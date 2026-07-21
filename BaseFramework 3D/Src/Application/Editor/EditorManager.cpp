@@ -50,8 +50,8 @@ void EditorManager::Draw()
 	}
 
 
-	m_hierarchy.Draw();
-	m_inspector.Draw();
+	//m_hierarchy.Draw();
+	//m_inspector.Draw();
 }
 
 void EditorManager::DrawMenu()
