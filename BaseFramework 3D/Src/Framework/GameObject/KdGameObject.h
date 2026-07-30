@@ -47,6 +47,11 @@ public:
 	virtual void SetScale(const Math::Vector3& scale);
 	virtual Math::Vector3 GetScale() const;
 
+	// 回転角度
+	void SetRotation(const Math::Vector3& rotation) { m_rotation = rotation; }
+	Math::Vector3 GetRotation()const { return m_rotation; }
+
+
 	const Math::Matrix& GetMatrix() const { return m_mWorld; }
 
 	virtual bool IsExpired() const { return m_isExpired; }
@@ -71,14 +76,19 @@ public:
 	bool Intersects(const KdCollider::RayInfo& targetShape, std::list<KdCollider::CollisionResult>* pResults);
 
 	
+	// オブジェクト名
 	const std::string &GetObjectName() const{ return m_objectName; }
-
 	void SetObjectName(const std::string& name) { m_objectName = name; }
 
+	// クラス名
 	virtual std::string GetTypeName()const
 	{
 		return "KdGameObject";
 	}
+
+	// クラスの関連付け用の関数
+	virtual void SetUpReference(){}
+
 
 	virtual nlohmann::json SaveData()const;
 
@@ -97,6 +107,9 @@ protected:
 
 	// 3D空間に存在する機能
 	Math::Matrix	m_mWorld;
+
+	// 回転
+	Math::Vector3 m_rotation = {};
 
 	// 当たり判定クラス
 	std::unique_ptr<KdCollider> m_pCollider = nullptr;

@@ -91,6 +91,7 @@ void CharacterBase::UpdateCollision()
 				// 地面に当たっている
 				SetPos(hitPos);
 				m_Gravity = 0;
+				m_jumpFlg = false;
 			}
 		}
 	}

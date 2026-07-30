@@ -9,26 +9,50 @@ void EditorCamera::Init()
 
 void EditorCamera::Update()
 {
-	Math::Vector3 move = Math::Vector3::Zero;
-	float         speed   = 0.2f;
 
-	Math::Vector3 forward = m_mWorld.Backward();
-	Math::Vector3 right   = m_mWorld.Right();
-	Math::Vector3 up      = m_mWorld.Up();
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		m_isCameraControl = true;
+	}
+	else
+	{
+		m_isCameraControl = false;
+	}
 
-	if (GetAsyncKeyState('W') & 0x8000)move += forward;
-	if (GetAsyncKeyState('S') & 0x8000)move -= forward;
-	if (GetAsyncKeyState('A') & 0x8000)move -= right;
-	if (GetAsyncKeyState('D') & 0x8000)move += right;
 
-	if (GetAsyncKeyState('Q') & 0x8000)move += up;
-	if (GetAsyncKeyState('E') & 0x8000)move -= up;
+	
+	if (m_isCameraControl)
+	{
+		// カメラの回転
+		UpdateRotateByMouse();
 
-	move.Normalize();
+		m_mRotation = GetRotationMatrix();
 
-	Math::Vector3 nowPos = GetPos();
-	nowPos += move * speed;
+		// カメラの移動
+		Math::Vector3 move = Math::Vector3::Zero;
+		float         speed = 0.2f;
 
-	m_mWorld = Math::Matrix::CreateTranslation(nowPos);
+		Math::Vector3 forward = m_mWorld.Backward();
+		Math::Vector3 right = m_mWorld.Right();
+		Math::Vector3 up = m_mWorld.Up();
+
+		if (GetAsyncKeyState('W') & 0x8000)move += forward;
+		if (GetAsyncKeyState('S') & 0x8000)move -= forward;
+		if (GetAsyncKeyState('A') & 0x8000)move -= right;
+		if (GetAsyncKeyState('D') & 0x8000)move += right;
+
+		if (GetAsyncKeyState('E') & 0x8000)move += up;
+		if (GetAsyncKeyState('Q') & 0x8000)move -= up;
+
+		move.Normalize();
+
+		Math::Vector3 nowPos = GetPos();
+		nowPos += move * speed;
+
+		Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
+
+
+		m_mWorld = m_mRotation * transMat;
+	}
 
 }

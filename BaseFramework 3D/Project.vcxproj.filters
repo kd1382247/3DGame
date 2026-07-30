@@ -112,6 +112,24 @@
     <Filter Include="Src\Application\GameObject\Camera\EditorCamera">
       <UniqueIdentifier>{93bd9e0e-ba11-4389-86e9-72b845cccbb0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\System">
+      <UniqueIdentifier>{e521b29b-3243-4d9d-bbc1-02f2dc8410f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\GameObjectFactory">
+      <UniqueIdentifier>{46d22ae5-cc98-4d2b-a8ca-fd394eeb24b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\ReferenceManager">
+      <UniqueIdentifier>{78b7834e-7c7d-4d83-950b-0d3466e75a98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\GameObjectFinder">
+      <UniqueIdentifier>{881cab7c-cfa0-4081-a6af-086111b438fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\Animation">
+      <UniqueIdentifier>{5ba57abb-da11-47d3-9e66-7c436f86fa93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\State">
+      <UniqueIdentifier>{dbb1fe2d-5313-40ca-890f-44ff7b5e074a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -318,6 +336,24 @@
     <ClInclude Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.h">
       <Filter>Src\Application\GameObject\Camera\EditorCamera</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\System\ReferenceManager\ReferenceManager.h">
+      <Filter>Src\Application\System\ReferenceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\GameObjectFactory\GameObjectFactory.h">
+      <Filter>Src\Application\System\GameObjectFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\GameObjectFinder\GameObjectFinder.h">
+      <Filter>Src\Application\System\GameObjectFinder</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.h">
+      <Filter>Src\Application\GameObject\Character\Player\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerState.h">
+      <Filter>Src\Application\GameObject\Character\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\Box.h">
+      <Filter>Src\Application\GameObject\Terrains</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -493,6 +529,21 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\EditorCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\GameObjectFactory\GameObjectFactory.cpp">
+      <Filter>Src\Application\System\GameObjectFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\ReferenceManager\ReferenceManager.cpp">
+      <Filter>Src\Application\System\ReferenceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\GameObjectFinder\GameObjectFinder.cpp">
+      <Filter>Src\Application\System\GameObjectFinder</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\Box.cpp">
+      <Filter>Src\Application\GameObject\Terrains</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

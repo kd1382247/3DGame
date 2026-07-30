@@ -12,8 +12,8 @@ public:
 	void Init()override;
 	void Update()override;
 
-
 private:
 
+	bool m_isCameraControl = false;
 
 };

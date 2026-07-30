@@ -50,8 +50,8 @@ void EditorManager::Draw()
 	}
 
 
-	//m_hierarchy.Draw();
-	//m_inspector.Draw();
+	m_hierarchy.Draw();
+	m_inspector.Draw();
 }
 
 void EditorManager::DrawMenu()
@@ -76,6 +76,33 @@ void EditorManager::DrawMenu()
 	{
 		ImGui::Text("CurrentMode: Play");
 	}
+}
+
+void EditorManager::SetupObjectReferences()
+{
+	
+}
+
+std::shared_ptr<KdGameObject> EditorManager::CreateObject(const std::string& className)
+{
+	auto newObject =
+		m_gameObjectFactory.CreateGameObject(className);
+
+	if (!newObject)
+	{
+		OutputDebugStringA(
+			"オブジェクトの生成に失敗しました\n");
+
+		return nullptr;
+	}
+
+	newObject->Init();
+
+	SceneManager::Instance().AddObject(newObject);
+
+	SetSelectedObject(newObject);
+
+	return newObject;
 }
 
 void EditorManager::SaveScene()
@@ -163,7 +190,8 @@ void EditorManager::LoadScene()
 		if (!objectJson.contains("Class") ||
 			!objectJson.contains("Name") ||
 			!objectJson.contains("Position") ||
-			!objectJson.contains("Scale"))
+			!objectJson.contains("Scale")||
+			!objectJson.contains("Rotation"))
 		{
 			OutputDebugStringA("必要なデータが不足しているオブジェクトをスキップしました\n");
 			continue;
@@ -184,19 +212,27 @@ void EditorManager::LoadScene()
 
 		// 座標読込
 		Math::Vector3 pos;
-		pos.x = objectJson["Position"]["x"].get<float>();;
-		pos.y = objectJson["Position"]["y"].get<float>();;
-		pos.z = objectJson["Position"]["z"].get<float>();;
+		pos.x = objectJson["Position"]["x"].get<float>();
+		pos.y = objectJson["Position"]["y"].get<float>();
+		pos.z = objectJson["Position"]["z"].get<float>();
 
 		obj->SetPos(pos);
 
 		// 大きさ読込
 		Math::Vector3 scale;
-		scale.x = objectJson["Scale"]["x"].get<float>();;
-		scale.y = objectJson["Scale"]["y"].get<float>();;
-		scale.z = objectJson["Scale"]["z"].get<float>();;
+		scale.x = objectJson["Scale"]["x"].get<float>();
+		scale.y = objectJson["Scale"]["y"].get<float>();
+		scale.z = objectJson["Scale"]["z"].get<float>();
 
 		obj->SetScale(scale);
+
+		// 回転
+		Math::Vector3 rotation;
+		rotation.x = objectJson["Rotation"]["x"].get<float>();
+		rotation.y = objectJson["Rotation"]["y"].get<float>();
+		rotation.z = objectJson["Rotation"]["z"].get<float>();
+		
+		obj->SetRotation(rotation);
 
 		SceneManager::Instance().AddObject(obj);
 	}

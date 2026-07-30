@@ -8,15 +8,40 @@ void EditorHierarchy::Draw()
 	ImGui::Begin("Hierarchy");
 
 	// オブジェクトを新規作成
-	if (ImGui::Button("Create Enpty"))
+	if (ImGui::Button("Add Object"))
 	{
-		auto newObject = std::make_shared<KdGameObject>();
-		newObject->SetObjectName("GameObject");
-
-		SceneManager::Instance().AddObject(newObject);
+		ImGui::OpenPopup("AddObjectPopup");
 	}
 
+	if (ImGui::BeginPopup("AddObjectPopup"))
+	{
+		if (ImGui::MenuItem("Create Empty"))
+		{
+			EditorManager::Instance()
+				.CreateObject("KdGameObject");
+		}
 
+		if (ImGui::MenuItem("Player"))
+		{
+			EditorManager::Instance()
+				.CreateObject("Player");
+		}
+
+		if (ImGui::MenuItem("Ground"))
+		{
+			EditorManager::Instance()
+				.CreateObject("Ground");
+		}
+
+		if (ImGui::MenuItem("TPS Camera"))
+		{
+			EditorManager::Instance()
+				.CreateObject("TPSCamera");
+		}
+
+		ImGui::EndPopup();
+
+	}
 	// どのオブジェクトを選択しているか
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{

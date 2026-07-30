@@ -35,6 +35,12 @@ public:
 		m_spSelectedObject = _obj;
 	}
 
+	void RequestCreateObject(const std::string name);
+
+	void SetupObjectReferences();
+
+	std::shared_ptr<KdGameObject> CreateObject(const std::string& className);
+
 	const std::shared_ptr<KdGameObject>&GetSelectedObject()
 	{
 		return m_spSelectedObject;
@@ -54,7 +60,7 @@ private:
 
 	KdGameObjectFactory m_gameObjectFactory;
 
-	EditorMode m_mode = EditorMode::Edit;
+	EditorMode m_mode = EditorMode::Play;
 
 
 

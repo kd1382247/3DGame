@@ -35,6 +35,7 @@ Math::Vector3 KdGameObject::GetScale() const
 	return Math::Vector3(m_mWorld.Right().Length(), m_mWorld.Up().Length(), m_mWorld.Backward().Length());
 }
 
+
 void KdGameObject::CalcDistSqrFromCamera(const Math::Vector3& camPos)
 {
 	m_distSqrFromCamera = (m_mWorld.Translation() - camPos).LengthSquared();
@@ -89,6 +90,14 @@ nlohmann::json KdGameObject::SaveData() const
 		{"z",scale.z}
 	};
 
+	Math::Vector3 rotation= GetRotation();
+
+	json["Rotation"] =
+	{
+		{"x",rotation.x},
+		{"y",rotation.y},
+		{"z",rotation.z}
+	};
 
 	return json;
 }

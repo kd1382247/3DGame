@@ -10,6 +10,7 @@
 
 #include"../../GameObject/Terrains/Ground/Ground.h"
 
+#include"../../GameObject/Terrains/Box.h"
 
 
 void GameScene::EditorUpdate()
@@ -46,9 +47,9 @@ void GameScene::SetupObjectReferences()
 void GameScene::Event()
 {
 
-	//// 現在のオブジェクト数をデバッグ
-	KdDebugGUI::Instance().ClearLog();
-	KdDebugGUI::Instance().AddLog("object%d",m_objList.size());
+	////// 現在のオブジェクト数をデバッグ
+	//KdDebugGUI::Instance().ClearLog();
+	//KdDebugGUI::Instance().AddLog("object%d", m_objList.size());
 
 	m_spEditorCamera->Update();
 
@@ -64,12 +65,19 @@ void GameScene::Init()
 	_ground->Init();
 	AddObject(_ground);
 	
+	std::shared_ptr<Box>_box = std::make_shared<Box>();
+	_box->Init();
+	AddObject(_box);
+
+
 	//===================================================================
 	// キャラクター初期化
 	//===================================================================
 	std::shared_ptr<Player> _player = std::make_shared<Player>();
 	_player->Init();
 	_player->RegistHitObject(_ground);
+	_player->RegistHitObject(_box);
+
 	AddObject(_player);
 
 	//===================================================================
@@ -83,6 +91,6 @@ void GameScene::Init()
 	m_spEditorCamera = std::make_shared<EditorCamera>();
 	m_spEditorCamera->Init();
 
-
+	_player->SetCamera(m_camera);
 
 }

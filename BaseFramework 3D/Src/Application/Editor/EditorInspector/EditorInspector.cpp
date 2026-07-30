@@ -59,6 +59,20 @@ void EditorInspector::Draw()
 			obj->SetScale(scale);
 		}
 
+		// 回転
+		Math::Vector3 rotation=obj->GetRotation();
+
+		if (ImGui::DragFloat3("Rotation", &rotation.x, 0.01))
+		{
+
+			//if (EditorManager::Instance().GetMode() == EditorManager::EditorMode::Edit)
+			{
+				obj->SetRotation(rotation);
+			}
+
+		}
+
+
 		// オブジェクト削除
 		if (ImGui::Button("Delete"))
 		{
