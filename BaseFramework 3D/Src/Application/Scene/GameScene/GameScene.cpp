@@ -48,8 +48,8 @@ void GameScene::Event()
 {
 
 	////// 現在のオブジェクト数をデバッグ
-	//KdDebugGUI::Instance().ClearLog();
-	//KdDebugGUI::Instance().AddLog("object%d", m_objList.size());
+	KdDebugGUI::Instance().ClearLog();
+	KdDebugGUI::Instance().AddLog("object%d", m_objList.size());
 
 	m_spEditorCamera->Update();
 

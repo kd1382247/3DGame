@@ -130,6 +130,15 @@
     <Filter Include="Src\Application\GameObject\Character\Player\State">
       <UniqueIdentifier>{dbb1fe2d-5313-40ca-890f-44ff7b5e074a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Enemy">
+      <UniqueIdentifier>{9d33c0ec-af94-40ab-b94b-e6c2218c2cab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\CollisionManager">
+      <UniqueIdentifier>{cab902f2-183b-4d4d-b8ac-99ba59c5a30a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\CollisionManager\CollisionLayer">
+      <UniqueIdentifier>{462a2018-3580-4e1d-83cc-ce56e3ab07df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -354,6 +363,15 @@
     <ClInclude Include="Src\Application\GameObject\Terrains\Box.h">
       <Filter>Src\Application\GameObject\Terrains</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Enemy\EnemyBase.h">
+      <Filter>Src\Application\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\CollisionManager\CollisionManager.h">
+      <Filter>Src\Application\System\CollisionManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\CollisionManager\CollisionLayer\CollisionLayer.h">
+      <Filter>Src\Application\System\CollisionManager\CollisionLayer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -544,6 +562,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Terrains\Box.cpp">
       <Filter>Src\Application\GameObject\Terrains</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Enemy\EnemyBase.cpp">
+      <Filter>Src\Application\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\CollisionManager\CollisionManager.cpp">
+      <Filter>Src\Application\System\CollisionManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

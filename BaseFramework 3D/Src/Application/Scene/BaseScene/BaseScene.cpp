@@ -6,20 +6,12 @@ void BaseScene::PreUpdate()
 {
 	// Updateの前の更新処理
 	// オブジェクトリストの整理 ・・・ 無効なオブジェクトを削除
-	auto it = m_objList.begin();
-
-	while (it != m_objList.end())
-	{
-		if ((*it)->IsExpired())	// IsExpired() ・・・ 無効ならtrue
+	
+	std::erase_if(m_objList,
+		[](const std::shared_ptr<KdGameObject>&obj)
 		{
-			// 無効なオブジェクトをリストから削除
-			it = m_objList.erase(it);
-		}
-		else
-		{
-			++it;	// 次の要素へイテレータを進める
-		}
-	}
+			return !obj||obj->IsExpired();
+		});
 
 	// ↑の後には有効なオブジェクトだけのリストになっている
 

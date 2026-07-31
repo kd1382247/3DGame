@@ -15,7 +15,7 @@ void Box::Init()
 
 void Box::Update()
 {
-
+	if (GetAsyncKeyState('T') & 0x8000)m_isExpired = true;
 }
 
 void Box::DrawLit()
