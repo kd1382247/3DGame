@@ -23,15 +23,15 @@ void PlayerAnimation::Change(PlayerAnimationType _nextAnim)
 		break;
 	case PlayerAnimationType::Attack1:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack1"), false);
-		m_animSpeed = 1.2f;
+		m_animSpeed = 1.4f;
 		break;
 	case PlayerAnimationType::Attack2:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack2"), false);
-		m_animSpeed = 1.2f;
+		m_animSpeed = 1.4f;
 		break;
 	case PlayerAnimationType::Attack3:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack3"), false);
-		m_animSpeed = 1.2f;
+		m_animSpeed = 1.4f;
 		break;
 	case PlayerAnimationType::AttackSpin:
 		break;
@@ -65,7 +65,7 @@ void PlayerAnimation::Change(PlayerAnimationType _nextAnim)
 		break;
 	case PlayerAnimationType::JumpLand:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("JumpLand"), false);
-		m_animSpeed = 1.0f;
+		m_animSpeed = 2.5f; 
 		break;
 	case PlayerAnimationType::JumpSpin:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("JumpSpin"), false);
@@ -73,17 +73,20 @@ void PlayerAnimation::Change(PlayerAnimationType _nextAnim)
 	case PlayerAnimationType::LevelUp:
 		break;
 	case PlayerAnimationType::MoveBWD:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("MoveFWD"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("MoveBWD"), true);
+		m_animSpeed = 1.0f;
 		break;
 	case PlayerAnimationType::MoveFWD:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("MoveFWD"), true);
 		m_animSpeed = 1.0f;
 		break;
 	case PlayerAnimationType::MoveLFT:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("MoveFWD"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("MoveLFT"), true);
+		m_animSpeed = 1.0f;
 		break;
 	case PlayerAnimationType::MoveRGT:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("MoveFWD"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("MoveRGT"), true);
+		m_animSpeed = 1.0f;
 		break;
 	case PlayerAnimationType::SprintFWD:
 		break;

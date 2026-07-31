@@ -5,8 +5,6 @@
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 
 #include"../../Terrains/Ground/Ground.h"
-
-
 void Player::Init()
 {
 	if (!m_spModel)
@@ -18,7 +16,6 @@ void Player::Init()
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
-		
 	}
 
 	SetPos({ -12.0f, 12.5f, 1.5f });
@@ -28,7 +25,6 @@ void Player::Update()
 {
 
 	UpdateInput();
-	UpdateAttack();
 	UpdateActionState();
 	UpdateMoveState();
 
@@ -48,15 +44,21 @@ void Player::PostUpdate()
 
 void Player::SetUpReference()
 {
-
 	std::shared_ptr<Ground>ground = GameObjectFinder::Instance().FindObject<Ground>();
 	m_wpHitObjectList.push_back(ground);
 }
 
 void Player::UpdateInput()
 {
+	// 入力関数
+	UpdateMoveInput();
+	UpdateJumpInput();
+	UpdateAttackInput();
+	UpdateComboInput();
+}
 
-	//===========================移動=================================//
+void Player::UpdateMoveInput()
+{
 	m_inputMoveDir = Math::Vector3::Zero;
 	m_dirType = 0;
 	m_moveFlg = false;
@@ -74,7 +76,7 @@ void Player::UpdateInput()
 	if (GetAsyncKeyState('A') & 0x8000)
 	{
 		m_inputMoveDir.x -= 1.0f;
-		m_dirType |=Left;
+		m_dirType |= Left;
 	}
 	if (GetAsyncKeyState('D') & 0x8000)
 	{
@@ -86,18 +88,20 @@ void Player::UpdateInput()
 	{
 		m_moveFlg = true;
 	}
+}
 
-
-	//===========================ジャンプ=================================//
+void Player::UpdateJumpInput()
+{
 	const bool currentJumpButton = (GetAsyncKeyState(VK_SPACE) & 0x8000) != 0;
 
-	m_jumpTrigger =currentJumpButton && !m_prevJumpButton;
+	m_jumpTrigger = currentJumpButton && !m_prevJumpButton;
 
 	m_jumpButton = currentJumpButton;
 	m_prevJumpButton = currentJumpButton;
+}
 
-
-	//===========================攻撃=================================//
+void Player::UpdateAttackInput()
+{
 	bool currentAttackButton = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
 
 	m_attackTrigger = currentAttackButton && !m_prevAttackButton;
@@ -105,20 +109,30 @@ void Player::UpdateInput()
 	m_attackButton = currentAttackButton;
 	m_prevAttackButton = currentAttackButton;
 
-	// コンボ受付時間
-	if(m_canCombo)
-	{
-		// 受付終了
-		if (m_attackInputCnt > 15)
+}
+
+void Player::UpdateComboInput()
+{
+	// コンボ受付
+	if (m_canCombo)
+	{	
+		++m_comboInputCnt;
+
+		if (m_attackButton)
 		{
-			m_attackInputCnt = 0;
 			m_canCombo = false;
+			m_comboInputCnt = 0;
 
-			m_nextAttackCombo = AttackCombo::Attack1;
+			m_currentAttackCombo = m_nextAttackCombo;
+			ChangeActionState(PlayerActionState::Attack);
+			return;
 		}
-		m_attackInputCnt++;
-	}
 
+		if (m_comboInputCnt > 20)
+		{
+			ResetCombo();
+		}
+	}
 }
 
 void Player::UpdateMove()
@@ -197,27 +211,20 @@ void Player::UpdateMove()
 	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
 	Math::Matrix rotationMat = Math::Matrix::Identity;
 	rotationMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle));
-	
-	
 
 	m_mWorld = scaleMat * rotationMat * transMat;
 
 }
 
-void Player::UpdateAttack()
-{
-	
-}
-
 void Player::UpdateActionState()
 {
+
 	if (m_actionState == PlayerActionState::Dead)
 	{
 		return;
 	}
 	if (m_actionState == PlayerActionState::Damage)
 	{
-
 		if (m_animation.IsFinished())
 		{
 			ChangeActionState(PlayerActionState::Normal);
@@ -230,13 +237,22 @@ void Player::UpdateActionState()
 		if (m_animation.IsFinished())
 		{
 			ChangeActionState(PlayerActionState::Normal);
-			m_canCombo = true;
-		}
+			
+			// 3段目以外なら次のコンボを受け付ける
+			if (m_currentAttackCombo != AttackCombo::Attack3)
+			{
+				m_canCombo = true;
+				m_comboInputCnt = 0;
+			}
+			else
+			{
+				ResetCombo();
+			}
 
+		}
 		return;
 	}
 
-	//===================ジャンプ===================//
 	if (m_actionState == PlayerActionState::JumpStart)
 	{
 		if (m_animation.IsFinished())
@@ -258,18 +274,15 @@ void Player::UpdateActionState()
 		return;
 	}
 
-	//=============================================//
-
-	if (m_jumpTrigger)
+	// ジャンプキーが押されたら
+	if (m_jumpButton)
 	{
 		ChangeActionState(PlayerActionState::JumpStart);
 		return;
 	}
-
-	if (m_attackTrigger)
+	// 攻撃キーが押されたら
+	if (m_attackButton)
 	{
-		m_currentAttackCombo = m_nextAttackCombo;
-		m_canCombo = false;
 		ChangeActionState(PlayerActionState::Attack);
 		return;
 	}
@@ -286,6 +299,23 @@ void Player::UpdateMoveState()
 	else
 	{
 		m_moveState = PlayerMoveState::Idle;
+	}
+}
+
+void Player::UpdateComboState()
+{
+	// 次の攻撃パターンを予約
+	switch (m_currentAttackCombo)
+	{
+	case Player::AttackCombo::Attack1:
+		m_nextAttackCombo = AttackCombo::Attack2;
+		break;
+	case Player::AttackCombo::Attack2:
+		m_nextAttackCombo = AttackCombo::Attack3;
+		break;
+	case Player::AttackCombo::Attack3:
+		m_nextAttackCombo = AttackCombo::Attack1;
+		break;
 	}
 }
 
@@ -347,15 +377,15 @@ void Player::UpdateAnimation()
 		}
 		if (m_dirType & Down)
 		{
-			nextAnimation = PlayerAnimationType::MoveBWD;
+			nextAnimation = PlayerAnimationType::MoveFWD;
 		}
 		if (m_dirType & Left)
 		{
-			nextAnimation = PlayerAnimationType::MoveLFT;
+			nextAnimation = PlayerAnimationType::MoveFWD;
 		}
 		if (m_dirType & Right)
 		{
-			nextAnimation = PlayerAnimationType::MoveRGT;
+			nextAnimation = PlayerAnimationType::MoveFWD;
 		}
 	}
 	else
@@ -367,6 +397,15 @@ void Player::UpdateAnimation()
 	m_animation.Update();
 }
 
+
+void Player::ResetCombo()
+{
+	m_currentAttackCombo = AttackCombo::Attack1;
+	m_nextAttackCombo = AttackCombo::Attack1;
+
+	m_canCombo = false;
+	m_comboInputCnt = 0;
+}
 
 void Player::ChangeActionState(PlayerActionState _nextState)
 {
@@ -388,28 +427,18 @@ void Player::EnterState(PlayerActionState _state)
 	case PlayerActionState::Normal:
 		break;
 	case PlayerActionState::Attack:
-		switch (m_currentAttackCombo)
-		{
-		case Player::AttackCombo::Attack1:
-			m_nextAttackCombo = AttackCombo::Attack2;
-			break;
-		case Player::AttackCombo::Attack2:
-			m_nextAttackCombo = AttackCombo::Attack3;
-			break;
-		case Player::AttackCombo::Attack3:
-			m_nextAttackCombo = AttackCombo::Attack1;
-			break;
-		}
+		UpdateComboState();
 		break;
 	case PlayerActionState::Damage:
 		break;
 	case PlayerActionState::Dead:
 		break;
 	case PlayerActionState::JumpStart:
-		break;
-	case PlayerActionState::JumpAir:
 		m_jumpFlg = true;
 		m_Gravity = -0.4f;
+		break;
+	case PlayerActionState::JumpAir:
+
 		break;
 	case PlayerActionState::JumpLand:
 		break;

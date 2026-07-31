@@ -34,27 +34,36 @@ private:
 		Attack3,
 	};
 
+	// 入力を受け付ける
 	void UpdateInput();
+	void UpdateMoveInput();
+	void UpdateJumpInput();
+	void UpdateAttackInput();
+	void UpdateComboInput();
+
+
 	void UpdateMove();
-	void UpdateAttack();
+
+	// 状態を更新
 	void UpdateActionState();
 	void UpdateMoveState();
-
+	void UpdateComboState();
 	void UpdateGroundState();
 
+	void ResetCombo();
+
+	// 状態を変更
 	void ChangeActionState(PlayerActionState _nextState);
-	void EnterState(PlayerActionState _state);
 	void ExitState(PlayerActionState _state);
+	void EnterState(PlayerActionState _state);
 
 	void UpdateAnimation();
 
 private:
 
-
 	// アニメーションクラス
 	PlayerAnimation     m_animation;
 
-	PlayerAnimationType m_animationType = PlayerAnimationType::Idle;
 	PlayerActionState   m_actionState = PlayerActionState::Normal;
 	PlayerMoveState     m_moveState   = PlayerMoveState::Idle;
 
@@ -72,22 +81,17 @@ private:
 	// 攻撃コンボ
 	AttackCombo     m_currentAttackCombo = AttackCombo::Attack1;
 	AttackCombo     m_nextAttackCombo = m_currentAttackCombo;
-	float           m_attackInputCnt = 0;
+	int             m_comboInputCnt = 0;
 	bool            m_canCombo = false;
-
 
 	// ジャンプキー
 	bool            m_jumpButton = false;
 	bool            m_prevJumpButton = false;
 	bool            m_jumpTrigger = false;
 
+	// 移動系
 	float           m_moveSpeed = 0.15;
-	float           m_turnSpeed = 10.0f;
+	float           m_turnSpeed = 12.0f;
 	float           m_angle=0;
-
-
-	float           m_frame=0;
-
-	int hoge = 0;
 
 };

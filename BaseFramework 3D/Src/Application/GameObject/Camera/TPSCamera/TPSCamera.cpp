@@ -24,7 +24,7 @@ void TPSCamera::PostUpdate()
 	}
 
 	// カメラの回転
-	//UpdateRotateByMouse();
+	UpdateRotateByMouse();
 	m_mRotation = GetRotationMatrix();
 	m_mWorld = m_mLocalPos * m_mRotation * _targetMat;
 
