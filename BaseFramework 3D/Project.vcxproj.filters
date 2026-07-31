@@ -130,14 +130,47 @@
     <Filter Include="Src\Application\GameObject\Character\Player\State">
       <UniqueIdentifier>{dbb1fe2d-5313-40ca-890f-44ff7b5e074a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Enemy">
-      <UniqueIdentifier>{9d33c0ec-af94-40ab-b94b-e6c2218c2cab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\CollisionManager">
       <UniqueIdentifier>{cab902f2-183b-4d4d-b8ac-99ba59c5a30a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\System\CollisionManager\CollisionLayer">
       <UniqueIdentifier>{462a2018-3580-4e1d-83cc-ce56e3ab07df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy">
+      <UniqueIdentifier>{7b620f96-ce03-4ae1-ab71-113b17281ddb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Bat">
+      <UniqueIdentifier>{71329e2b-d3d8-4ddd-bd02-843640308e12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Beholder">
+      <UniqueIdentifier>{58f20320-36ea-4b0f-9c01-69e560e9c046}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\BlueSlime">
+      <UniqueIdentifier>{90980da9-cda3-4438-9b0f-d429d3aa6856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\BlueSwarm">
+      <UniqueIdentifier>{4ca7f9ae-7521-4f21-b599-f36d2da0c684}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Mushroom">
+      <UniqueIdentifier>{6c1cc284-3c18-439f-a675-319b1e708ce8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\RedSwarm">
+      <UniqueIdentifier>{6801b83c-9cc2-4e8d-9721-500695b61390}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Golem">
+      <UniqueIdentifier>{46885049-651e-49a3-96d7-aed3e992e9ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\StarFish">
+      <UniqueIdentifier>{6344aee2-47e8-4c9b-9b77-3d3a301e0468}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\ChestMonster">
+      <UniqueIdentifier>{354540eb-e890-4bca-9c7c-f286eac697c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\RedSlime">
+      <UniqueIdentifier>{503314c6-1b3a-4e66-ad75-1d9fb95627ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\TurtleShell">
+      <UniqueIdentifier>{931ffdeb-826a-411a-ab2b-8e995dcf10ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -363,14 +396,47 @@
     <ClInclude Include="Src\Application\GameObject\Terrains\Box.h">
       <Filter>Src\Application\GameObject\Terrains</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Enemy\EnemyBase.h">
-      <Filter>Src\Application\GameObject\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionManager.h">
       <Filter>Src\Application\System\CollisionManager</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionLayer\CollisionLayer.h">
       <Filter>Src\Application\System\CollisionManager\CollisionLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\EnemyBase.h">
+      <Filter>Src\Application\GameObject\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Bat\Bat.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Bat</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Beholder\Beholder.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Beholder</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\BlueSlime\BlueSlime.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\BlueSlime</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\BlueSwarm\BlueSwarm.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\BlueSwarm</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\Mushroom.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Golem\Golem.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Golem</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\ChestMonster.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\TurtleShell.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\RedSlime\RedSlime.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\RedSlime</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\StarFish\StarFish.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\StarFish</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\RedSwarm\RedSwarm.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\RedSwarm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -563,11 +629,44 @@
     <ClCompile Include="Src\Application\GameObject\Terrains\Box.cpp">
       <Filter>Src\Application\GameObject\Terrains</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Enemy\EnemyBase.cpp">
-      <Filter>Src\Application\GameObject\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\CollisionManager\CollisionManager.cpp">
       <Filter>Src\Application\System\CollisionManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\EnemyBase.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Bat\Bat.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Bat</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Beholder\Beholder.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Beholder</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\BlueSlime\BlueSlime.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\BlueSlime</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\BlueSwarm\BlueSwarm.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\BlueSwarm</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\Mushroom.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Golem\Golem.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Golem</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\ChestMonster.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\TurtleShell.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\RedSlime\RedSlime.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\RedSlime</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\StarFish\StarFish.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\StarFish</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\RedSwarm\RedSwarm.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\RedSwarm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

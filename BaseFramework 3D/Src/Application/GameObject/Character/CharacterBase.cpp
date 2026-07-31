@@ -1,5 +1,7 @@
 ﻿#include "CharacterBase.h"
 
+#include"../../System/CollisionManager/CollisionManager.h"
+
 CharacterBase::CharacterBase()
 {}
 
@@ -42,6 +44,46 @@ void CharacterBase::GenerateDepthMapFromLight()
 
 void CharacterBase::UpdateCollision()
 {
+	UpdateBump();
+
+	UpdateGroundCollision();
+}
+
+void CharacterBase::UpdateBump()
+{
+	// ①当たり判定(球判定)用の情報作成
+	DirectX::BoundingSphere sphere;
+	sphere.Center = GetPos() + Math::Vector3(0, 0.5f, 0);
+	sphere.Radius = 0.5f;
+	KdCollider::SphereInfo spherInfo(KdCollider::TypeBump, sphere);
+
+	// ②HIT判定対象オブジェクトに総当たり
+	for (std::weak_ptr<KdGameObject> wpGameObj : CollisionManager::Instance().GetObjects(CollisionLayer::Bump))
+	{
+		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
+
+		if (spGameObj == shared_from_this())
+		{
+			continue;
+		}
+
+		if (spGameObj)
+		{
+			std::list<KdCollider::CollisionResult> retBumpList;
+			spGameObj->Intersects(spherInfo, &retBumpList);
+
+			// ③ 結果を使って座標を補完する
+			for (auto& ret : retBumpList)
+			{
+				Math::Vector3 newPos = GetPos() + (ret.m_hitDir * ret.m_overlapDistance);
+				SetPos(newPos);
+			}
+		}
+	}
+}
+
+void CharacterBase::UpdateGroundCollision()
+{
 	// 地面判定するよ
 	// ----- ----- ----- ----- -----
 
@@ -62,7 +104,7 @@ void CharacterBase::UpdateCollision()
 	rayInfo.m_type = KdCollider::TypeGround;
 
 	// ②HIT判定対象オブジェクトに総当たり
-	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
+	for (auto& wpGameObj : CollisionManager::Instance().GetObjects(CollisionLayer::Ground))
 	{
 		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
 		if (spGameObj)
@@ -96,31 +138,6 @@ void CharacterBase::UpdateCollision()
 		}
 	}
 
-	// その他球による衝突判定
-	// ----- ----- ----- ----- -----
-	// ①当たり判定(球判定)用の情報作成
-	DirectX::BoundingSphere sphere;
-	sphere.Center = GetPos() + Math::Vector3(0, 0.5f, 0);
-	sphere.Radius = 0.5f;
-	KdCollider::SphereInfo spherInfo(KdCollider::TypeBump, sphere);
-
-	// ②HIT判定対象オブジェクトに総当たり
-	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
-	{
-		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
-		if (spGameObj)
-		{
-			std::list<KdCollider::CollisionResult> retBumpList;
-			spGameObj->Intersects(spherInfo, &retBumpList);
-
-			// ③ 結果を使って座標を補完する
-			for (auto& ret : retBumpList)
-			{
-				Math::Vector3 newPos = GetPos() + (ret.m_hitDir * ret.m_overlapDistance);
-				SetPos(newPos);
-			}
-		}
-	}
 }
 
 // 解放

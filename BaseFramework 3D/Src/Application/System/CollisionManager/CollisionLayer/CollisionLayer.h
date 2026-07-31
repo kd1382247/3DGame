@@ -3,9 +3,11 @@
 enum class CollisionLayer
 {
 	Ground,
-	Character,
+	Player,
+	Enemy,
 	PlayerAttack,
 	EnemyAttac,
+	Bump,
 
 	Max
 };

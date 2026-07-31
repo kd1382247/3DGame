@@ -267,10 +267,4 @@ void EditorManager::LoadScene()
 	{
 		camera->SetTarget(player);
 	}
-
-	if (player && ground)
-	{
-		player->RegistHitObject(ground);
-	}
-
 }

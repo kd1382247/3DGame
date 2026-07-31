@@ -1,5 +1,7 @@
 ﻿#include "Ground.h"
 
+#include"../../../System/CollisionManager/CollisionManager.h"
+
 void Ground::Init()
 {
 	if (!m_spModel)
@@ -12,6 +14,9 @@ void Ground::Init()
 
 		m_objectName = "Ground";
 	}
+
+
+	CollisionManager::Instance().RegisterObject(CollisionLayer::Ground, shared_from_this());
 }
 
 void Ground::Update()

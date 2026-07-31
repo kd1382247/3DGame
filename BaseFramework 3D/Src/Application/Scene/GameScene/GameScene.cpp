@@ -52,7 +52,6 @@ void GameScene::Event()
 	KdDebugGUI::Instance().AddLog("object%d", m_objList.size());
 
 	m_spEditorCamera->Update();
-
 }
 
 void GameScene::Init()
@@ -75,8 +74,6 @@ void GameScene::Init()
 	//===================================================================
 	std::shared_ptr<Player> _player = std::make_shared<Player>();
 	_player->Init();
-	_player->RegistHitObject(_ground);
-	_player->RegistHitObject(_box);
 
 	AddObject(_player);
 
