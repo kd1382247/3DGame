@@ -5,20 +5,19 @@
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../../System/CollisionManager/CollisionManager.h"
 
-
-
 #include"../../Terrains/Ground/Ground.h"
 void Player::Init()
 {
 	if (!m_spModel)
 	{
 		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Player/Player1.gltf");
+		m_spModel->SetModelData("Asset/Models/Player/Player.gltf");
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape("Player", m_spModel, KdCollider::TypeBump);
 
-		m_objectName = "Player";
+		// オブジェクト名セット
+		SetObjectName("Player");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
@@ -400,7 +399,7 @@ void Player::UpdateAnimation()
 		nextAnimation = PlayerAnimationType::Idle;
 	}
 
-	m_animation.Change(nextAnimation);
+	m_animation.Play(nextAnimation);
 	m_animation.Update();
 }
 

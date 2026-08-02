@@ -12,6 +12,9 @@
 
 #include"../../GameObject/Terrains/Box.h"
 
+// 敵
+#include"../../GameObject/Character/Enemy/Beholder/Beholder.h"
+
 
 void GameScene::EditorUpdate()
 {
@@ -67,6 +70,12 @@ void GameScene::Init()
 	std::shared_ptr<Box>_box = std::make_shared<Box>();
 	_box->Init();
 	AddObject(_box);
+
+	std::shared_ptr<Beholder>_beholder = std::make_shared<Beholder>();
+	_beholder->Init();
+	AddObject(_beholder);
+
+
 
 
 	//===================================================================

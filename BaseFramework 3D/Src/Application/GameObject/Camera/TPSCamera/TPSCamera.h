@@ -10,8 +10,4 @@ public:
 	void Init()				override;
 	void PostUpdate()		override;
 
-	std::string GetTypeName()const override
-	{
-		return "TPSCamera";
-	}
 };

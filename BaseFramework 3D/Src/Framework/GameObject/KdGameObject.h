@@ -80,11 +80,6 @@ public:
 	const std::string &GetObjectName() const{ return m_objectName; }
 	void SetObjectName(const std::string& name) { m_objectName = name; }
 
-	// クラス名
-	virtual std::string GetTypeName()const
-	{
-		return "KdGameObject";
-	}
 
 	// クラスの関連付け用の関数
 	virtual void SetUpReference(){}

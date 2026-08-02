@@ -6,6 +6,7 @@
 
 #include"Animation/PlayerAnimation.h"
 
+class CameraBase;
 
 class Player : public CharacterBase
 {
@@ -19,9 +20,9 @@ public:
 	void PostUpdate()   override;
 	void SetUpReference()override;
 
-	std::string GetTypeName()const override
+	void SetCamera(const std::shared_ptr<CameraBase>& _camera)
 	{
-		return "Player";
+		m_wpCamera = _camera;
 	}
 
 private:
@@ -59,7 +60,13 @@ private:
 
 	void UpdateAnimation();
 
+
+
+
 private:
+
+	// カメラ
+	std::weak_ptr<CameraBase>m_wpCamera;
 
 	// アニメーションクラス
 	PlayerAnimation     m_animation;

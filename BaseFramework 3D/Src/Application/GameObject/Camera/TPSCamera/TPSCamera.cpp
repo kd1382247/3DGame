@@ -10,7 +10,8 @@ void TPSCamera::Init()
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
-	m_objectName = "TPSCamera";
+	// オブジェクト名セット
+	SetObjectName("TPSCamera");
 }
 
 void TPSCamera::PostUpdate()

@@ -44,12 +44,12 @@ void CharacterBase::GenerateDepthMapFromLight()
 
 void CharacterBase::UpdateCollision()
 {
-	UpdateBump();
+	UpdateBumpCollision();
 
 	UpdateGroundCollision();
 }
 
-void CharacterBase::UpdateBump()
+void CharacterBase::UpdateBumpCollision()
 {
 	// ①当たり判定(球判定)用の情報作成
 	DirectX::BoundingSphere sphere;

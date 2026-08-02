@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-class CameraBase;
-
 class CharacterBase : public KdGameObject
 {
 public:
@@ -15,16 +13,12 @@ public:
 	void DrawLit()		override;
 	void GenerateDepthMapFromLight()	override;
 
-	void SetCamera(const std::shared_ptr<CameraBase>& _camera)
-	{
-		m_wpCamera = _camera;
-	}
 
 private:
 	// 当たり判定更新
 	void UpdateCollision();
 
-	void UpdateBump();
+	void UpdateBumpCollision();
 	void UpdateGroundCollision();
 
 	// 解放処理
@@ -33,8 +27,6 @@ private:
 protected:
 
 	std::shared_ptr<KdModelWork>			    m_spModel = nullptr;
-	// カメラ
-	std::weak_ptr<CameraBase>m_wpCamera;
 
 	float										m_Gravity = 0;
 	bool                                        m_jumpFlg = false;

@@ -12,7 +12,8 @@ void Ground::Init()
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape("Ground", m_spModel, KdCollider::TypeGround);
 
-		m_objectName = "Ground";
+		// オブジェクト名セット
+		SetObjectName("Ground");
 	}
 
 

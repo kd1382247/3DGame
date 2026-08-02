@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include"../Character/CharacterBase.h"
+#include"../CharacterBase.h"
 
 class EnemyBase :public CharacterBase
 {

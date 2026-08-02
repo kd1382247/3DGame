@@ -68,7 +68,7 @@ nlohmann::json KdGameObject::SaveData() const
 
 	nlohmann::json json;
 
-	json["Class"] = GetTypeName();
+	json["Class"] = GetObjectName();
 
 	json["Name"] = m_objectName;
 
