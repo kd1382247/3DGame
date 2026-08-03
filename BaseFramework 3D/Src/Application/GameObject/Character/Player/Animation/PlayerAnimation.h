@@ -13,7 +13,7 @@ public:
 
 	void Init(const std::shared_ptr<KdModelWork>&_model);
 
-	void Play(PlayerAnimationType _nextAnim);
+	void Play(PlayerAnimationType _animType);
 	
 
 private:

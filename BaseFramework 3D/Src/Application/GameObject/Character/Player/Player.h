@@ -35,11 +35,23 @@ private:
 		Attack3,
 	};
 
+	enum class GuardState
+	{
+		Guard,
+		GuardHit,
+		GuardCancel,
+		Parry
+	};
+
 	// 入力を受け付ける
 	void UpdateInput();
 	void UpdateMoveInput();
 	void UpdateJumpInput();
 	void UpdateAttackInput();
+	void UpdateGuardInput();
+	void UpdateParryInput();
+
+
 	void UpdateComboInput();
 
 
@@ -59,9 +71,6 @@ private:
 	void EnterState(PlayerActionState _state);
 
 	void UpdateAnimation();
-
-
-
 
 private:
 
@@ -90,6 +99,15 @@ private:
 	AttackCombo     m_nextAttackCombo = m_currentAttackCombo;
 	int             m_comboInputCnt = 0;
 	bool            m_canCombo = false;
+
+	// ガードキー
+	bool            m_guardButton = false;
+	bool            m_prevGuardButton = false;
+	bool            m_guardTrigger = false;
+
+	// ガード状態
+	GuardState      m_guardState = GuardState::Guard;
+
 
 	// ジャンプキー
 	bool            m_jumpButton = false;

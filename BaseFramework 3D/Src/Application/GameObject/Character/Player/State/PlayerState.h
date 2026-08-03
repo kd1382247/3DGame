@@ -25,6 +25,7 @@ enum class PlayerAnimationType
 	MoveFWD,
 	MoveLFT,
 	MoveRGT,
+	Parry,
 	SprintFWD,
 	Vectory
 };
@@ -43,7 +44,8 @@ enum class PlayerActionState
 	Normal,
 	Attack,
 	Damage,
-	Dead,
+	Die,
+	Guard,
 	JumpStart,
 	JumpAir,
 	JumpLand

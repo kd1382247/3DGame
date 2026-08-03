@@ -525,9 +525,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Animation\ChestMonsterAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonster">
-      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Golem\Animation\GolemAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Golem\Animation</Filter>
     </ClInclude>
@@ -575,6 +572,9 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellState.h">
       <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

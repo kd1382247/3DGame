@@ -34,8 +34,16 @@ void PlayerAnimation::Play(PlayerAnimationType _animType)
 	case PlayerAnimationType::AttackSpin:
 		break;
 	case PlayerAnimationType::Defend:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Defend"), true);
+		m_animSpeed = 1.4f;
 		break;
 	case PlayerAnimationType::DefendHit:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("DefendHit"), false);
+		m_animSpeed = 1.4f;
+		break;
+	case PlayerAnimationType::Parry:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Parry"), false);
+		m_animSpeed = 1.4f;
 		break;
 	case PlayerAnimationType::Die:
 		break;

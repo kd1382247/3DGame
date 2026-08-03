@@ -293,7 +293,7 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\CactasState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Animation\ChestMonsterAnimation.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\ChestMonster.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonster" />
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\EnemyBase.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Golem\Animation\GolemAnimation.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Golem\Golem.h" />

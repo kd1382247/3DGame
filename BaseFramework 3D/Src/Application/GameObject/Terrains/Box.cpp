@@ -14,9 +14,10 @@ void Box::Init()
 
 	}
 
-	CollisionManager::Instance().RegisterObject(CollisionLayer::Ground, shared_from_this());
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
+	CollisionManager::Instance().RegisterObject(CollisionLayer::Ground, shared_from_this());
 
+	SetPos({ -15,0,15 });
 }
 
 void Box::Update()
@@ -26,5 +27,5 @@ void Box::Update()
 
 void Box::DrawLit()
 {
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel,m_mWorld);
 }

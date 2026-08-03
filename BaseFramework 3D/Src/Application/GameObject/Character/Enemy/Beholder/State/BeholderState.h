@@ -1,57 +1,36 @@
 ﻿#pragma once
 
-enum class PlayerAnimationType
+enum class BeholderAnimationType
 {
 	None,
-	Attack1,
-	Attack2,
-	Attack3,
-	AttackSpin,
-	Defend,
-	DefendHit,
+	NormalAttack,
+	BeamAttackST,
+	BeamAttackRPT,
+	BeamAttackEND,
+	EnergyAttack,
 	Die,
-	DieStay,
 	Dizzy,
 	GetHit,
-	GetUp,
 	Idle,
-	IdleNormal,
-	JumpStart,
-	JumpAir,
-	JumpLand,
-	JumpSpin,
-	LevelUp,
-	MoveBWD,
-	MoveFWD,
-	MoveLFT,
-	MoveRGT,
-	SprintFWD,
+	Walk,
 	Vectory
-};
-// 方向種類
-enum DirType
-{
-	Up = 1 << 0,	// 上　0000 0001
-	Down = 1 << 1,	// 下　0000 0010
-	Left = 1 << 2,	// 左　0000 0100
-	Right = 1 << 3,	// 右　0000 1000
 };
 
 // 攻撃しているか
-enum class PlayerActionState
+enum class BeholderActionState
 {
 	Normal,
-	Attack,
 	Damage,
-	Dead,
-	JumpStart,
-	JumpAir,
-	JumpLand
-
+	NormalAttack,
+	BeamAttackST,
+	BeamAttackRPT,
+	BeamAttackEND,
+	EnergyAttack,
+	Death,
 };
 
-enum class PlayerMoveState
+enum class BeholderMoveState
 {
 	Idle,
-	Run
+	Walk
 };

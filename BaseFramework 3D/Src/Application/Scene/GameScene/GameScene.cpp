@@ -14,6 +14,17 @@
 
 // 敵
 #include"../../GameObject/Character/Enemy/Beholder/Beholder.h"
+#include"../../GameObject//Character/Enemy/Bomb/Bomb.h"
+#include"../../GameObject//Character/Enemy/Cactas/Cactas.h"
+#include"../../GameObject//Character/Enemy/ChestMonster/ChestMonster.h"
+#include"../../GameObject//Character/Enemy/Golem/Golem.h"
+#include"../../GameObject//Character/Enemy/Mage/Mage.h"
+#include"../../GameObject//Character/Enemy/Mushroom/Mushroom.h"
+#include"../../GameObject//Character/Enemy/Slime/Slime.h"
+#include"../../GameObject//Character/Enemy/StarFish/StarFish.h"
+#include"../../GameObject//Character/Enemy/Swarm/Swarm.h"
+#include"../../GameObject//Character/Enemy/TurtleShell/TurtleShell.h"
+
 
 
 void GameScene::EditorUpdate()
@@ -71,12 +82,65 @@ void GameScene::Init()
 	_box->Init();
 	AddObject(_box);
 
+
+
+	//===================================================================
+	// エネミー初期化
+	//===================================================================
+	// Beholder
 	std::shared_ptr<Beholder>_beholder = std::make_shared<Beholder>();
 	_beholder->Init();
 	AddObject(_beholder);
 
+	// Bomb
+	std::shared_ptr<Bomb>_bomb = std::make_shared<Bomb>();
+	_bomb->Init();
+	AddObject(_bomb);
 
+	// Cactas
+	std::shared_ptr<Cactas>_cactas = std::make_shared<Cactas>();
+	_cactas->Init();
+	AddObject(_cactas);
 
+	// ChestMonster
+	std::shared_ptr<ChestMonster>_chestMonster = std::make_shared<ChestMonster>();
+	_chestMonster->Init();
+	AddObject(_chestMonster);
+
+	// Golem
+	std::shared_ptr<Golem>_golem = std::make_shared<Golem>();
+	_golem->Init();
+	AddObject(_golem);
+
+	// Mage
+	std::shared_ptr<Mage>_mage = std::make_shared<Mage>();
+	_mage->Init();
+	AddObject(_mage);
+
+	// Mushroom
+	std::shared_ptr<Mushroom>_mushroom = std::make_shared<Mushroom>();
+	_mushroom->Init();
+	AddObject(_mushroom);
+
+	// Slime
+	std::shared_ptr<Slime>_slime = std::make_shared<Slime>();
+	_slime->Init();
+	AddObject(_slime);
+
+	// StarFish
+	std::shared_ptr<StarFish>_starFish = std::make_shared<StarFish>();
+	_starFish->Init();
+	AddObject(_starFish);
+
+	// Swarm
+	std::shared_ptr<Swarm>_swarm = std::make_shared<Swarm>();
+	_swarm->Init();
+	AddObject(_swarm);
+
+	// TurtleShell
+	std::shared_ptr<TurtleShell>_turtleShell = std::make_shared<TurtleShell>();
+	_turtleShell->Init();
+	AddObject(_turtleShell);
 
 	//===================================================================
 	// キャラクター初期化

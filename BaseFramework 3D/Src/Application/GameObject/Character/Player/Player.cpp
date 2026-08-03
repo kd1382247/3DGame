@@ -12,9 +12,13 @@ void Player::Init()
 	{
 		m_spModel = std::make_shared<KdModelWork>();
 		m_spModel->SetModelData("Asset/Models/Player/Player.gltf");
+		//m_spModel->SetModelData("Asset/Models/Enemy/Golem/Golem.gltf");
 
 		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape("Player", m_spModel, KdCollider::TypeBump);
+		m_pCollider->RegisterCollisionShape
+		("Player",Math::Vector3(0,0.5,0),0.5,KdCollider::TypeBump);
+
+		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
 		// オブジェクト名セット
 		SetObjectName("Player");
@@ -47,6 +51,8 @@ void Player::PostUpdate()
 
 	UpdateAnimation();
 
+	m_pDebugWire->AddDebugSphere(GetPos()+Math::Vector3(0,0.5,0), 0.5, kRedColor);
+
 }
 
 void Player::SetUpReference()
@@ -58,9 +64,17 @@ void Player::UpdateInput()
 {
 	// 入力関数
 	UpdateMoveInput();
+	UpdateGuardInput();
+	UpdateComboInput();
+	// ガード中はジャンプ、攻撃の入力は受付ない
+	if (m_actionState == PlayerActionState::Guard)
+	{
+		UpdateParryInput();
+		return;
+	}
 	UpdateJumpInput();
 	UpdateAttackInput();
-	UpdateComboInput();
+	
 }
 
 void Player::UpdateMoveInput()
@@ -115,6 +129,38 @@ void Player::UpdateAttackInput()
 	m_attackButton = currentAttackButton;
 	m_prevAttackButton = currentAttackButton;
 
+}
+
+void Player::UpdateGuardInput()
+{
+	bool currentGuardButton = (GetAsyncKeyState(VK_RBUTTON) & 0x8000) != 0;
+
+	m_guardTrigger = currentGuardButton && !m_prevGuardButton;
+
+	m_guardButton = currentGuardButton;
+	m_prevGuardButton = currentGuardButton;
+
+	// ガードの状態を変更
+	if (m_guardTrigger)
+	{
+		// ガード解除
+		if (m_actionState == PlayerActionState::Guard)
+		{
+			m_guardState = GuardState::GuardCancel;
+		}
+		else if (m_actionState != PlayerActionState::Guard)
+		{
+			m_guardState = GuardState::Guard;
+		}
+	}
+}
+
+void Player::UpdateParryInput()
+{
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+	{
+		m_guardState = GuardState::Parry;
+	}
 }
 
 void Player::UpdateComboInput()
@@ -225,7 +271,7 @@ void Player::UpdateMove()
 void Player::UpdateActionState()
 {
 
-	if (m_actionState == PlayerActionState::Dead)
+	if (m_actionState == PlayerActionState::Die)
 	{
 		return;
 	}
@@ -237,7 +283,25 @@ void Player::UpdateActionState()
 		}
 		return;
 	}
+	// ガード
+	if (m_actionState == PlayerActionState::Guard)
+	{
 	
+		if (m_guardState == GuardState::GuardCancel)
+		{
+			ChangeActionState(PlayerActionState::Normal);
+		}
+		else if (m_guardState == GuardState::GuardHit||m_guardState==GuardState::Parry)
+		{
+			if (m_animation.IsFinished())
+			{
+				m_guardState = GuardState::Guard;
+			}
+		}
+
+		return;
+	}
+
 	if (m_actionState == PlayerActionState::Attack)
 	{
 		if (m_animation.IsFinished())
@@ -293,6 +357,14 @@ void Player::UpdateActionState()
 		return;
 	}
 
+	// ガードキーが押されたら
+	if (m_guardTrigger)
+	{
+		ChangeActionState(PlayerActionState::Guard);
+		return;
+	}
+
+
 	ChangeActionState(PlayerActionState::Normal);
 }
 
@@ -347,6 +419,22 @@ void Player::UpdateAnimation()
 	if (m_actionState == PlayerActionState::Damage)
 	{
 		nextAnimation = PlayerAnimationType::GetHit;
+	}
+	else if (m_actionState == PlayerActionState::Guard)
+	{
+		if (m_guardState == GuardState::Guard)
+		{
+			nextAnimation = PlayerAnimationType::Defend;
+		}
+		else if (m_guardState == GuardState::GuardHit)
+		{
+			nextAnimation = PlayerAnimationType::Defend;
+		}
+		else if (m_guardState == GuardState::Parry)
+		{
+			nextAnimation = PlayerAnimationType::Parry;
+		}
+
 	}
 	else if (m_actionState == PlayerActionState::JumpStart)
 	{
@@ -437,7 +525,7 @@ void Player::EnterState(PlayerActionState _state)
 		break;
 	case PlayerActionState::Damage:
 		break;
-	case PlayerActionState::Dead:
+	case PlayerActionState::Die:
 		break;
 	case PlayerActionState::JumpStart:
 		m_jumpFlg = true;
