@@ -1,10 +1,11 @@
 ﻿#pragma once
-
-#include"State/PlayerState.h"
-
+// 親クラス
 #include "../CharacterBase.h"
-
+// プレイヤー情報
+#include"State/PlayerState.h"
 #include"Animation/PlayerAnimation.h"
+
+
 
 class CameraBase;
 
@@ -20,10 +21,17 @@ public:
 	void PostUpdate()   override;
 	void SetUpReference()override;
 
+	void DrawLit()override
+	{
+		CharacterBase::DrawLit();
+	}
+
 	void SetCamera(const std::shared_ptr<CameraBase>& _camera)
 	{
 		m_wpCamera = _camera;
 	}
+
+	void DrawInspecter()override;
 
 private:
 
@@ -118,5 +126,8 @@ private:
 	float           m_moveSpeed = 0.15;
 	float           m_turnSpeed = 12.0f;
 	float           m_angle=0;
+
+	// パラメーター
+
 
 };

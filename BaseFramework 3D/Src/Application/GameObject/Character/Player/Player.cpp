@@ -29,7 +29,7 @@ void Player::Init()
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
-	SetPos({ -12.0f, 12.5f, 1.5f });
+	SetPos({ -12.0f, 0.0f, 1.5f });
 }
 
 void Player::Update()
@@ -58,6 +58,16 @@ void Player::PostUpdate()
 void Player::SetUpReference()
 {
 	
+}
+
+void Player::DrawInspecter()
+{
+	CharacterBase::DrawInspecter();
+
+	// 座標変更
+	Math::Vector3 pos = GetPos();
+
+
 }
 
 void Player::UpdateInput()
@@ -263,6 +273,7 @@ void Player::UpdateMove()
 	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
 	Math::Matrix rotationMat = Math::Matrix::Identity;
 	rotationMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle));
+
 
 	m_mWorld = scaleMat * rotationMat * transMat;
 

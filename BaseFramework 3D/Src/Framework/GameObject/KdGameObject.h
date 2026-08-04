@@ -48,14 +48,14 @@ public:
 	virtual Math::Vector3 GetScale() const;
 
 	// 回転角度
-	void SetRotation(const Math::Vector3& rotation) { m_rotation = rotation; }
+	void SetRotation(const Math::Vector3& rotation);
 	Math::Vector3 GetRotation()const { return m_rotation; }
 
 
 	const Math::Matrix& GetMatrix() const { return m_mWorld; }
 
 	virtual bool IsExpired() const { return m_isExpired; }
-	virtual void Destroy()         { m_isExpired = true; }
+	virtual void Destroy() { m_isExpired = true; }
 
 
 	virtual bool IsVisible()	const { return false; }
@@ -75,14 +75,21 @@ public:
 	bool Intersects(const KdCollider::BoxInfo& targetBox, std::list<KdCollider::CollisionResult>* pResults);
 	bool Intersects(const KdCollider::RayInfo& targetShape, std::list<KdCollider::CollisionResult>* pResults);
 
-	
+
 	// オブジェクト名
-	const std::string &GetObjectName() const{ return m_objectName; }
+	const std::string& GetObjectName() const { return m_objectName; }
 	void SetObjectName(const std::string& name) { m_objectName = name; }
 
 
 	// クラスの関連付け用の関数
-	virtual void SetUpReference(){}
+	virtual void SetUpReference() {}
+
+	// Inspectorに表示させるパラメータ
+	virtual void DrawInspecter();
+
+	// パラメーター系
+	virtual void SaveParameterData(){}
+	virtual void LoadParameterData(){}
 
 
 	virtual nlohmann::json SaveData()const;

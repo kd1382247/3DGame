@@ -16,6 +16,9 @@ void Mage::Init()
 
 		m_animation.Init(m_spModel);
 
+		m_animation.Play(MageAnimationType::Idle);
+		m_animation.Update();
+
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
 

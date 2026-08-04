@@ -17,6 +17,10 @@ void Box::Init()
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Ground, shared_from_this());
 
+
+	// オブジェクト名セット
+	SetObjectName("Box");
+
 	SetPos({ -15,0,15 });
 }
 

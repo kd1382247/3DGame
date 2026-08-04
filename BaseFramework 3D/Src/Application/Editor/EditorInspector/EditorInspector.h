@@ -7,19 +7,9 @@ public:
 	void  Draw();
 
 private:
+	
+	void SaveParameter(const std::shared_ptr<KdGameObject>& obj);
 
-
-
-
-	// オブジェクトの名前変更
-	void NameChange();
-
-	// 座標変更
-	void UpdatePos();
-	// 大きさ変更
-	void UpdateScale();
-
-	// オブジェクト削除
-	void Delete();
+	void Delete(const std::shared_ptr<KdGameObject>& obj);
 
 };

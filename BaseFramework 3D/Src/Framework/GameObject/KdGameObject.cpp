@@ -35,6 +35,23 @@ Math::Vector3 KdGameObject::GetScale() const
 	return Math::Vector3(m_mWorld.Right().Length(), m_mWorld.Up().Length(), m_mWorld.Backward().Length());
 }
 
+void KdGameObject::SetRotation(const Math::Vector3& rotation)
+{
+	Math::Matrix rotMat = Math::Matrix::CreateFromYawPitchRoll(
+		DirectX::XMConvertToRadians(rotation.y),
+		DirectX::XMConvertToRadians(rotation.x),
+		DirectX::XMConvertToRadians(rotation.z));
+
+	
+	Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos());
+	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
+
+
+	m_mWorld = scaleMat * rotMat * transMat;
+
+	m_rotation = rotation;
+}
+
 
 void KdGameObject::CalcDistSqrFromCamera(const Math::Vector3& camPos)
 {
@@ -62,10 +79,51 @@ bool KdGameObject::Intersects(const KdCollider::RayInfo& targetShape, std::list<
 	return m_pCollider->Intersects(targetShape, m_mWorld, pResults);
 }
 
-nlohmann::json KdGameObject::SaveData() const
+void KdGameObject::DrawInspecter()
 {
 
+	// オブジェクトの名前変更
+	char nameBaffer[128];
 
+	strcpy_s(
+		nameBaffer,
+		sizeof(nameBaffer),
+		GetObjectName().c_str()
+	);
+
+	if (ImGui::InputText("Name", nameBaffer, sizeof(nameBaffer)))
+	{
+		SetObjectName(nameBaffer);
+	}
+
+	// 座標変更
+	Math::Vector3 pos = GetPos();
+
+	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
+	{
+		SetPos(pos);
+	}
+
+	Math::Vector3 scale = GetScale();
+
+	// 大きさ変更
+	if (ImGui::DragFloat3("Scale", &scale.x, 0.01f))
+	{
+		SetScale(scale);
+	}
+
+	// 回転
+	Math::Vector3 rotation = GetRotation();
+
+	if (ImGui::DragFloat3("Rotation", &rotation.x, 1))
+	{
+			SetRotation(rotation);	
+	}
+
+}
+
+nlohmann::json KdGameObject::SaveData() const
+{
 	nlohmann::json json;
 
 	json["Class"] = GetObjectName();

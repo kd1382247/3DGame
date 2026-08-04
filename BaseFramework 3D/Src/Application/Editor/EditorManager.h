@@ -60,7 +60,7 @@ private:
 
 	KdGameObjectFactory m_gameObjectFactory;
 
-	EditorMode m_mode = EditorMode::Play;
+	EditorMode m_mode = EditorMode::Edit;
 
 
 

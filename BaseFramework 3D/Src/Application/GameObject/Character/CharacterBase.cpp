@@ -42,6 +42,13 @@ void CharacterBase::GenerateDepthMapFromLight()
 	}
 }
 
+void CharacterBase::DrawInspecter()
+{
+	KdGameObject::DrawInspecter();
+
+	ImGui::Text("----------Parameter----------");
+}
+
 void CharacterBase::UpdateCollision()
 {
 	UpdateBumpCollision();

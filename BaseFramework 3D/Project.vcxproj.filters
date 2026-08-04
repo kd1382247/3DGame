@@ -241,6 +241,9 @@
     <Filter Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State">
       <UniqueIdentifier>{40b9043a-87e4-475d-9170-4176c98619d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\Parameter">
+      <UniqueIdentifier>{0b2704a4-33e4-4046-906d-7686b3e8e0cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -576,6 +579,9 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterState.h">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.h">
+      <Filter>Src\Application\GameObject\Character\Player\Parameter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -841,6 +847,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Animation\TurtleShellAnimation.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\Parameter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
