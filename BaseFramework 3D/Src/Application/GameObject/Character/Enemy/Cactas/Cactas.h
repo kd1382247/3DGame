@@ -4,6 +4,7 @@
 
 #include"Animation/CactasAnimation.h"
 #include"State/CactasState.h"
+#include"Parameter/CactasParameter.h"
 
 class Cactas :public EnemyBase
 {
@@ -15,6 +16,8 @@ public:
 	void Init()override;
 	void Update()override;
 	void PostUpdate()override;
+
+	void DrawInspecter()override;
 
 private:
 
@@ -29,5 +32,6 @@ private:
 	// アニメーションクラス
 	CactasAnimation   m_animation;
 
-
+	// パラメータクラス
+	CactasParameter   m_parameter;
 };

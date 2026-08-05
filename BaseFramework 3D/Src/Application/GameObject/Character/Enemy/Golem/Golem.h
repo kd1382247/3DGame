@@ -4,6 +4,8 @@
 
 #include"Animation/GolemAnimation.h"
 #include"State/GolemState.h"
+#include"Parameter/GolemParameter.h"
+
 
 class Golem :public EnemyBase
 {
@@ -15,6 +17,8 @@ public:
 	void Init()override;
 	void Update()override;
 	void PostUpdate()override;
+
+	void DrawInspecter()override;
 
 private:
 
@@ -36,5 +40,7 @@ private:
 	// アニメーションクラス
 	GolemAnimation   m_animation;
 
+	// パラメータクラス
+	GolemParameter   m_parameter;
 
 };

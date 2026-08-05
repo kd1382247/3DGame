@@ -87,11 +87,6 @@ public:
 	// Inspectorに表示させるパラメータ
 	virtual void DrawInspecter();
 
-	// パラメーター系
-	virtual void SaveParameterData(){}
-	virtual void LoadParameterData(){}
-
-
 	virtual nlohmann::json SaveData()const;
 
 protected:

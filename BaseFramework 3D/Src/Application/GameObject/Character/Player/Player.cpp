@@ -12,7 +12,6 @@ void Player::Init()
 	{
 		m_spModel = std::make_shared<KdModelWork>();
 		m_spModel->SetModelData("Asset/Models/Player/Player.gltf");
-		//m_spModel->SetModelData("Asset/Models/Enemy/Golem/Golem.gltf");
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
@@ -25,6 +24,10 @@ void Player::Init()
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
+
+		// パラメータークラス初期化
+		m_parameter.Init();
+
 	}
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
@@ -63,11 +66,8 @@ void Player::SetUpReference()
 void Player::DrawInspecter()
 {
 	CharacterBase::DrawInspecter();
-
-	// 座標変更
-	Math::Vector3 pos = GetPos();
-
-
+	// パラメーター変更
+	m_parameter.DrawInspecter();
 }
 
 void Player::UpdateInput()
@@ -232,9 +232,9 @@ void Player::UpdateMove()
 		if (angle >= 0.1f)
 		{
 			// 回転角度の上限を設定
-			if (angle > m_turnSpeed)
+			if (angle > m_parameter.GetParam().m_turnSpeed)
 			{
-				angle = m_turnSpeed;
+				angle = m_parameter.GetParam().m_turnSpeed;
 			}
 
 			// 外積を求める
@@ -265,7 +265,7 @@ void Player::UpdateMove()
 
 	m_Gravity += 0.02;
 
-	nowPos += dir * m_moveSpeed;
+	nowPos += dir * m_parameter.GetParam().m_moveSpeed;
 
 	nowPos.y -= m_Gravity;
 
@@ -540,7 +540,7 @@ void Player::EnterState(PlayerActionState _state)
 		break;
 	case PlayerActionState::JumpStart:
 		m_jumpFlg = true;
-		m_Gravity = -0.4f;
+		m_Gravity = -m_parameter.GetParam().m_jumpPow;
 		break;
 	case PlayerActionState::JumpAir:
 

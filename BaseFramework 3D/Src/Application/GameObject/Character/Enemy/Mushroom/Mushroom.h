@@ -4,6 +4,8 @@
 
 #include"Animation/MushroomAnimation.h"
 #include"State/MushroomState.h"
+#include"Parameter/MushroomParameter.h"
+
 
 class Mushroom :public EnemyBase
 {
@@ -15,6 +17,8 @@ public:
 	void Init()override;
 	void Update()override;
 	void PostUpdate()override;
+
+	void DrawInspecter()override;
 
 private:
 
@@ -29,5 +33,7 @@ private:
 	// アニメーションクラス
 	MushroomAnimation   m_animation;
 
+	// パラメータクラス
+	MushroomParameter   m_parameter;
 
 };

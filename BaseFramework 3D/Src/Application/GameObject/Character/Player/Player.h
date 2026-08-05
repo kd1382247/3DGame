@@ -4,7 +4,7 @@
 // プレイヤー情報
 #include"State/PlayerState.h"
 #include"Animation/PlayerAnimation.h"
-
+#include"Parameter/PlayerParameter.h"
 
 
 class CameraBase;
@@ -35,7 +35,6 @@ public:
 
 private:
 
-
 	enum class AttackCombo
 	{
 		Attack1,
@@ -59,9 +58,7 @@ private:
 	void UpdateGuardInput();
 	void UpdateParryInput();
 
-
 	void UpdateComboInput();
-
 
 	void UpdateMove();
 
@@ -87,7 +84,11 @@ private:
 
 	// アニメーションクラス
 	PlayerAnimation     m_animation;
+	// パラメータークラス
+	PlayerParameter     m_parameter;
 
+
+	// プレイヤーの状態
 	PlayerActionState   m_actionState = PlayerActionState::Normal;
 	PlayerMoveState     m_moveState   = PlayerMoveState::Idle;
 
@@ -122,12 +123,7 @@ private:
 	bool            m_prevJumpButton = false;
 	bool            m_jumpTrigger = false;
 
-	// 移動系
-	float           m_moveSpeed = 0.15;
-	float           m_turnSpeed = 12.0f;
 	float           m_angle=0;
-
-	// パラメーター
 
 
 };

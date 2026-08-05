@@ -9,13 +9,17 @@ void Slime::Init()
 		m_spModel = std::make_shared<KdModelWork>();
 		m_spModel->SetModelData("Asset/Models/Enemy/Slime/Slime.gltf");
 
+		// アニメーションクラス初期化
+		m_animation.Init(m_spModel);
+
+		// パラメータークラス初期化
+		m_parameter.Init();
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
 		("Slime", Math::Vector3(0, 0.5, 0), 0.4, KdCollider::TypeBump);
 
-		m_animation.Init(m_spModel);
-
+	
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
 
@@ -42,6 +46,13 @@ void Slime::PostUpdate()
 
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
 
+}
+
+void Slime::DrawInspecter()
+{
+	EnemyBase::DrawInspecter();
+
+	m_parameter.DrawInspecter();
 }
 
 void Slime::UpdateAnimation()

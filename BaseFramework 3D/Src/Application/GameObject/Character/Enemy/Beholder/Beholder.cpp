@@ -10,7 +10,10 @@ void Beholder::Init()
 		m_spModel = std::make_shared<KdModelWork>();
 		m_spModel->SetModelData("Asset/Models/Enemy/Beholder/Beholder.gltf");
 
+		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
+		// パラメータクラス初期化
+		m_parameter.Init();
 
 
 		m_pCollider = std::make_unique<KdCollider>();
@@ -18,6 +21,8 @@ void Beholder::Init()
 		("Beholder", Math::Vector3(0, 1.5, 0), 0.5, KdCollider::TypeBump);
 
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+
 
 
 		// オブジェクト名セット
@@ -44,6 +49,13 @@ void Beholder::PostUpdate()
 
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 1.5, 0), 0.5, kRedColor);
 
+}
+
+void Beholder::DrawInspecter()
+{
+	EnemyBase::DrawInspecter();
+
+	m_parameter.DrawInspecter();
 }
 
 void Beholder::UpdateAnimation()

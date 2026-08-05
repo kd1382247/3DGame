@@ -4,6 +4,8 @@
 
 #include"Animation/BeholderAnimation.h"
 #include"State/BeholderState.h"
+#include"Parameter/BeholderParameter.h"
+
 
 class Beholder :public EnemyBase
 {
@@ -17,6 +19,7 @@ public:
 	void PostUpdate()override;
 
 
+	void DrawInspecter()override;
 
 private:
 
@@ -30,6 +33,8 @@ private:
 
 	// アニメーションクラス
 	BeholderAnimation   m_animation;
+	// パラメータークラス
+	BeholderParameter   m_parameter;
 
 
 };

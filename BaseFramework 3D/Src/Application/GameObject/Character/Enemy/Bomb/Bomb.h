@@ -4,6 +4,8 @@
 
 #include"Animation/BombAnimation.h"
 #include"State/BombState.h"
+#include"Parameter/BombParameter.h"
+
 
 class Bomb :public EnemyBase
 {
@@ -15,6 +17,8 @@ public:
 	void Init()override;
 	void Update()override;
 	void PostUpdate()override;
+
+	void DrawInspecter()override;
 
 private:
 
@@ -29,5 +33,7 @@ private:
 	// アニメーションクラス
 	BombAnimation   m_animation;
 
+	// パラメータクラス
+	BombParameter   m_parameter;
 
 };

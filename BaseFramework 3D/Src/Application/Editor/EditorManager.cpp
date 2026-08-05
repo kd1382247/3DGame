@@ -136,8 +136,6 @@ void EditorManager::SaveScene()
 	{
 		OutputDebugStringA("Scene save failed\n");
 	}
-
-
 }
 
 void EditorManager::LoadScene()

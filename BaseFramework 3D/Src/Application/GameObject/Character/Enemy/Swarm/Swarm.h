@@ -4,6 +4,7 @@
 
 #include"Animation/SwarmAnimation.h"
 #include"State/SwarmState.h"
+#include"Parameter/SwarmParameter.h"
 
 class Swarm :public EnemyBase
 {
@@ -15,6 +16,9 @@ public:
 	void Init()override;
 	void Update()override;
 	void PostUpdate()override;
+
+
+	void DrawInspecter()override;
 
 private:
 
@@ -29,5 +33,7 @@ private:
 	// アニメーションクラス
 	SwarmAnimation   m_animation;
 
+	// パラメータクラス
+	SwarmParameter   m_parameter;
 
 };

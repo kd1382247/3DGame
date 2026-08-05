@@ -4,6 +4,8 @@
 
 #include"Animation/TurtleShellAnimation.h"
 #include"State/TurtleShellState.h"
+#include"Parameter/TurtleShellParameter.h"
+
 
 class TurtleShell :public EnemyBase
 {
@@ -15,6 +17,8 @@ public:
 	void Init()override;
 	void Update()override;
 	void PostUpdate()override;
+
+	void DrawInspecter()override;
 
 private:
 
@@ -35,5 +39,7 @@ private:
 	// アニメーションクラス
 	TurtleShellAnimation   m_animation;
 
+	// パラメータクラス
+	TurtleShellParameter   m_parameter;
 
 };

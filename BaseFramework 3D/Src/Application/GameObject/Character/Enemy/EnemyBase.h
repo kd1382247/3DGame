@@ -13,6 +13,8 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
+	void DrawInspecter()override;
+
 private:
 
 

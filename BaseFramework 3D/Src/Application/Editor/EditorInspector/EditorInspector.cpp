@@ -10,38 +10,25 @@ void EditorInspector::Draw()
 
 	auto& obj = EditorManager::Instance().GetSelectedObject();
 
-	if (obj)
+	if (!obj)
 	{
-		if (ImGui::Button("Duplicate"))
-		{
-			auto duplicate = std::make_shared<KdGameObject>();
-
-			duplicate->SetObjectName(obj->GetObjectName() + " Copy");
-			duplicate->SetPos(obj->GetPos());
-			duplicate->SetScale(obj->GetScale());
-
-			SceneManager::Instance().AddObject(duplicate);
-			EditorManager::Instance().SetSelectedObject(duplicate);
-		}
-
-		ImGui::Text("ObjectName:");
-
-		ImGui::SameLine();
-
-		// 現在選択中のオブジェクト名表示
-		ImGui::Text(obj->GetObjectName().c_str());
-
-		obj->DrawInspecter();
-
-		Delete(obj);
+		ImGui::End();
+		return;
 	}
 
+	ImGui::Text("ObjectName:");
+
+	ImGui::SameLine();
+
+	// 現在選択中のオブジェクト名表示
+	ImGui::Text(obj->GetObjectName().c_str());
+
+	obj->DrawInspecter();
+
+	Delete(obj);
+
+
 	ImGui::End();
-}
-
-void EditorInspector::SaveParameter(const std::shared_ptr<KdGameObject>& obj)
-{
-
 }
 
 void EditorInspector::Delete(const std::shared_ptr<KdGameObject>& obj)

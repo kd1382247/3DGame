@@ -244,6 +244,39 @@
     <Filter Include="Src\Application\GameObject\Character\Player\Parameter">
       <UniqueIdentifier>{0b2704a4-33e4-4046-906d-7686b3e8e0cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Beholder\Parameter">
+      <UniqueIdentifier>{cfc78af4-463c-4a73-945c-ae2d237dacf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Bomb\Parameter">
+      <UniqueIdentifier>{9f779fdb-fe34-417a-b703-6f2b54ed82d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Cactas\Parameter">
+      <UniqueIdentifier>{ddfa690f-7fa1-4eb8-abe0-49ed3ab85ec3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter">
+      <UniqueIdentifier>{4a722537-2c50-483e-af9f-10947ea5e0ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Golem\Parameter">
+      <UniqueIdentifier>{a570494e-4c01-4604-a6ee-96075e778b22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Mage\Parameter">
+      <UniqueIdentifier>{a80b4287-37a2-46d3-b777-86d4d45871ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Mushroom\Parameter">
+      <UniqueIdentifier>{a8e012e5-a9a2-4f6d-a77b-33e3b06b2155}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Slime\Parameter">
+      <UniqueIdentifier>{49a16664-b346-4592-9507-35860654750c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\StarFish\Parameter">
+      <UniqueIdentifier>{e0a77edc-c61b-4290-8b66-3dd71e618a9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Swarm\Parameter">
+      <UniqueIdentifier>{93d6198e-aad4-4c19-a135-f86431607460}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter">
+      <UniqueIdentifier>{8e89adb4-fb16-45e5-8b4c-c1e7e671c713}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -582,6 +615,39 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.h">
       <Filter>Src\Application\GameObject\Character\Player\Parameter</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Beholder\Parameter\BeholderParameter.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Beholder\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Bomb\Parameter\BombParameter.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Bomb\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\Parameter\CactasParameter.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Cactas\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter\ChestMonsterParameter.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Golem\Parameter\GolemParameter.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Golem\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mage\Parameter\MageParameter.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mage\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\Parameter\MushroomParameter.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\Parameter\SlimeParameter.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Slime\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\StarFish\Parameter\StarFishParameter.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\StarFish\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Swarm\Parameter\SwarmParameter.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Swarm\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter\TurtleShellParameter.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -850,6 +916,39 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.cpp">
       <Filter>Src\Application\GameObject\Character\Player\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Beholder\Parameter\BeholderParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Beholder\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Bomb\Parameter\BombParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Bomb\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\Parameter\CactasParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Cactas\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter\ChestMonsterParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Golem\Parameter\GolemParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Golem\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mage\Parameter\MageParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mage\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\Parameter\MushroomParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\Parameter\SlimeParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Slime\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\StarFish\Parameter\StarFishParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\StarFish\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Swarm\Parameter\SwarmParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Swarm\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter\TurtleShellParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

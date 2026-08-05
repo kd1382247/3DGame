@@ -4,6 +4,7 @@
 
 #include"Animation/SlimeAnimation.h"
 #include"State/SlimeState.h"
+#include"Parameter/SlimeParameter.h"
 
 class Slime :public EnemyBase
 {
@@ -15,6 +16,8 @@ public:
 	void Init()override;
 	void Update()override;
 	void PostUpdate()override;
+
+	void DrawInspecter()override;
 
 private:
 
@@ -29,5 +32,7 @@ private:
 	// アニメーションクラス
 	SlimeAnimation   m_animation;
 
+	// パラメータクラス
+	SlimeParameter   m_parameter;
 
 };

@@ -4,6 +4,8 @@
 
 #include"Animation/MageAnimation.h"
 #include"State/MageState.h"
+#include"Parameter/MageParameter.h"
+
 
 class Mage :public EnemyBase
 {
@@ -15,6 +17,8 @@ public:
 	void Init()override;
 	void Update()override;
 	void PostUpdate()override;
+
+	void DrawInspecter()override;
 
 private:
 
@@ -36,6 +40,7 @@ private:
 	// アニメーションクラス
 	MageAnimation   m_animation;
 
-
+	// パラメータクラス
+	MageParameter   m_parameter;
 
 };
