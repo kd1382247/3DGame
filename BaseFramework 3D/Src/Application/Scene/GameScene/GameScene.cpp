@@ -12,6 +12,9 @@
 
 #include"../../GameObject/Terrains/Box.h"
 
+#include"../../System/PathFinding/WayPointManager.h"
+#include"../../System/PathFinding/WayPoint/WayPoint.h"
+
 // 敵
 #include"../../GameObject/Character/Enemy/Beholder/Beholder.h"
 #include"../../GameObject//Character/Enemy/Bomb/Bomb.h"
@@ -82,6 +85,44 @@ void GameScene::Init()
 	_box->Init();
 	AddObject(_box);
 
+
+	//===================================================================
+	// ウェイポイント初期化
+	//===================================================================
+	m_spWayPointManager = std::make_shared<WayPointManager>();
+
+	auto wp0 = std::make_shared<WayPoint>();
+	wp0->SetId(0);
+	wp0->SetObjectName("WayPoint0");
+	wp0->SetPos({ 0,0,0 });
+
+	AddObject(wp0);
+
+	m_spWayPointManager->Register(wp0);
+
+
+	auto wp1 = std::make_shared<WayPoint>();
+	wp1->SetId(1);
+	wp1->SetObjectName("WayPoint1");
+	wp1->SetPos({ -5,0,0 });
+
+	AddObject(wp1);
+
+	m_spWayPointManager->Register(wp1);
+
+
+	auto wp2 = std::make_shared<WayPoint>();
+	wp2->SetId(2);
+	wp2->SetObjectName("WayPoint2");
+	wp2->SetPos({ -10,0,0 });
+
+	AddObject(wp2);
+
+	m_spWayPointManager->Register(wp2);
+
+	m_spWayPointManager->Connect(0, 1);
+	m_spWayPointManager->Connect(1, 2);
+
 	//===================================================================
 	// キャラクター初期化
 	//===================================================================
@@ -92,7 +133,25 @@ void GameScene::Init()
 	//===================================================================
 	// エネミー初期化
 	//===================================================================
-	// Beholder
+	
+	std::vector<int>path = m_spWayPointManager->FindPath(0, 2);
+
+	for (int id : path)
+	{
+		OutputDebugStringA(
+			("Path ID : " + std::to_string(id) + "\n").c_str());
+	}
+
+	// Cactas
+	std::shared_ptr<Cactas>_cactas = std::make_shared<Cactas>();
+	_cactas->Init();
+	_cactas->SetWayPointManager(m_spWayPointManager.get());
+	_cactas->SetPath(path);
+	_cactas->SetPlayer(_player);
+	AddObject(_cactas);
+
+
+	/*// Beholder
 	std::shared_ptr<Beholder>_beholder = std::make_shared<Beholder>();
 	_beholder->Init();
 	AddObject(_beholder);
@@ -102,10 +161,6 @@ void GameScene::Init()
 	_bomb->Init();
 	AddObject(_bomb);
 
-	// Cactas
-	std::shared_ptr<Cactas>_cactas = std::make_shared<Cactas>();
-	_cactas->Init();
-	AddObject(_cactas);
 
 	// ChestMonster
 	std::shared_ptr<ChestMonster>_chestMonster = std::make_shared<ChestMonster>();
@@ -145,7 +200,7 @@ void GameScene::Init()
 	// TurtleShell
 	std::shared_ptr<TurtleShell>_turtleShell = std::make_shared<TurtleShell>();
 	_turtleShell->Init();
-	AddObject(_turtleShell);
+	AddObject(_turtleShell);*/
 
 
 	//===================================================================

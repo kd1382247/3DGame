@@ -277,6 +277,12 @@
     <Filter Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter">
       <UniqueIdentifier>{8e89adb4-fb16-45e5-8b4c-c1e7e671c713}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\System\PathFinding">
+      <UniqueIdentifier>{16ea0773-1cb7-4e0b-a443-167e6ad4ce1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\PathFinding\WayPoint">
+      <UniqueIdentifier>{a66a2dad-b306-4348-80b3-5e2210539685}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -648,6 +654,12 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter\TurtleShellParameter.h">
       <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\System\PathFinding\WayPoint\WayPoint.h">
+      <Filter>Src\Application\System\PathFinding\WayPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\PathFinding\WayPointManager.h">
+      <Filter>Src\Application\System\PathFinding</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -949,6 +961,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter\TurtleShellParameter.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\PathFinding\WayPoint\WayPoint.cpp">
+      <Filter>Src\Application\System\PathFinding\WayPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\PathFinding\WayPointManager.cpp">
+      <Filter>Src\Application\System\PathFinding</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

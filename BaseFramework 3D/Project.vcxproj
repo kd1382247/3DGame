@@ -342,6 +342,8 @@
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionManager.h" />
     <ClInclude Include="Src\Application\System\GameObjectFactory\GameObjectFactory.h" />
     <ClInclude Include="Src\Application\System\GameObjectFinder\GameObjectFinder.h" />
+    <ClInclude Include="Src\Application\System\PathFinding\WayPointManager.h" />
+    <ClInclude Include="Src\Application\System\PathFinding\WayPoint\WayPoint.h" />
     <ClInclude Include="Src\Application\System\ReferenceManager\ReferenceManager.h" />
     <ClInclude Include="Src\Framework\Direct3D\KdMaterial.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdPolygon.h" />
@@ -447,6 +449,8 @@
     <ClCompile Include="Src\Application\System\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="Src\Application\System\GameObjectFactory\GameObjectFactory.cpp" />
     <ClCompile Include="Src\Application\System\GameObjectFinder\GameObjectFinder.cpp" />
+    <ClCompile Include="Src\Application\System\PathFinding\WayPointManager.cpp" />
+    <ClCompile Include="Src\Application\System\PathFinding\WayPoint\WayPoint.cpp" />
     <ClCompile Include="Src\Application\System\ReferenceManager\ReferenceManager.cpp" />
     <ClCompile Include="Src\Framework\Direct3D\KdMaterial.cpp">
       <SubType>
