@@ -283,6 +283,9 @@
     <Filter Include="Src\Application\System\PathFinding\WayPoint">
       <UniqueIdentifier>{a66a2dad-b306-4348-80b3-5e2210539685}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\Scene\EditorScene">
+      <UniqueIdentifier>{4614ef41-c923-4f0d-aaa4-eb403ecee8f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -660,6 +663,9 @@
     <ClInclude Include="Src\Application\System\PathFinding\WayPointManager.h">
       <Filter>Src\Application\System\PathFinding</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Scene\EditorScene\EditorScene.h">
+      <Filter>Src\Application\Scene\EditorScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -967,6 +973,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\System\PathFinding\WayPointManager.cpp">
       <Filter>Src\Application\System\PathFinding</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Scene\EditorScene\EditorScene.cpp">
+      <Filter>Src\Application\Scene\EditorScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

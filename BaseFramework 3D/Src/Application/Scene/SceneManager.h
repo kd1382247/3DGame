@@ -11,6 +11,7 @@ public:
 	{
 		Title,
 		Game,
+		Editor
 	};
 
 	void PreUpdate();
@@ -53,7 +54,7 @@ private:
 	std::shared_ptr<BaseScene> m_currentScene = nullptr;
 
 	// 現在のシーンの種類を保持している変数
-	SceneType m_currentSceneType = SceneType::Game;
+	SceneType m_currentSceneType = SceneType::Editor;
 
 	// 次のシーンの種類を保持している変数
 	SceneType m_nextSceneType = m_currentSceneType;
