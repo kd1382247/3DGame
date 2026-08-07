@@ -5,15 +5,17 @@ class WayPoint :public KdGameObject
 
 public:
 
-	WayPoint(){}
+	WayPoint() { Init(); }
 	~WayPoint()override{}
 
 
 	void Init()override;
+	void Update()override;
 	void DrawDebug()override;
 
 	int GetId()const { return m_id; }
 	void SetId(int id) { m_id = id; }
+
 
 	// 接続先
 	const std::vector<int>& GetLinks()const

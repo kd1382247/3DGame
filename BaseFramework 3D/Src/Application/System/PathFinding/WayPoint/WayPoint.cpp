@@ -2,11 +2,24 @@
 
 void WayPoint::Init()
 {
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+}
+
+void WayPoint::Update()
+{
 
 }
 
 void WayPoint::DrawDebug()
-{}
+{
+
+	m_pDebugWire->AddDebugSphere(GetPos(), 0.5f, kBlueColor);
+
+	KdGameObject::DrawDebug();
+}
+
+
 
 void WayPoint::AddLink(int id)
 {

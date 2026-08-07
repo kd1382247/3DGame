@@ -16,7 +16,7 @@ public :
 	void EditorUpdate()override;
 
 	void PreDraw()override;
-
+	void DrawDebug()override;
 private:
 
 	bool UseEditorMode()const override

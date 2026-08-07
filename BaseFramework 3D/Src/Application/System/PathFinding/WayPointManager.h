@@ -6,8 +6,10 @@ class WayPointManager
 {
 public:
 
-	WayPointManager(){}
+	WayPointManager() { Init(); }
 	~WayPointManager(){}
+
+	void Init();
 
 	// 登録・解除
 	void Register(const std::shared_ptr<WayPoint>& point);
@@ -25,7 +27,6 @@ public:
 	// 経路探索
 	std::vector<int>FindPath(int startId, int goalId)const;
 
-
 	// デバッグ表示
 	void DrawDebug();
 
@@ -33,17 +34,19 @@ private:
 
 	struct SearchNode
 	{
-		int wayPointId = -1;
+		int wayPointId = -1; // どのWayPointの探索情報なのか
 
-		float g = 0.0f;
-		float h = 0.0f;
-		float f = 0.0f;
+		float g = 0.0f;      // スタートから進んだ距離
+		float h = 0.0f;      // ゴールまでの予想距離
+		float f = 0.0f;      // gとhの合計値でゴールまでの経路の長さを示す
 
-		int parentId = -1;
+		int parentId = -1;   // 経路を復元するための親(0番の親-1 → 1番の親0)
 	};
 
+	// 現在地点からゴール地点までの予想距離を計算
 	float CalculateHeuristic(const WayPoint& current, const WayPoint& goal)const;
 
+	// スタートからゴールまでの道のり距離を返す
 	std::vector<int>ReconstructPath(const std::unordered_map<int, SearchNode>& searchNodes, int goalId)const;
 
 
@@ -54,5 +57,8 @@ private:
 private:
 
 	std::vector<std::weak_ptr<WayPoint>>m_wpWayPoints;
+
+	// デバッグ
+	std::unique_ptr<KdDebugWireFrame>m_pDebugWire = nullptr;
 
 };

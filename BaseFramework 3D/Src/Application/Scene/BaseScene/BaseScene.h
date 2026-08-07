@@ -16,7 +16,7 @@ public :
 	virtual void PreDraw();
 	void Draw();
 	void DrawSprite();
-	void DrawDebug();
+	virtual void DrawDebug();
 
 	virtual void EditorUpdate();
 

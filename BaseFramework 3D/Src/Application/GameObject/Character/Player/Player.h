@@ -21,10 +21,8 @@ public:
 	void PostUpdate()   override;
 	void SetUpReference()override;
 
-	void DrawLit()override
-	{
-		CharacterBase::DrawLit();
-	}
+
+	void DrawLit()override;
 
 	void SetCamera(const std::shared_ptr<CameraBase>& _camera)
 	{

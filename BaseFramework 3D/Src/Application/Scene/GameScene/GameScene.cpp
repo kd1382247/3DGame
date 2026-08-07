@@ -51,6 +51,16 @@ void GameScene::PreDraw()
 	}
 }
 
+void GameScene::DrawDebug()
+{
+	BaseScene::DrawDebug();
+
+	if (m_spWayPointManager)
+	{
+		m_spWayPointManager->DrawDebug();
+	}
+}
+
 void GameScene::SetupObjectReferences()
 {/*
 	std::shared_ptr<Player> player=FindObject<Player>("Player");
@@ -98,18 +108,12 @@ void GameScene::Init()
 
 	AddObject(wp0);
 
-	m_spWayPointManager->Register(wp0);
-
-
 	auto wp1 = std::make_shared<WayPoint>();
 	wp1->SetId(1);
 	wp1->SetObjectName("WayPoint1");
 	wp1->SetPos({ -5,0,0 });
 
 	AddObject(wp1);
-
-	m_spWayPointManager->Register(wp1);
-
 
 	auto wp2 = std::make_shared<WayPoint>();
 	wp2->SetId(2);
@@ -118,10 +122,42 @@ void GameScene::Init()
 
 	AddObject(wp2);
 
+
+	auto wp3 = std::make_shared<WayPoint>();
+	wp3->SetId(3);
+	wp3->SetObjectName("WayPoint3");
+	wp3->SetPos({ -15,0,0 });
+
+	AddObject(wp3);
+
+
+	auto wp4 = std::make_shared<WayPoint>();
+	wp4->SetId(4);
+	wp4->SetObjectName("WayPoint4");
+	wp4->SetPos({ -15,0,5 });
+
+	AddObject(wp4);
+
+
+	auto wp5 = std::make_shared<WayPoint>();
+	wp5->SetId(5);
+	wp5->SetObjectName("WayPoint5");
+	wp5->SetPos({ -15,0,-5 });
+
+	AddObject(wp5);
+
+	m_spWayPointManager->Register(wp0);
+	m_spWayPointManager->Register(wp1);
 	m_spWayPointManager->Register(wp2);
+	m_spWayPointManager->Register(wp3);
+	m_spWayPointManager->Register(wp4);
+	m_spWayPointManager->Register(wp5);
 
 	m_spWayPointManager->Connect(0, 1);
 	m_spWayPointManager->Connect(1, 2);
+	m_spWayPointManager->Connect(2, 3);
+	m_spWayPointManager->Connect(3, 4);
+	m_spWayPointManager->Connect(3, 5);
 
 	//===================================================================
 	// キャラクター初期化
@@ -134,7 +170,10 @@ void GameScene::Init()
 	// エネミー初期化
 	//===================================================================
 	
-	std::vector<int>path = m_spWayPointManager->FindPath(0, 2);
+
+	auto goalPath = m_spWayPointManager->FindNearest(_player->GetPos());
+
+	std::vector<int>path = m_spWayPointManager->FindPath(0, goalPath->GetId());
 
 	for (int id : path)
 	{

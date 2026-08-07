@@ -151,8 +151,7 @@ void Cactas::UpdateFollowPath()
 
 	float distance = direction.Length();
 
-	float moveSpeed =
-		m_parameter.GetParam().m_moveSpeed;
+	float moveSpeed = m_parameter.GetParam().m_moveSpeed;
 
 	if (distance < moveSpeed)
 	{
