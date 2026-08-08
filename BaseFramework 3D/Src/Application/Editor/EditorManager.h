@@ -13,6 +13,12 @@ public:
 		Play
 	};
 
+	/*enum class EditorCategory
+	{
+		Stage,
+		Parameter
+	};*/
+
 
 	void Init();
 
@@ -22,12 +28,20 @@ public:
 
 
 
-	void SetMode(EditorMode mode)  {m_mode = mode;}
-	EditorMode GetMode()const      {return m_mode;}
+	void SetEditorMode(EditorMode state)  {m_editorMode = state;}
+	EditorMode GetEditorMode()const      {return m_editorMode;}
 
-	bool IsEditMode()const         { return m_mode == EditorMode::Edit; }
+	// エディタの状態
+	bool IsEditMode()const         { return m_editorMode == EditorMode::Edit; }
+	bool IsPlayMode()const         { return m_editorMode == EditorMode::Play; }
 
-	bool IsPlayMode()const         { return m_mode == EditorMode::Play; }
+
+	//void SetEditorCategory(EditorCategory category) { m_editorCategory = category; }
+	//EditorCategory GetEditorCategory() { return m_editorCategory; }
+
+	//// エディタの状態
+	//bool IsStageEdit()const { return m_editorCategory==EditorCategory::Stage; }
+	//bool IsParameterEdit()const { return m_editorCategory == EditorCategory::Parameter; }
 
 	// 現在選択されているオブジェクト
 	void SetSelectedObject(const std::shared_ptr<KdGameObject>&_obj)
@@ -35,11 +49,10 @@ public:
 		m_spSelectedObject = _obj;
 	}
 
-	void RequestCreateObject(const std::string name);
 
 	void SetupObjectReferences();
 
-	std::shared_ptr<KdGameObject> CreateObject(const std::string& className);
+	void  CreateGameObject(const std::string& className);
 
 	const std::shared_ptr<KdGameObject>&GetSelectedObject()
 	{
@@ -55,13 +68,12 @@ private:
 
 	std::shared_ptr<KdGameObject>m_spSelectedObject;
 	
-	EditorHierarchy m_hierarchy;
-	EditorInspector m_inspector;
+	EditorHierarchy     m_hierarchy;
+	EditorInspector     m_inspector;
 
-	KdGameObjectFactory m_gameObjectFactory;
-
-	EditorMode m_mode = EditorMode::Edit;
-
+	
+	EditorMode          m_editorMode = EditorMode::Edit;
+	//EditorCategory      m_editorCategory=EditorCategory::Stage;
 
 
 private: // シングルトンパターン

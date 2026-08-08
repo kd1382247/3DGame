@@ -341,7 +341,6 @@
     <ClInclude Include="Src\Application\Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionLayer\CollisionLayer.h" />
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionManager.h" />
-    <ClInclude Include="Src\Application\System\GameObjectFactory\GameObjectFactory.h" />
     <ClInclude Include="Src\Application\System\GameObjectFinder\GameObjectFinder.h" />
     <ClInclude Include="Src\Application\System\PathFinding\WayPointManager.h" />
     <ClInclude Include="Src\Application\System\PathFinding\WayPoint\WayPoint.h" />
@@ -449,7 +448,6 @@
     <ClCompile Include="Src\Application\Scene\SceneManager.cpp" />
     <ClCompile Include="Src\Application\Scene\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Src\Application\System\CollisionManager\CollisionManager.cpp" />
-    <ClCompile Include="Src\Application\System\GameObjectFactory\GameObjectFactory.cpp" />
     <ClCompile Include="Src\Application\System\GameObjectFinder\GameObjectFinder.cpp" />
     <ClCompile Include="Src\Application\System\PathFinding\WayPointManager.cpp" />
     <ClCompile Include="Src\Application\System\PathFinding\WayPoint\WayPoint.cpp" />

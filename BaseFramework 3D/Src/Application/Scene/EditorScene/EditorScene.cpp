@@ -53,10 +53,7 @@ void EditorScene::DrawDebug()
 {
 	BaseScene::DrawDebug();
 
-	if (m_spWayPointManager)
-	{
-		m_spWayPointManager->DrawDebug();
-	}
+	WayPointManager::Instance().DrawDebug();
 }
 
 void EditorScene::SetupObjectReferences()
@@ -67,7 +64,7 @@ void EditorScene::Event()
 
 	////// 現在のオブジェクト数をデバッグ
 	KdDebugGUI::Instance().ClearLog();
-	KdDebugGUI::Instance().AddLog("object%d", m_objList.size());
+	KdDebugGUI::Instance().AddLog("object%d", WayPointManager::Instance().GetWayPoints().size());
 
 	m_spEditorCamera->Update();
 }
@@ -89,7 +86,6 @@ void EditorScene::Init()
 	//===================================================================
 	// ウェイポイント初期化
 	//===================================================================
-	m_spWayPointManager = std::make_shared<WayPointManager>();
 
 	auto wp0 = std::make_shared<WayPoint>();
 	wp0->SetId(0);
@@ -136,18 +132,18 @@ void EditorScene::Init()
 
 	AddObject(wp5);
 
-	m_spWayPointManager->Register(wp0);
-	m_spWayPointManager->Register(wp1);
-	m_spWayPointManager->Register(wp2);
-	m_spWayPointManager->Register(wp3);
-	m_spWayPointManager->Register(wp4);
-	m_spWayPointManager->Register(wp5);
+	WayPointManager::Instance().RegisterWayPoint(wp0);
+	WayPointManager::Instance().RegisterWayPoint(wp1);
+	WayPointManager::Instance().RegisterWayPoint(wp2);
+	WayPointManager::Instance().RegisterWayPoint(wp3);
+	WayPointManager::Instance().RegisterWayPoint(wp4);
+	WayPointManager::Instance().RegisterWayPoint(wp5);
 
-	m_spWayPointManager->Connect(0, 1);
-	m_spWayPointManager->Connect(1, 2);
-	m_spWayPointManager->Connect(2, 3);
-	m_spWayPointManager->Connect(3, 4);
-	m_spWayPointManager->Connect(3, 5);
+	WayPointManager::Instance().Connect(0, 1);
+	WayPointManager::Instance().Connect(1, 2);
+	WayPointManager::Instance().Connect(2, 3);
+	WayPointManager::Instance().Connect(3, 4);
+	WayPointManager::Instance().Connect(3, 5);
 
 	//===================================================================
 	// キャラクター初期化
@@ -161,9 +157,9 @@ void EditorScene::Init()
 	//===================================================================
 
 
-	auto goalPath = m_spWayPointManager->FindNearest(_player->GetPos());
+	auto goalPath = WayPointManager::Instance().FindNearest(_player->GetPos());
 
-	std::vector<int>path = m_spWayPointManager->FindPath(0, goalPath->GetId());
+	std::vector<int>path = WayPointManager::Instance().FindPath(0, goalPath->GetId());
 
 	for (int id : path)
 	{
@@ -174,7 +170,6 @@ void EditorScene::Init()
 	// Cactas
 	std::shared_ptr<Cactas>_cactas = std::make_shared<Cactas>();
 	_cactas->Init();
-	_cactas->SetWayPointManager(m_spWayPointManager.get());
 	_cactas->SetPath(path);
 	_cactas->SetPlayer(_player);
 	AddObject(_cactas);

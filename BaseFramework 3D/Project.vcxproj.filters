@@ -115,9 +115,6 @@
     <Filter Include="Src\Application\System">
       <UniqueIdentifier>{e521b29b-3243-4d9d-bbc1-02f2dc8410f5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\System\GameObjectFactory">
-      <UniqueIdentifier>{46d22ae5-cc98-4d2b-a8ca-fd394eeb24b7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\ReferenceManager">
       <UniqueIdentifier>{78b7834e-7c7d-4d83-950b-0d3466e75a98}</UniqueIdentifier>
     </Filter>
@@ -495,9 +492,6 @@
     <ClInclude Include="Src\Application\System\ReferenceManager\ReferenceManager.h">
       <Filter>Src\Application\System\ReferenceManager</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\System\GameObjectFactory\GameObjectFactory.h">
-      <Filter>Src\Application\System\GameObjectFactory</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\GameObjectFinder\GameObjectFinder.h">
       <Filter>Src\Application\System\GameObjectFinder</Filter>
     </ClInclude>
@@ -841,9 +835,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\EditorCamera</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\System\GameObjectFactory\GameObjectFactory.cpp">
-      <Filter>Src\Application\System\GameObjectFactory</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\System\ReferenceManager\ReferenceManager.cpp">
       <Filter>Src\Application\System\ReferenceManager</Filter>

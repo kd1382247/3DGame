@@ -2,7 +2,7 @@
 
 #include"WayPoint/WayPoint.h"
 
-void WayPointManager::Register(const std::shared_ptr<WayPoint>& point)
+void WayPointManager::RegisterWayPoint(const std::shared_ptr<WayPoint>& point)
 {
 	if (!point)
 	{
@@ -23,7 +23,9 @@ void WayPointManager::Unregister(int id)
 {}
 
 void WayPointManager::Clear()
-{}
+{
+	m_wpWayPoints.clear();
+}
 
 std::shared_ptr<WayPoint> WayPointManager::FindById(int id) const
 {
@@ -284,7 +286,6 @@ void WayPointManager::DrawDebug()
 			m_pDebugWire->AddDebugLine(point->GetPos(), linkedPoint->GetPos(), kBlueColor);
 		}
 	}
-
 
 	m_pDebugWire->Draw();
 }

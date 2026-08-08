@@ -6,13 +6,12 @@ class WayPointManager
 {
 public:
 
-	WayPointManager() { Init(); }
-	~WayPointManager(){}
-
 	void Init();
 
+
+
 	// 登録・解除
-	void Register(const std::shared_ptr<WayPoint>& point);
+	void RegisterWayPoint(const std::shared_ptr<WayPoint>& point);
 	void Unregister(int id);
 	void Clear();
 
@@ -29,6 +28,12 @@ public:
 
 	// デバッグ表示
 	void DrawDebug();
+
+
+	const std::vector<std::weak_ptr<WayPoint>>& GetWayPoints()const
+	{
+		return m_wpWayPoints;
+	}
 
 private:
 
@@ -48,9 +53,6 @@ private:
 
 	// スタートからゴールまでの道のり距離を返す
 	std::vector<int>ReconstructPath(const std::unordered_map<int, SearchNode>& searchNodes, int goalId)const;
-
-
-
 	// 無効になったweak_ptrを削除
 	void RemoveExpired();
 
@@ -60,5 +62,19 @@ private:
 
 	// デバッグ
 	std::unique_ptr<KdDebugWireFrame>m_pDebugWire = nullptr;
+
+
+private:
+
+	WayPointManager() { Init(); }
+	~WayPointManager() {}
+
+public:
+
+	static WayPointManager& Instance()
+	{
+		static WayPointManager instance;
+		return instance;
+	}
 
 };

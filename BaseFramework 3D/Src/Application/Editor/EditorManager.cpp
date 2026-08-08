@@ -1,8 +1,6 @@
 ﻿#include "EditorManager.h"
 
-#include"../GameObject/Character/Player/Player.h"
-#include"../GameObject/Terrains/Ground/Ground.h"
-#include"../GameObject/Camera/TPSCamera/TPSCamera.h"
+#include"../../Framework/GameObject/KdGameObjectFactory.h"
 
 #include"json.hpp"
 #include<fstream>
@@ -12,28 +10,11 @@
 
 void EditorManager::Init()
 {
-	m_gameObjectFactory.RegisterCreateFunction(
-		"KdGameObject",[](){return std::make_shared<KdGameObject>();});
-
-	// カメラ
-	m_gameObjectFactory.RegisterCreateFunction(
-		"TPSCamera", []() {return std::make_shared<TPSCamera>(); }
-	);
-
-	// プレイヤー
-	m_gameObjectFactory.RegisterCreateFunction(
-		"Player", []() {return std::make_shared<Player>(); }
-	);
-
-	// 地面
-	m_gameObjectFactory.RegisterCreateFunction(
-		"Ground", []() {return std::make_shared<Ground>(); }
-	);
-
 }
 
 void EditorManager::Draw()
 {
+	ImGui::Begin("Menu");
 
 	DrawMenu();
 
@@ -49,24 +30,16 @@ void EditorManager::Draw()
 		LoadScene();
 	}
 
+	ImGui::End();
 
 	m_hierarchy.Draw();
 	m_inspector.Draw();
+
 }
 
 void EditorManager::DrawMenu()
 {
-	if(ImGui::Button("Edit"))
-	{
-		SetMode(EditorMode::Edit);
-	}
 
-	ImGui::SameLine();
-
-	if (ImGui::Button("Play"))
-	{
-		SetMode(EditorMode::Play);
-	}
 
 	if (IsEditMode())
 	{
@@ -76,6 +49,42 @@ void EditorManager::DrawMenu()
 	{
 		ImGui::Text("CurrentMode: Play");
 	}
+
+	if(ImGui::Button("Edit"))
+	{
+		SetEditorMode(EditorMode::Edit);
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Play"))
+	{
+		SetEditorMode(EditorMode::Play);
+	}
+
+
+
+	//if (IsStageEdit())
+	//{
+	//	ImGui::Text("CurrentEdit:Stage ");
+	//}
+	//else
+	//{
+	//	ImGui::Text("CurrentEdit: Parameter");
+	//}
+
+	//if (ImGui::Button("StageEdit"))
+	//{
+	//	SetEditorCategory(EditorCategory::Stage);
+	//}
+
+	//ImGui::SameLine();
+
+	//if (ImGui::Button("ParameterEdit"))
+	//{
+	//	SetEditorCategory(EditorCategory::Parameter);
+	//}
+
 }
 
 void EditorManager::SetupObjectReferences()
@@ -83,26 +92,23 @@ void EditorManager::SetupObjectReferences()
 	
 }
 
-std::shared_ptr<KdGameObject> EditorManager::CreateObject(const std::string& className)
+void EditorManager::CreateGameObject(const std::string& className)
 {
 	auto newObject =
-		m_gameObjectFactory.CreateGameObject(className);
+		KdGameObjectFactory::Instance().CreateGameObject(className);
 
 	if (!newObject)
 	{
 		OutputDebugStringA(
 			"オブジェクトの生成に失敗しました\n");
-
-		return nullptr;
+		return;
 	}
-
 	newObject->Init();
 
 	SceneManager::Instance().AddObject(newObject);
 
+	// 現在選択中のオブジェクト
 	SetSelectedObject(newObject);
-
-	return newObject;
 }
 
 void EditorManager::SaveScene()
@@ -196,7 +202,7 @@ void EditorManager::LoadScene()
 		}
 
 		std::string className = objectJson["Class"].get<std::string>();
-		auto obj = m_gameObjectFactory.CreateGameObject(className);
+		auto obj = KdGameObjectFactory::Instance().CreateGameObject(className);
 
 		if (!obj)
 		{
@@ -235,34 +241,4 @@ void EditorManager::LoadScene()
 		SceneManager::Instance().AddObject(obj);
 	}
 
-	// ③ 全部生成した後に探す
-	std::shared_ptr<Player> player;
-	std::shared_ptr<TPSCamera> camera;
-	std::shared_ptr<Ground>ground;
-	for (const auto& obj :
-		SceneManager::Instance().GetObjList())
-	{
-		if (obj->GetObjectName()=="Player")
-		{
-			player =
-				std::dynamic_pointer_cast<Player>(obj);
-		}
-
-		if (obj->GetObjectName() == "TPSCamera")
-		{
-			camera =
-				std::dynamic_pointer_cast<TPSCamera>(obj);
-		}
-		if (obj->GetObjectName() == "Ground")
-		{
-			ground =
-				std::dynamic_pointer_cast<Ground>(obj);
-		}
-	}
-
-	// ④ 関連付ける
-	if (player && camera)
-	{
-		camera->SetTarget(player);
-	}
 }

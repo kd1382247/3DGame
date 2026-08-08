@@ -4,8 +4,6 @@
 
 #include"../../GameObject/Camera/EditorCamera/EditorCamera.h"
 
-class WayPointManager;
-
 class EditorScene : public BaseScene
 {
 public:
@@ -30,8 +28,6 @@ private:
 	void Init()  override;
 
 	std::shared_ptr<EditorCamera>m_spEditorCamera = nullptr;
-
-	std::shared_ptr<WayPointManager>m_spWayPointManager = nullptr;
 
 };
 

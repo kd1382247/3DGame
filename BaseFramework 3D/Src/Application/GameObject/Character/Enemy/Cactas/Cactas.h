@@ -6,8 +6,6 @@
 #include"State/CactasState.h"
 #include"Parameter/CactasParameter.h"
 
-class WayPointManager;
-
 class Cactas :public EnemyBase
 {
 public:
@@ -20,11 +18,6 @@ public:
 	void PostUpdate()override;
 
 	void DrawInspecter()override;
-
-	void SetWayPointManager(WayPointManager* manager)
-	{
-		m_pWayPointManager = manager;
-	}
 
 	void SetPath(const std::vector<int>& path);
 
@@ -55,7 +48,5 @@ private:
 	// 現在目指しているWayPointが、m_pathの何番目か
 	size_t m_pathIndex = 0;
 
-	// WayPointを管理するクラスへの参照
-	WayPointManager *m_pWayPointManager=nullptr;
 
 };

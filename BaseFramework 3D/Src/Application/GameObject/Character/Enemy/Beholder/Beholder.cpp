@@ -22,9 +22,6 @@ void Beholder::Init()
 
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-
-
-
 		// オブジェクト名セット
 		SetObjectName("Beholder");
 	}

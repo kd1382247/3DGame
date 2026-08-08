@@ -109,11 +109,6 @@ void Cactas::UpdateDirectChase()
 
 void Cactas::UpdateFollowPath()
 {
-	// Managerが設定されていない
-	if (!m_pWayPointManager)
-	{
-		return;
-	}
 	// 経路が空
 	if (m_path.empty())
 	{
@@ -129,7 +124,7 @@ void Cactas::UpdateFollowPath()
 	int targetId = m_path[m_pathIndex];
 
 	// IDからWayPointを取得
-	auto targetPoint = m_pWayPointManager->FindById(targetId);
+	auto targetPoint = WayPointManager::Instance().FindById(targetId);
 
 	if (!targetPoint) { return; }
 

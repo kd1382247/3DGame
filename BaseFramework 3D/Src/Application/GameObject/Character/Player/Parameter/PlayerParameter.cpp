@@ -27,7 +27,7 @@ void PlayerParameter::DrawInspecter()
 	if (ImGui::DragFloat("TurnSpeed", &m_param.m_turnSpeed, 0.01f,0.0f));
 
 	// セーブ
-	if(ImGui::Button("SaveToJson"))
+	if(ImGui::Button("SaveParameter"))
 	{
 		SaveToJson();
 	}

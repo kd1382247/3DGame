@@ -27,8 +27,19 @@ void EditorInspector::Draw()
 
 	Delete(obj);
 
-
 	ImGui::End();
+}
+
+void EditorInspector::DrawStageInspecter()
+{
+
+
+}
+
+void EditorInspector::DrawParameterInspecter()
+{
+
+
 }
 
 void EditorInspector::Delete(const std::shared_ptr<KdGameObject>& obj)

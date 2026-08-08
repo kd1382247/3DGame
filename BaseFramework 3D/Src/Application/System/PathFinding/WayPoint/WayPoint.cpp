@@ -19,8 +19,6 @@ void WayPoint::DrawDebug()
 	KdGameObject::DrawDebug();
 }
 
-
-
 void WayPoint::AddLink(int id)
 {
 	// 自分自身には接続しない
