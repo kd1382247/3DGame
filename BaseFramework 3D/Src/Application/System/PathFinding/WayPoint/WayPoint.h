@@ -13,14 +13,15 @@ public:
 	void Update()override;
 	void DrawDebug()override;
 
-	int GetId()const { return m_id; }
-	void SetId(int id) { m_id = id; }
+	void DrawInspecter()override;
 
+	int GetID()const { return m_id; }
+	void SetID(int id) { m_id = id; }
 
 	// 接続先
 	const std::vector<int>& GetLinks()const
 	{
-		return m_linkIds;
+		return m_linkIDs;
 	}
 
 	void AddLink(int id);
@@ -34,6 +35,8 @@ private:
 	int m_id = -1;
 
 	// 直接移動可能なWayPointのID
-	std::vector<int>m_linkIds;
+	std::vector<int>m_linkIDs;
+
+
 
 };

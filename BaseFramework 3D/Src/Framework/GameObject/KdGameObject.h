@@ -87,6 +87,8 @@ public:
 	// Inspectorに表示させるパラメータ
 	virtual void DrawInspecter();
 
+
+
 	virtual nlohmann::json SaveData()const;
 
 protected:

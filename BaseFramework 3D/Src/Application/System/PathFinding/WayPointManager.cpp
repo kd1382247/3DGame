@@ -10,12 +10,12 @@ void WayPointManager::RegisterWayPoint(const std::shared_ptr<WayPoint>& point)
 	}
 
 	// 同じIDが既に登録されていないか確認
-	if (FindById(point->GetId()))
+	if (FindByID(point->GetID()))
 	{
 		return;
 	}
 
-	m_wpWayPoints.emplace_back(point);
+	m_wpWayPoints.push_back(point);
 
 }
 
@@ -24,22 +24,22 @@ void WayPointManager::Unregister(int id)
 
 void WayPointManager::Clear()
 {
-	m_wpWayPoints.clear();
+	//m_wpWayPoints.clear();
 }
 
-std::shared_ptr<WayPoint> WayPointManager::FindById(int id) const
+std::shared_ptr<WayPoint> WayPointManager::FindByID(int id) const
 {
 	// 指定されたIDを検索、見つかればそのWayPointを返す
 	for (const auto& weakPoint : m_wpWayPoints)
 	{
-		auto point = weakPoint.lock();
+		auto point = weakPoint;
 
 		if (!point)
 		{
 			continue;
 		}
 
-		if (point->GetId() == id)
+		if (point->GetID() == id)
 		{
 			return point;
 		}
@@ -60,7 +60,7 @@ std::shared_ptr<WayPoint> WayPointManager::FindNearest(const Math::Vector3& pos)
 	// 1個ずつWayPointを確認する
 	for (const auto& weakPoint : m_wpWayPoints)
 	{
-		auto point = weakPoint.lock();
+		auto point = weakPoint;
 
 		if (!point)
 		{
@@ -84,8 +84,8 @@ std::shared_ptr<WayPoint> WayPointManager::FindNearest(const Math::Vector3& pos)
 
 bool WayPointManager::Connect(int idA, int idB, bool bidirectional)
 {
-	auto pointA = FindById(idA);
-	auto pointB = FindById(idB);
+	auto pointA = FindByID(idA);
+	auto pointB = FindByID(idB);
 
 	if (!pointA || !pointB)
 	{
@@ -107,16 +107,35 @@ bool WayPointManager::Connect(int idA, int idB, bool bidirectional)
 
 }
 
-bool WayPointManager::Disconnect(int idA, int idB, bool bidirecttional)
+bool WayPointManager::Disconnect(int idA, int idB, bool bidirectional)
 {
-	return false;
+	auto pointA = FindByID(idA);
+	auto pointB = FindByID(idB);
+
+	if (!pointA || !pointB)
+	{
+		return false;
+	}
+
+	if (idA == idB)
+	{
+		return false;
+	}
+
+	pointA->RemoveLink(idB);
+	if (bidirectional)
+	{
+		pointB->RemoveLink(idA);
+	}
+
+	return true;
 }
 
 std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 {
 	// スタート地点とゴール地点のWayPointを探す
-	auto startPoint = FindById(startId);
-	auto goalPoint = FindById(goalId);
+	auto startPoint = FindByID(startId);
+	auto goalPoint = FindByID(goalId);
 
 	// どちらかのWayPointがなければreturn
 	if (!startPoint || !goalPoint)
@@ -174,7 +193,7 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 			return ReconstructPath(searchNodes, goalId);
 		}
 
-		auto currentPoint = FindById(currentId);
+		auto currentPoint = FindByID(currentId);
 
 		if (!currentPoint)
 		{
@@ -190,7 +209,7 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 				continue;
 			}
 
-			auto linkedPoint = FindById(linkId);
+			auto linkedPoint = FindByID(linkId);
 
 			if (!linkedPoint)
 			{
@@ -252,6 +271,40 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 
 }
 
+std::shared_ptr<WayPoint> WayPointManager::CreateWayPoint()
+{
+	std::shared_ptr<WayPoint>wayPoint = std::make_shared<WayPoint>();
+
+	wayPoint->SetID(GetNextWayPointID());
+	wayPoint->SetPos({ 0.0f,0.0f,0.0f });
+
+	// オブジェクトの名前をセット 後ろにID
+	std::string objName = "WayPoint_" + std::to_string(GetNextWayPointID());
+	wayPoint->SetObjectName(objName);
+
+	RegisterWayPoint(wayPoint);
+
+	return wayPoint;
+
+}
+
+int WayPointManager::GetNextWayPointID() const
+{
+	int maxID = -1;
+
+	for (const auto& wayPoint : m_wpWayPoints)
+	{
+		if (!wayPoint)
+		{
+			continue;
+		}
+
+		maxID = std::max(maxID, wayPoint->GetID());
+	}
+
+	return maxID + 1;
+}
+
 void WayPointManager::Init()
 {
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
@@ -262,23 +315,27 @@ void WayPointManager::DrawDebug()
 	
 	for (const auto& weakPoint : m_wpWayPoints)
 	{
-		auto point = weakPoint.lock();
+		auto point = weakPoint;
 
 		if (!point)
 		{
 			continue;
 		}
 
+		// WayPointの位置を表す球を表示
+		weakPoint->DrawDebug();
+
+		// 接続関係を表す線を描画
 		for (int linkId : point->GetLinks())
 		{
-			auto linkedPoint = FindById(linkId);
+			auto linkedPoint = FindByID(linkId);
 
 			if (!linkedPoint)
 			{
 				continue;
 			}
 			// 小さいID側だけ登録
-			if (point->GetId() > linkId)
+			if (point->GetID() > linkId)
 			{
 				continue;
 			}

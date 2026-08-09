@@ -79,23 +79,26 @@ void EditorHierarchy::DrawWayPointHierarchy()
 	// オブジェクトを新規作成
 	if (ImGui::Button("Add WayPoint"))
 	{	
-		auto obj = KdGameObjectFactory::Instance().CreateGameObject("WayPoint");
-
-		auto wayPoint = std::dynamic_pointer_cast<WayPoint>(obj);
-		wayPoint->SetId(0);
-		wayPoint->SetObjectName("WayPoint0");
-		wayPoint->SetPos({ 0,0,0 });
+		
+		auto wayPoint = WayPointManager::Instance().CreateWayPoint();
+		auto selectObj = std::dynamic_pointer_cast<KdGameObject>(wayPoint);
 
 		if (wayPoint)
 		{
 			WayPointManager::Instance().RegisterWayPoint(wayPoint);
+			EditorManager::Instance().SetSelectedObject(selectObj);
 		}
 	}
 
 	// どのオブジェクトを選択しているか
 	for (auto& wayPoints : WayPointManager::Instance().GetWayPoints())
 	{
-		auto obj= std::dynamic_pointer_cast<KdGameObject>(wayPoints.lock());
+		auto obj = std::dynamic_pointer_cast<KdGameObject>(wayPoints);
+
+		if (!obj)
+		{
+			continue;
+		}
 
 		ImGui::PushID(obj.get());
 
@@ -103,6 +106,7 @@ void EditorHierarchy::DrawWayPointHierarchy()
 			obj == EditorManager::Instance().GetSelectedObject()))
 		{
 			EditorManager::Instance().SetSelectedObject(obj);
+			
 		}
 		ImGui::PopID();
 	}

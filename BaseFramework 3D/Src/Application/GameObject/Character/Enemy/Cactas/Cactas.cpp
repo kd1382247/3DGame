@@ -124,7 +124,7 @@ void Cactas::UpdateFollowPath()
 	int targetId = m_path[m_pathIndex];
 
 	// IDからWayPointを取得
-	auto targetPoint = WayPointManager::Instance().FindById(targetId);
+	auto targetPoint = WayPointManager::Instance().FindByID(targetId);
 
 	if (!targetPoint) { return; }
 

@@ -8,29 +8,37 @@ public:
 
 	void Init();
 
-
-
 	// 登録・解除
 	void RegisterWayPoint(const std::shared_ptr<WayPoint>& point);
+
 	void Unregister(int id);
 	void Clear();
 
-	// 検索
-	std::shared_ptr<WayPoint>FindById(int id)const;
+	// 指定されたIDのWayPointを返す
+	std::shared_ptr<WayPoint>FindByID(int id)const;
+
+	// 引数の位置から近いWayPointを返す
 	std::shared_ptr<WayPoint>FindNearest(const Math::Vector3& pos)const;
 
 	// 接続
 	bool Connect(int idA, int idB, bool bidirectional = true);
+	// 接続解除
 	bool Disconnect(int idA, int idB, bool bidirecttional = true);
 
 	// 経路探索
 	std::vector<int>FindPath(int startId, int goalId)const;
 
+	// WayPoint生成
+	std::shared_ptr<WayPoint> CreateWayPoint();
+
+	// 空いてるIDを返す
+	int GetNextWayPointID()const;
+
 	// デバッグ表示
 	void DrawDebug();
 
 
-	const std::vector<std::weak_ptr<WayPoint>>& GetWayPoints()const
+	const std::vector<std::shared_ptr<WayPoint>>& GetWayPoints()const
 	{
 		return m_wpWayPoints;
 	}
@@ -58,7 +66,7 @@ private:
 
 private:
 
-	std::vector<std::weak_ptr<WayPoint>>m_wpWayPoints;
+	std::vector<std::shared_ptr<WayPoint>>m_wpWayPoints;
 
 	// デバッグ
 	std::unique_ptr<KdDebugWireFrame>m_pDebugWire = nullptr;
