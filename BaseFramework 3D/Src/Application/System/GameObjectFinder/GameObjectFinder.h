@@ -29,6 +29,8 @@ public:
 		return nullptr;
 	}
 	
+
+
 	// 複数の同じ型のオブジェクトを返す
 	template<class T>
 	std::vector<std::shared_ptr<T>> FindObjects()

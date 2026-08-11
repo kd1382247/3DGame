@@ -9,7 +9,6 @@ public:
 	void Init()				override;
 	void PreDraw()			override;
 
-	void SetTarget(const std::shared_ptr<KdGameObject>& target);
 
 	// 「絶対変更しません！見るだけ！」な書き方
 	const std::shared_ptr<KdCamera>& GetCamera() const
@@ -41,6 +40,9 @@ public:
 	{
 		m_wpHitObjectList.push_back(object);
 	}
+
+	void SetUpReference()override;
+
 
 protected:
 	// カメラ回転用角度

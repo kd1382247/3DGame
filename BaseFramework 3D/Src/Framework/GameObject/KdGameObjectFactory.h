@@ -10,7 +10,9 @@ public:
 
 	struct FactoryEntry
 	{
+		// オブジェクトを生成する関数
 		CreateFunction               createFunc;
+		// Hierarchyなどで分類するためのカテゴリ
 		KdGameObject::ObjectCategory category;
 	};
 
@@ -30,23 +32,7 @@ public:
 		);
 	}
 
-	template<class T>
-	std::shared_ptr<T> CreateGameObject()
-	{
-		std::shared_ptr<T> spObj = std::make_shared<T>();
-
-		spObj->Init();
-
-		m_objects.push_back(spObj);
-
-		return spObj;
-	}
-
-	std::shared_ptr<KdGameObject> CreateGameObject(const std::string objName) const;
-
-	const std::list<std::shared_ptr<KdGameObject>>& GetObjects() { return m_objects; }
-
-	void RemoveExpiredObjects();
+	std::shared_ptr<KdGameObject> CreateGameObject(const std::string& objName) const;
 
 private:
 
@@ -54,10 +40,8 @@ private:
 
 	void RegisterCreateFunction(const std::string_view str, const CreateFunction func,const KdGameObject::ObjectCategory category);
 
-	// GameObjectのインスタンスリスト
-	std::list<std::shared_ptr<KdGameObject>> m_objects;
-
-	// GameObjectの生成関数
+	// クラス名に対応する生成情報
+	// 生成関数とオブジェクトカテゴリを保持する
 	std::unordered_map<std::string, FactoryEntry> m_createFunctions;
 
 

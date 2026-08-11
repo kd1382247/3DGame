@@ -2,26 +2,56 @@
 
 #include"WayPoint/WayPoint.h"
 
-void WayPointManager::RegisterWayPoint(const std::shared_ptr<WayPoint>& point)
+bool WayPointManager::RegisterWayPoint(const std::shared_ptr<WayPoint>& wayPoint)
 {
-	if (!point)
+	// 無効なWayPointは登録しない
+	if (!wayPoint)
 	{
-		return;
+		return false;
 	}
 
-	// 同じIDが既に登録されていないか確認
-	if (FindByID(point->GetID()))
+	// IDはWayPointを識別するため、一意でなければならない
+	if (FindWayPoint(wayPoint->GetID()))
 	{
-		return;
+		return  false;
 	}
 
-	m_spWayPoints.push_back(point);
+	m_spWayPoints.push_back(wayPoint);
 
+	return true;
 }
 
-void WayPointManager::Unregister(int id)
+bool WayPointManager::RemoveWayPoint(int id)
 {
+	auto target = FindWayPoint(id);
 
+	if (!target)
+	{
+		return false;
+	}
+
+	// 削除後に存在しないIDへのリンクが残らないよう、
+	// 管理リストから消す前に全WayPointの参照を解除する
+	for (const auto& wayPoint : m_spWayPoints)
+	{
+		if (!wayPoint)
+		{
+			continue;
+		}
+
+		wayPoint->RemoveLink(id);
+	}
+
+	auto it = std::find(m_spWayPoints.begin(), m_spWayPoints.end(), target);
+
+	if (it == m_spWayPoints.end())
+	{
+		return false;
+	}
+
+	m_spWayPoints.erase(it);
+
+	return true;
 }
 
 void WayPointManager::Clear()
@@ -29,13 +59,11 @@ void WayPointManager::Clear()
 	m_spWayPoints.clear();
 }
 
-std::shared_ptr<WayPoint> WayPointManager::FindByID(int id) const
+std::shared_ptr<WayPoint> WayPointManager::FindWayPoint(int id) const
 {
 	// 指定されたIDを検索、見つかればそのWayPointを返す
-	for (const auto& weakPoint : m_spWayPoints)
+	for (const auto& point : m_spWayPoints)
 	{
-		auto point = weakPoint;
-
 		if (!point)
 		{
 			continue;
@@ -60,10 +88,8 @@ std::shared_ptr<WayPoint> WayPointManager::FindNearest(const Math::Vector3& pos)
 
 
 	// 1個ずつWayPointを確認する
-	for (const auto& weakPoint : m_spWayPoints)
+	for (const auto& point : m_spWayPoints)
 	{
-		auto point = weakPoint;
-
 		if (!point)
 		{
 			continue;
@@ -86,8 +112,8 @@ std::shared_ptr<WayPoint> WayPointManager::FindNearest(const Math::Vector3& pos)
 
 bool WayPointManager::Connect(int idA, int idB, bool bidirectional)
 {
-	auto pointA = FindByID(idA);
-	auto pointB = FindByID(idB);
+	auto pointA = FindWayPoint(idA);
+	auto pointB = FindWayPoint(idB);
 
 	if (!pointA || !pointB)
 	{
@@ -99,20 +125,22 @@ bool WayPointManager::Connect(int idA, int idB, bool bidirectional)
 		return false;
 	}
 
-	pointA->AddLink(idB);
+	const bool addedA = pointA->AddLink(idB);
+	bool addedB = false;
+
 	if (bidirectional)
 	{
-		pointB->AddLink(idA);
+		addedB = pointB->AddLink(idA);
 	}
 
-	return true;
+	return addedA || addedB;
 
 }
 
 bool WayPointManager::Disconnect(int idA, int idB, bool bidirectional)
 {
-	auto pointA = FindByID(idA);
-	auto pointB = FindByID(idB);
+	auto pointA = FindWayPoint(idA);
+	auto pointB = FindWayPoint(idB);
 
 	if (!pointA || !pointB)
 	{
@@ -124,20 +152,30 @@ bool WayPointManager::Disconnect(int idA, int idB, bool bidirectional)
 		return false;
 	}
 
+	const bool hadLinkA = std::find(
+		pointA->GetLinks().begin(), pointA->GetLinks().end(), idB)
+		!= pointA->GetLinks().end();
+
 	pointA->RemoveLink(idB);
+
+	bool hadLinkB = false;
 	if (bidirectional)
 	{
+		hadLinkB = std::find(
+			pointB->GetLinks().begin(), pointB->GetLinks().end(), idA)
+			!= pointB->GetLinks().end();
+
 		pointB->RemoveLink(idA);
 	}
 
-	return true;
+	return hadLinkA || hadLinkB;
 }
 
 std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 {
 	// スタート地点とゴール地点のWayPointを探す
-	auto startPoint = FindByID(startId);
-	auto goalPoint = FindByID(goalId);
+	auto startPoint = FindWayPoint(startId);
+	auto goalPoint = FindWayPoint(goalId);
 
 	// どちらかのWayPointがなければreturn
 	if (!startPoint || !goalPoint)
@@ -152,9 +190,9 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 
 	SearchNode startNode;
 	// スタート地点のWayPointを入れる
-	startNode.wayPointId =startId ;
+	startNode.wayPointId = startId;
 	startNode.g = 0.0f;
-	startNode.h = CalculateHeuristic(*startPoint,*goalPoint);
+	startNode.h = CalculateHeuristic(*startPoint, *goalPoint);
 
 	startNode.f = startNode.g + startNode.h;
 	startNode.parentId = -1;
@@ -179,7 +217,7 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 			{  // Fが小さいWayPointを比較する
 				return searchNodes.at(leftId).f < searchNodes.at(rightId).f;
 			});
-		
+
 		// これから調べるWayPointのID
 		int currentId = *bestIt;
 
@@ -189,13 +227,13 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 		closeList.insert(currentId);
 
 		// ゴールのIDと同じか
-		if (currentId ==goalId )
+		if (currentId == goalId)
 		{
 			// 
 			return ReconstructPath(searchNodes, goalId);
 		}
 
-		auto currentPoint = FindByID(currentId);
+		auto currentPoint = FindWayPoint(currentId);
 
 		if (!currentPoint)
 		{
@@ -211,7 +249,7 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 				continue;
 			}
 
-			auto linkedPoint = FindByID(linkId);
+			auto linkedPoint = FindWayPoint(linkId);
 
 			if (!linkedPoint)
 			{
@@ -242,7 +280,7 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 
 			// 接続先のWayPoint情報
 			SearchNode linkedSearchNode;
-			
+
 			// 今調べている接続先IDを入れる
 			linkedSearchNode.wayPointId = linkId;
 
@@ -275,36 +313,36 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 
 std::shared_ptr<WayPoint> WayPointManager::CreateWayPoint()
 {
+	const int id = FindAvailableID();
+
 	std::shared_ptr<WayPoint>wayPoint = std::make_shared<WayPoint>();
 
-	wayPoint->SetID(GetNextWayPointID());
-	wayPoint->SetPos({ 0.0f,0.0f,0.0f });
+
+	wayPoint->SetID(id);
 
 	// オブジェクトの名前をセット 後ろにID
-	std::string objName = "WayPoint_" + std::to_string(GetNextWayPointID());
+	std::string objName = "WayPoint_" + std::to_string(id);
 	wayPoint->SetObjectName(objName);
 
-	RegisterWayPoint(wayPoint);
+	if (!RegisterWayPoint(wayPoint))
+	{
+		return nullptr;
+	}
 
 	return wayPoint;
 
 }
 
-int WayPointManager::GetNextWayPointID() const
+int WayPointManager::FindAvailableID() const
 {
-	int maxID = -1;
+	int id = 0;
 
-	for (const auto& wayPoint : m_spWayPoints)
+	while (FindWayPoint(id))
 	{
-		if (!wayPoint)
-		{
-			continue;
-		}
-
-		maxID = std::max(maxID, wayPoint->GetID());
+		++id;
 	}
 
-	return maxID + 1;
+	return id;
 }
 
 void WayPointManager::Init()
@@ -314,23 +352,21 @@ void WayPointManager::Init()
 
 void WayPointManager::DrawDebug()
 {
-	
-	for (const auto& weakPoint : m_spWayPoints)
-	{
-		auto point = weakPoint;
 
+	for (const auto& point : m_spWayPoints)
+	{
 		if (!point)
 		{
 			continue;
 		}
 
 		// WayPointの位置を表す球を表示
-		weakPoint->DrawDebug();
+		point->DrawDebug();
 
 		// 接続関係を表す線を描画
 		for (int linkId : point->GetLinks())
 		{
-			auto linkedPoint = FindByID(linkId);
+			auto linkedPoint = FindWayPoint(linkId);
 
 			if (!linkedPoint)
 			{
@@ -395,7 +431,7 @@ bool WayPointManager::Save(const std::string& filePath)
 
 bool WayPointManager::Load(const std::string& filePath)
 {
-	
+
 	std::ifstream file(filePath);
 
 	if (!file.is_open())
@@ -424,7 +460,7 @@ bool WayPointManager::Load(const std::string& filePath)
 
 		return false;
 	}
-		
+
 	if (!rootJson.contains("WayPoints") ||
 		!rootJson["WayPoints"].is_array())
 	{
@@ -442,13 +478,13 @@ bool WayPointManager::Load(const std::string& filePath)
 	// Jsonに保存されてる情報でWayPointを生成
 	for (const auto& wpJson : rootJson["WayPoints"])
 	{
-	
+
 		auto obj = KdGameObjectFactory::Instance().CreateGameObject("WayPoint");
 
 		auto wayPoint = std::dynamic_pointer_cast<WayPoint>(obj);
 
-		if(!wayPoint)
-		{ 
+		if (!wayPoint)
+		{
 			continue;
 		}
 
@@ -461,12 +497,16 @@ bool WayPointManager::Load(const std::string& filePath)
 		wayPoint->SetPos({
 			wpJson["Position"]["x"].get<float>(),
 			wpJson["Position"]["y"].get<float>(),
-			wpJson["Position"]["z"].get<float>() 
+			wpJson["Position"]["z"].get<float>()
 			});
 
 		// WayPointsに登録
-		RegisterWayPoint(wayPoint);
-		
+		if (!RegisterWayPoint(wayPoint))
+		{
+			Clear();
+			return false;
+		}
+
 	}
 
 	// 接続設定
@@ -475,7 +515,7 @@ bool WayPointManager::Load(const std::string& filePath)
 		int id = wpJson["ID"].get<int>();
 
 		// IDからWayPointを探す
-		auto wayPoint = FindByID(id);
+		auto wayPoint = FindWayPoint(id);
 
 		if (!wayPoint)
 		{
@@ -488,11 +528,13 @@ bool WayPointManager::Load(const std::string& filePath)
 			wayPoint->AddLink(linkID);
 		}
 	}
+
+	return true;
 }
 
 float WayPointManager::CalculateHeuristic(const WayPoint& current, const WayPoint& goal) const
 {
-	
+
 	Math::Vector3 difference = goal.GetPos() - current.GetPos();
 
 	return difference.Length();
@@ -507,7 +549,7 @@ std::vector<int> WayPointManager::ReconstructPath(const std::unordered_map<int, 
 	int currentId = goalId;
 
 	// 親が無くなるまでたどる
-	while (currentId!=-1)
+	while (currentId != -1)
 	{
 		path.push_back(currentId);
 
@@ -532,5 +574,3 @@ std::vector<int> WayPointManager::ReconstructPath(const std::unordered_map<int, 
 	return path;
 }
 
-void WayPointManager::RemoveExpired()
-{}

@@ -3,11 +3,9 @@
 class Inspector
 {
 public:
-
-	void  Draw();
+	void Draw();
 
 private:
 
-	void Delete(const std::shared_ptr<KdGameObject>& obj);
-
+	void DrawDeleteButton(const std::shared_ptr<KdGameObject>& obj);
 };

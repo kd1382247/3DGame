@@ -5,7 +5,7 @@
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../../System/CollisionManager/CollisionManager.h"
 
-#include"../../Terrains/Ground/Ground.h"
+
 void Player::Init()
 {
 	if (!m_spModel)
@@ -62,7 +62,10 @@ void Player::PostUpdate()
 
 void Player::SetUpReference()
 {
-	
+	if(!m_wpCamera.lock())
+	{
+		m_wpCamera = GameObjectFinder::Instance().FindObject<CameraBase>();
+	}
 }
 
 void Player::DrawLit()

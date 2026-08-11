@@ -21,10 +21,16 @@ public:
 
 	void DrawInspector()override;
 
+
+
+
 private:
 
 
 	void UpdateAnimation();
+
+
+
 
 private:
 

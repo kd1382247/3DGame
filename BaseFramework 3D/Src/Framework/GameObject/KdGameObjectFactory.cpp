@@ -88,32 +88,19 @@ void KdGameObjectFactory::RegisterCreateFunction(const std::string_view str, con
 }
 
 
-std::shared_ptr<KdGameObject> KdGameObjectFactory::CreateGameObject(const std::string objName) const
+std::shared_ptr<KdGameObject> KdGameObjectFactory::CreateGameObject(const std::string& objName) const
 {
-	auto creater = m_createFunctions.find(objName);
+	// 登録されているクラス名から生成情報を検索
+	auto entryIt = m_createFunctions.find(objName);
 
-	if (creater == m_createFunctions.end())
+	// 未登録のクラス名だった場合
+	if (entryIt == m_createFunctions.end())
 	{
 		assert(0 && "GameObjectFactoryに未登録のゲームオブジェクトクラスです");
 
 		return nullptr;
 	}
 
-	return  creater->second.createFunc();
-}
-
-// リスト内の最適化（寿命の尽きたオブジェクトの解放）
-void KdGameObjectFactory::RemoveExpiredObjects()
-{
-	for (auto objIter = m_objects.begin(); objIter != m_objects.end();)
-	{
-		if ((*objIter)->IsExpired())
-		{
-			objIter = m_objects.erase(objIter);
-
-			continue;
-		}
-
-		++objIter;
-	}
+	// 登録されている生成関数を実行
+	return  entryIt->second.createFunc();
 }

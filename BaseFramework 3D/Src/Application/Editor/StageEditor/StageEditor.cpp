@@ -1,8 +1,9 @@
 ﻿#include "StageEditor.h"
 
-#include"../EditorManager.h"
-#include"../../Scene/SceneManager.h"
-#include"../../System/PathFinding/WayPointManager.h"
+#include "../EditorManager.h"
+#include "../../Scene/SceneManager.h"
+#include "../../System/PathFinding/WayPointManager.h"
+#include"../../System/ReferenceManager/ReferenceManager.h"
 
 void StageEditor::Draw()
 {
@@ -15,33 +16,37 @@ void StageEditor::Draw()
 		ImGui::Text("Current Stage : %s", m_currentStageName.c_str());
 	}
 
-	
+
 	if (ImGui::Button("New Stage"))
 	{
+		m_newStageName[0] = '\0';
 		ImGui::OpenPopup("NewStagePopup");
-
 	}
 
 	ImGui::SameLine();
 
 	if (ImGui::Button("Open Stage"))
 	{
-		LoadStage("Stage02");
+		RefreshStageList();
+		ImGui::OpenPopup("OpenStagePopup");
 	}
 
 	ImGui::SameLine();
 
 	if (ImGui::Button("Save Stage"))
 	{
-	
 		RequestSaveStage();
 	}
 
+	// 新規作成時のPopup
 	DrawNewStagePopup();
-
+	// 保存時のPopup
 	DrawSaveStagePopup();
-	
 
+	// 保存済ステージ一覧のPopup
+	DrawOpenStagePopup();
+
+	DrawLoadConfirmationPopup();
 }
 
 void StageEditor::CreateNewStage()
@@ -54,26 +59,22 @@ void StageEditor::CreateNewStage()
 		return;
 	}
 
-	m_currentStageName = stageName;
-
 	// 既存の編集対象をクリア
 	ClearStage();
 
+	m_currentStageName = stageName;
 
 	ImGui::CloseCurrentPopup();
 }
 
-bool StageEditor::SaveStage()
+bool StageEditor::SaveStage(const std::string& stageName)
 {
-
-	if (m_currentStageName.empty())
+	if (stageName.empty())
 	{
 		return false;
 	}
 
-	// フォルダー作成
-	std::filesystem::path stageFolder =
-		std::filesystem::path("Asset/Data/Stage") / m_currentStageName;
+	const std::filesystem::path stageFolder = GetStageFolder(stageName);
 
 	// フォルダーがない場合作成
 	std::filesystem::create_directories(stageFolder);
@@ -96,7 +97,7 @@ bool StageEditor::SaveStage()
 		}
 
 		// Jsonファイルに追加
-		stageJson["Objects"].push_back( obj->SaveData());
+		stageJson["Objects"].push_back(obj->SaveData());
 	}
 
 	// ファイル作成
@@ -115,9 +116,7 @@ bool StageEditor::SaveStage()
 		return false;
 	}
 
-
 	return true;
-
 }
 
 void StageEditor::RequestSaveStage()
@@ -161,12 +160,11 @@ void StageEditor::DrawSaveStagePopup()
 				}
 				else
 				{
-					// 新しい名前で保存
-					m_currentStageName = stageName;
-
-					SaveStage();
-
-					ImGui::CloseCurrentPopup();
+					if (SaveStage(stageName))
+					{
+						m_currentStageName = stageName;
+						ImGui::CloseCurrentPopup();
+					}
 				}
 			}
 		}
@@ -210,11 +208,11 @@ void StageEditor::DrawOverwritePopup()
 
 		if (ImGui::Button("Yes"))
 		{
-			m_currentStageName =
-				m_saveStageName;
+			const std::string stageName = m_saveStageName;
 
-			if (SaveStage())
+			if (SaveStage(stageName))
 			{
+				m_currentStageName = stageName;
 				// OverwritePopupを閉じる
 				ImGui::CloseCurrentPopup();
 
@@ -235,16 +233,19 @@ void StageEditor::DrawOverwritePopup()
 }
 bool StageEditor::LoadStage(const std::string& stageName)
 {
-
-	ClearStage();
-
-	// 指定のフォルダーパス
-	std::filesystem::path stageFolder =std::filesystem::path("Asset/Data/Stage") / stageName;
+	const std::filesystem::path stageFolder = GetStageFolder(stageName);
 
 	// ステージデータ
-	std::filesystem::path stageDataPath =stageFolder / "StageData.json";
+	const std::filesystem::path stageDataPath = stageFolder / "StageData.json";
 	// ウェイポイントデータ
-	std::filesystem::path wayPointDataPath =stageFolder / "WayPointData.json";
+	const std::filesystem::path wayPointDataPath = stageFolder / "WayPointData.json";
+
+	// 読込失敗で現在の編集内容を消さないよう、先に必要ファイルを確認する
+	if (!std::filesystem::exists(stageDataPath) ||
+		!std::filesystem::exists(wayPointDataPath))
+	{
+		return false;
+	}
 
 
 	std::ifstream file(stageDataPath);
@@ -267,10 +268,13 @@ bool StageEditor::LoadStage(const std::string& stageName)
 		return false;
 	}
 
-	if (!stageJson.contains("Objects") ||!stageJson["Objects"].is_array())
+	if (!stageJson.contains("Objects") || !stageJson["Objects"].is_array())
 	{
 		return false;
 	}
+
+	// ファイルとJSON形式を確認できてから現在の編集対象を消す
+	ClearStage();
 
 	// オブジェクトを生成
 	for (const auto& objectJson : stageJson["Objects"])
@@ -286,7 +290,7 @@ bool StageEditor::LoadStage(const std::string& stageName)
 			continue;
 		}
 
-		std::string className = objectJson["Class"].get<std::string>();
+		const std::string className = objectJson["Class"].get<std::string>();
 		auto obj = KdGameObjectFactory::Instance().CreateGameObject(className);
 
 		if (!obj)
@@ -296,7 +300,7 @@ bool StageEditor::LoadStage(const std::string& stageName)
 
 		obj->Init();
 		// 名前読込
-		std::string name = objectJson["Name"];
+		const std::string name = objectJson["Name"];
 		obj->SetObjectName(name);
 
 		// 座標読込
@@ -332,9 +336,194 @@ bool StageEditor::LoadStage(const std::string& stageName)
 		return false;
 	}
 
+	
 	m_currentStageName = stageName;
 
 	return true;
+}
+void StageEditor::RefreshStageList()
+{
+	m_stageNames.clear();
+
+	const std::filesystem::path stageRoot = "Asset/Data/Stage";
+
+	if (!std::filesystem::exists(stageRoot))
+	{
+		return;
+	}
+
+	for (const auto& entry : std::filesystem::directory_iterator(stageRoot))
+	{
+		if (!entry.is_directory())
+		{
+			continue;
+		}
+
+		const auto stageDataPath = entry.path() / "StageData.json";
+
+		// StageData.jsonが存在するフォルダーだけ表示する
+		if (!std::filesystem::exists(stageDataPath))
+		{
+			continue;
+		}
+		m_stageNames.push_back(entry.path().filename().string());
+	}
+
+	// ファイルシステムの列挙順に依存しないよう並べ替える
+	std::sort(m_stageNames.begin(), m_stageNames.end());
+
+}
+void StageEditor::DrawOpenStagePopup()
+{
+	if (ImGui::BeginPopupModal(
+		"OpenStagePopup", 
+		nullptr, 
+		ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Select Stage");
+
+		ImGui::Separator();
+
+		if (m_stageNames.empty())
+		{
+			ImGui::TextDisabled("No saved stages were found.");
+		}
+
+		for (const auto& stageName : m_stageNames)
+		{
+			const bool isCurrentStage = stageName == m_currentStageName;
+
+			ImGui::PushID(stageName.c_str());
+
+			if (ImGui::Selectable(stageName.c_str(), isCurrentStage))
+			{
+				RequestLoadStage(stageName);
+			}
+
+			ImGui::PopID();
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::Button("Refresh"))
+		{
+			RefreshStageList();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel"))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+
+		if (m_closeOpenStagePopup)
+		{
+			m_closeOpenStagePopup = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+}
+void StageEditor::RequestLoadStage(const std::string & stageName)
+{
+	if (stageName.empty())
+	{
+		return;
+	}
+
+	// 現在開いているステージを再度選んだ場合
+	if (stageName == m_currentStageName)
+	{
+		return;
+	}
+
+	m_pendingLoadStageName = stageName;
+
+	// 現在のステージがなければ、そのままロードする
+	if (m_currentStageName.empty())
+	{
+		if (LoadStage(m_pendingLoadStageName))
+		{
+			m_pendingLoadStageName.clear();
+			m_closeOpenStagePopup = true;
+		}
+
+		return;
+	}
+
+	// Popup描画の外側で保存確認を開くための要求
+	m_requestLoadConfirmation = true;
+}
+
+
+void StageEditor::DrawLoadConfirmationPopup()
+{
+	if (m_requestLoadConfirmation)
+	{
+		ImGui::OpenPopup("LoadConfirmationPopup");
+		m_requestLoadConfirmation = false;
+	}
+
+	if (ImGui::BeginPopupModal(
+		"LoadConfirmationPopup",
+		nullptr,
+		ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text(
+			"Save the current stage before loading?");
+
+		ImGui::Text(
+			"Current : %s",
+			m_currentStageName.c_str());
+
+		ImGui::Text(
+			"Load    : %s",
+			m_pendingLoadStageName.c_str());
+
+		ImGui::Separator();
+
+		if (ImGui::Button("Save and Load"))
+		{
+			// 現在のステージを保存できた場合だけロードする
+			if (SaveStage(m_currentStageName))
+			{
+				if (LoadStage(m_pendingLoadStageName))
+				{
+					m_pendingLoadStageName.clear();
+					m_closeOpenStagePopup = true;
+
+					ImGui::CloseCurrentPopup();
+				}
+			}
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Don't Save"))
+		{
+			if (LoadStage(m_pendingLoadStageName))
+			{
+				m_pendingLoadStageName.clear();
+				m_closeOpenStagePopup = true;
+
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel"))
+		{
+			m_pendingLoadStageName.clear();
+
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
 }
 void StageEditor::DrawNewStagePopup()
 {
@@ -344,7 +533,7 @@ void StageEditor::DrawNewStagePopup()
 		ImGui::Text("Stage Name");
 
 
-		if (ImGui::InputText("##StageName", m_newStageName, sizeof(m_newStageName)));
+		ImGui::InputText("##StageName", m_newStageName, sizeof(m_newStageName));
 
 
 		if (ImGui::Button("Create"))
@@ -365,8 +554,7 @@ void StageEditor::DrawNewStagePopup()
 
 void StageEditor::ClearStage()
 {
-
-	// 選択中のオブジェクトを空にする
+	// 選択中のオブジェクトへの参照を先に解除する
 	EditorManager::Instance().SetSelectedObject(nullptr);
 
 	// WayPointをクリア
@@ -380,11 +568,18 @@ void StageEditor::ClearStage()
 			continue;
 		}
 
-		if (obj->GetObjectName() == "EditorCamera")
+		// Category::NoneはEditorCameraなど、ステージ保存対象外のオブジェクト
+		if (obj->GetObjectCategory() == KdGameObject::ObjectCategory::None||
+			obj->GetObjectCategory()==KdGameObject::ObjectCategory::Camera)
 		{
 			continue;
 		}
 
 		obj->Destroy();
 	}
+}
+
+std::filesystem::path StageEditor::GetStageFolder(const std::string& stageName) const
+{
+	return std::filesystem::path("Asset/Data/Stage") / stageName;
 }

@@ -1,5 +1,8 @@
 ﻿#include "CameraBase.h"
 
+#include"../../GameObject/Character/Player/Player.h"
+#include"../../System/GameObjectFinder/GameObjectFinder.h"
+
 void CameraBase::Init()
 {
 	if (!m_spCamera)
@@ -19,11 +22,12 @@ void CameraBase::PreDraw()
 	m_spCamera->SetToShader();
 }
 
-void CameraBase::SetTarget(const std::shared_ptr<KdGameObject>& target)
+void CameraBase::SetUpReference()
 {
-	if (!target) { return; }
-
-	m_wpTarget = target;
+	if(!m_wpTarget.lock())
+	{
+		m_wpTarget = GameObjectFinder::Instance().FindObject<Player>();
+	}
 }
 
 void CameraBase::UpdateRotateByMouse()

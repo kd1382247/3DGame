@@ -1,13 +1,10 @@
 ﻿#include "Hierarchy.h"
 
-#include"../EditorManager.h"
-#include"../../Scene/SceneManager.h"
-#include<ranges>
-
-#include"../../../Framework/GameObject/KdGameObjectFactory.h"
-#include"../../System/PathFinding/WayPointManager.h"
+#include "../EditorManager.h"
+#include "../../Scene/SceneManager.h"
+#include "../../../Framework/GameObject/KdGameObjectFactory.h"
+#include "../../System/PathFinding/WayPointManager.h"
 #include"../../System/PathFinding/WayPoint/WayPoint.h"
-
 
 void Hierarchy::Draw()
 {
@@ -17,7 +14,7 @@ void Hierarchy::Draw()
 	{
 		m_category = HierarchyCategory::GameObject;
 	}
-	
+
 	ImGui::SameLine();
 
 	if (ImGui::Button("WayPoint"))
@@ -32,23 +29,18 @@ void Hierarchy::Draw()
 		m_category = HierarchyCategory::Stage;
 	}
 
-
-
 	switch (m_category)
 	{
-	case Hierarchy::HierarchyCategory::GameObject:
+	case HierarchyCategory::GameObject:
 		DrawGameObjects();
 		break;
-	case Hierarchy::HierarchyCategory::WayPoint:
+	case HierarchyCategory::WayPoint:
 		DrawWayPoints();
 		break;
-	case Hierarchy::HierarchyCategory::Stage:
+	case HierarchyCategory::Stage:
 		DrawStage();
 		break;
-
 	}
-
-
 	ImGui::End();
 }
 
@@ -62,30 +54,12 @@ void Hierarchy::DrawGameObjects()
 
 	if (ImGui::BeginPopup("AddObjectPopup"))
 	{
-		const auto& createFanctions = KdGameObjectFactory::Instance().GetCreateFunctions();
-		AddObject(createFanctions, KdGameObject::ObjectCategory::Character);
-
+		DrawAddObjectList(KdGameObject::ObjectCategory::Character);
 		ImGui::EndPopup();
 	}
 
-
 	ImGui::Text("--------GameObjects--------");
-
-	// どのオブジェクトを選択しているか
-	for (auto& obj : SceneManager::Instance().GetObjList())
-	{
-
-		if (!obj)
-		{
-			continue;
-		}
-		// 敵、プレイヤーのみを表示
-		if (obj->GetObjectCategory() == KdGameObject::ObjectCategory::Character)
-		{
-			SelectObject(obj);
-		}
-	}
-
+	DrawObjectList(KdGameObject::ObjectCategory::Character);
 }
 
 void Hierarchy::DrawWayPoints()
@@ -93,12 +67,12 @@ void Hierarchy::DrawWayPoints()
 
 	// ウェイポイントを新規作成
 	if (ImGui::Button("Add WayPoint"))
-	{	
+	{
 		auto wayPoint = WayPointManager::Instance().CreateWayPoint();
 
 		if (wayPoint)
 		{
-			WayPointManager::Instance().RegisterWayPoint(wayPoint);
+			// CreateWayPoint()内でManagerへの登録まで完了している
 			EditorManager::Instance().SetSelectedObject(wayPoint);
 		}
 	}
@@ -106,7 +80,7 @@ void Hierarchy::DrawWayPoints()
 	ImGui::Text("----------WayPoints----------");
 
 	// どのオブジェクトを選択しているか
-	for (auto& wayPoint : WayPointManager::Instance().GetWayPoints())
+	for (const auto& wayPoint : WayPointManager::Instance().GetWayPoints())
 	{
 		if (!wayPoint)
 		{
@@ -128,10 +102,7 @@ void Hierarchy::DrawStage()
 
 	if (ImGui::BeginPopup("AddStagePopup"))
 	{
-		const auto& createFanctions = KdGameObjectFactory::Instance().GetCreateFunctions();
-		// オブジェクト生成
-		AddObject(createFanctions, KdGameObject::ObjectCategory::Stage);
-
+		DrawAddObjectList(KdGameObject::ObjectCategory::Stage);
 		ImGui::EndPopup();
 	}
 
@@ -145,51 +116,29 @@ void Hierarchy::DrawStage()
 
 	if (ImGui::BeginPopup("AddGimmickPopup"))
 	{
-		const auto& createFanctions = KdGameObjectFactory::Instance().GetCreateFunctions();
-		// オブジェクト生成
-		AddObject(createFanctions, KdGameObject::ObjectCategory::Gimmick);
-
+		DrawAddObjectList(KdGameObject::ObjectCategory::Gimmick);
 		ImGui::EndPopup();
 	}
 
 	ImGui::Text("-----------Stage-----------");
-
-	// どのオブジェクトを選択しているか
-	for (auto& obj : SceneManager::Instance().GetObjList())
-	{
-		if (!obj)
-		{
-			continue;
-		}
-		if (obj->GetObjectCategory() == KdGameObject::ObjectCategory::Stage)
-		{
-			SelectObject(obj);
-		}
-	}
+	DrawObjectList(KdGameObject::ObjectCategory::Stage);
 
 	ImGui::Text("----------Gimmicks----------");
-	// どのオブジェクトを選択しているか
-	for (auto& obj : SceneManager::Instance().GetObjList())
-	{
-		if (!obj)
-		{
-			continue;
-		}
-		if (obj->GetObjectCategory() == KdGameObject::ObjectCategory::Gimmick)
-		{
-			SelectObject(obj);
-		}
-	}
+	DrawObjectList(KdGameObject::ObjectCategory::Gimmick);
 }
 
-void Hierarchy::AddObject(const auto& createFanctions, const KdGameObject::ObjectCategory objectCategory)
+void Hierarchy::DrawAddObjectList(KdGameObject::ObjectCategory objectCategory)
 {
-	for (const auto& [name, entory] : createFanctions)
+	const auto& createFunctions =
+		KdGameObjectFactory::Instance().GetCreateFunctions();
+
+	for (const auto& [name, entry] : createFunctions)
 	{
-		if (entory.category !=objectCategory )
+		if (entry.category != objectCategory)
 		{
 			continue;
 		}
+
 		if (ImGui::Selectable(
 			name.c_str(),
 			false,
@@ -201,7 +150,20 @@ void Hierarchy::AddObject(const auto& createFanctions, const KdGameObject::Objec
 	}
 }
 
-void Hierarchy::SelectObject(const std::shared_ptr<KdGameObject>&obj)
+void Hierarchy::DrawObjectList(KdGameObject::ObjectCategory objectCategory)
+{
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (!obj || obj->GetObjectCategory() != objectCategory)
+		{
+			continue;
+		}
+
+		SelectObject(obj);
+	}
+}
+
+void Hierarchy::SelectObject(const std::shared_ptr<KdGameObject>& obj)
 {
 	ImGui::PushID(obj.get());
 

@@ -1,13 +1,10 @@
 ﻿#include "WayPoint.h"
 
-#include"../WayPointManager.h"
+#include "../WayPointManager.h"
 
 void WayPoint::Init()
 {
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
-
-
-
 }
 
 void WayPoint::DrawDebug()
@@ -28,7 +25,7 @@ void WayPoint::DrawInspector()
 	// 接続先一覧
 	if (ImGui::Button("LinkList"))
 	{
-		if(!m_linkIDs.empty())
+		if (!m_linkIDs.empty())
 		{
 			ImGui::OpenPopup("LinkListPopup");
 		}
@@ -38,8 +35,10 @@ void WayPoint::DrawInspector()
 	{
 		for (int id : m_linkIDs)
 		{
-			std::string wayPointName = "WayPoint_" + std::to_string(id);
-			ImGui::Text(wayPointName.c_str());
+			const std::string wayPointName =
+				"WayPoint_" + std::to_string(id);
+
+			ImGui::Text("%s", wayPointName.c_str());
 		}
 		ImGui::EndPopup();
 	}
@@ -48,56 +47,64 @@ void WayPoint::DrawInspector()
 	ImGui::Text("Connection");
 
 	// 接続関係を設定
-	for (const auto& wayPoints : WayPointManager::Instance().GetWayPoints())
+	for (const auto& wayPoint : WayPointManager::Instance().GetWayPoints())
 	{
-		if (!wayPoints)
+		if (!wayPoint)
 		{
 			continue;
 		}
 
 		// 自分自身は表示しない
-		if (wayPoints->GetID() == GetID())
+		if (wayPoint->GetID() == GetID())
 		{
 			continue;
 		}
 
-		bool hasLink = HasLink(wayPoints->GetID());
-		if (ImGui::Checkbox(wayPoints->GetObjectName().c_str(), &hasLink))
+		bool hasLink = HasLink(wayPoint->GetID());
+
+		// 同名WayPointがあってもImGui上の項目を区別できるようIDを付ける
+		ImGui::PushID(wayPoint->GetID());
+
+		if (ImGui::Checkbox(wayPoint->GetObjectName().c_str(), &hasLink))
 		{
 			if (hasLink)
 			{
 				// 双方向に接続
-				WayPointManager::Instance().Connect(GetID(), wayPoints->GetID());
+				WayPointManager::Instance().Connect(GetID(), wayPoint->GetID());
 			}
 			else
 			{
 				// 双方向接続解除
-				WayPointManager::Instance().Disconnect(GetID(), wayPoints->GetID());
+				WayPointManager::Instance().Disconnect(GetID(), wayPoint->GetID());
 			}
 		}
+
+		ImGui::PopID();
 	}
 }
 
-void WayPoint::AddLink(int id)
+bool WayPoint::AddLink(int id)
 {
 	// 自分自身には接続しない
 	if (id == m_id)
 	{
-		return;
+		return false;
 	}
 
 	// 同じIDを重複登録しない
 	if (HasLink(id))
 	{
-		return;
+		return false;
 	}
 
 	m_linkIDs.push_back(id);
+
+	return true;
 }
 
-void WayPoint::RemoveLink(int id)
+bool WayPoint::RemoveLink(int id)
 {
-	std::erase(m_linkIDs, id);
+	return std::erase(m_linkIDs, id) > 0;
 }
 
 bool WayPoint::HasLink(int id) const

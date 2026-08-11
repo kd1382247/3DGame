@@ -1,5 +1,9 @@
 ﻿#include "EnemyBase.h"
 
+#include"../../../System/GameObjectFinder/GameObjectFinder.h"
+
+#include"../Player/Player.h"
+
 void EnemyBase::Init()
 {
 	// カテゴリーをセット
@@ -19,4 +23,9 @@ void EnemyBase::PostUpdate()
 void EnemyBase::DrawInspector()
 {
 	CharacterBase::DrawInspector();
+}
+
+void EnemyBase::SetUpReference()
+{
+	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
 }

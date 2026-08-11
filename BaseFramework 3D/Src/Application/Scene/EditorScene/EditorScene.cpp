@@ -64,41 +64,18 @@ void EditorScene::Event()
 
 	////// 現在のオブジェクト数をデバッグ
 	KdDebugGUI::Instance().ClearLog();
-	KdDebugGUI::Instance().AddLog("object%d", WayPointManager::Instance().GetWayPoints().size());
+	KdDebugGUI::Instance().AddLog("object%d", GetObjList().size());
 
 	m_spEditorCamera->Update();
 }
 
 void EditorScene::Init()
 {
-	//===================================================================
-	// ステージ初期化
-	//===================================================================
-	std::shared_ptr<Ground>_ground = std::make_shared<Ground>();
-	_ground->Init();
-	AddObject(_ground);
 
-	std::shared_ptr<Box>_box = std::make_shared<Box>();
-	_box->Init();
-	AddObject(_box);
-
-	//===================================================================
-	// キャラクター初期化
-	//===================================================================
-	std::shared_ptr<Player> _player = std::make_shared<Player>();
-	_player->Init();
-	AddObject(_player);
-
-	//===================================================================
-	// カメラ初期化
-	//===================================================================
 	m_camera = std::make_shared<TPSCamera>();
 	m_camera->Init();
-	m_camera->SetTarget(_player);
 	AddObject(m_camera);
 
 	m_spEditorCamera = std::make_shared<EditorCamera>();
 	m_spEditorCamera->Init();
-
-	_player->SetCamera(m_camera);
 }

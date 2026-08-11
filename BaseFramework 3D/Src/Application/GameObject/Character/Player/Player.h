@@ -24,11 +24,6 @@ public:
 
 	void DrawLit()override;
 
-	void SetCamera(const std::shared_ptr<CameraBase>& _camera)
-	{
-		m_wpCamera = _camera;
-	}
-
 	void DrawInspector()override;
 
 private:

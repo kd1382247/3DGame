@@ -1,14 +1,14 @@
 ﻿#include "Inspector.h"
 
-#include"../EditorManager.h"
-
-#include"../../Scene/SceneManager.h"
+#include "../EditorManager.h"
+#include "../../System/PathFinding/WayPointManager.h"
+#include "../../System/PathFinding/WayPoint/WayPoint.h"
 
 void Inspector::Draw()
 {
 	ImGui::Begin("Inspector");
 
-	auto& obj = EditorManager::Instance().GetSelectedObject();
+	const auto& obj = EditorManager::Instance().GetSelectedObject();
 
 	if (!obj)
 	{
@@ -21,22 +21,30 @@ void Inspector::Draw()
 	ImGui::SameLine();
 
 	// 現在選択中のオブジェクト名表示
-	ImGui::Text(obj->GetObjectName().c_str());
+	ImGui::Text("%s", obj->GetObjectName().c_str());
 
 	obj->DrawInspector();
 
-	Delete(obj);
-	
+	DrawDeleteButton(obj);
 
 	ImGui::End();
 }
 
-void Inspector::Delete(const std::shared_ptr<KdGameObject>& obj)
+void Inspector::DrawDeleteButton(const std::shared_ptr<KdGameObject>& obj)
 {
-	// オブジェクト削除
-	if (ImGui::Button("Delete"))
+	if (!ImGui::Button("Delete"))
 	{
-		obj->Destroy();
-		EditorManager::Instance().SetSelectedObject(nullptr);
+		return;
 	}
+
+	// 選択参照を先に解除し、Inspectorが削除対象を保持し続けないようにする
+	EditorManager::Instance().SetSelectedObject(nullptr);
+
+	if (const auto wayPoint = std::dynamic_pointer_cast<WayPoint>(obj))
+	{
+		WayPointManager::Instance().RemoveWayPoint(wayPoint->GetID());
+		return;
+	}
+
+	obj->Destroy();
 }

@@ -24,11 +24,8 @@ public:
 
 	void DrawInspector()override;
 
-	void SetPlayer(std::shared_ptr<Player>_player)
-	{
-		m_wpPlayer = _player;
-	}
 
+	void SetUpReference()override;
 
 protected:
 

@@ -1,19 +1,22 @@
 ﻿#include "ReferenceManager.h"
 
-void ReferenceManager::AssociateClass()
-{
 
-	for (auto& obj : m_referenceList)
+
+void ReferenceManager::AssociateObject(const std::shared_ptr<KdGameObject>& obj)
+{
+	if (!obj)
 	{
-		if (!obj)
-		{
-			continue;
-		}
-		// 必要に応じて関連付けを行う
-		obj->SetUpReference();
+		return;
 	}
 
-	// 関連付を終えた後は配列をクリアする
-	m_referenceList.clear();
+	obj->SetUpReference();
 
+}
+
+void ReferenceManager::AssociateObjects(const std::list<std::shared_ptr<KdGameObject>>& objList)
+{
+	for (const auto& obj : objList)
+	{
+		AssociateObject(obj);
+	}
 }
