@@ -27,6 +27,8 @@ void Slime::Init()
 		SetObjectName("Slime");
 	}
 
+	EnemyBase::Init();
+
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
 
@@ -48,9 +50,9 @@ void Slime::PostUpdate()
 
 }
 
-void Slime::DrawInspecter()
+void Slime::DrawInspector()
 {
-	EnemyBase::DrawInspecter();
+	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
 }

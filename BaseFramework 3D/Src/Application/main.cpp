@@ -216,6 +216,8 @@ bool Application::Init(int w, int h)
 	//ShowCursor(false);
 
 	return true;
+
+
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -317,6 +319,9 @@ void Application::Execute()
 		//=========================================
 
 		m_fpsController.Update();
+
+		std::string titleBar = "Game FPS:" + std::to_string(m_fpsController.m_nowfps);
+		SetWindowTextA(m_window.GetWndHandle(), titleBar.c_str());
 	}
 
 	//===================================================================

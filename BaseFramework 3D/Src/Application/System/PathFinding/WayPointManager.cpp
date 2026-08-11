@@ -15,22 +15,24 @@ void WayPointManager::RegisterWayPoint(const std::shared_ptr<WayPoint>& point)
 		return;
 	}
 
-	m_wpWayPoints.push_back(point);
+	m_spWayPoints.push_back(point);
 
 }
 
 void WayPointManager::Unregister(int id)
-{}
+{
+
+}
 
 void WayPointManager::Clear()
 {
-	//m_wpWayPoints.clear();
+	m_spWayPoints.clear();
 }
 
 std::shared_ptr<WayPoint> WayPointManager::FindByID(int id) const
 {
 	// 指定されたIDを検索、見つかればそのWayPointを返す
-	for (const auto& weakPoint : m_wpWayPoints)
+	for (const auto& weakPoint : m_spWayPoints)
 	{
 		auto point = weakPoint;
 
@@ -58,7 +60,7 @@ std::shared_ptr<WayPoint> WayPointManager::FindNearest(const Math::Vector3& pos)
 
 
 	// 1個ずつWayPointを確認する
-	for (const auto& weakPoint : m_wpWayPoints)
+	for (const auto& weakPoint : m_spWayPoints)
 	{
 		auto point = weakPoint;
 
@@ -292,7 +294,7 @@ int WayPointManager::GetNextWayPointID() const
 {
 	int maxID = -1;
 
-	for (const auto& wayPoint : m_wpWayPoints)
+	for (const auto& wayPoint : m_spWayPoints)
 	{
 		if (!wayPoint)
 		{
@@ -313,7 +315,7 @@ void WayPointManager::Init()
 void WayPointManager::DrawDebug()
 {
 	
-	for (const auto& weakPoint : m_wpWayPoints)
+	for (const auto& weakPoint : m_spWayPoints)
 	{
 		auto point = weakPoint;
 
@@ -345,6 +347,147 @@ void WayPointManager::DrawDebug()
 	}
 
 	m_pDebugWire->Draw();
+}
+
+bool WayPointManager::Save(const std::string& filePath)
+{
+
+	nlohmann::json rootJson;
+	rootJson["WayPoints"] = nlohmann::json::array();
+
+	for (const auto& wayPoint : m_spWayPoints)
+	{
+		if (!wayPoint)
+		{
+			continue;
+		}
+
+		nlohmann::json wayPointJson;
+
+		wayPointJson["ID"] = wayPoint->GetID();
+
+		wayPointJson["Name"] = wayPoint->GetObjectName();
+
+		const auto& pos = wayPoint->GetPos();
+
+		wayPointJson["Position"]["x"] = pos.x;
+		wayPointJson["Position"]["y"] = pos.y;
+		wayPointJson["Position"]["z"] = pos.z;
+
+		wayPointJson["Links"] = wayPoint->GetLinks();
+
+		rootJson["WayPoints"].push_back(wayPointJson);
+	}
+
+	std::ofstream file(filePath);
+
+	if (!file.is_open())
+	{
+		OutputDebugStringA("WayPointDataの保存に失敗しました\n");
+
+		return false;
+	}
+
+	file << rootJson.dump(4);
+
+	return true;
+}
+
+bool WayPointManager::Load(const std::string& filePath)
+{
+	
+	std::ifstream file(filePath);
+
+	if (!file.is_open())
+	{
+		OutputDebugStringA(
+			"WayPointDataを開けませんでした\n"
+		);
+
+		return false;
+	}
+
+	nlohmann::json rootJson;
+
+	try
+	{
+		file >> rootJson;
+	}
+	catch (const nlohmann::json::exception& e)
+	{
+		OutputDebugStringA(
+			"WayPointDataの読み込みに失敗しました\n"
+		);
+
+		OutputDebugStringA(e.what());
+		OutputDebugStringA("\n");
+
+		return false;
+	}
+		
+	if (!rootJson.contains("WayPoints") ||
+		!rootJson["WayPoints"].is_array())
+	{
+		OutputDebugStringA(
+			"WayPoints配列がありません\n"
+		);
+
+		return false;
+	}
+
+
+	// 既存のWayPointを消す
+	Clear();
+
+	// Jsonに保存されてる情報でWayPointを生成
+	for (const auto& wpJson : rootJson["WayPoints"])
+	{
+	
+		auto obj = KdGameObjectFactory::Instance().CreateGameObject("WayPoint");
+
+		auto wayPoint = std::dynamic_pointer_cast<WayPoint>(obj);
+
+		if(!wayPoint)
+		{ 
+			continue;
+		}
+
+		wayPoint->Init();
+		// ID
+		wayPoint->SetID(wpJson["ID"].get<int>());
+		//Name
+		wayPoint->SetObjectName(wpJson["Name"].get<std::string>());
+		//Position
+		wayPoint->SetPos({
+			wpJson["Position"]["x"].get<float>(),
+			wpJson["Position"]["y"].get<float>(),
+			wpJson["Position"]["z"].get<float>() 
+			});
+
+		// WayPointsに登録
+		RegisterWayPoint(wayPoint);
+		
+	}
+
+	// 接続設定
+	for (auto& wpJson : rootJson["WayPoints"])
+	{
+		int id = wpJson["ID"].get<int>();
+
+		// IDからWayPointを探す
+		auto wayPoint = FindByID(id);
+
+		if (!wayPoint)
+		{
+			continue;
+		}
+
+		for (const auto& linkJson : wpJson["Links"])
+		{
+			int linkID = linkJson.get<int>();
+			wayPoint->AddLink(linkID);
+		}
+	}
 }
 
 float WayPointManager::CalculateHeuristic(const WayPoint& current, const WayPoint& goal) const

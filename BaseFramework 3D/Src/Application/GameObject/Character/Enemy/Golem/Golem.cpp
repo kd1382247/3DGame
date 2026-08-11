@@ -25,6 +25,7 @@ void Golem::Init()
 		// オブジェクト名セット
 		SetObjectName("Golem");
 	}
+	EnemyBase::Init();
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
@@ -47,9 +48,9 @@ void Golem::PostUpdate()
 
 }
 
-void Golem::DrawInspecter()
+void Golem::DrawInspector()
 {
-	EnemyBase::DrawInspecter();
+	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
 }

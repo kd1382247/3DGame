@@ -10,6 +10,9 @@ void TPSCamera::Init()
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 
+
+	SetObjectCategory(ObjectCategory::Camera);
+
 	// オブジェクト名セット
 	SetObjectName("TPSCamera");
 }

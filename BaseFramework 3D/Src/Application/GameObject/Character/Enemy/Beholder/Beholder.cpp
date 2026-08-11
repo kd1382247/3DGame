@@ -26,8 +26,10 @@ void Beholder::Init()
 		SetObjectName("Beholder");
 	}
 
-	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
+	EnemyBase::Init();
+
+	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
 	SetPos({ 0,0,5 });
 
@@ -48,9 +50,9 @@ void Beholder::PostUpdate()
 
 }
 
-void Beholder::DrawInspecter()
+void Beholder::DrawInspector()
 {
-	EnemyBase::DrawInspecter();
+	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
 }

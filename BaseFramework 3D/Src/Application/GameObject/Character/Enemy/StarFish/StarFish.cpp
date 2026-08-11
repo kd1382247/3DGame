@@ -27,6 +27,8 @@ void StarFish::Init()
 		SetObjectName("StarFish");
 	}
 
+	EnemyBase::Init();
+
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
 
@@ -48,10 +50,10 @@ void StarFish::PostUpdate()
 
 }
 
-void StarFish::DrawInspecter()
+void StarFish::DrawInspector()
 {
 
-	EnemyBase::DrawInspecter();
+	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
 

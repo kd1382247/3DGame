@@ -1,7 +1,9 @@
 ﻿#pragma once
 
-#include"Hierarchy/EditorHierarchy.h"
-#include"EditorInspector/EditorInspector.h"
+#include"Hierarchy/Hierarchy.h"
+#include"Inspector/Inspector.h"
+#include"StageEditor/StageEditor.h"
+
 
 class EditorManager
 {
@@ -59,8 +61,6 @@ public:
 		return m_spSelectedObject;
 	}
 
-	void SaveScene();
-
 	void LoadScene();
 
 
@@ -68,10 +68,11 @@ private:
 
 	std::shared_ptr<KdGameObject>m_spSelectedObject;
 	
-	EditorHierarchy     m_hierarchy;
-	EditorInspector     m_inspector;
+	Hierarchy     m_hierarchy;
+	Inspector     m_inspector;
 
-	
+	StageEditor   m_stageEditor;
+
 	EditorMode          m_editorMode = EditorMode::Edit;
 	//EditorCategory      m_editorCategory=EditorCategory::Stage;
 

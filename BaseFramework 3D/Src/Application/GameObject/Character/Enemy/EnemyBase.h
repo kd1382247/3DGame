@@ -22,7 +22,7 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-	void DrawInspecter()override;
+	void DrawInspector()override;
 
 	void SetPlayer(std::shared_ptr<Player>_player)
 	{

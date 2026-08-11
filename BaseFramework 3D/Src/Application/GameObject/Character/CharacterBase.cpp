@@ -42,9 +42,9 @@ void CharacterBase::GenerateDepthMapFromLight()
 	}
 }
 
-void CharacterBase::DrawInspecter()
+void CharacterBase::DrawInspector()
 {
-	KdGameObject::DrawInspecter();
+	KdGameObject::DrawInspector();
 
 	ImGui::Text("----------Parameter----------");
 }
@@ -81,9 +81,12 @@ void CharacterBase::UpdateBumpCollision()
 			// ③ 結果を使って座標を補完する
 			for (auto& ret : retBumpList)
 			{
-				ret.m_hitDir.y = 0.0f;
+				
+
+
 				Math::Vector3 newPos = GetPos() + (ret.m_hitDir * ret.m_overlapDistance);
 				SetPos(newPos);
+
 			}
 		}
 	}

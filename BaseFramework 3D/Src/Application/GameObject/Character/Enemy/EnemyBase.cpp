@@ -2,7 +2,8 @@
 
 void EnemyBase::Init()
 {
-
+	// カテゴリーをセット
+	SetObjectCategory(ObjectCategory::Character);
 }
 
 void EnemyBase::Update()
@@ -15,7 +16,7 @@ void EnemyBase::PostUpdate()
 	CharacterBase::PostUpdate();
 }
 
-void EnemyBase::DrawInspecter()
+void EnemyBase::DrawInspector()
 {
-	CharacterBase::DrawInspecter();
+	CharacterBase::DrawInspector();
 }

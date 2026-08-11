@@ -79,7 +79,7 @@ bool KdGameObject::Intersects(const KdCollider::RayInfo& targetShape, std::list<
 	return m_pCollider->Intersects(targetShape, m_mWorld, pResults);
 }
 
-void KdGameObject::DrawInspecter()
+void KdGameObject::DrawInspector()
 {
 
 	// オブジェクトの名前変更
@@ -128,7 +128,7 @@ nlohmann::json KdGameObject::SaveData() const
 
 	json["Class"] = GetObjectName();
 
-	json["Name"] = m_objectName;
+	json["Name"] = GetObjectName();
 
 	Math::Vector3 pos = GetPos();
 

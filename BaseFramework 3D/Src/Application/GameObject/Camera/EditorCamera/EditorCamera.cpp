@@ -4,6 +4,8 @@ void EditorCamera::Init()
 {
 	CameraBase::Init();
 	
+	SetObjectCategory(ObjectCategory::None);
+
 	m_mWorld = Math::Matrix::CreateTranslation(Math::Vector3(0.0f, 5.0f, -10.0f));
 }
 

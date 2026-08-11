@@ -10,10 +10,9 @@ public:
 
 
 	void Init()override;
-	void Update()override;
 	void DrawDebug()override;
 
-	void DrawInspecter()override;
+	void DrawInspector()override;
 
 	int GetID()const { return m_id; }
 	void SetID(int id) { m_id = id; }

@@ -10,13 +10,14 @@ void Box::Init()
 		m_spModel->Load("Asset/Models/Terrains/Box.gltf");
 
 		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape("Box", m_spModel,KdCollider::TypeGround|KdCollider::TypeBump);
+		m_pCollider->RegisterCollisionShape("Box", m_spModel,KdCollider::TypeBump| KdCollider::TypeGround);
 
 	}
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Ground, shared_from_this());
 
+	SetObjectCategory(ObjectCategory::Gimmick);
 
 	// オブジェクト名セット
 	SetObjectName("Box");

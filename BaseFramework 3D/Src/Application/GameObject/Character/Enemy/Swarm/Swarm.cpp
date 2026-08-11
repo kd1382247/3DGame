@@ -27,6 +27,8 @@ void Swarm::Init()
 		SetObjectName("Swarm");
 	}
 
+	EnemyBase::Init();
+
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
 
@@ -48,9 +50,9 @@ void Swarm::PostUpdate()
 
 }
 
-void Swarm::DrawInspecter()
+void Swarm::DrawInspector()
 {
-	EnemyBase::DrawInspecter();
+	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
 }

@@ -1,0 +1,67 @@
+{
+    "WayPoints": [
+        {
+            "ID": 0,
+            "Links": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "Name": "WayPoint_0",
+            "Position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "ID": 1,
+            "Links": [
+                0
+            ],
+            "Name": "WayPoint_1",
+            "Position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "ID": 2,
+            "Links": [
+                0
+            ],
+            "Name": "WayPoint_2",
+            "Position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "ID": 3,
+            "Links": [
+                0
+            ],
+            "Name": "WayPoint_3",
+            "Position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "ID": 4,
+            "Links": [
+                0
+            ],
+            "Name": "WayPoint_4",
+            "Position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        }
+    ]
+}

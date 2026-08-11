@@ -6,18 +6,27 @@ class KdGameObjectFactory
 {
 public:
 
+	using CreateFunction = std::function <std::shared_ptr<KdGameObject>(void)>;
+
+	struct FactoryEntry
+	{
+		CreateFunction               createFunc;
+		KdGameObject::ObjectCategory category;
+	};
+
 	const auto& GetCreateFunctions()const
 	{
 		return m_createFunctions;
 	}
 
 	template<class T>
-	void Register(const std::string name)
+	void Register(const std::string name,KdGameObject::ObjectCategory category)
 	{
 		RegisterCreateFunction
 		(
 			name, 
-			[]() {return std::make_shared<T>(); }
+			[]() {return std::make_shared<T>(); },
+			category
 		);
 	}
 
@@ -43,13 +52,13 @@ private:
 
 	void Init();
 
-	void RegisterCreateFunction(const std::string_view, const std::function <std::shared_ptr<KdGameObject>(void)> func);
+	void RegisterCreateFunction(const std::string_view str, const CreateFunction func,const KdGameObject::ObjectCategory category);
 
 	// GameObjectのインスタンスリスト
 	std::list<std::shared_ptr<KdGameObject>> m_objects;
 
 	// GameObjectの生成関数
-	std::unordered_map<std::string, std::function<std::shared_ptr<KdGameObject>(void)>> m_createFunctions;
+	std::unordered_map<std::string, FactoryEntry> m_createFunctions;
 
 
 private:

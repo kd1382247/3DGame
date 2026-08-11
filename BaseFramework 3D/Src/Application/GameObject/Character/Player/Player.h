@@ -29,7 +29,7 @@ public:
 		m_wpCamera = _camera;
 	}
 
-	void DrawInspecter()override;
+	void DrawInspector()override;
 
 private:
 
@@ -79,7 +79,6 @@ private:
 
 	// カメラ
 	std::weak_ptr<CameraBase>m_wpCamera;
-
 	// アニメーションクラス
 	PlayerAnimation     m_animation;
 	// パラメータークラス

@@ -19,7 +19,7 @@ public:
 	void PostUpdate()override;
 
 
-	void DrawInspecter()override;
+	void DrawInspector()override;
 
 private:
 

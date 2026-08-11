@@ -12,19 +12,19 @@ void TurtleShellParameter::Init()
 void TurtleShellParameter::DrawInspecter()
 {
 	// HP
-	if (ImGui::DragInt("MaxHP", &m_param.m_maxHP, 1,0));
+	if (ImGui::DragInt("MaxHP", &m_param.m_maxHP, 1,0))
 	
 	// 攻撃力
-	if (ImGui::DragFloat("AttackPow", &m_param.m_attackPow, 1.0f,0.0f));
+	if (ImGui::DragFloat("AttackPow", &m_param.m_attackPow, 1.0f,0.0f))
 
 	// 移動スピード
-	if (ImGui::DragFloat("MoveSpeed", &m_param.m_moveSpeed, 0.01f,0.0f));
+	if (ImGui::DragFloat("MoveSpeed", &m_param.m_moveSpeed, 0.01f,0.0f))
 
 	//ジャンプパワー
-	if (ImGui::DragFloat("JumpPow", &m_param.m_jumpPow, 0.01f,0.0f));
+	if (ImGui::DragFloat("JumpPow", &m_param.m_jumpPow, 0.01f,0.0f))
 
 	// 回転速度
-	if (ImGui::DragFloat("TurnSpeed", &m_param.m_turnSpeed, 0.01f,0.0f));
+	if (ImGui::DragFloat("TurnSpeed", &m_param.m_turnSpeed, 0.01f,0.0f))
 
 	// セーブ
 	if(ImGui::Button("SaveToJson"))

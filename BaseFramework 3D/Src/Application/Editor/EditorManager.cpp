@@ -1,34 +1,24 @@
 ﻿#include "EditorManager.h"
 
-#include"../../Framework/GameObject/KdGameObjectFactory.h"
-
 #include"json.hpp"
-#include<fstream>
+
+#include"../../Framework/GameObject/KdGameObjectFactory.h"
 
 
 #include"../Scene/SceneManager.h"
 
 void EditorManager::Init()
 {
+
 }
 
 void EditorManager::Draw()
 {
 	ImGui::Begin("Menu");
 
+	m_stageEditor.Draw();
+
 	DrawMenu();
-
-	if (ImGui::Button("Save Scene"))
-	{
-		SaveScene();
-	}
-
-	ImGui::SameLine();
-
-	if (ImGui::Button("Load Scene"))
-	{
-		LoadScene();
-	}
 
 	ImGui::End();
 
@@ -62,29 +52,6 @@ void EditorManager::DrawMenu()
 		SetEditorMode(EditorMode::Play);
 	}
 
-
-
-	//if (IsStageEdit())
-	//{
-	//	ImGui::Text("CurrentEdit:Stage ");
-	//}
-	//else
-	//{
-	//	ImGui::Text("CurrentEdit: Parameter");
-	//}
-
-	//if (ImGui::Button("StageEdit"))
-	//{
-	//	SetEditorCategory(EditorCategory::Stage);
-	//}
-
-	//ImGui::SameLine();
-
-	//if (ImGui::Button("ParameterEdit"))
-	//{
-	//	SetEditorCategory(EditorCategory::Parameter);
-	//}
-
 }
 
 void EditorManager::SetupObjectReferences()
@@ -109,39 +76,6 @@ void EditorManager::CreateGameObject(const std::string& className)
 
 	// 現在選択中のオブジェクト
 	SetSelectedObject(newObject);
-}
-
-void EditorManager::SaveScene()
-{
-
-	nlohmann::json sceneJson;
-
-	// 配列作成
-	sceneJson["Objects"] = nlohmann::json::array();
-	for (const auto& obj : SceneManager::Instance().GetObjList())
-	{
-		// 各オブジェクトをセーブし配列に格納
-		sceneJson["Objects"].push_back(obj->SaveData());
-	}
-
-	// デバッグに保存先のファイルパスを表示
-	std::filesystem::path path = std::filesystem::current_path();
-	OutputDebugStringA((path.string() + "\n").c_str());
-
-	// ファイルに保存
-	std::ofstream file("SceneData.json");
-	if (file.is_open())
-	{
-		// JSONを文字列に変換()はインデント幅
-		file << sceneJson.dump(4);
-		file.close();
-
-		OutputDebugStringA("Scene save success\n");
-	}
-	else
-	{
-		OutputDebugStringA("Scene save failed\n");
-	}
 }
 
 void EditorManager::LoadScene()

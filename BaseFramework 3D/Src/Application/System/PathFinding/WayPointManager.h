@@ -38,9 +38,13 @@ public:
 	void DrawDebug();
 
 
+	bool Save(const std::string&filePath);
+
+	bool Load(const std::string& filePath);
+
 	const std::vector<std::shared_ptr<WayPoint>>& GetWayPoints()const
 	{
-		return m_wpWayPoints;
+		return m_spWayPoints;
 	}
 
 private:
@@ -66,7 +70,7 @@ private:
 
 private:
 
-	std::vector<std::shared_ptr<WayPoint>>m_wpWayPoints;
+	std::vector<std::shared_ptr<WayPoint>>m_spWayPoints;
 
 	// デバッグ
 	std::unique_ptr<KdDebugWireFrame>m_pDebugWire = nullptr;

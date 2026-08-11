@@ -13,7 +13,7 @@ public:
 	void DrawLit()		override;
 	void GenerateDepthMapFromLight()	override;
 
-	void DrawInspecter()override;
+	void DrawInspector()override;
 
 private:
 	// 当たり判定更新

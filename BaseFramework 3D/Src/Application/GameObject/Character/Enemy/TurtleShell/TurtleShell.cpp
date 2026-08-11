@@ -27,8 +27,9 @@ void TurtleShell::Init()
 		SetObjectName("TurtleShell");
 	}
 
-	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
+	EnemyBase::Init();
 
+	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
 	SetPos({ 0,0,-10 });
 }
@@ -48,9 +49,9 @@ void TurtleShell::PostUpdate()
 
 }
 
-void TurtleShell::DrawInspecter()
+void TurtleShell::DrawInspector()
 {
-	EnemyBase::DrawInspecter();
+	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
 }

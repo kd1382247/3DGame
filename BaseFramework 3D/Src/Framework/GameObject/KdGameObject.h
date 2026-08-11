@@ -17,6 +17,16 @@ public:
 		eDrawTypeDepthOfShadow = 1 << 4,
 	};
 
+	// オブジェクトのカテゴリー
+	enum class ObjectCategory
+	{
+		None,
+		Character,
+		Camera,
+		Stage,
+		Gimmick
+	};
+
 	KdGameObject() {}
 	virtual ~KdGameObject() { Release(); }
 
@@ -85,8 +95,11 @@ public:
 	virtual void SetUpReference() {}
 
 	// Inspectorに表示させるパラメータ
-	virtual void DrawInspecter();
+	virtual void DrawInspector();
 
+	// カテゴリをセット
+	void SetObjectCategory(const ObjectCategory category) { m_objectCategory = category; }
+	const ObjectCategory GetObjectCategory() const{ return m_objectCategory; }
 
 
 	virtual nlohmann::json SaveData()const;
@@ -118,4 +131,8 @@ protected:
 
 	// エディターに表示するオブジェクト名
 	std::string m_objectName = {};
+
+	// オブジェクトのカテゴリー
+	ObjectCategory m_objectCategory=ObjectCategory::None;
+
 };

@@ -35,57 +35,58 @@ void KdGameObjectFactory::Init()
 	//===================================================================
 
 	// プレイヤー
-	Register<Player>("Player");
+	Register<Player>("Player",KdGameObject::ObjectCategory::Character);
 	
 	//===================================================================
 	// 敵
 	//===================================================================
 
 	// Beholder
-	Register<Beholder>("Beholder");
+	Register<Beholder>("Beholder", KdGameObject::ObjectCategory::Character);
 	// Bomb
-	Register<Bomb>("Bomb");
+	Register<Bomb>("Bomb", KdGameObject::ObjectCategory::Character);
 	// Cactas
-	Register<Cactas>("Cactas");
+	Register<Cactas>("Cactas", KdGameObject::ObjectCategory::Character);
 	// ChestMonster
-	Register<ChestMonster>("ChestMonster");
+	Register<ChestMonster>("ChestMonster", KdGameObject::ObjectCategory::Character);
 	// Golem
-	Register<Golem>("Golem");
+	Register<Golem>("Golem", KdGameObject::ObjectCategory::Character);
 	// Mage
-	Register<Mage>("Mage");
+	Register<Mage>("Mage", KdGameObject::ObjectCategory::Character);
 	// Mushroom
-	Register<Mushroom>("Mushroom");
+	Register<Mushroom>("Mushroom", KdGameObject::ObjectCategory::Character);
 	// Slime
-	Register<Slime>("Slime");
+	Register<Slime>("Slime", KdGameObject::ObjectCategory::Character);
 	// StarFish
-	Register<Mage>("StarFish");
+	Register<StarFish>("StarFish", KdGameObject::ObjectCategory::Character);
 	// Swarm
-	Register<Swarm>("Swarm");
+	Register<Swarm>("Swarm", KdGameObject::ObjectCategory::Character);
 	// TurtleShell
-	Register<TurtleShell>("TurtleShell");
+	Register<TurtleShell>("TurtleShell", KdGameObject::ObjectCategory::Character);
 
 	//===================================================================
 	// ステージ
 	//===================================================================
 
 	// 地面
-	Register<Ground>("Ground");
+	Register<Ground>("Ground", KdGameObject::ObjectCategory::Stage);
 	// ボックス
-	Register<Box>("Box");
+	Register<Box>("Box", KdGameObject::ObjectCategory::Gimmick);
 	// 地面
-	Register<TPSCamera>("TPSCamera");
+	Register<TPSCamera>("TPSCamera", KdGameObject::ObjectCategory::Camera);
 
 	//===================================================================
 	// ウェイポイント
 	//===================================================================
-	Register<WayPoint>("WayPoint");
+	Register<WayPoint>("WayPoint", KdGameObject::ObjectCategory::None);
 
 }
 
-void KdGameObjectFactory::RegisterCreateFunction(const std::string_view str, const std::function<std::shared_ptr<KdGameObject>(void)> func)
+void KdGameObjectFactory::RegisterCreateFunction(const std::string_view str, const CreateFunction func, const KdGameObject::ObjectCategory category)
 {
-	m_createFunctions[str.data()] = func;
+	m_createFunctions[str.data()] = { func,category };
 }
+
 
 std::shared_ptr<KdGameObject> KdGameObjectFactory::CreateGameObject(const std::string objName) const
 {
@@ -98,7 +99,7 @@ std::shared_ptr<KdGameObject> KdGameObjectFactory::CreateGameObject(const std::s
 		return nullptr;
 	}
 
-	return  creater->second();
+	return  creater->second.createFunc();
 }
 
 // リスト内の最適化（寿命の尽きたオブジェクトの解放）

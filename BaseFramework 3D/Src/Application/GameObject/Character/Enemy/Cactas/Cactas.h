@@ -17,7 +17,7 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-	void DrawInspecter()override;
+	void DrawInspector()override;
 
 	void SetPath(const std::vector<int>& path);
 

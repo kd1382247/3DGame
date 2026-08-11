@@ -26,6 +26,8 @@ void Bomb::Init()
 		SetObjectName("Bomb");
 	}
 
+	EnemyBase::Init();
+
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
 
@@ -47,9 +49,9 @@ void Bomb::PostUpdate()
 
 }
 
-void Bomb::DrawInspecter()
+void Bomb::DrawInspector()
 {
-	EnemyBase::DrawInspecter();
+	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
 }

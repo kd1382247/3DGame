@@ -1,10 +1,10 @@
-﻿#include "EditorInspector.h"
+﻿#include "Inspector.h"
 
 #include"../EditorManager.h"
 
 #include"../../Scene/SceneManager.h"
 
-void EditorInspector::Draw()
+void Inspector::Draw()
 {
 	ImGui::Begin("Inspector");
 
@@ -23,7 +23,7 @@ void EditorInspector::Draw()
 	// 現在選択中のオブジェクト名表示
 	ImGui::Text(obj->GetObjectName().c_str());
 
-	obj->DrawInspecter();
+	obj->DrawInspector();
 
 	Delete(obj);
 	
@@ -31,17 +31,7 @@ void EditorInspector::Draw()
 	ImGui::End();
 }
 
-void EditorInspector::DrawGameObjectInspecter()
-{
-
-}
-
-void EditorInspector::DrawWayPointInspecter()
-{
-	
-}
-
-void EditorInspector::Delete(const std::shared_ptr<KdGameObject>& obj)
+void Inspector::Delete(const std::shared_ptr<KdGameObject>& obj)
 {
 	// オブジェクト削除
 	if (ImGui::Button("Delete"))

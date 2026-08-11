@@ -16,6 +16,7 @@ void Ground::Init()
 		SetObjectName("Ground");
 	}
 
+	SetObjectCategory(ObjectCategory::Stage);
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Ground, shared_from_this());
 }
@@ -30,6 +31,6 @@ void Ground::DrawLit()
 
 	if (!m_spModel)return;
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel,m_mWorld);
 
 }

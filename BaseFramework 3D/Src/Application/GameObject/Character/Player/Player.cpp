@@ -22,6 +22,9 @@ void Player::Init()
 		// オブジェクト名セット
 		SetObjectName("Player");
 
+		// カテゴリーをセット
+		SetObjectCategory(ObjectCategory::Character);
+
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 
@@ -69,9 +72,9 @@ void Player::DrawLit()
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.5, kRedColor);
 }
 
-void Player::DrawInspecter()
+void Player::DrawInspector()
 {
-	CharacterBase::DrawInspecter();
+	CharacterBase::DrawInspector();
 	// パラメーター変更
 	m_parameter.DrawInspecter();
 }

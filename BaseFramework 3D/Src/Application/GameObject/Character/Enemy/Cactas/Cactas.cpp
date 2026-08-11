@@ -31,8 +31,9 @@ void Cactas::Init()
 		SetObjectName("Cactas");
 	}
 
-	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
+	EnemyBase::Init();
 
+	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
 	SetPos({ 5,0,0 });
 }
@@ -64,9 +65,9 @@ void Cactas::PostUpdate()
 
 }
 
-void Cactas::DrawInspecter()
+void Cactas::DrawInspector()
 {
-	EnemyBase::DrawInspecter();
+	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
 }

@@ -27,6 +27,8 @@ void ChestMonster::Init()
 		SetObjectName("ChestMonster");
 	}
 
+	EnemyBase::Init();
+
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
 
@@ -48,9 +50,9 @@ void ChestMonster::PostUpdate()
 
 }
 
-void ChestMonster::DrawInspecter()
+void ChestMonster::DrawInspector()
 {
-	EnemyBase::DrawInspecter();
+	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
 }

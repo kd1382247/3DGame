@@ -6,10 +6,7 @@ void WayPoint::Init()
 {
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-}
 
-void WayPoint::Update()
-{
 
 }
 
@@ -19,7 +16,7 @@ void WayPoint::DrawDebug()
 	KdGameObject::DrawDebug();
 }
 
-void WayPoint::DrawInspecter()
+void WayPoint::DrawInspector()
 {
 	// 座標変更
 	Math::Vector3 pos = GetPos();
@@ -27,7 +24,6 @@ void WayPoint::DrawInspecter()
 	{
 		SetPos(pos);
 	}
-
 
 	// 接続先一覧
 	if (ImGui::Button("LinkList"))
@@ -50,7 +46,6 @@ void WayPoint::DrawInspecter()
 
 
 	ImGui::Text("Connection");
-
 
 	// 接続関係を設定
 	for (const auto& wayPoints : WayPointManager::Instance().GetWayPoints())

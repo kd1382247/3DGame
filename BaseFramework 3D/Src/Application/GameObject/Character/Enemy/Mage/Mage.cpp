@@ -29,6 +29,8 @@ void Mage::Init()
 		SetObjectName("Mage");
 	}
 
+	EnemyBase::Init();
+
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
 
@@ -50,9 +52,9 @@ void Mage::PostUpdate()
 
 }
 
-void Mage::DrawInspecter()
+void Mage::DrawInspector()
 {
-	EnemyBase::DrawInspecter();
+	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
 }

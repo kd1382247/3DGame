@@ -91,9 +91,6 @@
     <Filter Include="Src\Application\Editor">
       <UniqueIdentifier>{bf3e7fb9-3068-4184-8f64-3fa8d38a4899}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\Editor\EditorHierarchy">
-      <UniqueIdentifier>{31bebdf4-4599-4c94-bdd1-80bf69a8b441}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Terrains">
       <UniqueIdentifier>{73cf1858-7f28-4461-b867-2374b36946cb}</UniqueIdentifier>
     </Filter>
@@ -105,9 +102,6 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Player">
       <UniqueIdentifier>{2d4bd6b5-2c58-407f-ac00-ab8f08bdc42b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\Editor\EditorInspector">
-      <UniqueIdentifier>{feaf2ee3-afdd-4ddf-bbe4-2f3038c84518}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Camera\EditorCamera">
       <UniqueIdentifier>{93bd9e0e-ba11-4389-86e9-72b845cccbb0}</UniqueIdentifier>
@@ -282,6 +276,15 @@
     </Filter>
     <Filter Include="Src\Application\Scene\EditorScene">
       <UniqueIdentifier>{4614ef41-c923-4f0d-aaa4-eb403ecee8f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Editor\StageEditor">
+      <UniqueIdentifier>{4fdd5ec8-e329-44a9-953b-aef40772338e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Editor\Hierarchy">
+      <UniqueIdentifier>{31bebdf4-4599-4c94-bdd1-80bf69a8b441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Editor\Inspector">
+      <UniqueIdentifier>{feaf2ee3-afdd-4ddf-bbe4-2f3038c84518}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -468,9 +471,6 @@
     <ClInclude Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.h">
       <Filter>Src\Application\GameObject\Camera\FPSCamera</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\Editor\Hierarchy\EditorHierarchy.h">
-      <Filter>Src\Application\Editor\EditorHierarchy</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\CharacterBase.h">
       <Filter>Src\Application\GameObject\Character</Filter>
     </ClInclude>
@@ -482,9 +482,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\Editor\EditorManager.h">
       <Filter>Src\Application\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\Editor\EditorInspector\EditorInspector.h">
-      <Filter>Src\Application\Editor\EditorInspector</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.h">
       <Filter>Src\Application\GameObject\Camera\EditorCamera</Filter>
@@ -660,6 +657,15 @@
     <ClInclude Include="Src\Application\Scene\EditorScene\EditorScene.h">
       <Filter>Src\Application\Scene\EditorScene</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Editor\Hierarchy\Hierarchy.h">
+      <Filter>Src\Application\Editor\Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\Inspector\Inspector.h">
+      <Filter>Src\Application\Editor\Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\StageEditor\StageEditor.h">
+      <Filter>Src\Application\Editor\StageEditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -815,9 +821,6 @@
     <ClCompile Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\FPSCamera</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\Editor\Hierarchy\EditorHierarchy.cpp">
-      <Filter>Src\Application\Editor\EditorHierarchy</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\CharacterBase.cpp">
       <Filter>Src\Application\GameObject\Character</Filter>
     </ClCompile>
@@ -829,9 +832,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Editor\EditorManager.cpp">
       <Filter>Src\Application\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\Editor\EditorInspector\EditorInspector.cpp">
-      <Filter>Src\Application\Editor\EditorInspector</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\EditorCamera</Filter>
@@ -967,6 +967,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Scene\EditorScene\EditorScene.cpp">
       <Filter>Src\Application\Scene\EditorScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\Hierarchy\Hierarchy.cpp">
+      <Filter>Src\Application\Editor\Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\Inspector\Inspector.cpp">
+      <Filter>Src\Application\Editor\Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\StageEditor\StageEditor.cpp">
+      <Filter>Src\Application\Editor\StageEditor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -27,6 +27,8 @@ void Mushroom::Init()
 		SetObjectName("Mushroom");
 	}
 
+	EnemyBase::Init();
+
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
 
@@ -48,9 +50,9 @@ void Mushroom::PostUpdate()
 
 }
 
-void Mushroom::DrawInspecter()
+void Mushroom::DrawInspector()
 {
-	EnemyBase::DrawInspecter();
+	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
 }
