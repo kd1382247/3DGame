@@ -29,3 +29,5 @@ void EnemyBase::SetUpReference()
 {
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
 }
+
+

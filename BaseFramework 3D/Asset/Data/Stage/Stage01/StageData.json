@@ -1,69 +1,12 @@
 {
     "Objects": [
         {
-            "Class": "Ground",
-            "Name": "Ground",
+            "Class": "Stage01",
+            "Name": "Stage01",
             "Position": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
-        },
-        {
-            "Class": "Box",
-            "Name": "Box",
-            "Position": {
-                "x": -15.0,
-                "y": 0.0,
-                "z": 15.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
-        },
-        {
-            "Class": "Box",
-            "Name": "Box",
-            "Position": {
-                "x": -15.0,
-                "y": 0.0,
-                "z": 15.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
-        },
-        {
-            "Class": "Box",
-            "Name": "Box",
-            "Position": {
-                "x": -15.0,
-                "y": 0.0,
-                "z": 15.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -80,47 +23,9 @@
             "Class": "Player",
             "Name": "Player",
             "Position": {
-                "x": -15.0,
-                "y": 0.0,
-                "z": -5.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
+                "x": -6.0,
+                "y": 2.799999952316284,
                 "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
-        },
-        {
-            "Class": "Player",
-            "Name": "Player",
-            "Position": {
-                "x": -15.0,
-                "y": 0.0,
-                "z": -5.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
-        },
-        {
-            "Class": "Player",
-            "Name": "Player",
-            "Position": {
-                "x": -15.0,
-                "y": 0.0,
-                "z": -5.0
             },
             "Rotation": {
                 "x": 0.0,

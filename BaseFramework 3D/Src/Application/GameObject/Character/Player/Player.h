@@ -109,11 +109,8 @@ private:
 	// ガード状態
 	GuardState      m_guardState = GuardState::Guard;
 
-
 	// ジャンプキー
 	bool            m_jumpButton = false;
-	bool            m_prevJumpButton = false;
-	bool            m_jumpTrigger = false;
 
 	float           m_angle=0;
 

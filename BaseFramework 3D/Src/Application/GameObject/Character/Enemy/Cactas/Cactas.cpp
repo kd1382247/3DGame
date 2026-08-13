@@ -41,6 +41,20 @@ void Cactas::Init()
 void Cactas::Update()
 {
 
+
+	if (GetAsyncKeyState('G') & 0x8000)
+	{
+		ChangeMoveState(MoveState::DirectChase);
+	}
+	if (GetAsyncKeyState('H') & 0x8000)
+	{
+		ChangeMoveState(MoveState::FollowPath);
+	}
+
+
+
+
+
 	switch (m_moveState)
 	{
 	case EnemyBase::MoveState::DirectChase:
@@ -70,6 +84,35 @@ void Cactas::DrawInspector()
 	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
+}
+
+void Cactas::ChangeMoveState(MoveState nextState)
+{
+	if (m_moveState == nextState)
+	{
+		return;
+	}
+
+	m_moveState = nextState;
+
+	if (m_moveState == MoveState::FollowPath)
+	{
+		// ここでA*経路を作る
+
+		// スタート地点
+		auto startPoint = WayPointManager::Instance().FindNearest(GetPos());
+
+		if (!m_wpPlayer.lock())
+		{
+			return;
+		}
+
+		// ゴール（目標地点）
+		auto goalPoint = WayPointManager::Instance().FindNearest(m_wpPlayer.lock()->GetPos());
+
+		SetPath (WayPointManager::Instance().FindPath(startPoint->GetID(), goalPoint->GetID()));
+
+	}
 }
 
 void Cactas::SetPath(const std::vector<int>& path)

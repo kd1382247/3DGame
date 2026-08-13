@@ -1,12 +1,8 @@
 ﻿#include "KdGameObjectFactory.h"
 
 // ファクトリーに登録するクラス
-#include"../../Application/GameObject/Camera/TPSCamera/TPSCamera.h"
 
 #include"../../Application/GameObject/Character/Player/Player.h"
-#include"../../Application/GameObject/Terrains/Ground/Ground.h"
-
-#include"../../Application/GameObject/Terrains/Box.h"
 
 // ウェイポイント
 #include"../../Application/System/PathFinding/WayPoint/WayPoint.h"
@@ -24,7 +20,8 @@
 #include"../../Application/GameObject//Character/Enemy/Swarm/Swarm.h"
 #include"../../Application/GameObject//Character/Enemy/TurtleShell/TurtleShell.h"
 
-
+// ステージ
+#include"../../Application/GameObject/Stage/Stage01/Render/Stage01.h"
 
 
 void KdGameObjectFactory::Init()
@@ -68,12 +65,9 @@ void KdGameObjectFactory::Init()
 	// ステージ
 	//===================================================================
 
-	// 地面
-	Register<Ground>("Ground", KdGameObject::ObjectCategory::Stage);
-	// ボックス
-	Register<Box>("Box", KdGameObject::ObjectCategory::Gimmick);
-	// 地面
-	Register<TPSCamera>("TPSCamera", KdGameObject::ObjectCategory::Camera);
+	// Stage01
+	Register<Stage01>("Stage01", KdGameObject::ObjectCategory::Stage);
+
 
 	//===================================================================
 	// ウェイポイント

@@ -9,7 +9,7 @@ void WayPoint::Init()
 
 void WayPoint::DrawDebug()
 {
-	m_pDebugWire->AddDebugSphere(GetPos(), 0.5f, kBlueColor);
+	m_pDebugWire->AddDebugSphere(GetPos(), 0.5f, kGreenColor);
 	KdGameObject::DrawDebug();
 }
 
@@ -81,6 +81,11 @@ void WayPoint::DrawInspector()
 
 		ImGui::PopID();
 	}
+}
+
+void WayPoint::Destroy()
+{
+	WayPointManager::Instance().RemoveWayPoint(GetID());
 }
 
 bool WayPoint::AddLink(int id)

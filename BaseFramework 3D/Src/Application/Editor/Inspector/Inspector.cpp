@@ -8,7 +8,7 @@ void Inspector::Draw()
 {
 	ImGui::Begin("Inspector");
 
-	const auto& obj = EditorManager::Instance().GetSelectedObject();
+	const auto obj = EditorManager::Instance().GetSelectedObject();
 
 	if (!obj)
 	{
@@ -30,7 +30,7 @@ void Inspector::Draw()
 	ImGui::End();
 }
 
-void Inspector::DrawDeleteButton(const std::shared_ptr<KdGameObject>& obj)
+void Inspector::DrawDeleteButton(const std::shared_ptr<KdGameObject> obj)
 {
 	if (!ImGui::Button("Delete"))
 	{

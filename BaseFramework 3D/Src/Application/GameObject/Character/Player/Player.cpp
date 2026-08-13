@@ -35,7 +35,7 @@ void Player::Init()
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
 
-	SetPos({ -15.0f, 0.0f, -5.0f });
+	SetPos({ 0.0f, 0.0f, 0.0f });
 }
 
 void Player::Update()
@@ -134,12 +134,9 @@ void Player::UpdateMoveInput()
 
 void Player::UpdateJumpInput()
 {
-	const bool currentJumpButton = (GetAsyncKeyState(VK_SPACE) & 0x8000) != 0;
+		const bool currentJumpButton = (GetAsyncKeyState(VK_SPACE) & 0x8000) != 0;
 
-	m_jumpTrigger = currentJumpButton && !m_prevJumpButton;
-
-	m_jumpButton = currentJumpButton;
-	m_prevJumpButton = currentJumpButton;
+		m_jumpButton = currentJumpButton&&m_Gravity<=0;	
 }
 
 void Player::UpdateAttackInput()
@@ -551,6 +548,7 @@ void Player::EnterState(PlayerActionState _state)
 	case PlayerActionState::Die:
 		break;
 	case PlayerActionState::JumpStart:
+		ResetCombo();
 		m_jumpFlg = true;
 		m_Gravity = -m_parameter.GetParam().m_jumpPow;
 		break;

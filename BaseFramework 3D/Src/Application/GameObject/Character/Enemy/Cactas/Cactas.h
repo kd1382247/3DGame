@@ -21,6 +21,10 @@ public:
 
 	void SetPath(const std::vector<int>& path);
 
+
+	void ChangeMoveState(MoveState nextState);
+
+
 private:
 
 

@@ -4,6 +4,8 @@
 
 #include"../System/ReferenceManager/ReferenceManager.h"
 #include "../Scene/SceneManager.h"
+#include"../GameObject/Camera/TPSCamera/TPSCamera.h"
+
 
 
 void EditorManager::Draw()
@@ -31,9 +33,21 @@ void EditorManager::DrawModeMenu()
 		ImGui::Text("CurrentMode: Play");
 	}
 
+	if (GetAsyncKeyState(VK_TAB) & 0x8000)
+	{
+		SetEditorMode(EditorMode::Edit);
+	}
+
+
 	if (ImGui::Button("Edit"))
 	{
 		SetEditorMode(EditorMode::Edit);
+
+		// カメラを削除
+		if (m_wpCamera.lock())
+		{
+			m_wpCamera.lock()->Destroy();
+		}
 	}
 
 	ImGui::SameLine();
@@ -41,6 +55,17 @@ void EditorManager::DrawModeMenu()
 	if (ImGui::Button("Play"))
 	{
 		SetEditorMode(EditorMode::Play);
+
+
+		if(!m_wpCamera.lock())
+		{
+			// 一時的にカメラを用意
+			std::shared_ptr<TPSCamera>camera = std::make_shared<TPSCamera>();
+			camera->Init();
+			SceneManager::Instance().AddObject(camera);
+			m_wpCamera = camera;
+		}
+
 
 		// 全てのオブジェクトを生成後に関連付け
 		ReferenceManager::Instance().AssociateObjects(SceneManager::Instance().GetObjList());

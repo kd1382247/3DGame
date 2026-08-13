@@ -378,11 +378,12 @@ void WayPointManager::DrawDebug()
 				continue;
 			}
 
-			m_pDebugWire->AddDebugLine(point->GetPos(), linkedPoint->GetPos(), kBlueColor);
+			m_pDebugWire->AddDebugLine(point->GetPos(), linkedPoint->GetPos(), kGreenColor);
 		}
 	}
 
 	m_pDebugWire->Draw();
+
 }
 
 bool WayPointManager::Save(const std::string& filePath)

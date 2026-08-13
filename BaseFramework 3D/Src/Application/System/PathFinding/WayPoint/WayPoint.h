@@ -20,6 +20,9 @@ public:
 		return m_linkIDs;
 	}
 
+	// WayPoint削除
+	void Destroy()override;
+
 	bool AddLink(int id);
 	bool RemoveLink(int id);
 	bool HasLink(int id) const;

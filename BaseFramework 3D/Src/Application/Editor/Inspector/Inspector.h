@@ -7,5 +7,5 @@ public:
 
 private:
 
-	void DrawDeleteButton(const std::shared_ptr<KdGameObject>& obj);
+	void DrawDeleteButton(const std::shared_ptr<KdGameObject> obj);
 };

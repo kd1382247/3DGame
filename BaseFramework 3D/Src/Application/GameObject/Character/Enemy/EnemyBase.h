@@ -27,9 +27,11 @@ public:
 
 	void SetUpReference()override;
 
+	/*void ChangeMoveState(MoveState nextState);*/
+
 protected:
 
-	MoveState m_moveState = MoveState::FollowPath;
+	MoveState m_moveState = MoveState::DirectChase;
 
 	std::weak_ptr<Player>m_wpPlayer;
 

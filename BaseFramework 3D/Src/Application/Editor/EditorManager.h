@@ -4,6 +4,8 @@
 #include "Inspector/Inspector.h"
 #include "StageEditor/StageEditor.h"
 
+class CameraBase;
+
 class EditorManager
 {
 public:
@@ -44,6 +46,8 @@ private:
 	Inspector m_inspector;
 	StageEditor m_stageEditor;
 	EditorMode m_editorMode = EditorMode::Edit;
+
+	std::weak_ptr<CameraBase>m_wpCamera;
 
 private: // シングルトンパターン
 	EditorManager() = default;

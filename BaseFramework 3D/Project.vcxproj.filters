@@ -91,12 +91,6 @@
     <Filter Include="Src\Application\Editor">
       <UniqueIdentifier>{bf3e7fb9-3068-4184-8f64-3fa8d38a4899}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Terrains">
-      <UniqueIdentifier>{73cf1858-7f28-4461-b867-2374b36946cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Terrains\Ground">
-      <UniqueIdentifier>{00c2946d-5da4-4405-a67e-d9f654afe28a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Character">
       <UniqueIdentifier>{38c86d12-6db2-44b6-9a47-235578177f9a}</UniqueIdentifier>
     </Filter>
@@ -285,6 +279,27 @@
     </Filter>
     <Filter Include="Src\Application\Editor\Inspector">
       <UniqueIdentifier>{feaf2ee3-afdd-4ddf-bbe4-2f3038c84518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage">
+      <UniqueIdentifier>{30d95ea9-9d6c-4602-babd-2e5b004b74d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Stage01">
+      <UniqueIdentifier>{8c808a1c-7860-4340-9395-88bac228d58e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Stage01\Render">
+      <UniqueIdentifier>{a5abb3c0-5e3c-437c-950e-42b919c9dfde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision">
+      <UniqueIdentifier>{951a0f0d-2621-45cf-be81-df3ff79cec17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision">
+      <UniqueIdentifier>{e403af3b-ffd4-4523-a9d4-f13fe8d4d7ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision">
+      <UniqueIdentifier>{fd853f4f-c024-4112-b051-5c8297be0620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\PathFinding\WayPoint\WayPointNumber">
+      <UniqueIdentifier>{8d619306-9d44-4c47-b7c7-2e0e403bdf62}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -477,9 +492,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\Player.h">
       <Filter>Src\Application\GameObject\Character\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground.h">
-      <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\Editor\EditorManager.h">
       <Filter>Src\Application\Editor</Filter>
     </ClInclude>
@@ -497,9 +509,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerState.h">
       <Filter>Src\Application\GameObject\Character\Player\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Terrains\Box.h">
-      <Filter>Src\Application\GameObject\Terrains</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionManager.h">
       <Filter>Src\Application\System\CollisionManager</Filter>
@@ -666,6 +675,21 @@
     <ClInclude Include="Src\Application\Editor\StageEditor\StageEditor.h">
       <Filter>Src\Application\Editor\StageEditor</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\StageBase.h">
+      <Filter>Src\Application\GameObject\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Render\Stage01.h">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision\GroundCollision.h">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollision.h">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\PathFinding\WayPoint\WayPointNumber\WayPointNumber.h">
+      <Filter>Src\Application\System\PathFinding\WayPoint\WayPointNumber</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -827,9 +851,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\Player.cpp">
       <Filter>Src\Application\GameObject\Character\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground.cpp">
-      <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\Editor\EditorManager.cpp">
       <Filter>Src\Application\Editor</Filter>
     </ClCompile>
@@ -844,9 +865,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.cpp">
       <Filter>Src\Application\GameObject\Character\Player\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Terrains\Box.cpp">
-      <Filter>Src\Application\GameObject\Terrains</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\System\CollisionManager\CollisionManager.cpp">
       <Filter>Src\Application\System\CollisionManager</Filter>
@@ -976,6 +994,21 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Editor\StageEditor\StageEditor.cpp">
       <Filter>Src\Application\Editor\StageEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\StageBase.cpp">
+      <Filter>Src\Application\GameObject\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Render\Stage01.cpp">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision\GroundCollision.cpp">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollision.cpp">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\PathFinding\WayPoint\WayPointNumber\WayPointNumber.cpp">
+      <Filter>Src\Application\System\PathFinding\WayPoint\WayPointNumber</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
