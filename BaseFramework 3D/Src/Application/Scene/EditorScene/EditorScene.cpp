@@ -37,6 +37,23 @@ void EditorScene::DrawDebug()
 	WayPointManager::Instance().DrawDebug();
 }
 
+void EditorScene::ClearObjectList()
+{
+	m_spBackupList = std::move(m_objList);
+	m_objList.clear();
+}
+
+void EditorScene::RestoreObjList()
+{
+	m_objList = std::move(m_spBackupList);
+	m_spBackupList.clear();
+}
+
+void EditorScene::ClearBackupList()
+{
+	m_spBackupList.clear();
+}
+
 void EditorScene::SetupObjectReferences()
 {}
 
@@ -52,10 +69,6 @@ void EditorScene::Event()
 
 void EditorScene::Init()
 {
-
-	//m_camera = std::make_shared<TPSCamera>();
-	//m_camera->Init();
-	//AddObject(m_camera);
 
 	m_spEditorCamera = std::make_shared<EditorCamera>();
 	m_spEditorCamera->Init();

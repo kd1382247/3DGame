@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include"../MessageWindow/MessageWindow.h"
+
 class StageEditor
 {
 public:
@@ -20,57 +22,72 @@ public:
 private:
 	// 新規作成
 	void CreateNewStage();
-	void DrawNewStagePopup();
+
+	void NewStagePopup();
+	void NewStageConfirmationPopup();
+
+	// セーブ完了後の処理
+	void SaveSucceeded();
 
 	// 現在編集対象のステージをクリア
 	void ClearStage();
 
-	// 保存
-	bool SaveStage(const std::string& stageName);
-
-	void RequestSaveStage();
-	void DrawSaveStagePopup();
-	void DrawOverwritePopup();
-
-	// 読み込み
-	bool LoadStage(const std::string& stageName);
+	// セーブのポップアップ
+	void SaveStagePopup();
+	// 上書きチェック
+	void OverwritePopup();
 
 	// 保存済みステージ一覧
 	void RefreshStageList();
-	void DrawOpenStagePopup();
+	void OpenStagePopup();
 
 	// ロード前の保存確認
 	void RequestLoadStage(const std::string& stageName);
-	void DrawLoadConfirmationPopup();
+	void LoadConfirmationPopup();
 
-	std::filesystem::path GetStageFolder(const std::string& stageName) const;
+	// ロード成功後の処理
+	void  LoadSucceeded(const std::string&stageName);
 
-	
+	// ステージ名が被っていないか
+	bool IsStageExists(const std::string& stageName) const;
+
+	// メッセージウィンドウを表示
+	bool HasSaveTarget() { return m_hasSaveTarget; }
 
 
 private:
 
+	// メッセージウィンドウクラス
+	MessageWindow m_messageWindow;
+
+
+	// 編集中のステージ名
 	std::string m_currentStageName;
+
+	// 保存済ステージ名リスト
+	std::vector<std::string>m_stageNames;
+
+	// ユーザーがロードしようとしているステージ名
+	std::string m_pendingLoadStageName;
+
+
+	bool m_hasSaveTarget = false;
 
 	// Popupへの一時入力。確定するまで現在のステージ名は変更しない
 	char m_newStageName[128]{};
 	char m_saveStageName[128]{};
+
+
 	bool m_closeSavePopup = false;
-
-
-	// 保存済ステージ名
-	std::vector<std::string>m_stageNames;
-
-	// ユーザーがロードしようとしているステージ
-	std::string m_pendingLoadStageName;
 
 	// 保存確認Popupを次のフレームで開く
 	bool m_requestLoadConfirmation = false;
 
+	// 保存確認Popupを次のフレームで開く
+	bool m_requestNewStageConfirmation = false;
+
 	// 一覧Popupを閉じる
 	bool m_closeOpenStagePopup = false;
-
-
 
 
 };

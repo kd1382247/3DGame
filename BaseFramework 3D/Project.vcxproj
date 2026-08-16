@@ -276,6 +276,7 @@
     <ClInclude Include="Src\Application\Editor\EditorManager.h" />
     <ClInclude Include="Src\Application\Editor\Hierarchy\Hierarchy.h" />
     <ClInclude Include="Src\Application\Editor\Inspector\Inspector.h" />
+    <ClInclude Include="Src\Application\Editor\MessageWindow\MessageWindow.h" />
     <ClInclude Include="Src\Application\Editor\StageEditor\StageEditor.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\CameraBase.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.h" />
@@ -349,6 +350,7 @@
     <ClInclude Include="Src\Application\System\PathFinding\WayPoint\WayPoint.h" />
     <ClInclude Include="Src\Application\System\PathFinding\WayPoint\WayPointNumber\WayPointNumber.h" />
     <ClInclude Include="Src\Application\System\ReferenceManager\ReferenceManager.h" />
+    <ClInclude Include="Src\Application\System\StageDataManager\StageDataManager.h" />
     <ClInclude Include="Src\Framework\Direct3D\KdMaterial.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdPolygon.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdSquarePolygon.h" />
@@ -400,6 +402,7 @@
     <ClCompile Include="Src\Application\Editor\EditorManager.cpp" />
     <ClCompile Include="Src\Application\Editor\Hierarchy\Hierarchy.cpp" />
     <ClCompile Include="Src\Application\Editor\Inspector\Inspector.cpp" />
+    <ClCompile Include="Src\Application\Editor\MessageWindow\MessageWindow.cpp" />
     <ClCompile Include="Src\Application\Editor\StageEditor\StageEditor.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\CameraBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.cpp" />
@@ -460,6 +463,7 @@
     <ClCompile Include="Src\Application\System\PathFinding\WayPoint\WayPoint.cpp" />
     <ClCompile Include="Src\Application\System\PathFinding\WayPoint\WayPointNumber\WayPointNumber.cpp" />
     <ClCompile Include="Src\Application\System\ReferenceManager\ReferenceManager.cpp" />
+    <ClCompile Include="Src\Application\System\StageDataManager\StageDataManager.cpp" />
     <ClCompile Include="Src\Framework\Direct3D\KdMaterial.cpp">
       <SubType>
       </SubType>

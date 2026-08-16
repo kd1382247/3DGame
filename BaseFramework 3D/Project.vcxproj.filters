@@ -301,6 +301,12 @@
     <Filter Include="Src\Application\System\PathFinding\WayPoint\WayPointNumber">
       <UniqueIdentifier>{8d619306-9d44-4c47-b7c7-2e0e403bdf62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\System\StageDataManager">
+      <UniqueIdentifier>{ac463d04-d4d0-41e4-87a2-a202f1fb5506}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Editor\MessageWindow">
+      <UniqueIdentifier>{f372b89f-5acd-4edc-b7f5-7d7e3f411150}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -690,6 +696,12 @@
     <ClInclude Include="Src\Application\System\PathFinding\WayPoint\WayPointNumber\WayPointNumber.h">
       <Filter>Src\Application\System\PathFinding\WayPoint\WayPointNumber</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\System\StageDataManager\StageDataManager.h">
+      <Filter>Src\Application\System\StageDataManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\MessageWindow\MessageWindow.h">
+      <Filter>Src\Application\Editor\MessageWindow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1009,6 +1021,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\System\PathFinding\WayPoint\WayPointNumber\WayPointNumber.cpp">
       <Filter>Src\Application\System\PathFinding\WayPoint\WayPointNumber</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\StageDataManager\StageDataManager.cpp">
+      <Filter>Src\Application\System\StageDataManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\MessageWindow\MessageWindow.cpp">
+      <Filter>Src\Application\Editor\MessageWindow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

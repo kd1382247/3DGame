@@ -11,7 +11,15 @@ public:
 	// WayPointの登録・削除
 	bool RegisterWayPoint(const std::shared_ptr<WayPoint>& wayPoint);
 	bool RemoveWayPoint(int id);
-	void Clear();
+
+
+	void ClearWayPoints();
+	// ウェイポイントを復元
+	void RestoreWayPoints();
+	// バックアップをクリア
+	void ClearBackup();
+
+
 
 	// 指定IDが登録されていない場合はnullptrを返す
 	std::shared_ptr<WayPoint> FindWayPoint(int id) const;
@@ -60,7 +68,6 @@ private:
 	// 現在使われていない最小のIDを返す
 	int FindAvailableID() const;
 
-
 	// 現在地点からゴール地点までの予想距離を計算
 	float CalculateHeuristic(const WayPoint& current, const WayPoint& goal) const;
 
@@ -73,6 +80,8 @@ private:
 
 	// 現在のステージに配置されているWayPointを所有する
 	std::vector<std::shared_ptr<WayPoint>> m_spWayPoints;
+	// バックアップ用のWayPointリスト
+	std::vector<std::shared_ptr<WayPoint>>m_spBackupWayPoints;
 
 	// デバッグ
 	std::unique_ptr<KdDebugWireFrame> m_pDebugWire = nullptr;

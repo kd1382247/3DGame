@@ -1,5 +1,7 @@
 ﻿#include "StarFishParameter.h"
 
+#include"../../../../../Editor/EditorManager.h"
+
 #include"json.hpp"
 #include<fstream>
 
@@ -12,19 +14,35 @@ void StarFishParameter::Init()
 void StarFishParameter::DrawInspecter()
 {
 	// HP
-	if (ImGui::DragInt("MaxHP", &m_param.m_maxHP, 1,0))
-	
+	if (ImGui::DragInt("MaxHP", &m_param.m_maxHP, 1, 0))
+	{
+		EditorManager::Instance().MarkDirty();
+	}
+
 	// 攻撃力
-	if (ImGui::DragFloat("AttackPow", &m_param.m_attackPow, 1.0f,0.0f))
+	if (ImGui::DragFloat("AttackPow", &m_param.m_attackPow, 1.0f, 0.0f))
+	{
+		EditorManager::Instance().MarkDirty();
+	}
 
 	// 移動スピード
-	if (ImGui::DragFloat("MoveSpeed", &m_param.m_moveSpeed, 0.01f,0.0f))
+	if (ImGui::DragFloat("MoveSpeed", &m_param.m_moveSpeed, 0.01f, 0.0f))
+	{
+		EditorManager::Instance().MarkDirty();
+	}
 
 	//ジャンプパワー
-	if (ImGui::DragFloat("JumpPow", &m_param.m_jumpPow, 0.01f,0.0f))
+	if (ImGui::DragFloat("JumpPow", &m_param.m_jumpPow, 0.01f, 0.0f))
+	{
+		EditorManager::Instance().MarkDirty();
+	}
 
 	// 回転速度
-	if (ImGui::DragFloat("TurnSpeed", &m_param.m_turnSpeed, 0.01f,0.0f))
+	if (ImGui::DragFloat("TurnSpeed", &m_param.m_turnSpeed, 0.01f, 0.0f))
+	{
+		EditorManager::Instance().MarkDirty();
+	}
+
 
 	// セーブ
 	if(ImGui::Button("SaveToJson"))

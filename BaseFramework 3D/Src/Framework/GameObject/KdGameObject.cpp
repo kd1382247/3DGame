@@ -1,5 +1,7 @@
 ﻿#include "KdGameObject.h"
 
+#include"../../Application/Editor/EditorManager.h"
+
 void KdGameObject::DrawDebug()
 {
 	// 早期リターン
@@ -94,6 +96,7 @@ void KdGameObject::DrawInspector()
 	if (ImGui::InputText("Name", nameBaffer, sizeof(nameBaffer)))
 	{
 		SetObjectName(nameBaffer);
+		EditorManager::Instance().MarkDirty();
 	}
 
 	// 座標変更
@@ -102,6 +105,7 @@ void KdGameObject::DrawInspector()
 	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
 	{
 		SetPos(pos);
+		EditorManager::Instance().MarkDirty();
 	}
 
 	Math::Vector3 scale = GetScale();
@@ -110,6 +114,7 @@ void KdGameObject::DrawInspector()
 	if (ImGui::DragFloat3("Scale", &scale.x, 0.01f))
 	{
 		SetScale(scale);
+		EditorManager::Instance().MarkDirty();
 	}
 
 	// 回転
@@ -117,7 +122,8 @@ void KdGameObject::DrawInspector()
 
 	if (ImGui::DragFloat3("Rotation", &rotation.x, 1))
 	{
-			SetRotation(rotation);	
+		SetRotation(rotation);
+		EditorManager::Instance().MarkDirty();
 	}
 
 }

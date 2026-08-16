@@ -32,6 +32,15 @@ public :
 		m_objList.push_back(_obj);
 	}
 
+	// オブジェクトをクリア
+	virtual void ClearObjectList(){}
+
+	// オブジェクトリストを復元
+	virtual void RestoreObjList(){}
+
+	// バックアップリストをクリア
+	virtual void ClearBackupList(){}
+
 protected :
 
 	// このシーンでEdit/Play切り替えを使うか

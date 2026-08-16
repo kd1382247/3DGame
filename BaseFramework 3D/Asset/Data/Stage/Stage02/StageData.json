@@ -1,8 +1,8 @@
 {
     "Objects": [
         {
-            "Class": "Stage01",
-            "Name": "Stage01",
+            "Class": "Player",
+            "Name": "Player",
             "Position": {
                 "x": 0.0,
                 "y": 0.0,
@@ -20,12 +20,12 @@
             }
         },
         {
-            "Class": "Player",
-            "Name": "Player",
+            "Class": "Beholder",
+            "Name": "Beholder",
             "Position": {
-                "x": -1.0,
-                "y": 2.299999952316284,
-                "z": -1.399999976158142
+                "x": 0.0,
+                "y": 0.0,
+                "z": 5.0
             },
             "Rotation": {
                 "x": 0.0,

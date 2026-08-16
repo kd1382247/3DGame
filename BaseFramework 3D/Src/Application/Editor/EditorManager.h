@@ -17,10 +17,15 @@ public:
 
 	void Draw();
 
-	void SetEditorMode(EditorMode mode) { m_editorMode = mode; }
-	EditorMode GetEditorMode() const { return m_editorMode; }
 
-	// エディタの状態
+	void StartPlayMode();
+	void StopPlayMode();
+
+
+	// エディタのモードを変更する
+	void SetEditorMode(EditorMode mode) { m_editorMode = mode; }
+	
+	// エディタの状態を返す
 	bool IsEditMode() const { return m_editorMode == EditorMode::Edit; }
 	bool IsPlayMode() const { return m_editorMode == EditorMode::Play; }
 
@@ -30,14 +35,23 @@ public:
 		m_spSelectedObject = obj;
 	}
 
-	void CreateGameObject(const std::string& className);
-
 	const std::shared_ptr<KdGameObject>& GetSelectedObject() const
 	{
 		return m_spSelectedObject;
 	}
 
+	// オブジェクトを作成
+	void CreateGameObject(const std::string& className);
+
+	
+	// 編集したかどうか
+	const bool IsDirty()const { return m_isDirty; }
+	void ClearDirty() { m_isDirty = false; }
+	void MarkDirty() { m_isDirty = true; }
+
 private:
+
+	// メニュー表示
 	void DrawModeMenu();
 
 	std::shared_ptr<KdGameObject> m_spSelectedObject;
@@ -48,6 +62,10 @@ private:
 	EditorMode m_editorMode = EditorMode::Edit;
 
 	std::weak_ptr<CameraBase>m_wpCamera;
+
+	// 編集したかどうか
+	bool m_isDirty = false;
+
 
 private: // シングルトンパターン
 	EditorManager() = default;

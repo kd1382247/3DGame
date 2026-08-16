@@ -15,6 +15,11 @@ public:
 
 	void PreDraw()override;
 	void DrawDebug()override;
+
+	void ClearObjectList()override;
+	void RestoreObjList()override;
+	void ClearBackupList()override;
+
 private:
 
 	bool UseEditorMode()const override
@@ -29,5 +34,6 @@ private:
 
 	std::shared_ptr<EditorCamera>m_spEditorCamera = nullptr;
 
+	std::list<std::shared_ptr<KdGameObject>> m_spBackupList;
 };
 

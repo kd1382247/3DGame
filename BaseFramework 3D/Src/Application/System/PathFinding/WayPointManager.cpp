@@ -1,6 +1,7 @@
 ﻿#include "WayPointManager.h"
 
 #include"WayPoint/WayPoint.h"
+#include"WayPoint/WayPointNumber/WayPointNumber.h"
 
 bool WayPointManager::RegisterWayPoint(const std::shared_ptr<WayPoint>& wayPoint)
 {
@@ -17,6 +18,7 @@ bool WayPointManager::RegisterWayPoint(const std::shared_ptr<WayPoint>& wayPoint
 	}
 
 	m_spWayPoints.push_back(wayPoint);
+
 
 	return true;
 }
@@ -54,9 +56,23 @@ bool WayPointManager::RemoveWayPoint(int id)
 	return true;
 }
 
-void WayPointManager::Clear()
+void WayPointManager::ClearWayPoints()
 {
+	// 一時的にバックアップリストに移す
+	m_spBackupWayPoints = std::move(m_spWayPoints);
 	m_spWayPoints.clear();
+}
+
+void WayPointManager::RestoreWayPoints()
+{
+	// バックアップリストから復元
+	m_spWayPoints = std::move(m_spBackupWayPoints);
+	m_spBackupWayPoints.clear();
+}
+
+void WayPointManager::ClearBackup()
+{
+	m_spBackupWayPoints.clear();
 }
 
 std::shared_ptr<WayPoint> WayPointManager::FindWayPoint(int id) const
@@ -383,7 +399,6 @@ void WayPointManager::DrawDebug()
 	}
 
 	m_pDebugWire->Draw();
-
 }
 
 bool WayPointManager::Save(const std::string& filePath)
@@ -474,7 +489,7 @@ bool WayPointManager::Load(const std::string& filePath)
 
 
 	// 既存のWayPointを消す
-	Clear();
+	ClearWayPoints();
 
 	// Jsonに保存されてる情報でWayPointを生成
 	for (const auto& wpJson : rootJson["WayPoints"])
@@ -504,7 +519,7 @@ bool WayPointManager::Load(const std::string& filePath)
 		// WayPointsに登録
 		if (!RegisterWayPoint(wayPoint))
 		{
-			Clear();
+			ClearWayPoints();
 			return false;
 		}
 

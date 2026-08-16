@@ -23,10 +23,11 @@ void Inspector::Draw()
 	// 現在選択中のオブジェクト名表示
 	ImGui::Text("%s", obj->GetObjectName().c_str());
 
-	obj->DrawInspector();
-
 	DrawDeleteButton(obj);
 
+	obj->DrawInspector();
+
+	
 	ImGui::End();
 }
 

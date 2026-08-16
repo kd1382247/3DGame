@@ -35,7 +35,14 @@ public:
 	// 現在のシーンにオブジェクトを追加
 	void AddObject(const std::shared_ptr<KdGameObject>& _obj);
 
-	
+	// オブジェクトリストをクリア
+	void ClearObjectList();
+
+	// オブジェクトリストを復元
+	void RestoreObjList();
+
+	// バックアップリストをクリア
+	void ClearBackupList();
 
 private:
 
@@ -58,6 +65,9 @@ private:
 
 	// 次のシーンの種類を保持している変数
 	SceneType m_nextSceneType = m_currentSceneType;
+
+	// バックアップリスト
+	std::list<std::shared_ptr<KdGameObject>> m_spBackupList;
 
 private:
 
