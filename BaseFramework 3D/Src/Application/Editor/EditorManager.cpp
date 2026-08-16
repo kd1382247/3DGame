@@ -2,7 +2,7 @@
 
 #include "../../Framework/GameObject/KdGameObjectFactory.h"
 
-#include"../System/PathFinding/WayPointManager.h"
+#include"../System/WayPointManager/WayPointManager.h"
 #include"../System/ReferenceManager/ReferenceManager.h"
 #include "../Scene/SceneManager.h"
 #include"../GameObject/Camera/TPSCamera/TPSCamera.h"

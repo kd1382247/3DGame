@@ -1,7 +1,6 @@
 ﻿#include "WayPointManager.h"
 
-#include"WayPoint/WayPoint.h"
-#include"WayPoint/WayPointNumber/WayPointNumber.h"
+#include"../../GameObject/WayPoint/WayPoint.h"
 
 bool WayPointManager::RegisterWayPoint(const std::shared_ptr<WayPoint>& wayPoint)
 {

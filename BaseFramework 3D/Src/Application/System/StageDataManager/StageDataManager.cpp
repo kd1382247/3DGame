@@ -1,7 +1,7 @@
 ﻿#include "StageDataManager.h"
 
 #include "../../Scene/SceneManager.h"
-#include "../../System/PathFinding/WayPointManager.h"
+#include "../../System/WayPointManager/WayPointManager.h"
 
 
 

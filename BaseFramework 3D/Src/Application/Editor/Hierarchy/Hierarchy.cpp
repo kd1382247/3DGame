@@ -3,8 +3,8 @@
 #include "../EditorManager.h"
 #include "../../Scene/SceneManager.h"
 #include "../../../Framework/GameObject/KdGameObjectFactory.h"
-#include "../../System/PathFinding/WayPointManager.h"
-#include"../../System/PathFinding/WayPoint/WayPoint.h"
+#include "../../System/WayPointManager/WayPointManager.h"
+#include"../../GameObject/WayPoint/WayPoint.h"
 
 void Hierarchy::Draw()
 {

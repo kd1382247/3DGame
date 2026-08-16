@@ -262,12 +262,6 @@
     <Filter Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter">
       <UniqueIdentifier>{8e89adb4-fb16-45e5-8b4c-c1e7e671c713}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\System\PathFinding">
-      <UniqueIdentifier>{16ea0773-1cb7-4e0b-a443-167e6ad4ce1f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\System\PathFinding\WayPoint">
-      <UniqueIdentifier>{a66a2dad-b306-4348-80b3-5e2210539685}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\Scene\EditorScene">
       <UniqueIdentifier>{4614ef41-c923-4f0d-aaa4-eb403ecee8f7}</UniqueIdentifier>
     </Filter>
@@ -298,14 +292,20 @@
     <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision">
       <UniqueIdentifier>{fd853f4f-c024-4112-b051-5c8297be0620}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\System\PathFinding\WayPoint\WayPointNumber">
-      <UniqueIdentifier>{8d619306-9d44-4c47-b7c7-2e0e403bdf62}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\StageDataManager">
       <UniqueIdentifier>{ac463d04-d4d0-41e4-87a2-a202f1fb5506}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\Editor\MessageWindow">
       <UniqueIdentifier>{f372b89f-5acd-4edc-b7f5-7d7e3f411150}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\AIBlock">
+      <UniqueIdentifier>{d523c8f2-a6e0-4f03-aef9-bf62909506e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\WayPoint">
+      <UniqueIdentifier>{75425795-af46-4a60-bf6c-781f50c49e32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\WayPointManager">
+      <UniqueIdentifier>{16ea0773-1cb7-4e0b-a443-167e6ad4ce1f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -663,12 +663,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter\TurtleShellParameter.h">
       <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\System\PathFinding\WayPoint\WayPoint.h">
-      <Filter>Src\Application\System\PathFinding\WayPoint</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\System\PathFinding\WayPointManager.h">
-      <Filter>Src\Application\System\PathFinding</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\Scene\EditorScene\EditorScene.h">
       <Filter>Src\Application\Scene\EditorScene</Filter>
     </ClInclude>
@@ -693,14 +687,20 @@
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollision.h">
       <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\System\PathFinding\WayPoint\WayPointNumber\WayPointNumber.h">
-      <Filter>Src\Application\System\PathFinding\WayPoint\WayPointNumber</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\StageDataManager\StageDataManager.h">
       <Filter>Src\Application\System\StageDataManager</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\Editor\MessageWindow\MessageWindow.h">
       <Filter>Src\Application\Editor\MessageWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\AIBlock\AIBlock.h">
+      <Filter>Src\Application\GameObject\Stage\AIBlock</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\WayPointManager\WayPointManager.h">
+      <Filter>Src\Application\System\WayPointManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\WayPoint\WayPoint.h">
+      <Filter>Src\Application\GameObject\WayPoint</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -989,12 +989,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter\TurtleShellParameter.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\Parameter</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\System\PathFinding\WayPoint\WayPoint.cpp">
-      <Filter>Src\Application\System\PathFinding\WayPoint</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\System\PathFinding\WayPointManager.cpp">
-      <Filter>Src\Application\System\PathFinding</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\Scene\EditorScene\EditorScene.cpp">
       <Filter>Src\Application\Scene\EditorScene</Filter>
     </ClCompile>
@@ -1019,14 +1013,20 @@
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollision.cpp">
       <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\System\PathFinding\WayPoint\WayPointNumber\WayPointNumber.cpp">
-      <Filter>Src\Application\System\PathFinding\WayPoint\WayPointNumber</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\StageDataManager\StageDataManager.cpp">
       <Filter>Src\Application\System\StageDataManager</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\Editor\MessageWindow\MessageWindow.cpp">
       <Filter>Src\Application\Editor\MessageWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\AIBlock\AIBlock.cpp">
+      <Filter>Src\Application\GameObject\Stage\AIBlock</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\WayPointManager\WayPointManager.cpp">
+      <Filter>Src\Application\System\WayPointManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\WayPoint\WayPoint.cpp">
+      <Filter>Src\Application\GameObject\WayPoint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

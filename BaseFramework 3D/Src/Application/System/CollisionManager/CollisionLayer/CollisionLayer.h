@@ -8,6 +8,6 @@ enum class CollisionLayer
 	PlayerAttack,
 	EnemyAttac,
 	Bump,
-
+	AIBlock,
 	Max
 };

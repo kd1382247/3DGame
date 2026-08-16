@@ -1,6 +1,6 @@
 ﻿#include "WayPoint.h"
 
-#include "../WayPointManager.h"
+#include "../../System/WayPointManager/WayPointManager.h"
 
 void WayPoint::Init()
 {

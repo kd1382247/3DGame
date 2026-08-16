@@ -5,7 +5,7 @@
 #include"../../Application/GameObject/Character/Player/Player.h"
 
 // ウェイポイント
-#include"../../Application/System/PathFinding/WayPoint/WayPoint.h"
+#include"../../Application/GameObject/WayPoint/WayPoint.h"
 
 // 敵
 #include"../../Application/GameObject/Character/Enemy/Beholder/Beholder.h"

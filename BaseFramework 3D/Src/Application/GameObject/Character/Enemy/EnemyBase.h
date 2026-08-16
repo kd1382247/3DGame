@@ -27,6 +27,8 @@ public:
 
 	void SetUpReference()override;
 
+	bool CanDirectChase();
+
 	/*void ChangeMoveState(MoveState nextState);*/
 
 protected:

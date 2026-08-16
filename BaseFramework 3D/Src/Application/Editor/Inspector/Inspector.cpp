@@ -1,8 +1,8 @@
 ﻿#include "Inspector.h"
 
 #include "../EditorManager.h"
-#include "../../System/PathFinding/WayPointManager.h"
-#include "../../System/PathFinding/WayPoint/WayPoint.h"
+#include "../../System/WayPointManager/WayPointManager.h"
+#include "../../GameObject/WayPoint/WayPoint.h"
 
 void Inspector::Draw()
 {
