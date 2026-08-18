@@ -6,45 +6,81 @@
 #include "../../System/WayPointManager/WayPointManager.h"
 #include"../../GameObject/WayPoint/WayPoint.h"
 
+
 void Hierarchy::Draw()
 {
 	ImGui::Begin("Hierarchy");
 
-	if (ImGui::Button("GameObject"))
-	{
-		m_category = HierarchyCategory::GameObject;
-	}
+	// 表示するカテゴリを選択
+	DrawCategoryButtons();
 
-	ImGui::SameLine();
+	ImGui::Separator();
 
-	if (ImGui::Button("WayPoint"))
-	{
-		m_category = HierarchyCategory::WayPoint;
-	}
+	// オブジェクトを追加する
+	DrawAddButtons();
 
-	ImGui::SameLine();
+	ImGui::Separator();
 
-	if (ImGui::Button("Stage"))
-	{
-		m_category = HierarchyCategory::Stage;
-	}
+	// 追加されたオブジェクト一覧
+	DrawScrollableList();
 
-	switch (m_category)
-	{
-	case HierarchyCategory::GameObject:
-		DrawGameObjects();
-		break;
-	case HierarchyCategory::WayPoint:
-		DrawWayPoints();
-		break;
-	case HierarchyCategory::Stage:
-		DrawStage();
-		break;
-	}
 	ImGui::End();
 }
 
-void Hierarchy::DrawGameObjects()
+void Hierarchy::DrawCategoryButtons()
+{
+	CategoryButton("GameObject", HierarchyCategory::GameObject);
+
+	ImGui::SameLine();
+
+	CategoryButton("Stage", HierarchyCategory::Stage);
+
+	ImGui::SameLine();
+
+	CategoryButton("WayPoint", HierarchyCategory::WayPoint);
+}
+
+void Hierarchy::CategoryButton(const char* label, HierarchyCategory category)
+{
+	const bool selected = m_category == category;
+
+	if (selected)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.45f, 0.8f, 1.0f));
+
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35f, 0.5f, 0.85f, 1.0f));
+	}
+
+	if (ImGui::Button(label))
+	{
+		m_category = category;
+	}
+
+	if (selected)
+	{
+		ImGui::PopStyleColor(2);
+	}
+
+}
+
+void Hierarchy::DrawAddButtons()
+{
+	switch (m_category)
+	{
+	case Hierarchy::HierarchyCategory::GameObject:
+		AddGameObject();
+		break;
+	case Hierarchy::HierarchyCategory::WayPoint:
+		AddWayPoint();
+		break;
+	case Hierarchy::HierarchyCategory::Stage:
+		AddStage();
+		break;
+	}
+
+}
+
+void Hierarchy::AddGameObject()
 {
 	// オブジェクトを新規作成
 	if (ImGui::Button("Add Object"))
@@ -57,14 +93,10 @@ void Hierarchy::DrawGameObjects()
 		DrawAddObjectList(KdGameObject::ObjectCategory::Character);
 		ImGui::EndPopup();
 	}
-
-	ImGui::Text("--------GameObjects--------");
-	DrawObjectList(KdGameObject::ObjectCategory::Character);
 }
 
-void Hierarchy::DrawWayPoints()
+void Hierarchy::AddWayPoint()
 {
-
 	// ウェイポイントを新規作成
 	if (ImGui::Button("Add WayPoint"))
 	{
@@ -76,23 +108,9 @@ void Hierarchy::DrawWayPoints()
 			EditorManager::Instance().SetSelectedObject(wayPoint);
 		}
 	}
-
-	ImGui::Text("----------WayPoints----------");
-
-	// どのオブジェクトを選択しているか
-	for (const auto& wayPoint : WayPointManager::Instance().GetWayPoints())
-	{
-		if (!wayPoint)
-		{
-			continue;
-		}
-
-		SelectObject(wayPoint);
-	}
-
 }
 
-void Hierarchy::DrawStage()
+void Hierarchy::AddStage()
 {
 	// ステージを新規作成
 	if (ImGui::Button("Add Stage"))
@@ -120,8 +138,34 @@ void Hierarchy::DrawStage()
 		ImGui::EndPopup();
 	}
 
+}
+
+void Hierarchy::DrawGameObjects()
+{
+	ImGui::Text("--------GameObjects--------");
+	DrawObjectList(KdGameObject::ObjectCategory::Character);
+}
+
+void Hierarchy::DrawWayPoints()
+{
+	for (const auto& wayPoint : WayPointManager::Instance().GetWayPoints())
+	{
+		if (!wayPoint)
+		{
+			continue;
+		}
+
+		SelectObject(wayPoint);
+	}
+}
+
+
+void Hierarchy::DrawStage()
+{
 	ImGui::Text("-----------Stage-----------");
 	DrawObjectList(KdGameObject::ObjectCategory::Stage);
+
+	ImGui::Separator();
 
 	ImGui::Text("----------Gimmicks----------");
 	DrawObjectList(KdGameObject::ObjectCategory::Gimmick);
@@ -148,6 +192,33 @@ void Hierarchy::DrawAddObjectList(KdGameObject::ObjectCategory objectCategory)
 				.CreateGameObject(name);
 		}
 	}
+}
+
+void Hierarchy::DrawScrollableList()
+{
+	// 残り領域をスクロール可能なChildとして使う
+	if (ImGui::BeginChild(
+		"HierarchyList",
+		ImVec2(0, 0),
+		true))
+	{
+		switch (m_category)
+		{
+		case HierarchyCategory::GameObject:
+			DrawGameObjects();
+			break;
+
+		case HierarchyCategory::WayPoint:
+			DrawWayPoints();
+			break;
+
+		case HierarchyCategory::Stage:
+			DrawStage();
+			break;
+		}
+	}
+
+	ImGui::EndChild();
 }
 
 void Hierarchy::DrawObjectList(KdGameObject::ObjectCategory objectCategory)

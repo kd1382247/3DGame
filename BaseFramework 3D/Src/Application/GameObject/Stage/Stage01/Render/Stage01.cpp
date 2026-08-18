@@ -2,7 +2,7 @@
 
 #include"../Collision/GroundCollision/GroundCollision.h"
 #include"../Collision/WallCollision/WallCollision.h"
-
+#include"../Collision/AIBlockCollision/AIBlockCollision.h"
 
 void Stage01::Init()
 {
@@ -23,6 +23,9 @@ void Stage01::Init()
 
 		m_spWallCollision = std::make_shared<WallCollision>();
 		m_spWallCollision->Init();
+
+		m_spAIBlockCollision = std::make_shared<AIBlockCollision>();
+		m_spAIBlockCollision->Init();
 
 	}
 }

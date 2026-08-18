@@ -11,9 +11,13 @@ public:
 	bool SaveTemporary();
 	bool LoadTemporary();
 
+	
 
 
 private:
+
+
+	void ClearStage();
 
 	std::filesystem::path GetStageFolder(const std::string& stageName) const;
 

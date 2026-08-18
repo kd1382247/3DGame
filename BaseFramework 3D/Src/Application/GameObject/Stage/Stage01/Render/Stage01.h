@@ -4,7 +4,7 @@
 
 class GroundCollision;
 class WallCollision;
-
+class AIBlockCollision;
 
 class Stage01 :public StageBase
 {
@@ -20,7 +20,7 @@ private:
 
 	std::shared_ptr<GroundCollision> m_spGroundCollision=nullptr;
 	std::shared_ptr<WallCollision>   m_spWallCollision=nullptr;
-
+	std::shared_ptr<AIBlockCollision>m_spAIBlockCollision = nullptr;
 
 
 };

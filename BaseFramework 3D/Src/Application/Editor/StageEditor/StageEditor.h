@@ -20,14 +20,15 @@ public:
 	void Draw();
 
 private:
+
 	// 新規作成
 	void CreateNewStage();
 
+	// ポップアップをまとめて管理
+	void DrawPopups();
+
 	void NewStagePopup();
 	void NewStageConfirmationPopup();
-
-	// セーブ完了後の処理
-	void SaveSucceeded();
 
 	// 現在編集対象のステージをクリア
 	void ClearStage();
@@ -47,6 +48,9 @@ private:
 
 	// ロード成功後の処理
 	void  LoadSucceeded(const std::string&stageName);
+
+	// ロード失敗後の処理
+	void LoadFailed();
 
 	// ステージ名が被っていないか
 	bool IsStageExists(const std::string& stageName) const;

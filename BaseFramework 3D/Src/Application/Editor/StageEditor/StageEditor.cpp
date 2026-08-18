@@ -3,23 +3,11 @@
 #include "../EditorManager.h"
 #include "../../Scene/SceneManager.h"
 #include "../../System/WayPointManager/WayPointManager.h"
-
 #include"../../System/StageDataManager/StageDataManager.h"
 
 
 void StageEditor::Draw()
 {
-
-	// 現在編集しているステージ名
-	if (m_currentStageName.empty())
-	{
-		ImGui::Text("Current Stage : None");
-	}
-	else
-	{
-		ImGui::Text("Current Stage : %s", m_currentStageName.c_str());
-	}
-
 
 	// ステージを新規作成
 	if (ImGui::Button("New Stage"))
@@ -53,6 +41,15 @@ void StageEditor::Draw()
 		ImGui::OpenPopup("SaveStagePopup");
 	}
 
+
+	// ポップアップを表示
+	DrawPopups();
+
+}
+
+void StageEditor::DrawPopups()
+{
+
 	// 新規作成時のPopup
 	NewStagePopup();
 
@@ -66,11 +63,10 @@ void StageEditor::Draw()
 	LoadConfirmationPopup();
 	NewStageConfirmationPopup();
 
-
 	// 要求があればメッセージを表示
 	m_messageWindow.Draw();
-
 }
+
 
 void StageEditor::CreateNewStage()
 {
@@ -81,7 +77,7 @@ void StageEditor::CreateNewStage()
 
 	m_currentStageName = stageName;
 
-	EditorManager::Instance().MarkDirty();
+	EditorManager::Instance().ClearDirty();
 
 	ImGui::CloseCurrentPopup();
 }
@@ -99,7 +95,6 @@ void StageEditor::SaveStagePopup()
 
 			// 保存するステージ名が変更されたかどうか
 			bool stageNameChange = m_saveStageName != m_currentStageName;
-			
 
 			if (!stageName.empty())
 			{
@@ -293,6 +288,8 @@ void StageEditor::RequestLoadStage(const std::string & stageName)
 	// 現在のステージがなければ、そのままロードする
 	if (m_currentStageName.empty())
 	{
+		ClearStage();
+
 		if (StageDataManager::Instance().Load(m_pendingLoadStageName))
 		{
 			// ロード成功後の処理
@@ -300,11 +297,7 @@ void StageEditor::RequestLoadStage(const std::string & stageName)
 		}
 		else
 		{
-			// ロードに失敗した場合は復元
-			SceneManager::Instance().RestoreObjList();
-
-			// ウェイポイントを復元
-			WayPointManager::Instance().RestoreWayPoints();
+			LoadFailed();
 		}
 		return;
 	}
@@ -317,6 +310,8 @@ void StageEditor::RequestLoadStage(const std::string & stageName)
 	}
 	else
 	{
+		ClearStage();
+
 		if (StageDataManager::Instance().Load(m_pendingLoadStageName))
 		{
 			// ロード成功後の処理
@@ -324,11 +319,7 @@ void StageEditor::RequestLoadStage(const std::string & stageName)
 		}
 		else
 		{
-			// ロードに失敗した場合は復元
-			SceneManager::Instance().RestoreObjList();
-
-			// ウェイポイントを復元
-			WayPointManager::Instance().RestoreWayPoints();
+			LoadFailed();
 		}
 		return;
 	}
@@ -357,6 +348,8 @@ void StageEditor::LoadConfirmationPopup()
 			// 現在のステージを保存できた場合だけロードする
 			if (StageDataManager::Instance().Save(m_currentStageName))
 			{
+				ClearStage();
+
 				if (StageDataManager::Instance().Load(m_pendingLoadStageName))
 				{
 					// ロード成功後の処理
@@ -366,11 +359,7 @@ void StageEditor::LoadConfirmationPopup()
 				}
 				else
 				{
-					// ロードに失敗した場合は復元
-					SceneManager::Instance().RestoreObjList();
-
-					// ウェイポイントを復元
-					WayPointManager::Instance().RestoreWayPoints();
+					LoadFailed();
 				}
 			}
 		}
@@ -379,6 +368,8 @@ void StageEditor::LoadConfirmationPopup()
 
 		if (ImGui::Button("Don't Save"))
 		{
+			ClearStage();
+
 			// 新しく開くステージ名
 			if (StageDataManager::Instance().Load(m_pendingLoadStageName))
 			{
@@ -388,11 +379,7 @@ void StageEditor::LoadConfirmationPopup()
 			}
 			else
 			{
-				// オブジェクトを復元
-				SceneManager::Instance().RestoreObjList();
-
-				// ウェイポイントを復元
-				WayPointManager::Instance().RestoreWayPoints();
+				LoadFailed();
 			}
 		}
 
@@ -413,7 +400,7 @@ void StageEditor::LoadSucceeded(const std::string& stageName)
 	SceneManager::Instance().ClearBackupList();
 	WayPointManager::Instance().ClearBackup();
 
-	EditorManager::Instance().MarkDirty();
+	EditorManager::Instance().ClearDirty();
 
 	m_currentStageName = stageName;
 
@@ -422,6 +409,15 @@ void StageEditor::LoadSucceeded(const std::string& stageName)
 
 	m_hasSaveTarget = true;
 
+}
+
+void StageEditor::LoadFailed()
+{
+	// ロードに失敗した場合は復元
+	SceneManager::Instance().RestoreObjList();
+
+	// ウェイポイントを復元
+	WayPointManager::Instance().RestoreWayPoints();
 }
 
 bool StageEditor::IsStageExists(const std::string& stageName) const
@@ -447,8 +443,6 @@ void StageEditor::NewStagePopup()
 
 		// 新規作成するステージ名
 		std::string newStageName = m_newStageName;
-
-
 
 		if (ImGui::Button("Create"))
 		{

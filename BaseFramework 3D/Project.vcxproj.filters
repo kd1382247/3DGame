@@ -298,14 +298,14 @@
     <Filter Include="Src\Application\Editor\MessageWindow">
       <UniqueIdentifier>{f372b89f-5acd-4edc-b7f5-7d7e3f411150}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Stage\AIBlock">
-      <UniqueIdentifier>{d523c8f2-a6e0-4f03-aef9-bf62909506e2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\WayPoint">
       <UniqueIdentifier>{75425795-af46-4a60-bf6c-781f50c49e32}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\System\WayPointManager">
       <UniqueIdentifier>{16ea0773-1cb7-4e0b-a443-167e6ad4ce1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision">
+      <UniqueIdentifier>{567349c9-f5fb-4004-a44c-aee239827de9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -693,14 +693,14 @@
     <ClInclude Include="Src\Application\Editor\MessageWindow\MessageWindow.h">
       <Filter>Src\Application\Editor\MessageWindow</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Stage\AIBlock\AIBlock.h">
-      <Filter>Src\Application\GameObject\Stage\AIBlock</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\WayPointManager\WayPointManager.h">
       <Filter>Src\Application\System\WayPointManager</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\WayPoint\WayPoint.h">
       <Filter>Src\Application\GameObject\WayPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.h">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1019,14 +1019,14 @@
     <ClCompile Include="Src\Application\Editor\MessageWindow\MessageWindow.cpp">
       <Filter>Src\Application\Editor\MessageWindow</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Stage\AIBlock\AIBlock.cpp">
-      <Filter>Src\Application\GameObject\Stage\AIBlock</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\WayPointManager\WayPointManager.cpp">
       <Filter>Src\Application\System\WayPointManager</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\WayPoint\WayPoint.cpp">
       <Filter>Src\Application\GameObject\WayPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.cpp">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

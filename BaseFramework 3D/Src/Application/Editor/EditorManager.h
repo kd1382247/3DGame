@@ -17,6 +17,7 @@ public:
 
 	void Draw();
 
+	void SetEditorCamera(std::shared_ptr<CameraBase>camera) { m_wpEditorCamera = camera; }
 
 	void StartPlayMode();
 	void StopPlayMode();
@@ -32,7 +33,14 @@ public:
 	// 現在選択されているオブジェクト
 	void SetSelectedObject(const std::shared_ptr<KdGameObject>& obj)
 	{
+
+		// 前に選択されていたフラグをfalse
+		if (m_spSelectedObject){m_spSelectedObject->SetSelected(false);}
+
 		m_spSelectedObject = obj;
+
+		// 新たに選択されたフラグをtrueにする
+		if (m_spSelectedObject){m_spSelectedObject->SetSelected(true);}
 	}
 
 	const std::shared_ptr<KdGameObject>& GetSelectedObject() const
@@ -52,7 +60,27 @@ public:
 private:
 
 	// メニュー表示
-	void DrawModeMenu();
+	void DrawToolBar();
+
+	// ステージ名の長さを調べて返す
+	std::string MakeEllipsisText(const std::string& text, float maxWidth);
+
+	// レイ情報を生成
+	KdCollider::RayInfo CreateReyInfo(KdCollider::Type type);
+
+	// マウスクリックでオブジェクトを選択
+	void UpdateMouseSelection();
+
+	// キャラクターを選択
+	void SelectGameObjectByMouse();
+
+	// ステージを選択
+	void SelectStageObjectByMouse();
+
+	// ウェイポイントを選択
+	void SelectWayPointByMouse();
+
+private:
 
 	std::shared_ptr<KdGameObject> m_spSelectedObject;
 
@@ -61,15 +89,19 @@ private:
 	StageEditor m_stageEditor;
 	EditorMode m_editorMode = EditorMode::Edit;
 
-	std::weak_ptr<CameraBase>m_wpCamera;
+	std::weak_ptr<CameraBase>m_wpTPSCamera;
+
+	std::weak_ptr<CameraBase>m_wpEditorCamera;
+
+	
 
 	// 編集したかどうか
 	bool m_isDirty = false;
 
 
 private: // シングルトンパターン
-	EditorManager() = default;
-	~EditorManager() = default;
+	EditorManager() {}
+	~EditorManager() {}
 
 public:
 

@@ -4,7 +4,6 @@
 #include "../../System/WayPointManager/WayPointManager.h"
 
 
-
 bool StageDataManager::Save(const std::string& stageName)
 {
 	return SaveToFolder(GetStageFolder(stageName));
@@ -24,6 +23,7 @@ bool StageDataManager::LoadTemporary()
 {
 	return LoadFromFolder("Asset/Data/EditorTemp");
 }
+
 
 std::filesystem::path StageDataManager::GetStageFolder(const std::string& stageName) const
 {
@@ -89,6 +89,7 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 	const std::filesystem::path stageDataPath = stageFolder / "StageData.json";
 	// ウェイポイントデータ
 	const std::filesystem::path wayPointDataPath = stageFolder / "WayPointData.json";
+
 
 	// 読込失敗で現在の編集内容を消さないよう、先に必要ファイルを確認する
 	if (!std::filesystem::exists(stageDataPath) ||

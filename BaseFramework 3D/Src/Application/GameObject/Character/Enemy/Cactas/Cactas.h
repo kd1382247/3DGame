@@ -19,20 +19,15 @@ public:
 
 	void DrawInspector()override;
 
-	void SetPath(const std::vector<int>& path);
-
-
-	void ChangeMoveState(MoveState nextState);
-
 
 private:
 
-
 	void UpdateDirectChase();
-
 	void UpdateFollowPath();
 
 	void UpdateAnimation();
+
+
 
 private:
 
@@ -46,11 +41,6 @@ private:
 	CactasParameter   m_parameter;
 
 
-	// 敵が通るWayPointのID一覧
-	std::vector<int>m_path;
-
-	// 現在目指しているWayPointが、m_pathの何番目か
-	size_t m_pathIndex = 0;
 
 
 };

@@ -94,8 +94,14 @@ public:
 	// クラスの関連付け用の関数
 	virtual void SetUpReference() {}
 
-	// Inspectorに表示させるパラメータ
-	virtual void DrawInspector();
+	// Inspectorに表示させる
+	virtual void DrawInspector() {}
+
+	// オブジェクトが選択されたか
+	bool IsSelected() { return m_isSelected; }
+	void SetSelected(bool selected) { m_isSelected = selected; }
+
+
 
 	// カテゴリをセット
 	void SetObjectCategory(const ObjectCategory category) { m_objectCategory = category; }
@@ -107,6 +113,20 @@ public:
 protected:
 
 	void Release() {}
+
+	// 名前を含めすべてInspecterに表示
+	void DrawBasicInspecter();
+
+	// 座標、回転、大きさのInspectorをまとめて表示
+	void DrawTransformInspector();
+
+	// Inspectorに表示させる内容
+	void DrawNameInspector();
+	void DrawPositionInspector();
+	void DrawRotationInspector();
+	void DrawScaleInspector();
+
+
 
 	// 描画タイプ・何の描画を行うのかを決める / 最適な描画リスト作成用
 	UINT m_drawType = 0;
@@ -135,4 +155,5 @@ protected:
 	// オブジェクトのカテゴリー
 	ObjectCategory m_objectCategory=ObjectCategory::None;
 
+	bool m_isSelected = false;
 };

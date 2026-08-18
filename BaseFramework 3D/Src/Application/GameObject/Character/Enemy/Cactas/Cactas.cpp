@@ -1,8 +1,9 @@
 ﻿#include "Cactas.h"
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
-#include"../../../../System/PathFinding/WayPointManager.h"
-#include"../../../../System/PathFinding/WayPoint/WayPoint.h"
+#include"../../../../System/WayPointManager/WayPointManager.h"
+#include"../../../../GameObject/WayPoint/WayPoint.h"
+
 
 
 #include"../../Player/Player.h"
@@ -41,21 +42,11 @@ void Cactas::Init()
 void Cactas::Update()
 {
 
-
-	if (GetAsyncKeyState('G') & 0x8000)
-	{
-		ChangeMoveState(MoveState::DirectChase);
-	}
-	if (GetAsyncKeyState('H') & 0x8000)
-	{
-		ChangeMoveState(MoveState::FollowPath);
-	}
+	CanDirectChase();
+	ChangeMoveState(m_nextMoveState);
 
 
-
-
-
-	switch (m_moveState)
+	switch (m_currentMoveState)
 	{
 	case EnemyBase::MoveState::DirectChase:
 		UpdateDirectChase();
@@ -66,6 +57,11 @@ void Cactas::Update()
 	default:
 		break;
 	}
+
+	Math::Vector3 nowPos = GetPos();
+	m_Gravity += 0.02;
+	nowPos.y -= m_Gravity;
+	SetPos(nowPos);
 
 }
 
@@ -84,42 +80,6 @@ void Cactas::DrawInspector()
 	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
-}
-
-void Cactas::ChangeMoveState(MoveState nextState)
-{
-	if (m_moveState == nextState)
-	{
-		return;
-	}
-
-	m_moveState = nextState;
-
-	if (m_moveState == MoveState::FollowPath)
-	{
-		// ここでA*経路を作る
-
-		// スタート地点
-		auto startPoint = WayPointManager::Instance().FindNearest(GetPos());
-
-		if (!m_wpPlayer.lock())
-		{
-			return;
-		}
-
-		// ゴール（目標地点）
-		auto goalPoint = WayPointManager::Instance().FindNearest(m_wpPlayer.lock()->GetPos());
-
-		SetPath (WayPointManager::Instance().FindPath(startPoint->GetID(), goalPoint->GetID()));
-
-	}
-}
-
-void Cactas::SetPath(const std::vector<int>& path)
-{
-	m_path = path;
-
-	m_pathIndex = 0;
 }
 
 void Cactas::UpdateDirectChase()
@@ -141,7 +101,10 @@ void Cactas::UpdateDirectChase()
 	
 	// 目的地までの距離より移動スピードが大きくなったら
 	// 残りの距離を移動量にする
-	if (targetDir.Length() < moveSpeed)moveSpeed = targetDir.Length();
+	if (targetDir.Length() < 1.4)
+	{
+		return;
+	}
 
 	targetDir.Normalize();
 
@@ -153,6 +116,9 @@ void Cactas::UpdateDirectChase()
 
 void Cactas::UpdateFollowPath()
 {
+
+	UpdatePath();
+
 	// 経路が空
 	if (m_path.empty())
 	{

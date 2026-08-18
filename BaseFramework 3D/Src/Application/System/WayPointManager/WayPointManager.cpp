@@ -518,7 +518,7 @@ bool WayPointManager::Load(const std::string& filePath)
 		// WayPointsに登録
 		if (!RegisterWayPoint(wayPoint))
 		{
-			ClearWayPoints();
+			RestoreWayPoints();
 			return false;
 		}
 

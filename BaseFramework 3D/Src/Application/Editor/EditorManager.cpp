@@ -1,12 +1,13 @@
 ﻿#include "EditorManager.h"
 
+#include"../main.h"
+#include"../GameObject/Camera/CameraBase.h"
+#include"../GameObject/Camera/TPSCamera/TPSCamera.h"
 #include "../../Framework/GameObject/KdGameObjectFactory.h"
-
 #include"../System/WayPointManager/WayPointManager.h"
+#include"../GameObject/WayPoint/WayPoint.h"
 #include"../System/ReferenceManager/ReferenceManager.h"
 #include "../Scene/SceneManager.h"
-#include"../GameObject/Camera/TPSCamera/TPSCamera.h"
-
 #include"../System/StageDataManager/StageDataManager.h"
 
 
@@ -16,16 +17,11 @@ void EditorManager::Draw()
 
 	if(m_editorMode==EditorMode::Edit)
 	{
-		ImGui::Begin("Menu");
-
-		m_stageEditor.Draw();
-
-		DrawModeMenu();
-
-		ImGui::End();
-
+		DrawToolBar();
 		m_hierarchy.Draw();
 		m_inspector.Draw();
+
+		UpdateMouseSelection();
 	}
 
 	if (m_editorMode == EditorMode::Play)
@@ -48,14 +44,16 @@ void EditorManager::StartPlayMode()
 	// モードを切り替える
 	SetEditorMode(EditorMode::Play);
 
-	if (!m_wpCamera.lock())
+	if (!m_wpTPSCamera.lock())
 	{
 		// 一時的にカメラを用意
 		std::shared_ptr<TPSCamera>camera = std::make_shared<TPSCamera>();
 		camera->Init();
 		SceneManager::Instance().AddObject(camera);
-		m_wpCamera = camera;
+		m_wpTPSCamera = camera;
 	}
+
+	SetSelectedObject(nullptr);
 
 	// 全てのオブジェクトを生成後に関連付け
 	ReferenceManager::Instance().AssociateObjects(SceneManager::Instance().GetObjList());
@@ -86,27 +84,272 @@ void EditorManager::StopPlayMode()
 	SetEditorMode(EditorMode::Edit);
 
 	// カメラを削除
-	if (m_wpCamera.lock())
+	if (m_wpTPSCamera.lock())
 	{
-		m_wpCamera.lock()->Destroy();
+		m_wpTPSCamera.lock()->Destroy();
 	}
 }
 
-void EditorManager::DrawModeMenu()
+void EditorManager::DrawToolBar()
 {
-	if (IsEditMode())
-	{
-		ImGui::Text("CurrentMode: Edit");
-	}
-	else
-	{
-		ImGui::Text("CurrentMode: Play");
-	}
+	ImGui::Begin("Menu");
 
-	if (ImGui::Button("Play"))
+	//-----------------------------
+	//  左:ファイル操作
+	//-----------------------------
+	m_stageEditor.Draw();
+
+
+	ImGui::SameLine();
+
+	ImGui::TextDisabled("|");
+
+	ImGui::SameLine();
+
+	//-----------------------------
+	//  中央:ステージ名
+	//-----------------------------
+
+	// Saveボタンの右端から少し空ける
+	const float stageStartX =ImGui::GetCursorPosX() + 10.0f;
+
+	// Playボタン用の幅を右側に確保
+	const float playButtonWidth = 70.0f;
+	const float rightMargin = 10.0f;
+
+	const float windowWidth =ImGui::GetWindowWidth();
+
+	const float stageEndX =windowWidth -playButtonWidth -rightMargin -20.0f;
+
+	// Stage名を描画できる幅
+	const float stageWidth =stageEndX - stageStartX;
+
+
+	ImGui::SetCursorPosX(stageStartX);
+	
+	std::string stageName = m_stageEditor.GetCurrentStageName();
+
+	// ステージ名表示
+	ImGui::Text("Stage : %s",stageName.empty()? "None": stageName.c_str());
+
+	ImGui::SameLine();
+	//-----------------------------
+	//  右:プレイ
+	//-----------------------------
+
+	const float playWidth = 70.0f;
+
+	ImGui::SetCursorPosX(windowWidth - playWidth - 10.0f);
+
+	if (ImGui::Button("Play", ImVec2(playWidth, 0.0f)))
 	{
 		StartPlayMode();
 	}
+
+	ImGui::End();
+}
+
+std::string EditorManager::MakeEllipsisText(const std::string& text, float maxWidth)
+{
+	if (text.empty())
+	{
+		return text;
+	}
+
+	// そのまま収まるなら変更しない
+	if (ImGui::CalcTextSize(text.c_str()).x <= maxWidth)
+	{
+		return text;
+	}
+
+	const std::string ellipsis = "...";
+
+	std::string result = text;
+
+	// ...を付けても maxWidth に収まるまで後ろから削る
+
+	while (!result.empty())
+	{
+		result.pop_back();
+
+		const std::string displayText = result + ellipsis;
+
+		if (ImGui::CalcTextSize(displayText.c_str()).x <= maxWidth)
+		{
+			return displayText;
+		}
+	}
+
+	return ellipsis;
+}
+
+KdCollider::RayInfo EditorManager::CreateReyInfo(KdCollider::Type type)
+{
+	// マウス座標を取得
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	ScreenToClient(Application::Instance().GetWindowHandle(), &mousePos);
+
+	// マウスを3D座標へ変換する
+	auto& camera = m_wpEditorCamera.lock()->GetCamera();
+	Math::Vector3 rayPos = camera->GetCameraMatrix().Translation();
+	Math::Vector3 rayDir = Math::Vector3::Zero;
+	float         range = 2000.f;
+
+	camera->GenerateRayInfoFromClientPos(
+		mousePos,
+		rayPos,
+		rayDir,
+		range
+	);
+
+	// 生成したレイ情報でオブジェクトの当たり判定を行う
+
+	Math::Vector3 endRayPos = rayPos + (rayDir * range);
+
+	KdCollider::RayInfo rayInfo;
+
+	rayInfo.m_dir = rayDir;
+	rayInfo.m_pos = rayPos;
+	rayInfo.m_range = range;
+	rayInfo.m_type = type;
+
+	return rayInfo;
+}
+
+void EditorManager::UpdateMouseSelection()
+{
+	if (!IsEditMode()){return;}
+	if (ImGui::GetIO().WantCaptureMouse){return;}
+	if (!(GetAsyncKeyState(VK_LBUTTON) & 0x8000)) { return; }
+
+	switch (m_hierarchy.GetHierarchyCategory())
+	{
+	case Hierarchy::HierarchyCategory::GameObject :
+
+		SelectGameObjectByMouse();
+		break;
+
+	case Hierarchy::HierarchyCategory::Stage:
+		SelectStageObjectByMouse();
+		break;
+
+	case Hierarchy::HierarchyCategory::WayPoint:
+		SelectWayPointByMouse();
+		break;
+
+	}
+}
+
+void EditorManager::SelectGameObjectByMouse()
+{
+	
+	KdCollider::RayInfo rayInfo=CreateReyInfo(KdCollider::TypeBump);
+	
+	float maxOverLap = 0;
+
+	std::shared_ptr<KdGameObject> selectedObj = nullptr;
+
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (!obj || obj->GetObjectCategory() != KdGameObject::ObjectCategory::Character)
+		{
+			continue;
+		}
+
+		std::list<KdCollider::CollisionResult> retRayList;
+		if (obj->Intersects(rayInfo, &retRayList));
+
+		
+
+		for (auto& ret : retRayList)
+		{
+			// レイを遮断しオーバーした長さが
+			// 一番長いものを探す
+			if (maxOverLap < ret.m_overlapDistance)
+			{
+				maxOverLap = ret.m_overlapDistance;
+
+				selectedObj = obj;
+			}
+		}
+	}
+
+	SetSelectedObject(selectedObj);
+}
+
+
+void EditorManager::SelectStageObjectByMouse()
+{
+	KdCollider::RayInfo rayInfo = CreateReyInfo(KdCollider::TypeEvent);
+
+	float maxOverLap = 0;
+
+
+	std::shared_ptr<KdGameObject> selectedObj = nullptr;
+
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (!obj || obj->GetObjectCategory() != KdGameObject::ObjectCategory::Stage)
+		{
+			continue;
+		}
+
+		std::list<KdCollider::CollisionResult> retRayList;
+		if (obj->Intersects(rayInfo, &retRayList));
+
+		for (auto& ret : retRayList)
+		{
+			// レイを遮断しオーバーした長さが
+			// 一番長いものを探す
+			if (maxOverLap < ret.m_overlapDistance)
+			{
+				maxOverLap = ret.m_overlapDistance;
+
+				selectedObj = obj;
+			}
+		}
+	}
+
+	SetSelectedObject(selectedObj);
+}
+
+void EditorManager::SelectWayPointByMouse()
+{
+	KdCollider::RayInfo rayInfo = CreateReyInfo(KdCollider::TypeBump);
+
+
+	float maxOverlap = 0.0f;
+
+	std::shared_ptr<KdGameObject> selectedObj = nullptr;
+
+	for (const auto& wayPoint :WayPointManager::Instance().GetWayPoints())
+	{
+		if (!wayPoint)
+		{
+			continue;
+		}
+
+		std::list<KdCollider::CollisionResult> retRayList;
+
+		if (!wayPoint->Intersects(rayInfo, &retRayList))
+		{
+			continue;
+		}
+
+		for (const auto& ret : retRayList)
+		{
+			if (maxOverlap < ret.m_overlapDistance)
+			{
+				maxOverlap = ret.m_overlapDistance;
+
+				selectedObj = wayPoint;
+			}
+		}
+	}
+
+	SetSelectedObject(selectedObj);
+	
 }
 
 void EditorManager::CreateGameObject(const std::string& className)

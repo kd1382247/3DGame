@@ -1,13 +1,11 @@
 ﻿#include "EditorScene.h"
 
-#include"../SceneManager.h"
-
 #include"../../Editor/EditorManager.h"
 #include"../../GameObject/Camera/EditorCamera/EditorCamera.h"
 
 
-#include"../../System/PathFinding/WayPointManager.h"
-#include"../../System/PathFinding/WayPoint/WayPoint.h"
+#include"../../System/WayPointManager/WayPointManager.h"
+#include"../../GameObject/WayPoint/WayPoint.h"
 
 
 void EditorScene::EditorUpdate()
@@ -72,4 +70,6 @@ void EditorScene::Init()
 
 	m_spEditorCamera = std::make_shared<EditorCamera>();
 	m_spEditorCamera->Init();
+
+	EditorManager::Instance().SetEditorCamera(m_spEditorCamera);
 }

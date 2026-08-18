@@ -1,10 +1,20 @@
 ﻿#include "WayPoint.h"
 
+#include"../../Editor/EditorManager.h"
+
 #include "../../System/WayPointManager/WayPointManager.h"
 
 void WayPoint::Init()
 {
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+	// カテゴリーをセット
+	SetObjectCategory(ObjectCategory::None);
+
+	// 当たり判定をセット
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape
+	("WayPoint", Math::Vector3(0, 0, 0), 0.5, KdCollider::TypeBump);
 
 	// IDの表示をするポリゴンを初期化
 	for (int i = 0; i < maxDigits; ++i)
@@ -23,22 +33,29 @@ void WayPoint::Init()
 
 void WayPoint::DrawDebug()
 {
+	Math::Color color;
+
 	// 球の表示
-	m_pDebugWire->AddDebugSphere(GetPos(), 0.5f, kGreenColor);
+	if(IsSelected())
+	{
+		color = kRedColor+kGreenColor;
+	}
+	else
+	{
+		color = kGreenColor;
+	}
+
+	m_pDebugWire->AddDebugSphere(GetPos(), 0.5f, color);
 	KdGameObject::DrawDebug();
 
 	// IDを描画
-	DrawID();
+	//DrawID();
 }
 
 void WayPoint::DrawInspector()
 {
-	// 座標変更
-	Math::Vector3 pos = GetPos();
-	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
-	{
-		SetPos(pos);
-	}
+
+	DrawPositionInspector();
 
 	// 接続先一覧
 	if (ImGui::Button("LinkList"))
@@ -61,43 +78,51 @@ void WayPoint::DrawInspector()
 		ImGui::EndPopup();
 	}
 
-
-	ImGui::Text("Connection");
-
-	// 接続関係を設定
-	for (const auto& wayPoint : WayPointManager::Instance().GetWayPoints())
+	if (ImGui::CollapsingHeader("Connections",ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		if (!wayPoint)
+		// 残り領域をスクロール可能なChildとして使う
+		if (ImGui::BeginChild("HierarchyList", ImVec2(0, 200), true))
 		{
-			continue;
-		}
-
-		// 自分自身は表示しない
-		if (wayPoint->GetID() == GetID())
-		{
-			continue;
-		}
-
-		bool hasLink = HasLink(wayPoint->GetID());
-
-		// 同名WayPointがあってもImGui上の項目を区別できるようIDを付ける
-		ImGui::PushID(wayPoint->GetID());
-
-		if (ImGui::Checkbox(wayPoint->GetObjectName().c_str(), &hasLink))
-		{
-			if (hasLink)
+			// 接続関係を設定
+			for (const auto& wayPoint : WayPointManager::Instance().GetWayPoints())
 			{
-				// 双方向に接続
-				WayPointManager::Instance().Connect(GetID(), wayPoint->GetID());
-			}
-			else
-			{
-				// 双方向接続解除
-				WayPointManager::Instance().Disconnect(GetID(), wayPoint->GetID());
+				if (!wayPoint)
+				{
+					continue;
+				}
+
+				// 自分自身は表示しない
+				if (wayPoint->GetID() == GetID())
+				{
+					continue;
+				}
+
+				bool hasLink = HasLink(wayPoint->GetID());
+
+				// 同名WayPointがあってもImGui上の項目を区別できるようIDを付ける
+				ImGui::PushID(wayPoint->GetID());
+
+				if (ImGui::Checkbox(wayPoint->GetObjectName().c_str(), &hasLink))
+				{
+					if (hasLink)
+					{
+						// 双方向に接続
+						WayPointManager::Instance().Connect(GetID(), wayPoint->GetID());
+						EditorManager::Instance().MarkDirty();
+					}
+					else
+					{
+						// 双方向接続解除
+						WayPointManager::Instance().Disconnect(GetID(), wayPoint->GetID());
+						EditorManager::Instance().MarkDirty();
+					}
+				}
+
+				ImGui::PopID();
 			}
 		}
 
-		ImGui::PopID();
+		ImGui::EndChild();
 	}
 }
 
@@ -155,7 +180,6 @@ void WayPoint::DrawID()
 			*m_spPoly[i], mat);
 
 	}
-
 }
 
 void WayPoint::SetUpDrawID()

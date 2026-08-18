@@ -81,52 +81,6 @@ bool KdGameObject::Intersects(const KdCollider::RayInfo& targetShape, std::list<
 	return m_pCollider->Intersects(targetShape, m_mWorld, pResults);
 }
 
-void KdGameObject::DrawInspector()
-{
-
-	// オブジェクトの名前変更
-	char nameBaffer[128];
-
-	strcpy_s(
-		nameBaffer,
-		sizeof(nameBaffer),
-		GetObjectName().c_str()
-	);
-
-	if (ImGui::InputText("Name", nameBaffer, sizeof(nameBaffer)))
-	{
-		SetObjectName(nameBaffer);
-		EditorManager::Instance().MarkDirty();
-	}
-
-	// 座標変更
-	Math::Vector3 pos = GetPos();
-
-	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
-	{
-		SetPos(pos);
-		EditorManager::Instance().MarkDirty();
-	}
-
-	Math::Vector3 scale = GetScale();
-
-	// 大きさ変更
-	if (ImGui::DragFloat3("Scale", &scale.x, 0.01f))
-	{
-		SetScale(scale);
-		EditorManager::Instance().MarkDirty();
-	}
-
-	// 回転
-	Math::Vector3 rotation = GetRotation();
-
-	if (ImGui::DragFloat3("Rotation", &rotation.x, 1))
-	{
-		SetRotation(rotation);
-		EditorManager::Instance().MarkDirty();
-	}
-
-}
 
 nlohmann::json KdGameObject::SaveData() const
 {
@@ -164,4 +118,71 @@ nlohmann::json KdGameObject::SaveData() const
 	};
 
 	return json;
+}
+
+void KdGameObject::DrawBasicInspecter()
+{
+	DrawNameInspector();
+
+	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		DrawTransformInspector();
+	}
+}
+
+void KdGameObject::DrawTransformInspector()
+{
+	DrawPositionInspector();
+	DrawRotationInspector();
+	DrawScaleInspector();
+}
+
+void KdGameObject::DrawNameInspector()
+{
+		// オブジェクトの名前変更
+		char nameBaffer[128];
+
+		strcpy_s(nameBaffer, sizeof(nameBaffer), GetObjectName().c_str());
+
+		if (ImGui::InputText("Name", nameBaffer, sizeof(nameBaffer)))
+		{
+			SetObjectName(nameBaffer);
+			EditorManager::Instance().MarkDirty();
+		}
+}
+
+void KdGameObject::DrawPositionInspector()
+{
+	// 座標変更
+	Math::Vector3 pos = GetPos();
+
+	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
+	{
+		SetPos(pos);
+		EditorManager::Instance().MarkDirty();
+	}
+}
+
+void KdGameObject::DrawRotationInspector()
+{
+	// 回転
+	Math::Vector3 rotation = GetRotation();
+
+	if (ImGui::DragFloat3("Rotation", &rotation.x, 1))
+	{
+		SetRotation(rotation);
+		EditorManager::Instance().MarkDirty();
+	}
+}
+
+void KdGameObject::DrawScaleInspector()
+{
+	Math::Vector3 scale = GetScale();
+
+	// 大きさ変更
+	if (ImGui::DragFloat3("Scale", &scale.x, 0.01f))
+	{
+		SetScale(scale);
+		EditorManager::Instance().MarkDirty();
+	}
 }
