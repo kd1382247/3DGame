@@ -8,12 +8,8 @@ public:
 	MessageWindow(){}
 	~MessageWindow(){}
 	
-
 	void Open(const std::string&title,const std::string&message);
 	void Draw();
-
-
-
 
 private:
 

@@ -31,9 +31,10 @@ void Player::Init()
 		// パラメータークラス初期化
 		m_parameter.Init();
 
+		m_bumpPushRate = 0.0f;
 	}
 
-	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
+	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
 	SetPos({ 0.0f, 0.0f, 0.0f });
 }
@@ -136,7 +137,7 @@ void Player::UpdateJumpInput()
 {
 		const bool currentJumpButton = (GetAsyncKeyState(VK_SPACE) & 0x8000) != 0;
 
-		m_jumpButton = currentJumpButton&&m_Gravity<=0;	
+		m_jumpButton = currentJumpButton&&m_gravity<=0;	
 }
 
 void Player::UpdateAttackInput()
@@ -272,11 +273,11 @@ void Player::UpdateMove()
 
 	}
 
-	m_Gravity += 0.02;
+	m_gravity += 0.02;
 
 	nowPos += dir * m_parameter.GetParam().m_moveSpeed;
 
-	nowPos.y -= m_Gravity;
+	nowPos.y -= m_gravity;
 
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
 	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
@@ -550,7 +551,7 @@ void Player::EnterState(PlayerActionState _state)
 	case PlayerActionState::JumpStart:
 		ResetCombo();
 		m_jumpFlg = true;
-		m_Gravity = -m_parameter.GetParam().m_jumpPow;
+		m_gravity = -m_parameter.GetParam().m_jumpPow;
 		break;
 	case PlayerActionState::JumpAir:
 

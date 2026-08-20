@@ -1,10 +1,12 @@
 ﻿#pragma once
 
-#include "Hierarchy/Hierarchy.h"
-#include "Inspector/Inspector.h"
-#include "StageEditor/StageEditor.h"
+
+class Hierarchy;
+class Inspector;
+class StageEditor;
 
 class CameraBase;
+class MessageWindow;
 
 class EditorManager
 {
@@ -59,6 +61,8 @@ public:
 
 private:
 
+	void Init();
+
 	// メニュー表示
 	void DrawToolBar();
 
@@ -82,25 +86,27 @@ private:
 
 private:
 
-	std::shared_ptr<KdGameObject> m_spSelectedObject;
+	std::shared_ptr<KdGameObject> m_spSelectedObject=nullptr;
 
-	Hierarchy m_hierarchy;
-	Inspector m_inspector;
-	StageEditor m_stageEditor;
+	std::shared_ptr<Hierarchy> m_spHierarchy=nullptr;
+	std::shared_ptr<Inspector> m_spInspector=nullptr;
+	std::shared_ptr<StageEditor> m_spStageEditor=nullptr;
+
+	// エディタのモード
 	EditorMode m_editorMode = EditorMode::Edit;
 
-	std::weak_ptr<CameraBase>m_wpTPSCamera;
-
+	// エディターカメラ
 	std::weak_ptr<CameraBase>m_wpEditorCamera;
 
-	
+	// メッセージウィンドウ
+	std::shared_ptr<MessageWindow>m_spMessageWindow = nullptr;
 
 	// 編集したかどうか
 	bool m_isDirty = false;
 
 
 private: // シングルトンパターン
-	EditorManager() {}
+	EditorManager() { Init(); }
 	~EditorManager() {}
 
 public:

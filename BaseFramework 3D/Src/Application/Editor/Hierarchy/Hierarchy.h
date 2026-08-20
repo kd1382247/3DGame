@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-
-
 class Hierarchy
 {
 public:
@@ -10,7 +8,8 @@ public:
 	{
 		GameObject,
 		WayPoint,
-		Stage
+		Stage,
+		CollisionBox
 	};
 
 
@@ -31,7 +30,7 @@ private:
 	void AddGameObject();
 	void AddWayPoint();
 	void AddStage();
-
+	void AddCollisionBox();
 
 	
 	void DrawScrollableList();
@@ -39,6 +38,7 @@ private:
 	void DrawGameObjects();
 	void DrawWayPoints();
 	void DrawStage();
+	void DrawCollisionBox();
 
 	// 指定のカテゴリに登録されている生成候補を表示する
 	void DrawAddObjectList(KdGameObject::ObjectCategory objectCategory);

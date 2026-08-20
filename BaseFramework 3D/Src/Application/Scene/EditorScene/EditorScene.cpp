@@ -3,9 +3,9 @@
 #include"../../Editor/EditorManager.h"
 #include"../../GameObject/Camera/EditorCamera/EditorCamera.h"
 
-
 #include"../../System/WayPointManager/WayPointManager.h"
 #include"../../GameObject/WayPoint/WayPoint.h"
+#include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 
 
 void EditorScene::EditorUpdate()
@@ -31,6 +31,8 @@ void EditorScene::PreDraw()
 void EditorScene::DrawDebug()
 {
 	BaseScene::DrawDebug();
+
+	WallCollisionManager::Instance().DrawDebug();
 
 	WayPointManager::Instance().DrawDebug();
 }

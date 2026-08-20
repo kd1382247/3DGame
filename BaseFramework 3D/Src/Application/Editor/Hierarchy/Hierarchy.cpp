@@ -5,6 +5,9 @@
 #include "../../../Framework/GameObject/KdGameObjectFactory.h"
 #include "../../System/WayPointManager/WayPointManager.h"
 #include"../../GameObject/WayPoint/WayPoint.h"
+#include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
+#include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
+
 
 
 void Hierarchy::Draw()
@@ -38,6 +41,9 @@ void Hierarchy::DrawCategoryButtons()
 	ImGui::SameLine();
 
 	CategoryButton("WayPoint", HierarchyCategory::WayPoint);
+
+	CategoryButton("CollisionBox", HierarchyCategory::CollisionBox);
+
 }
 
 void Hierarchy::CategoryButton(const char* label, HierarchyCategory category)
@@ -75,6 +81,9 @@ void Hierarchy::DrawAddButtons()
 		break;
 	case Hierarchy::HierarchyCategory::Stage:
 		AddStage();
+		break;
+	case Hierarchy::HierarchyCategory::CollisionBox:
+		AddCollisionBox();
 		break;
 	}
 
@@ -140,6 +149,21 @@ void Hierarchy::AddStage()
 
 }
 
+void Hierarchy::AddCollisionBox()
+{
+
+	if (ImGui::Button("Add WallBox"))
+	{
+		auto wallBox = WallCollisionManager::Instance().CreateWallCollision();
+
+		if (wallBox)
+		{
+			// CreateWayPoint()内でManagerへの登録まで完了している
+			EditorManager::Instance().SetSelectedObject(wallBox);
+		}
+	}
+}
+
 void Hierarchy::DrawGameObjects()
 {
 	ImGui::Text("--------GameObjects--------");
@@ -167,8 +191,24 @@ void Hierarchy::DrawStage()
 
 	ImGui::Separator();
 
-	ImGui::Text("----------Gimmicks----------");
+	ImGui::Text("----------Gimmick----------");
 	DrawObjectList(KdGameObject::ObjectCategory::Gimmick);
+}
+
+void Hierarchy::DrawCollisionBox()
+{
+
+	ImGui::Text("----------CollisionBox----------");
+
+	for (const auto& wallBox : WallCollisionManager::Instance().GetWallCollisionList())
+	{
+		if (!wallBox)
+		{
+			continue;
+		}
+
+		SelectObject(wallBox);
+	}
 }
 
 void Hierarchy::DrawAddObjectList(KdGameObject::ObjectCategory objectCategory)
@@ -214,6 +254,10 @@ void Hierarchy::DrawScrollableList()
 
 		case HierarchyCategory::Stage:
 			DrawStage();
+			break;
+
+		case HierarchyCategory::CollisionBox:
+			DrawCollisionBox();
 			break;
 		}
 	}

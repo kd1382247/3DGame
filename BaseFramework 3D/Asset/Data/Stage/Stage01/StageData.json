@@ -1,11 +1,30 @@
 {
     "Objects": [
         {
+            "Class": "TPSCamera",
+            "Name": "TPSCamera",
+            "Position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        {
             "Class": "Stage01",
             "Name": "Stage01",
             "Position": {
                 "x": 0.0,
-                "y": 0.0,
+                "y": -1.0,
                 "z": 0.0
             },
             "Rotation": {
@@ -24,8 +43,8 @@
             "Name": "Player",
             "Position": {
                 "x": 0.0,
-                "y": 2.299999952316284,
-                "z": -1.399999976158142
+                "y": 0.0,
+                "z": 0.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -43,7 +62,83 @@
             "Name": "Cactas",
             "Position": {
                 "x": 5.0,
-                "y": 2.0,
+                "y": 0.0,
+                "z": 2.5
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        {
+            "Class": "Cactas",
+            "Name": "Cactas",
+            "Position": {
+                "x": 5.0,
+                "y": 0.0,
+                "z": -2.299999952316284
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        {
+            "Class": "Cactas",
+            "Name": "Cactas",
+            "Position": {
+                "x": 7.300000190734863,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        {
+            "Class": "Cactas",
+            "Name": "Cactas",
+            "Position": {
+                "x": 5.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        {
+            "Class": "Cactas",
+            "Name": "Cactas",
+            "Position": {
+                "x": 2.700000047683716,
+                "y": 0.0,
                 "z": 0.0
             },
             "Rotation": {

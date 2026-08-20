@@ -1,20 +1,75 @@
 ﻿#include "WallCollision.h"
 
+#include"WallCollisionManager.h"
+
+#include"../../../../../Editor/EditorManager.h"
 #include"../../../../../System/CollisionManager/CollisionManager.h"
 
 void WallCollision::Init()
 {
-	if (!m_spModel)
+
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+	CollisionManager::Instance().RegisterObject(CollisionLayer::Wall, shared_from_this());
+
+	SetPos(Math::Vector3::Zero);
+}
+
+void WallCollision::DrawDebug()
+{
+
+	Math::Vector3 halfSize =
 	{
+		m_scale.x * 0.5f,
+		m_scale.y * 0.5f,
+		m_scale.z * 0.5f
+	};
 
-		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Stage/Stage01/WallCollision.gltf");
 
-		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape("WallCollision", m_spModel, KdCollider::TypeBump);
+	m_pDebugWire->AddDebugBox(m_mWorld, halfSize, Math::Vector3::Zero, false, kGreenColor);
 
-		CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
+	KdGameObject::DrawDebug();
 
+}
+
+DirectX::BoundingBox WallCollision::GetBox() const
+{
+	DirectX::BoundingBox box;
+
+	box.Center = GetPos();
+
+	box.Extents =
+	{
+		m_scale.x * 0.5f,
+		m_scale.y * 0.5f,
+		m_scale.z * 0.5f
+	};
+
+	return box;
+}
+
+void WallCollision::DrawInspector()
+{
+	// 座標変更
+	Math::Vector3 pos = GetPos();
+
+	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
+	{
+		SetPos(pos);
+		EditorManager::Instance().MarkDirty();
 	}
 
+	Math::Vector3 scale = GetScale();
+
+	// 大きさ変更
+	if (ImGui::DragFloat3("Size", &scale.x, 0.01f))
+	{
+		SetScale(scale);
+		EditorManager::Instance().MarkDirty();
+	}
+}
+
+void WallCollision::Destroy()
+{
+	WallCollisionManager::Instance().RemoveWallCollision(GetID());
 }

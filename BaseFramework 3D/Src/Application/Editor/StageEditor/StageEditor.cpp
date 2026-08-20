@@ -4,7 +4,10 @@
 #include "../../Scene/SceneManager.h"
 #include "../../System/WayPointManager/WayPointManager.h"
 #include"../../System/StageDataManager/StageDataManager.h"
+#include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 
+
+#include"../../GameObject/Camera/TPSCamera/TPSCamera.h"
 
 void StageEditor::Draw()
 {
@@ -70,12 +73,19 @@ void StageEditor::DrawPopups()
 
 void StageEditor::CreateNewStage()
 {
-	std::string stageName = m_newStageName;
+
+	m_currentStageName = m_newStageName;
 
 	// 既存の編集対象をクリア
 	ClearStage();
 
-	m_currentStageName = stageName;
+	m_isEditStage = true;
+
+	// カメラを作成(どのステージにも必ず必要)
+	std::shared_ptr<TPSCamera>camera = std::make_shared<TPSCamera>();
+	camera->Init();
+	SceneManager::Instance().AddObject(camera);
+
 
 	EditorManager::Instance().ClearDirty();
 
@@ -89,40 +99,42 @@ void StageEditor::SaveStagePopup()
 		// ステージ名を変更可能
 		ImGui::InputText("Stage Name",m_saveStageName,sizeof(m_saveStageName));
 
-		if (ImGui::Button("Save"))
+
+		std::string stageName = m_saveStageName;
+		// 保存するステージ名が変更されたかどうか
+		bool stageNameChange = m_saveStageName != m_currentStageName;
+
+		if (ImGui::Button("Save")&&!stageName.empty())
 		{
-			std::string stageName = m_saveStageName;
-
-			// 保存するステージ名が変更されたかどうか
-			bool stageNameChange = m_saveStageName != m_currentStageName;
-
-			if (!stageName.empty())
+			// もし編集対象のステージ無ければセーブしない
+			if (!m_isEditStage)
 			{
-				// 既に存在するかつ、保存するステージ名が変更されたら
-				if (IsStageExists(stageName)&&stageNameChange)
+				m_messageWindow.Open(U8("エラー"), U8("編集中のステージがないためセーブできません"));
+				ImGui::CloseCurrentPopup();
+			}
+			// 既に存在するかつ、保存するステージ名が変更されたら
+			else if (IsStageExists(stageName) && stageNameChange)
+			{
+				ImGui::OpenPopup("OverwritePopup");
+			}
+			else
+			{
+				if (StageDataManager::Instance().Save(stageName))
 				{
-					ImGui::OpenPopup("OverwritePopup");
+					m_currentStageName = stageName;
+
+					EditorManager::Instance().ClearDirty();
+
+					m_hasSaveTarget = true;
+
+					ImGui::CloseCurrentPopup();
 				}
 				else
 				{
-					if (StageDataManager::Instance().Save(stageName))
-					{
-						m_currentStageName = stageName;
-
-						EditorManager::Instance().ClearDirty();
-
-						m_hasSaveTarget = true;
-
-						ImGui::CloseCurrentPopup();
-					}
-					else
-					{
-						m_messageWindow.Open(
-							U8("エラー"),
-							U8("ステージのセーブに失敗しました"));
-					}
+					m_messageWindow.Open(U8("エラー"),U8("ステージのセーブに失敗しました"));
 				}
 			}
+
 		}
 
 		ImGui::SameLine();
@@ -176,9 +188,7 @@ void StageEditor::OverwritePopup()
 			}
 			else
 			{
-				m_messageWindow.Open(
-					U8("エラー"),
-					U8("ステージのセーブに失敗しました"));
+				m_messageWindow.Open(U8("エラー"),U8("ステージのセーブに失敗しました"));
 			}
 		}
 
@@ -238,20 +248,26 @@ void StageEditor::OpenStagePopup()
 			ImGui::TextDisabled("No saved stages were found.");
 		}
 
-		// ステージ一覧を表示
-		for (const auto& stageName : m_stageNames)
+
+		// 残り領域をスクロール可能なChildとして使う
+		if (ImGui::BeginChild("StageList", ImVec2(0, 100), true))
 		{
-			const bool isCurrentStage = stageName == m_currentStageName;
-
-			ImGui::PushID(stageName.c_str());
-
-			if (ImGui::Selectable(stageName.c_str(), isCurrentStage))
+			// ステージ一覧を表示
+			for (const auto& stageName : m_stageNames)
 			{
-				RequestLoadStage(stageName);
-			}
+				const bool isCurrentStage = stageName == m_currentStageName;
 
-			ImGui::PopID();
+				ImGui::PushID(stageName.c_str());
+
+				if (ImGui::Selectable(stageName.c_str(), isCurrentStage))
+				{
+					RequestLoadStage(stageName);
+				}
+
+				ImGui::PopID();
+			}
 		}
+		ImGui::EndChild();
 
 		ImGui::Separator();
 
@@ -297,6 +313,7 @@ void StageEditor::RequestLoadStage(const std::string & stageName)
 		}
 		else
 		{
+			m_messageWindow.Open(U8("エラー"), U8("ファイルを開けません"));
 			LoadFailed();
 		}
 		return;
@@ -399,6 +416,8 @@ void StageEditor::LoadSucceeded(const std::string& stageName)
 	// ロードに成功したのでバックアップをクリア
 	SceneManager::Instance().ClearBackupList();
 	WayPointManager::Instance().ClearBackup();
+	WallCollisionManager::Instance().ClearBackup();
+
 
 	EditorManager::Instance().ClearDirty();
 
@@ -406,6 +425,8 @@ void StageEditor::LoadSucceeded(const std::string& stageName)
 
 	m_pendingLoadStageName.clear();
 	m_closeOpenStagePopup = true;
+
+	m_isEditStage = true;
 
 	m_hasSaveTarget = true;
 
@@ -418,6 +439,8 @@ void StageEditor::LoadFailed()
 
 	// ウェイポイントを復元
 	WayPointManager::Instance().RestoreWayPoints();
+
+	WallCollisionManager::Instance().RestoreWallCollisionList();
 }
 
 bool StageEditor::IsStageExists(const std::string& stageName) const
@@ -444,12 +467,8 @@ void StageEditor::NewStagePopup()
 		// 新規作成するステージ名
 		std::string newStageName = m_newStageName;
 
-		if (ImGui::Button("Create"))
+		if (ImGui::Button("Create")&& !newStageName.empty())
 		{
-			if (newStageName.empty())
-			{
-				return;
-			}
 
 			// 変更後セーブをしていなかったら
 			if (EditorManager::Instance().IsDirty())

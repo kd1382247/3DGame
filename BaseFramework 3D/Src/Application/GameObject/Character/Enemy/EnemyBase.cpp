@@ -15,6 +15,8 @@ void EnemyBase::Init()
 {
 	// カテゴリーをセット
 	SetObjectCategory(ObjectCategory::Character);
+
+	m_bumpPushRate = 1.0f;
 }
 
 void EnemyBase::Update()
@@ -99,7 +101,11 @@ bool EnemyBase::CanDirectChase()
 	
 	if (hit)
 	{
-		m_nextMoveState = MoveState::FollowPath;
+		// ウェイポイントが無ければ変更しない
+		if(!WayPointManager::Instance().GetWayPoints().empty())
+		{
+			m_nextMoveState = MoveState::FollowPath;
+		}
 	}
 	else
 	{
@@ -112,6 +118,7 @@ bool EnemyBase::CanDirectChase()
 
 void EnemyBase::CreatePath()
 {
+
     // スタート地点
 	auto startPoint = WayPointManager::Instance().FindNearest(GetPos());
 

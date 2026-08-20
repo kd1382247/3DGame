@@ -702,6 +702,9 @@
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.h">
       <Filter>Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollisionManager.h">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1027,6 +1030,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.cpp">
       <Filter>Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollisionManager.cpp">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

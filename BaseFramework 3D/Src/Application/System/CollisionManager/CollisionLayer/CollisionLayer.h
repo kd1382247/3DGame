@@ -7,7 +7,8 @@ enum class CollisionLayer
 	Enemy,
 	PlayerAttack,
 	EnemyAttac,
-	Bump,
+	CharacterBump,
+	Wall,
 	AIBlock,
 	Max
 };

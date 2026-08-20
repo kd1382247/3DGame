@@ -6,9 +6,40 @@
 #include "../../Framework/GameObject/KdGameObjectFactory.h"
 #include"../System/WayPointManager/WayPointManager.h"
 #include"../GameObject/WayPoint/WayPoint.h"
+#include"../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
+
 #include"../System/ReferenceManager/ReferenceManager.h"
 #include "../Scene/SceneManager.h"
 #include"../System/StageDataManager/StageDataManager.h"
+
+
+#include "Hierarchy/Hierarchy.h"
+#include "Inspector/Inspector.h"
+#include "StageEditor/StageEditor.h"
+
+
+void EditorManager::Init()
+{
+	if(!m_spHierarchy)
+	{
+		m_spHierarchy = std::make_shared<Hierarchy>();
+	}
+
+	if (!m_spInspector)
+	{
+		m_spInspector = std::make_shared<Inspector>();
+	}
+
+	if (!m_spStageEditor)
+	{
+		m_spStageEditor = std::make_shared<StageEditor>();
+	}
+
+	if (!m_spMessageWindow)
+	{
+		m_spMessageWindow = std::make_shared<MessageWindow>();
+	}
+}
 
 
 void EditorManager::Draw()
@@ -18,8 +49,8 @@ void EditorManager::Draw()
 	if(m_editorMode==EditorMode::Edit)
 	{
 		DrawToolBar();
-		m_hierarchy.Draw();
-		m_inspector.Draw();
+		m_spHierarchy->Draw();
+		m_spInspector->Draw();
 
 		UpdateMouseSelection();
 	}
@@ -31,6 +62,9 @@ void EditorManager::Draw()
 			StopPlayMode();
 		}
 	}
+
+
+	m_spMessageWindow->Draw();
 }
 
 void EditorManager::StartPlayMode()
@@ -44,15 +78,7 @@ void EditorManager::StartPlayMode()
 	// モードを切り替える
 	SetEditorMode(EditorMode::Play);
 
-	if (!m_wpTPSCamera.lock())
-	{
-		// 一時的にカメラを用意
-		std::shared_ptr<TPSCamera>camera = std::make_shared<TPSCamera>();
-		camera->Init();
-		SceneManager::Instance().AddObject(camera);
-		m_wpTPSCamera = camera;
-	}
-
+	// 選択中のオブジェクトを解除
 	SetSelectedObject(nullptr);
 
 	// 全てのオブジェクトを生成後に関連付け
@@ -65,6 +91,7 @@ void EditorManager::StopPlayMode()
 	// Play中の状態を削除
 	SceneManager::Instance().ClearObjectList();
 	WayPointManager::Instance().ClearWayPoints();
+	WallCollisionManager::Instance().ClearWallCollisionList();
 
 	// Edit開始前の状態を復元
 	if (!StageDataManager::Instance().LoadTemporary())
@@ -72,6 +99,7 @@ void EditorManager::StopPlayMode()
 		// ロードに失敗したため復元する
 		SceneManager::Instance().RestoreObjList();
 		WayPointManager::Instance().RestoreWayPoints();
+		WallCollisionManager::Instance().RestoreWallCollisionList();
 
 		return;
 	}
@@ -79,16 +107,13 @@ void EditorManager::StopPlayMode()
 	// バックアップリストをクリア
 	SceneManager::Instance().ClearBackupList();
 	WayPointManager::Instance().ClearBackup();
+	WallCollisionManager::Instance().ClearBackup();
 
 	// モードを切り替える
 	SetEditorMode(EditorMode::Edit);
-
-	// カメラを削除
-	if (m_wpTPSCamera.lock())
-	{
-		m_wpTPSCamera.lock()->Destroy();
-	}
 }
+
+
 
 void EditorManager::DrawToolBar()
 {
@@ -97,7 +122,7 @@ void EditorManager::DrawToolBar()
 	//-----------------------------
 	//  左:ファイル操作
 	//-----------------------------
-	m_stageEditor.Draw();
+	m_spStageEditor->Draw();
 
 
 	ImGui::SameLine();
@@ -127,7 +152,7 @@ void EditorManager::DrawToolBar()
 
 	ImGui::SetCursorPosX(stageStartX);
 	
-	std::string stageName = m_stageEditor.GetCurrentStageName();
+	std::string stageName = m_spStageEditor->GetCurrentStageName();
 
 	// ステージ名表示
 	ImGui::Text("Stage : %s",stageName.empty()? "None": stageName.c_str());
@@ -143,7 +168,14 @@ void EditorManager::DrawToolBar()
 
 	if (ImGui::Button("Play", ImVec2(playWidth, 0.0f)))
 	{
-		StartPlayMode();
+		if(m_spStageEditor->IsEditStage())
+		{
+			StartPlayMode();
+		}
+		else
+		{
+			m_spMessageWindow->Open(U8("エラー"), U8("プレイするステージがありません"));
+		}
 	}
 
 	ImGui::End();
@@ -223,7 +255,7 @@ void EditorManager::UpdateMouseSelection()
 	if (ImGui::GetIO().WantCaptureMouse){return;}
 	if (!(GetAsyncKeyState(VK_LBUTTON) & 0x8000)) { return; }
 
-	switch (m_hierarchy.GetHierarchyCategory())
+	switch (m_spHierarchy->GetHierarchyCategory())
 	{
 	case Hierarchy::HierarchyCategory::GameObject :
 

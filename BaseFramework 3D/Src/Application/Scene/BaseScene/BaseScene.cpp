@@ -1,6 +1,9 @@
 ﻿#include "BaseScene.h"
 
+#include"../../System/CollisionManager/CollisionManager.h"
+
 #include"../../Editor/EditorManager.h"
+
 
 void BaseScene::PreUpdate()
 {
@@ -56,6 +59,10 @@ void BaseScene::PostUpdate()
 	{
 		obj->PostUpdate();
 	}
+
+
+	// 全オブジェクトの更新が終了してから１回だけ
+	CollisionManager::Instance().Resolve();
 }
 
 void BaseScene::PreDraw()

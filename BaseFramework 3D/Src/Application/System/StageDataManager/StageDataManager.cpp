@@ -2,7 +2,7 @@
 
 #include "../../Scene/SceneManager.h"
 #include "../../System/WayPointManager/WayPointManager.h"
-
+#include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 
 bool StageDataManager::Save(const std::string& stageName)
 {
@@ -76,6 +76,12 @@ bool StageDataManager::SaveToFolder(const std::filesystem::path& folder)
 		return false;
 	}
 
+	// Wallを保存
+	if (!WallCollisionManager::Instance().Save((stageFolder / "WallCollisionData.json").string()))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -90,10 +96,14 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 	// ウェイポイントデータ
 	const std::filesystem::path wayPointDataPath = stageFolder / "WayPointData.json";
 
+	// 壁の当たり判定データ
+	const std::filesystem::path wallCollisionDataPath = stageFolder / "WallCollisionData.json";
+
 
 	// 読込失敗で現在の編集内容を消さないよう、先に必要ファイルを確認する
 	if (!std::filesystem::exists(stageDataPath) ||
-		!std::filesystem::exists(wayPointDataPath))
+		!std::filesystem::exists(wayPointDataPath)||
+		!std::filesystem::exists(wallCollisionDataPath))
 	{
 		return false;
 	}
@@ -180,6 +190,12 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 
 	// ウェイポイントを生成
 	if (!WayPointManager::Instance().Load(wayPointDataPath.string()))
+	{
+		return false;
+	}
+
+	// 壁の当たり判定を生成
+	if (!WallCollisionManager::Instance().Load(wallCollisionDataPath.string()))
 	{
 		return false;
 	}

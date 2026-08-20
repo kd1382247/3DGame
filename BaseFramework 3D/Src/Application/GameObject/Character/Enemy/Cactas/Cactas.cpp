@@ -34,7 +34,7 @@ void Cactas::Init()
 
 	EnemyBase::Init();
 
-	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
+	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
 	SetPos({ 5,0,0 });
 }
@@ -59,8 +59,8 @@ void Cactas::Update()
 	}
 
 	Math::Vector3 nowPos = GetPos();
-	m_Gravity += 0.02;
-	nowPos.y -= m_Gravity;
+	m_gravity += 0.02;
+	nowPos.y -= m_gravity;
 	SetPos(nowPos);
 
 }
@@ -101,10 +101,7 @@ void Cactas::UpdateDirectChase()
 	
 	// 目的地までの距離より移動スピードが大きくなったら
 	// 残りの距離を移動量にする
-	if (targetDir.Length() < 1.4)
-	{
-		return;
-	}
+	if (targetDir.Length() < moveSpeed)moveSpeed = targetDir.Length();
 
 	targetDir.Normalize();
 

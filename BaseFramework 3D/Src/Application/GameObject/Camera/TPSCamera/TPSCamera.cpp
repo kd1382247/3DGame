@@ -1,5 +1,7 @@
 ﻿#include "TPSCamera.h"
 
+#include"../../../System/CollisionManager/CollisionManager.h"
+
 void TPSCamera::Init()
 {
 	// 親クラスの初期化呼び出し
@@ -33,10 +35,13 @@ void TPSCamera::PostUpdate()
 	m_mWorld = m_mLocalPos * m_mRotation * _targetMat;
 
 	// ↓めり込み防止の為の座標補正計算↓
-	// ①当たり判定(レイ判定)用の情報作成
 	KdCollider::RayInfo rayInfo;
 	// レイの発射位置を設定
 	rayInfo.m_pos = GetPos();
+
+	// 少し高いところから飛ばす(段差の許容範囲)
+	static float enableStepHigh = 0.2f;
+	rayInfo.m_pos.y += enableStepHigh;
 
 	// レイの発射方向を設定
 	rayInfo.m_dir = Math::Vector3::Down;
@@ -52,39 +57,46 @@ void TPSCamera::PostUpdate()
 	}
 
 	// 当たり判定をしたいタイプを設定
-	rayInfo.m_type = KdCollider::TypeGround;
+	rayInfo.m_type = KdCollider::TypeGround|KdCollider::TypeBump;
 
-	// ②HIT判定対象オブジェクトに総当たり
-	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
+	std::vector<const std::vector< std::weak_ptr<KdGameObject>>*>lists;
+
+	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::Ground));
+	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::Wall));
+
+	
+	for (const auto&objList:lists )
 	{
-		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
-		if (spGameObj)
+		for(const auto wpGameObj:*objList)
 		{
-			std::list<KdCollider::CollisionResult> retRayList;
-			spGameObj->Intersects(rayInfo, &retRayList);
+			std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
+			if (spGameObj)
+			{
+				std::list<KdCollider::CollisionResult> retRayList;
+				spGameObj->Intersects(rayInfo, &retRayList);
 
-			// ③ 結果を使って座標を補完する
-			// レイに当たったリストから一番近いオブジェクトを検出
-			float maxOverLap = 0;
-			Math::Vector3 hitPos = {};
-			bool hit = false;
-			for (auto& ret : retRayList)
-			{
-				// レイを遮断しオーバーした長さが
-				// 一番長いものを探す
-				if (maxOverLap < ret.m_overlapDistance)
+				// レイに当たったリストから一番近いオブジェクトを検出
+				float maxOverLap = 0;
+				Math::Vector3 hitPos = {};
+				bool hit = false;
+				for (auto& ret : retRayList)
 				{
-					maxOverLap = ret.m_overlapDistance;
-					hitPos = ret.m_hitPos;
-					hit = true;
+					// レイを遮断しオーバーした長さが
+					// 一番長いものを探す
+					if (maxOverLap < ret.m_overlapDistance)
+					{
+						maxOverLap = ret.m_overlapDistance;
+						hitPos = ret.m_hitPos;
+						hit = true;
+					}
 				}
-			}
-			if (hit)
-			{
-				// 何かしらの障害物に当たっている
-				Math::Vector3 _hitPos = hitPos;
-				_hitPos += rayInfo.m_dir * 0.4f;
-				SetPos(_hitPos);
+				if (hit)
+				{
+					// 何かしらの障害物に当たっている
+					Math::Vector3 _hitPos = hitPos;
+					_hitPos += rayInfo.m_dir * 0.4f;
+					SetPos(_hitPos);
+				}
 			}
 		}
 	}

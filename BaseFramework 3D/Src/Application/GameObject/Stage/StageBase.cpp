@@ -6,7 +6,9 @@ void StageBase::Init()
 }
 
 void StageBase::Update()
-{}
+{
+
+}
 
 void StageBase::DrawLit()
 {

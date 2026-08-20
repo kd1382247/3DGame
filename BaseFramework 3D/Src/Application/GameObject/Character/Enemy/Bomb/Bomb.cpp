@@ -28,7 +28,7 @@ void Bomb::Init()
 
 	EnemyBase::Init();
 
-	CollisionManager::Instance().RegisterObject(CollisionLayer::Bump, shared_from_this());
+	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
 
 	SetPos({ 5,0,0 });

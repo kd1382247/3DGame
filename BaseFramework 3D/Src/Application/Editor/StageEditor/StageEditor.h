@@ -17,6 +17,8 @@ public:
 		return m_currentStageName;
 	}
 
+	const bool IsEditStage()const { return m_isEditStage; }
+
 	void Draw();
 
 private:
@@ -74,8 +76,13 @@ private:
 	// ユーザーがロードしようとしているステージ名
 	std::string m_pendingLoadStageName;
 
+	// 編集対象のステージが存在するか
+	bool m_isEditStage = false;
 
+	// セーブする対象を判定、同じであれば上書きの確認はしない
 	bool m_hasSaveTarget = false;
+
+
 
 	// Popupへの一時入力。確定するまで現在のステージ名は変更しない
 	char m_newStageName[128]{};

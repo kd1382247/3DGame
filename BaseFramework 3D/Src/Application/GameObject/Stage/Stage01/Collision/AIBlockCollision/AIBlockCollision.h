@@ -11,4 +11,6 @@ public:
 
 	void Init()override;
 	void DrawLit()override {}
+
+	void SetMatrix(const Math::Matrix& mat) { m_mWorld = mat; }
 };

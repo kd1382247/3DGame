@@ -14,6 +14,8 @@ public:
 	~Stage01()override{}
 
 	void Init()override;
+	void Update()override;
+	void DrawInspector()override;
 
 private:
 

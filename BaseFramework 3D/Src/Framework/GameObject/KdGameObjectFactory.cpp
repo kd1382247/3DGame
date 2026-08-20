@@ -4,6 +4,8 @@
 
 #include"../../Application/GameObject/Character/Player/Player.h"
 
+#include"../../Application/GameObject/Camera/TPSCamera/TPSCamera.h"
+
 // ウェイポイント
 #include"../../Application/GameObject/WayPoint/WayPoint.h"
 
@@ -23,9 +25,18 @@
 // ステージ
 #include"../../Application/GameObject/Stage/Stage01/Render/Stage01.h"
 
+// 当たり判定(壁)
+#include"../../Application/GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
+
+
 
 void KdGameObjectFactory::Init()
 {
+	//===================================================================
+	// カメラ
+	//===================================================================
+
+	Register<TPSCamera>("TPSCamera", KdGameObject::ObjectCategory::Camera);
 
 	//===================================================================
 	// プレイヤー
@@ -68,6 +79,13 @@ void KdGameObjectFactory::Init()
 	// Stage01
 	Register<Stage01>("Stage01", KdGameObject::ObjectCategory::Stage);
 
+
+	//===================================================================
+	// 当たり判定
+	//===================================================================
+
+	// 壁
+	Register<WallCollision>("WallCollision", KdGameObject::ObjectCategory::None);
 
 	//===================================================================
 	// ウェイポイント
