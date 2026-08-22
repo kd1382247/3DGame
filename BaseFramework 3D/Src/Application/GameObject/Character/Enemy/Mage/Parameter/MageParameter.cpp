@@ -72,7 +72,6 @@ void MageParameter::SaveToJson()
 
 		return;
 	}
-
 }
 
 void MageParameter::LoadFromJson()

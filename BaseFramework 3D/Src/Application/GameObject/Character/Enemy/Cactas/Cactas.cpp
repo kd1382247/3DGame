@@ -4,8 +4,6 @@
 #include"../../../../System/WayPointManager/WayPointManager.h"
 #include"../../../../GameObject/WayPoint/WayPoint.h"
 
-
-
 #include"../../Player/Player.h"
 
 void Cactas::Init()
@@ -17,8 +15,11 @@ void Cactas::Init()
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
+
 		// パラメータクラス初期化
 		m_parameter.Init();
+		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
+		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
@@ -42,9 +43,23 @@ void Cactas::Init()
 void Cactas::Update()
 {
 
-	CanDirectChase();
-	ChangeMoveState(m_nextMoveState);
+	////// 現在のオブジェクト数をデバッグ
+	KdDebugGUI::Instance().ClearLog();
+	KdDebugGUI::Instance().AddLog("%fY\n", GetPos().y);
+	KdDebugGUI::Instance().AddLog("%fMoveDir.x\n", GetMoveDir().x);
+	KdDebugGUI::Instance().AddLog("%fMoveDir.y\n", GetMoveDir().y);
+	KdDebugGUI::Instance().AddLog("%fMoveDir.z\n", GetMoveDir().z);
+	
+	if (CanDirectChase())
+	{
+		m_moveState = CactasMoveState::Walk;
+	}
+	else
+	{
+		m_moveState = CactasMoveState::Idle;
+	}
 
+	ChangeMoveState(m_nextMoveState);
 
 	switch (m_currentMoveState)
 	{
@@ -54,10 +69,11 @@ void Cactas::Update()
 	case EnemyBase::MoveState::FollowPath:
 		UpdateFollowPath();
 		break;
-	default:
-		break;
 	}
 
+	UpdateFacingDirection();
+
+	// 重力
 	Math::Vector3 nowPos = GetPos();
 	m_gravity += 0.02;
 	nowPos.y -= m_gravity;
@@ -67,11 +83,12 @@ void Cactas::Update()
 
 void Cactas::PostUpdate()
 {
-	EnemyBase::PostUpdate();
 
 	UpdateAnimation();
 
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
+
+	EnemyBase::PostUpdate();
 
 }
 
@@ -80,92 +97,6 @@ void Cactas::DrawInspector()
 	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
-}
-
-void Cactas::UpdateDirectChase()
-{
-	auto spPlayer = m_wpPlayer.lock();
-
-	if (!spPlayer)
-	{
-		return;
-	}
-
-	Math::Vector3 pos = GetPos();
-	float         moveSpeed = m_parameter.GetParam().m_moveSpeed;
-
-	Math::Vector3 targetDir = spPlayer->GetPos()-pos;
-
-	// Y成分はいらない
-	targetDir.y = 0;
-	
-	// 目的地までの距離より移動スピードが大きくなったら
-	// 残りの距離を移動量にする
-	if (targetDir.Length() < moveSpeed)moveSpeed = targetDir.Length();
-
-	targetDir.Normalize();
-
-	pos += targetDir * moveSpeed;
-
-	SetPos(pos);
-
-}
-
-void Cactas::UpdateFollowPath()
-{
-
-	UpdatePath();
-
-	// 経路が空
-	if (m_path.empty())
-	{
-		return;
-	}
-	// 全てのWayPointを通過した
-	if (m_pathIndex >= m_path.size())
-	{
-		return;
-	}
-
-	// 現在目指しているWayPointのID
-	int targetId = m_path[m_pathIndex];
-
-	// IDからWayPointを取得
-	auto targetPoint = WayPointManager::Instance().FindWayPoint(targetId);
-
-	if (!targetPoint) { return; }
-
-	// WayPointへの方向
-	Math::Vector3 direction =
-		targetPoint->GetPos() - GetPos();
-
-	// X・Z平面だけで移動・到着判定する
-	direction.y = 0.0f;
-
-	constexpr float arrivalDistance = 0.1f;
-
-	if (direction.LengthSquared()
-		<= arrivalDistance * arrivalDistance)
-	{
-		++m_pathIndex;
-		return;
-	}
-
-	float distance = direction.Length();
-
-	float moveSpeed = m_parameter.GetParam().m_moveSpeed;
-
-	if (distance < moveSpeed)
-	{
-		moveSpeed = distance;
-	}
-
-	direction.Normalize();
-
-	Math::Vector3 pos = GetPos();
-	pos += direction * moveSpeed;
-
-	SetPos(pos);
 }
 
 void Cactas::UpdateAnimation()
@@ -179,6 +110,10 @@ void Cactas::UpdateAnimation()
 	else if (m_actionState == CactasActionState::Attack)
 	{
 		nextAnimation = CactasAnimationType::Attack;
+	}
+	else if (m_moveState == CactasMoveState::Walk)
+	{
+		nextAnimation = CactasAnimationType::Walk;
 	}
 	else
 	{

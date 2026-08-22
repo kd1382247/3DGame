@@ -24,7 +24,6 @@ public:
 	void StartPlayMode();
 	void StopPlayMode();
 
-
 	// エディタのモードを変更する
 	void SetEditorMode(EditorMode mode) { m_editorMode = mode; }
 	
@@ -35,7 +34,6 @@ public:
 	// 現在選択されているオブジェクト
 	void SetSelectedObject(const std::shared_ptr<KdGameObject>& obj)
 	{
-
 		// 前に選択されていたフラグをfalse
 		if (m_spSelectedObject){m_spSelectedObject->SetSelected(false);}
 
@@ -83,6 +81,10 @@ private:
 
 	// ウェイポイントを選択
 	void SelectWayPointByMouse();
+
+	// AABBを選択
+	void SelectBoxByMouse();
+
 
 private:
 

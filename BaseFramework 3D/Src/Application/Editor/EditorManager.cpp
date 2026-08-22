@@ -7,6 +7,7 @@
 #include"../System/WayPointManager/WayPointManager.h"
 #include"../GameObject/WayPoint/WayPoint.h"
 #include"../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
+#include"../GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
 
 #include"../System/ReferenceManager/ReferenceManager.h"
 #include "../Scene/SceneManager.h"
@@ -74,6 +75,28 @@ void EditorManager::StartPlayMode()
 	{
 		return;
 	}
+
+	// Play中の状態を削除
+	SceneManager::Instance().ClearObjectList();
+	WayPointManager::Instance().ClearWayPoints();
+	WallCollisionManager::Instance().ClearWallCollisionList();
+
+	// Edit開始前の状態を復元
+	if (!StageDataManager::Instance().LoadTemporary())
+	{
+		// ロードに失敗したため復元する
+		SceneManager::Instance().RestoreObjList();
+		WayPointManager::Instance().RestoreWayPoints();
+		WallCollisionManager::Instance().RestoreWallCollisionList();
+
+		return;
+	}
+
+	// バックアップリストをクリア
+	SceneManager::Instance().ClearBackupList();
+	WayPointManager::Instance().ClearBackup();
+	WallCollisionManager::Instance().ClearBackup();
+
 
 	// モードを切り替える
 	SetEditorMode(EditorMode::Play);
@@ -270,6 +293,10 @@ void EditorManager::UpdateMouseSelection()
 		SelectWayPointByMouse();
 		break;
 
+	case Hierarchy::HierarchyCategory::CollisionBox:
+		SelectBoxByMouse();
+		break;
+
 	}
 }
 
@@ -350,7 +377,6 @@ void EditorManager::SelectWayPointByMouse()
 {
 	KdCollider::RayInfo rayInfo = CreateReyInfo(KdCollider::TypeBump);
 
-
 	float maxOverlap = 0.0f;
 
 	std::shared_ptr<KdGameObject> selectedObj = nullptr;
@@ -382,6 +408,41 @@ void EditorManager::SelectWayPointByMouse()
 
 	SetSelectedObject(selectedObj);
 	
+}
+
+void EditorManager::SelectBoxByMouse()
+{
+
+	KdCollider::RayInfo rayInfo = CreateReyInfo(KdCollider::TypeBump);
+
+	float maxOverlap=0;
+	
+	std::shared_ptr<KdGameObject>obj;
+
+	for (const auto& selectObj : WallCollisionManager::Instance().GetWallCollisionList())
+	{
+		if (!selectObj)
+		{
+			return;
+		}
+
+		std::list<KdCollider::CollisionResult>result;
+
+		selectObj->Intersects(rayInfo, &result);
+
+		for (const auto& ret : result)
+		{
+			if (maxOverlap < ret.m_overlapDistance)
+			{
+				maxOverlap = ret.m_overlapDistance;
+				obj = selectObj;
+			}
+		}
+	}
+
+	SetSelectedObject(obj);
+
+
 }
 
 void EditorManager::CreateGameObject(const std::string& className)

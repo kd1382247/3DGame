@@ -12,16 +12,16 @@ void TurtleShell::Init()
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 
-		// パラメータークラス初期化
+		// パラメータクラス初期化
 		m_parameter.Init();
+		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
+		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
 		("TurtleShell", Math::Vector3(0, 0.5, 0), 0.4, KdCollider::TypeBump);
 
-
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
-
 
 		// オブジェクト名セット
 		SetObjectName("TurtleShell");
@@ -36,7 +36,35 @@ void TurtleShell::Init()
 
 void TurtleShell::Update()
 {
+	
+	
+	if (CanDirectChase())
+	{
+		m_moveState = TurtleShellMoveState::Walk;
+	}
+	else
+	{
+		m_moveState = TurtleShellMoveState::Idle;
+	}
 
+	ChangeMoveState(m_nextMoveState);
+
+	switch (m_currentMoveState)
+	{
+	case EnemyBase::MoveState::DirectChase:
+		UpdateDirectChase();
+		break;
+	case EnemyBase::MoveState::FollowPath:
+		UpdateFollowPath();
+		break;
+	}
+
+	UpdateFacingDirection();
+
+	Math::Vector3 nowPos = GetPos();
+	m_gravity += 0.02;
+	nowPos.y -= m_gravity;
+	SetPos(nowPos);
 }
 
 void TurtleShell::PostUpdate()

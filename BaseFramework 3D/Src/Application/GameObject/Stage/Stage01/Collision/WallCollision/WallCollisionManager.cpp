@@ -224,14 +224,14 @@ int WallCollisionManager::FindAvailableID() const
 
 void WallCollisionManager::DrawDebug()
 {
+	if (!IsDebug())
+	{
+		return;
+	}
 
 	for (const auto& wall : m_spWallCollisionList)
 	{
-		if (!wall)
-		{
-			continue;
-		}
-
+		if (!wall){continue;}
 		wall->DrawDebug();
 	}
 }

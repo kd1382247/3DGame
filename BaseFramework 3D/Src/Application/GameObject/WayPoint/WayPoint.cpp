@@ -57,6 +57,22 @@ void WayPoint::DrawInspector()
 
 	DrawPositionInspector();
 
+
+	// AreaIDをセット
+
+	int areaID = GetAreaID();
+	int min = 0;
+	int max = 2;
+
+
+	if (ImGui::DragInt("Area ID", &areaID, 1.0f))
+	{
+		areaID=std::clamp(areaID, min, max);
+		SetAreaID(areaID);
+	}
+
+
+
 	// 接続先一覧
 	if (ImGui::Button("LinkList"))
 	{
@@ -220,8 +236,7 @@ void WayPoint::SetUpDrawID()
 
 	float digitSpacing = 0.4f;
 
-	float startX =
-		-((m_renderDigitCount - 1) * digitSpacing) * 0.5f;
+	float startX =-((m_renderDigitCount - 1) * digitSpacing) * 0.5f;
 
 	for (int i = 0; i < m_renderDigitCount; ++i)
 	{

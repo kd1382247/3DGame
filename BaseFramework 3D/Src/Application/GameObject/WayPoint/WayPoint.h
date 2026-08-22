@@ -14,6 +14,9 @@ public:
 	int GetID() const { return m_id; }
 	void SetID(int id);
 
+	int GetAreaID()const { return m_areaID; }
+	void SetAreaID(const int areaID) { m_areaID = areaID; }
+
 
 	// このWayPointから直接移動できる接続先ID
 	const std::vector<int>& GetLinks() const
@@ -28,14 +31,13 @@ public:
 	bool RemoveLink(int id);
 	bool HasLink(int id) const;
 
-
-
-	
 private:
 
 	void DrawID();
 	void SetUpDrawID();
 
+	// エリアID
+	int m_areaID = 0;
 
 	// WayPointManager内でWayPointを識別する一意な番号
 	int m_id = -1;

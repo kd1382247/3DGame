@@ -10,6 +10,9 @@ void WallCollision::Init()
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape("Wall",GetBox(),KdCollider::TypeBump);
+
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Wall, shared_from_this());
 
 	SetPos(Math::Vector3::Zero);
@@ -18,15 +21,18 @@ void WallCollision::Init()
 void WallCollision::DrawDebug()
 {
 
-	Math::Vector3 halfSize =
+	Math::Color color;
+
+	if (IsSelected())
 	{
-		m_scale.x * 0.5f,
-		m_scale.y * 0.5f,
-		m_scale.z * 0.5f
-	};
+		color = kRedColor + kGreenColor;
+	}
+	else
+	{
+		color = kGreenColor;
+	}
 
-
-	m_pDebugWire->AddDebugBox(m_mWorld, halfSize, Math::Vector3::Zero, false, kGreenColor);
+	m_pDebugWire->AddDebugBox(m_mWorld, { 0.5f,0.5f,0.5f }, Math::Vector3::Zero, false,color);
 
 	KdGameObject::DrawDebug();
 
@@ -40,9 +46,9 @@ DirectX::BoundingBox WallCollision::GetBox() const
 
 	box.Extents =
 	{
-		m_scale.x * 0.5f,
-		m_scale.y * 0.5f,
-		m_scale.z * 0.5f
+		GetScale().x * 0.5f,
+		GetScale().y * 0.5f,
+		GetScale().z * 0.5f
 	};
 
 	return box;

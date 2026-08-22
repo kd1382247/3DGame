@@ -26,6 +26,11 @@ public:
 
 	void DrawInspector()override;
 
+	int GetCurrentAreaID(const Math::Vector3&pos)
+	{
+		 return CharacterBase::GetCurrentAreaID(pos);
+	}
+
 private:
 
 	enum class AttackCombo
@@ -88,7 +93,6 @@ private:
 	UINT            m_dirType = 0;
 
 	bool            m_moveFlg=false;
-	Math::Vector3   m_inputMoveDir = Math::Vector3::Zero;
 
 	// 攻撃キー
 	bool            m_attackButton = false;
@@ -111,8 +115,6 @@ private:
 
 	// ジャンプキー
 	bool            m_jumpButton = false;
-
-	float           m_angle=0;
 
 
 };

@@ -1,50 +1,299 @@
 {
     "WayPoints": [
         {
-            "ID": 0,
-            "Links": [
-                3
-            ],
-            "Name": "WayPoint_0",
-            "Position": {
-                "x": -4.0,
-                "y": 0.0,
-                "z": 0.0
-            }
-        },
-        {
-            "ID": 1,
-            "Links": [
-                3
-            ],
-            "Name": "WayPoint_1",
-            "Position": {
-                "x": 4.099999904632568,
-                "y": 0.0,
-                "z": 0.0
-            }
-        },
-        {
-            "ID": 2,
-            "Links": [
-                3
-            ],
-            "Name": "WayPoint_2",
-            "Position": {
-                "x": 0.20000000298023224,
-                "y": 0.0,
-                "z": 3.5999999046325684
-            }
-        },
-        {
+            "AreaID": 0,
             "ID": 3,
             "Links": [
-                2,
-                1,
+                0,
+                5
+            ],
+            "Name": "WayPoint_3",
+            "Position": {
+                "x": -5.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 6,
+            "Links": [
+                36,
+                8,
+                5
+            ],
+            "Name": "WayPoint_6",
+            "Position": {
+                "x": -19.100000381469727,
+                "y": 4.0,
+                "z": 0.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 8,
+            "Links": [
+                6,
+                10
+            ],
+            "Name": "WayPoint_8",
+            "Position": {
+                "x": -16.0,
+                "y": 4.0,
+                "z": 6.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 10,
+            "Links": [
+                8,
+                12
+            ],
+            "Name": "WayPoint_10",
+            "Position": {
+                "x": -12.0,
+                "y": 4.0,
+                "z": 12.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 12,
+            "Links": [
+                10,
+                14
+            ],
+            "Name": "WayPoint_12",
+            "Position": {
+                "x": -6.0,
+                "y": 4.0,
+                "z": 16.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 14,
+            "Links": [
+                12,
+                16,
+                2
+            ],
+            "Name": "WayPoint_14",
+            "Position": {
+                "x": 0.0,
+                "y": 4.0,
+                "z": 19.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 16,
+            "Links": [
+                14,
+                18
+            ],
+            "Name": "WayPoint_16",
+            "Position": {
+                "x": 6.0,
+                "y": 4.0,
+                "z": 16.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 18,
+            "Links": [
+                16,
+                20
+            ],
+            "Name": "WayPoint_18",
+            "Position": {
+                "x": 12.0,
+                "y": 4.0,
+                "z": 12.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 20,
+            "Links": [
+                18,
+                22
+            ],
+            "Name": "WayPoint_20",
+            "Position": {
+                "x": 16.0,
+                "y": 4.0,
+                "z": 6.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 22,
+            "Links": [
+                20,
+                24,
+                1
+            ],
+            "Name": "WayPoint_22",
+            "Position": {
+                "x": 19.0,
+                "y": 4.0,
+                "z": 0.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 24,
+            "Links": [
+                22,
+                26
+            ],
+            "Name": "WayPoint_24",
+            "Position": {
+                "x": 16.0,
+                "y": 4.0,
+                "z": -6.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 26,
+            "Links": [
+                24,
+                28
+            ],
+            "Name": "WayPoint_26",
+            "Position": {
+                "x": 12.0,
+                "y": 4.0,
+                "z": -12.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 28,
+            "Links": [
+                26,
+                30
+            ],
+            "Name": "WayPoint_28",
+            "Position": {
+                "x": 6.0,
+                "y": 4.0,
+                "z": -16.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 30,
+            "Links": [
+                28,
+                32,
+                4
+            ],
+            "Name": "WayPoint_30",
+            "Position": {
+                "x": 0.0,
+                "y": 4.0,
+                "z": -19.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 32,
+            "Links": [
+                30,
+                34
+            ],
+            "Name": "WayPoint_32",
+            "Position": {
+                "x": -6.0,
+                "y": 4.0,
+                "z": -16.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 34,
+            "Links": [
+                32,
+                36
+            ],
+            "Name": "WayPoint_34",
+            "Position": {
+                "x": -12.0,
+                "y": 4.0,
+                "z": -12.0
+            }
+        },
+        {
+            "AreaID": 2,
+            "ID": 36,
+            "Links": [
+                6,
+                34
+            ],
+            "Name": "WayPoint_36",
+            "Position": {
+                "x": -16.0,
+                "y": 4.0,
+                "z": -6.0
+            }
+        },
+        {
+            "AreaID": 0,
+            "ID": 40,
+            "Links": [
+                0,
+                2
+            ],
+            "Name": "WayPoint_40",
+            "Position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 5.0
+            }
+        },
+        {
+            "AreaID": 0,
+            "ID": 45,
+            "Links": [
+                0,
+                1
+            ],
+            "Name": "WayPoint_45",
+            "Position": {
+                "x": 5.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "AreaID": 0,
+            "ID": 49,
+            "Links": [
                 0,
                 4
             ],
-            "Name": "WayPoint_3",
+            "Name": "WayPoint_49",
+            "Position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": -5.0
+            }
+        },
+        {
+            "AreaID": 0,
+            "ID": 0,
+            "Links": [
+                49,
+                3,
+                40,
+                45
+            ],
+            "Name": "WayPoint_0",
             "Position": {
                 "x": 0.0,
                 "y": 0.0,
@@ -52,15 +301,59 @@
             }
         },
         {
+            "AreaID": 0,
+            "ID": 1,
+            "Links": [
+                45,
+                22
+            ],
+            "Name": "WayPoint_1",
+            "Position": {
+                "x": 12.0,
+                "y": 2.0,
+                "z": 0.0
+            }
+        },
+        {
+            "AreaID": 0,
+            "ID": 2,
+            "Links": [
+                40,
+                14
+            ],
+            "Name": "WayPoint_2",
+            "Position": {
+                "x": 0.0,
+                "y": 2.0,
+                "z": 12.0
+            }
+        },
+        {
+            "AreaID": 0,
             "ID": 4,
             "Links": [
-                3
+                49,
+                30
             ],
             "Name": "WayPoint_4",
             "Position": {
                 "x": 0.0,
-                "y": 0.0,
-                "z": -3.4000000953674316
+                "y": 2.0,
+                "z": -12.0
+            }
+        },
+        {
+            "AreaID": 0,
+            "ID": 5,
+            "Links": [
+                6,
+                3
+            ],
+            "Name": "WayPoint_5",
+            "Position": {
+                "x": -12.0,
+                "y": 2.0,
+                "z": 0.0
             }
         }
     ]

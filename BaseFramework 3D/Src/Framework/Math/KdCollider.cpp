@@ -543,22 +543,45 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingOrientedBox& target, cons
 	// 即結果を返す(HITしたかどうかだけが知れる)
 	return isHit;
 }
-bool KdBoxCollision::Intersects(const KdCollider::RayInfo& target, const Math::Matrix& world, KdCollider::CollisionResult* /*pRes*/)
+bool KdBoxCollision::Intersects(const KdCollider::RayInfo& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	if (!m_enable) { return false; }
 
-	// AABB vs レイ
-	float AABBdist = FLT_MAX;
+	float hitDistance = FLT_MAX;
 
-	// BOXvsBOX(OBB)の当たり判定
-	DirectX::BoundingBox			myAABBShape;
-	DirectX::BoundingOrientedBox	myOBBShape;
+	DirectX::BoundingBox myAABBShape;
+	DirectX::BoundingOrientedBox myOBBShape;
+
+	// Local空間からWorld空間へ変換
 	m_Abox.Transform(myAABBShape, world);
 	m_Obox.Transform(myOBBShape, world);
-	bool isHit = (!m_IsOriented) ? myAABBShape.Intersects(target.m_pos, target.m_dir, AABBdist) : myOBBShape.Intersects(target.m_pos, target.m_dir, AABBdist);
 
-	// 即結果を返す(HITしたかどうかだけが知れる)
-	return isHit;
+	// レイ情報を基に、ボックスとの距離を求める
+	bool isHit =
+		(!m_IsOriented)? myAABBShape.Intersects(target.m_pos,target.m_dir,hitDistance):
+		                 myOBBShape.Intersects(target.m_pos,target.m_dir,hitDistance);
+
+	// Rayの最大距離より遠ければHit扱いにしない
+	isHit &= (hitDistance <= target.m_range);
+
+	// 詳細結果が不要ならここで終了
+	if (!pRes)
+	{
+		return isHit;
+	}
+
+	if (isHit)
+	{
+		pRes->m_hitPos =
+			target.m_pos +
+			target.m_dir * hitDistance;
+
+		pRes->m_hitDir =
+			target.m_dir * -1;
+
+		pRes->m_overlapDistance =
+			target.m_range - hitDistance;
+	}
 }
 
 // ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####

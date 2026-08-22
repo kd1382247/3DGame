@@ -31,20 +31,28 @@ public:
 
 protected:
 
-
-	MoveState m_currentMoveState = MoveState::DirectChase;
-	MoveState m_nextMoveState = MoveState::DirectChase;
-
-
 	std::weak_ptr<Player>m_wpPlayer;
 
+	// 追跡移動
+	void UpdateDirectChase();
+	// ウェイポイント移動
+	void UpdateFollowPath();
+
+
+	// 追跡か経路探索移動かを判定する
 	bool CanDirectChase();
 	void CreatePath();
 
+	// 移動方法を変更
 	void ChangeMoveState(const MoveState nextState);
 
+	// 新しくワイポイント情報を更新
 	void UpdatePath();
 	void SetPath(const std::vector<int>& path,const int goalID);
+
+	// 移動状態
+	MoveState m_currentMoveState = MoveState::DirectChase;
+	MoveState m_nextMoveState = MoveState::DirectChase;
 
 	// 敵が通るWayPointのID一覧
 	std::vector<int>m_path;
@@ -54,8 +62,6 @@ protected:
 
 	int m_goalWayPointID = 0;
 
-
-private:
-
+	bool m_moveFlg = false;
 
 };

@@ -12,8 +12,11 @@ void Mushroom::Init()
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 
-		// パラメータークラス初期化
+		// パラメータクラス初期化
 		m_parameter.Init();
+		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
+		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+		
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
@@ -21,7 +24,6 @@ void Mushroom::Init()
 
 
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
-
 
 		// オブジェクト名セット
 		SetObjectName("Mushroom");
@@ -37,16 +39,46 @@ void Mushroom::Init()
 
 void Mushroom::Update()
 {
+	if (CanDirectChase())
+	{
+		m_moveState = MushroomMoveState::Walk;
+	}
+	else
+	{
+		m_moveState = MushroomMoveState::Idle;
+	}
+
+	ChangeMoveState(m_nextMoveState);
+
+	switch (m_currentMoveState)
+	{
+	case EnemyBase::MoveState::DirectChase:
+		UpdateDirectChase();
+		break;
+	case EnemyBase::MoveState::FollowPath:
+		UpdateFollowPath();
+		break;
+	}
+
+	UpdateFacingDirection();
+
+	Math::Vector3 nowPos = GetPos();
+	m_gravity += 0.02;
+	nowPos.y -= m_gravity;
+	SetPos(nowPos);
+
 
 }
 
 void Mushroom::PostUpdate()
 {
-	EnemyBase::PostUpdate();
+	
 
 	UpdateAnimation();
 
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
+
+	EnemyBase::PostUpdate();
 
 }
 

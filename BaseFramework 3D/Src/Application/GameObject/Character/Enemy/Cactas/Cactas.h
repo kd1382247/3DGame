@@ -22,25 +22,17 @@ public:
 
 private:
 
-	void UpdateDirectChase();
-	void UpdateFollowPath();
-
 	void UpdateAnimation();
-
-
 
 private:
 
 	CactasActionState m_actionState = CactasActionState::Normal;
-	//CactasMoveState   m_moveState = CactasMoveState::Idle;
+	CactasMoveState   m_moveState = CactasMoveState::Idle;
 
 	// アニメーションクラス
 	CactasAnimation   m_animation;
 
 	// パラメータクラス
 	CactasParameter   m_parameter;
-
-
-
 
 };

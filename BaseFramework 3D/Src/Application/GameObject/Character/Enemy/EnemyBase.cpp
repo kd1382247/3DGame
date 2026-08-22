@@ -40,12 +40,122 @@ void EnemyBase::SetUpReference()
 }
 
 
+void EnemyBase::UpdateDirectChase()
+{
+	auto spPlayer = m_wpPlayer.lock();
+
+	if (!spPlayer)
+	{
+		return;
+	}
+
+	Math::Vector3 pos = GetPos();
+	float         moveSpeed = m_moveSpeed;
+
+	Math::Vector3 targetDir = spPlayer->GetPos() - pos;
+	
+
+	// Y成分はいらない
+	targetDir.y = 0;
+
+	SetMoveDir(targetDir);
+
+	// 目的地までの距離より移動スピードが大きくなったら
+	// 残りの距離を移動量にする
+	//if (targetDir.Length() < moveSpeed)moveSpeed = targetDir.Length();
+
+	if (targetDir.Length()<=1.2f)
+	{
+		return;
+	}
+
+	targetDir.Normalize();
+
+	pos += targetDir * moveSpeed;
+
+	SetPos(pos);
+}
+
+void EnemyBase::UpdateFollowPath()
+{
+	
+	//UpdatePath();
+
+	// 経路が空
+	if (m_path.empty())
+	{
+		return;
+	}
+	// 全てのWayPointを通過した
+	if (m_pathIndex >= m_path.size())
+	{
+
+		if (m_currentMoveState == MoveState::FollowPath)
+		{
+			CreatePath();
+		}
+		return;
+	}
+
+	// 現在目指しているWayPointのID
+	int targetId = m_path[m_pathIndex];
+
+	// IDからWayPointを取得
+	auto targetPoint = WayPointManager::Instance().FindWayPoint(targetId);
+
+	if (!targetPoint) { return; }
+
+	// WayPointへの方向
+	Math::Vector3 targetDir = targetPoint->GetPos() - GetPos();
+
+	
+
+	// X・Z平面だけで移動・到着判定する
+	targetDir.y = 0.0f;
+
+	SetMoveDir(targetDir);
+
+
+	constexpr float arrivalDistance = 2.0f;
+
+	if (targetDir.LengthSquared() <= arrivalDistance * arrivalDistance)
+	{
+		++m_pathIndex;
+		return;
+	}
+
+	float distance = targetDir.Length();
+
+	float moveSpeed = m_moveSpeed;
+
+	if (distance < moveSpeed)
+	{
+		moveSpeed = distance;
+	}
+
+	targetDir.Normalize();
+
+
+	Math::Vector3 pos = GetPos();
+	pos += targetDir * moveSpeed;
+
+	SetPos(pos);
+}
+
 bool EnemyBase::CanDirectChase()
 {
 
 	auto player = m_wpPlayer.lock();
 
 	if (!player)
+	{
+		// プレイヤーがいない場合は動かない
+		m_moveFlg = false;
+		return false;
+	}
+
+
+	if (m_gravity != 0)
 	{
 		return false;
 	}
@@ -55,7 +165,8 @@ bool EnemyBase::CanDirectChase()
 
 	// プレイヤーの方向に向くベクトル作成
 	Math::Vector3 direction = playerPos - startPos;
-	
+
+
 	// レイの長さをセット
 	float rayLength = direction.Length();
 
@@ -66,6 +177,7 @@ bool EnemyBase::CanDirectChase()
 
 	// 正規化
 	direction.Normalize();
+
 
 	////////////////////////////////////////
 	//  レイ判定を行う
@@ -112,6 +224,7 @@ bool EnemyBase::CanDirectChase()
 		m_nextMoveState = MoveState::DirectChase;
 	}
 	
+	m_moveFlg = true;
 	return true;
 
 }
@@ -119,16 +232,26 @@ bool EnemyBase::CanDirectChase()
 void EnemyBase::CreatePath()
 {
 
-    // スタート地点
-	auto startPoint = WayPointManager::Instance().FindNearest(GetPos());
+	auto player = m_wpPlayer.lock();
 
-	if (!m_wpPlayer.lock())
+	if (!player)
 	{
 		return;
 	}
 
+	// スタート地点
+	auto startPoint =
+		WayPointManager::Instance().FindNearest(GetPos(),GetCurrentAreaID(GetPos()));
+
 	// ゴール（目標地点）
-	auto goalPoint = WayPointManager::Instance().FindNearest(m_wpPlayer.lock()->GetPos());
+	auto goalPoint = 
+		WayPointManager::Instance().FindNearest(player->GetPos(), player->GetCurrentAreaID(player->GetPos()));
+
+
+	if (!startPoint || !goalPoint)
+	{
+		return;
+	}
 
 	SetPath(WayPointManager::Instance().FindPath(startPoint->GetID(), goalPoint->GetID()),goalPoint->GetID());
 }
@@ -150,13 +273,26 @@ void EnemyBase::ChangeMoveState(const MoveState nextState)
 
 void EnemyBase::UpdatePath()
 {
-	auto currentGoalPoint =
-		WayPointManager::Instance().FindNearest(m_wpPlayer.lock()->GetPos());
+
+	auto player = m_wpPlayer.lock();
+
+	if (!player)
+	{
+		return;
+	}
+
+	auto currentGoalPoint =WayPointManager::Instance().FindNearest(player->GetPos(),player->GetCurrentAreaID(player->GetPos()));
+
+	if (!currentGoalPoint)
+	{
+		return;
+	}
 
 	if (m_goalWayPointID != currentGoalPoint->GetID())
 	{
 		CreatePath();
 	}
+
 }
 
 void EnemyBase::SetPath(const std::vector<int>& path,const int goalID)

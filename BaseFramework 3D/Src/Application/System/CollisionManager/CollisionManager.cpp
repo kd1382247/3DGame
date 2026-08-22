@@ -267,14 +267,19 @@ void CollisionManager::ResolveGroundCollisionForCharacter(const std::shared_ptr<
 
 	KdCollider::RayInfo rayInfo;
 	rayInfo.m_pos = character->GetPos();
-	// 段差の許容の高さ
-	static float enableStepHigh = 0.2f;
+	
+
+	constexpr float enableStepHigh = 0.2f;
+	constexpr float groundSnapDistance = 0.2;
+
 	rayInfo.m_pos.y += enableStepHigh;
 
 	// レイの発射方向を設定
 	rayInfo.m_dir = Math::Vector3::Down;
 
-	rayInfo.m_range = character->GetGravity() + enableStepHigh;
+	rayInfo.m_range =
+		character->GetGravity() + enableStepHigh + groundSnapDistance;
+
 	rayInfo.m_type = KdCollider::TypeGround;
 
 	for (const auto& weakGround : grounds)
@@ -307,8 +312,6 @@ void CollisionManager::ResolveGroundCollisionForCharacter(const std::shared_ptr<
 		{
 			// 地面に当たっている
 			character->SetPos(hitPos);
-			character->SetGravity(0.0f);
-			character->SetJumpFlg(false);
 		}
 	}
 
@@ -503,15 +506,20 @@ void CollisionManager::ResolveGroundCollision()
 	for(auto&character:characters)
 	{
 		KdCollider::RayInfo rayInfo;
+
 		rayInfo.m_pos =character->GetPos();
-		// 段差の許容の高さ
-		static float enableStepHigh = 0.2f;
+
+		constexpr float enableStepHigh = 0.2f;
+		constexpr float groundSnapDistance = 0.2;
+
 		rayInfo.m_pos.y += enableStepHigh;
 
 		// レイの発射方向を設定
 		rayInfo.m_dir = Math::Vector3::Down;
 
-		rayInfo.m_range =character->GetGravity() + enableStepHigh;
+		rayInfo.m_range =
+			character->GetGravity() + enableStepHigh + groundSnapDistance;
+
 		rayInfo.m_type = KdCollider::TypeGround;
 
 		for (const auto& weakGround : grounds)
@@ -524,7 +532,6 @@ void CollisionManager::ResolveGroundCollision()
 			std::list<KdCollider::CollisionResult> retRayList;
 			ground->Intersects(rayInfo, &retRayList);
 
-			// ③ 結果を使って座標を補完する
 			// レイに当たったリストから一番近いオブジェクトを検出
 			float maxOverLap = 0;
 			Math::Vector3 hitPos = {};

@@ -72,7 +72,6 @@ void CactasParameter::SaveToJson()
 
 		return;
 	}
-
 }
 
 void CactasParameter::LoadFromJson()

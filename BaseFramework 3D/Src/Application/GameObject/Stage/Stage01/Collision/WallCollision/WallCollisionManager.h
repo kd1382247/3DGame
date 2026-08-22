@@ -36,6 +36,9 @@ public:
 		return m_spWallCollisionList;
 	}
 
+	// デバッグの表示切り替えフラグ
+	bool IsDebug() { return m_isDebug; }
+	void SetDebugFlg(const bool flg) { m_isDebug = flg; }
 
 	// デバッグ表示
 	void DrawDebug();
@@ -48,7 +51,7 @@ private:
 
 	std::vector<std::shared_ptr<WallCollision>>m_spBackupList;
 
-	
+	bool m_isDebug = false;
 
 private:
 

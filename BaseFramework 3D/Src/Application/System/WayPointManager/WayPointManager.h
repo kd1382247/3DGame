@@ -25,7 +25,7 @@ public:
 	std::shared_ptr<WayPoint> FindWayPoint(int id) const;
 
 	// 引数の位置から近いWayPointを返す
-	std::shared_ptr<WayPoint> FindNearest(const Math::Vector3& pos) const;
+	std::shared_ptr<WayPoint> FindNearest(const Math::Vector3& pos,const int areaID) const;
 
 	// 接続
 	bool Connect(int idA, int idB, bool bidirectional = true);
@@ -40,6 +40,10 @@ public:
 
 	// デバッグ表示
 	void DrawDebug();
+
+	// デバッグの表示切り替えフラグ
+	bool IsDebug() { return m_isDebug; }
+	void SetDebugFlg(const bool flg) { m_isDebug = flg; }
 
 
 	bool Save(const std::string& filePath);
@@ -86,6 +90,7 @@ private:
 	// デバッグ
 	std::unique_ptr<KdDebugWireFrame> m_pDebugWire = nullptr;
 
+	bool m_isDebug = false;
 
 private:
 

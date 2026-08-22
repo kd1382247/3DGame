@@ -39,7 +39,7 @@ private:
 
 	// 押し戻し量を細かく分けて地面との当たり判定を行う
 	void ResolveGroundCollisionForCharacter(const std::shared_ptr<CharacterBase>& character);
-
+	
 
 	void ApplyCharacterPush(const std::shared_ptr<CharacterBase>& character);
 

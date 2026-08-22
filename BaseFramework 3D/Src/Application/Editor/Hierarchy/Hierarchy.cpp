@@ -115,7 +115,19 @@ void Hierarchy::AddWayPoint()
 		{
 			// CreateWayPoint()内でManagerへの登録まで完了している
 			EditorManager::Instance().SetSelectedObject(wayPoint);
+
+			EditorManager::Instance().MarkDirty();
 		}
+	}
+
+	ImGui::SameLine();
+
+	bool isDebug = WayPointManager::Instance().IsDebug();
+
+	if (ImGui::Checkbox("Debug", &isDebug))
+	{
+		isDebug ? WayPointManager::Instance().SetDebugFlg(true) :
+			WayPointManager::Instance().SetDebugFlg(false);
 	}
 }
 
@@ -160,8 +172,24 @@ void Hierarchy::AddCollisionBox()
 		{
 			// CreateWayPoint()内でManagerへの登録まで完了している
 			EditorManager::Instance().SetSelectedObject(wallBox);
+
+			EditorManager::Instance().MarkDirty();
 		}
 	}
+
+
+	ImGui::SameLine();
+
+	bool isDebug = WallCollisionManager::Instance().IsDebug();
+
+	if (ImGui::Checkbox("Debug", &isDebug))
+	{
+		isDebug? WallCollisionManager::Instance().SetDebugFlg(true):
+			     WallCollisionManager::Instance().SetDebugFlg(false);
+	}
+
+
+
 }
 
 void Hierarchy::DrawGameObjects()
@@ -198,7 +226,7 @@ void Hierarchy::DrawStage()
 void Hierarchy::DrawCollisionBox()
 {
 
-	ImGui::Text("----------CollisionBox----------");
+	ImGui::Text("-------CollisionBox-------");
 
 	for (const auto& wallBox : WallCollisionManager::Instance().GetWallCollisionList())
 	{
@@ -228,8 +256,9 @@ void Hierarchy::DrawAddObjectList(KdGameObject::ObjectCategory objectCategory)
 			false,
 			ImGuiSelectableFlags_DontClosePopups))
 		{
-			EditorManager::Instance()
-				.CreateGameObject(name);
+			EditorManager::Instance().CreateGameObject(name);
+
+			EditorManager::Instance().MarkDirty();
 		}
 	}
 }

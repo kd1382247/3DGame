@@ -499,15 +499,6 @@
 		},
 		{
 			"mesh":27,
-			"name":"COL1_Ground",
-			"scale":[
-				9.5,
-				1,
-				9.5
-			]
-		},
-		{
-			"mesh":28,
 			"name":"COL19_Ground",
 			"rotation":[
 				0,
@@ -524,6 +515,20 @@
 				0,
 				2.3554747104644775,
 				-11.69239616394043
+			]
+		},
+		{
+			"mesh":28,
+			"name":"COL1_Ground",
+			"scale":[
+				9.5,
+				1,
+				9.5
+			],
+			"translation":[
+				0,
+				1,
+				0
 			]
 		}
 	],
@@ -880,7 +885,7 @@
 			]
 		},
 		{
-			"name":"\u7acb\u65b9\u4f53.003",
+			"name":"\u7acb\u65b9\u4f53.008",
 			"primitives":[
 				{
 					"attributes":{
@@ -893,7 +898,7 @@
 			]
 		},
 		{
-			"name":"\u7acb\u65b9\u4f53.008",
+			"name":"\u5e73\u9762",
 			"primitives":[
 				{
 					"attributes":{
@@ -901,7 +906,7 @@
 						"NORMAL":87,
 						"TEXCOORD_0":88
 					},
-					"indices":85
+					"indices":3
 				}
 			]
 		}
@@ -1706,15 +1711,15 @@
 		{
 			"bufferView":86,
 			"componentType":5126,
-			"count":24,
+			"count":4,
 			"max":[
 				1,
-				1,
+				0,
 				1
 			],
 			"min":[
 				-1,
-				-1,
+				0,
 				-1
 			],
 			"type":"VEC3"
@@ -1722,13 +1727,13 @@
 		{
 			"bufferView":87,
 			"componentType":5126,
-			"count":24,
+			"count":4,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":88,
 			"componentType":5126,
-			"count":24,
+			"count":4,
 			"type":"VEC2"
 		}
 	],
@@ -2251,26 +2256,26 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":288,
+			"byteLength":48,
 			"byteOffset":4308,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":288,
-			"byteOffset":4596,
+			"byteLength":48,
+			"byteOffset":4356,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":192,
-			"byteOffset":4884,
+			"byteLength":32,
+			"byteOffset":4404,
 			"target":34962
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":5076,
+			"byteLength":4436,
 			"uri":"GroundCollision.bin"
 		}
 	]

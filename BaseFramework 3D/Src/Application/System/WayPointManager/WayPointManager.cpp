@@ -93,7 +93,7 @@ std::shared_ptr<WayPoint> WayPointManager::FindWayPoint(int id) const
 	return nullptr;
 }
 
-std::shared_ptr<WayPoint> WayPointManager::FindNearest(const Math::Vector3& pos) const
+std::shared_ptr<WayPoint> WayPointManager::FindNearest(const Math::Vector3& pos, const int areaID) const
 {
 	// 調べた中で一番近いWayPointを保存
 	std::shared_ptr<WayPoint>nearest = nullptr;
@@ -109,8 +109,16 @@ std::shared_ptr<WayPoint> WayPointManager::FindNearest(const Math::Vector3& pos)
 		{
 			continue;
 		}
+
+		// 違うエリアは候補にしない
+		if (areaID != point->GetAreaID())
+		{
+			continue;
+		}
+
 		// wayPointの位置  -  調べたい位置
 		Math::Vector3 difference = point->GetPos() - pos;
+
 
 		float distanceSq = difference.LengthSquared();
 
@@ -367,6 +375,10 @@ void WayPointManager::Init()
 
 void WayPointManager::DrawDebug()
 {
+	if (!IsDebug())
+	{
+		return;
+	}
 
 	for (const auto& point : m_spWayPoints)
 	{
@@ -426,6 +438,8 @@ bool WayPointManager::Save(const std::string& filePath)
 		wayPointJson["Position"]["z"] = pos.z;
 
 		wayPointJson["Links"] = wayPoint->GetLinks();
+
+		wayPointJson["AreaID"] = wayPoint->GetAreaID();
 
 		rootJson["WayPoints"].push_back(wayPointJson);
 	}
@@ -514,6 +528,11 @@ bool WayPointManager::Load(const std::string& filePath)
 			wpJson["Position"]["y"].get<float>(),
 			wpJson["Position"]["z"].get<float>()
 			});
+
+		if (wpJson.contains("AreaID"))
+		{
+			wayPoint->SetAreaID(wpJson["AreaID"].get<int>());
+		}
 
 		// WayPointsに登録
 		if (!RegisterWayPoint(wayPoint))

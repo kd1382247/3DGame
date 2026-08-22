@@ -30,12 +30,9 @@ public:
 	const Math::Vector3& GetTotalPush()const { return m_totalPush; }
 
 	// 押し戻し量を適用する
-	void ApplyPush(){SetPos(GetPos() + m_totalPush);}
-	void ClearPush(){ m_totalPush = Math::Vector3::Zero; }
+	void ApplyPush() { SetPos(GetPos() + m_totalPush); }
+	void ClearPush() { m_totalPush = Math::Vector3::Zero; }
 
-	void SetWallHit(bool hit) { m_wallHit = hit; }
-
-	bool IsWallHit()const { return m_wallHit; }
 
 
 	// 重力を返す
@@ -55,19 +52,40 @@ private:
 	// 解放処理
 	void Release();
 
-	
+
 protected:
 
-	std::shared_ptr<KdModelWork>			    m_spModel = nullptr;
+	void  UpdateFacingDirection();
+	void  UpdateMatrix();
 
-	float										m_gravity = 0;
-	bool                                        m_jumpFlg = false;
+	int   GetCurrentAreaID(const Math::Vector3& pos);
 
-	
-	float m_bumpPushRate = 1.0f;
 
+	void SetMoveDir(const Math::Vector3& moveDir) { m_moveDir = moveDir; }
+	Math::Vector3 GetMoveDir() { return m_moveDir; }
+
+	Math::Vector3                 m_moveDir = Math::Vector3::Zero;
+
+
+	std::shared_ptr<KdModelWork>  m_spModel = nullptr;
+
+	float		                  m_gravity = 0;
+	bool                          m_jumpFlg = false;
+
+	// 押し戻り量の割合
+	float         m_bumpPushRate = 1.0f;
+	// 押し戻し量をためる
 	Math::Vector3 m_totalPush = {};
 
-	bool m_wallHit = false;
+	// キャラクターの回転スピード
+	float         m_turnSpeed = {};
+	// 移動スピード
+	float         m_moveSpeed = {};
+
+	float         m_angle = 0;
+
+	// エリアID
+	int m_currentAreaID = 0;
+
 
 };

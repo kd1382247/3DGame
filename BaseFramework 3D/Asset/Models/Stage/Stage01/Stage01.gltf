@@ -11,8 +11,7 @@
 				0,
 				1,
 				2,
-				3,
-				4
+				3
 			]
 		}
 	],
@@ -62,15 +61,6 @@
 				6.599999904632568,
 				0.5,
 				-9.600000381469727
-			]
-		},
-		{
-			"mesh":4,
-			"name":"\u5e73\u9762",
-			"translation":[
-				-5.767422676086426,
-				7.290637969970703,
-				-14.745031356811523
 			]
 		}
 	],
@@ -248,19 +238,6 @@
 					},
 					"indices":27,
 					"material":6
-				}
-			]
-		},
-		{
-			"name":"\u5e73\u9762",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":28,
-						"NORMAL":29,
-						"TEXCOORD_0":30
-					},
-					"indices":31
 				}
 			]
 		}
@@ -503,40 +480,6 @@
 			"componentType":5123,
 			"count":13734,
 			"type":"SCALAR"
-		},
-		{
-			"bufferView":28,
-			"componentType":5126,
-			"count":4,
-			"max":[
-				1,
-				0,
-				1
-			],
-			"min":[
-				-1,
-				0,
-				-1
-			],
-			"type":"VEC3"
-		},
-		{
-			"bufferView":29,
-			"componentType":5126,
-			"count":4,
-			"type":"VEC3"
-		},
-		{
-			"bufferView":30,
-			"componentType":5126,
-			"count":4,
-			"type":"VEC2"
-		},
-		{
-			"bufferView":31,
-			"componentType":5123,
-			"count":6,
-			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -707,35 +650,11 @@
 			"byteLength":27468,
 			"byteOffset":18447276,
 			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":48,
-			"byteOffset":18474744,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":48,
-			"byteOffset":18474792,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":32,
-			"byteOffset":18474840,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":12,
-			"byteOffset":18474872,
-			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":18474884,
+			"byteLength":18474744,
 			"uri":"Stage01.bin"
 		}
 	]

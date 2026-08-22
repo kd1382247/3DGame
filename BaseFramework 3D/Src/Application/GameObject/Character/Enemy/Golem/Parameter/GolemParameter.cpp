@@ -48,6 +48,8 @@ void GolemParameter::DrawInspecter()
 	{
 		SaveToJson();
 	}
+
+
 }
 
 void GolemParameter::SaveToJson()

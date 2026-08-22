@@ -30,6 +30,8 @@ void Player::Init()
 
 		// パラメータークラス初期化
 		m_parameter.Init();
+		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
 
 		m_bumpPushRate = 0.0f;
 	}
@@ -42,6 +44,8 @@ void Player::Init()
 void Player::Update()
 {
 
+
+
 	UpdateInput();
 	UpdateActionState();
 	UpdateMoveState();
@@ -52,13 +56,11 @@ void Player::Update()
 void Player::PostUpdate()
 {
 
-	CharacterBase::PostUpdate();
-
 	UpdateGroundState();
 
 	UpdateAnimation();
 
-
+	CharacterBase::PostUpdate();
 }
 
 void Player::SetUpReference()
@@ -102,35 +104,38 @@ void Player::UpdateInput()
 
 void Player::UpdateMoveInput()
 {
-	m_inputMoveDir = Math::Vector3::Zero;
+	Math::Vector3 moveDir = Math::Vector3::Zero;
 	m_dirType = 0;
 	m_moveFlg = false;
 
 	if (GetAsyncKeyState('W') & 0x8000)
 	{
-		m_inputMoveDir.z += 1.0f;
+		moveDir.z += 1.0f;
 		m_dirType |= Up;
 	}
 	if (GetAsyncKeyState('S') & 0x8000)
 	{
-		m_inputMoveDir.z -= 1.0f;
+		moveDir.z -= 1.0f;
 		m_dirType |= Down;
 	}
 	if (GetAsyncKeyState('A') & 0x8000)
 	{
-		m_inputMoveDir.x -= 1.0f;
+		moveDir.x -= 1.0f;
 		m_dirType |= Left;
 	}
 	if (GetAsyncKeyState('D') & 0x8000)
 	{
-		m_inputMoveDir.x += 1.0f;
+		moveDir.x += 1.0f;
 		m_dirType |= Right;
 	}
 
-	if (m_inputMoveDir != Math::Vector3::Zero)
+	if (moveDir != Math::Vector3::Zero)
 	{
 		m_moveFlg = true;
 	}
+
+	SetMoveDir(moveDir);
+
 }
 
 void Player::UpdateJumpInput()
@@ -219,73 +224,24 @@ void Player::UpdateMove()
 		camRotYMat = camera->GetRotationYMatrix();
 	}
 
-	Math::Vector3 dir = Math::Vector3::TransformNormal(m_inputMoveDir, camRotYMat);
+	SetMoveDir(Math::Vector3::TransformNormal(GetMoveDir(), camRotYMat));
 
 	if (m_moveFlg)
 	{
-		// 正規化
-		dir.Normalize();
-
-		// キャラが向いている方向
-		Math::Vector3 nowDir = m_mWorld.Backward();
-
-		// 向きたい方向
-		Math::Vector3 toDir = dir;
-
-		// 内積を求める
-		float dot = nowDir.Dot(toDir);
-		dot = std::clamp(dot, -1.0f, 1.0f);
-		// 角度に変換
-		float angle = DirectX::XMConvertToDegrees(acos(dot));
-
-		// 少しでも回転する必要があったら
-		if (angle >= 0.1f)
-		{
-			// 回転角度の上限を設定
-			if (angle > m_parameter.GetParam().m_turnSpeed)
-			{
-				angle = m_parameter.GetParam().m_turnSpeed;
-			}
-
-			// 外積を求める
-			Math::Vector3 cross = nowDir.Cross(toDir);
-			if (cross.y >= 0)
-			{
-				// 右回転
-				m_angle += angle;
-			}
-			else
-			{
-				// 左回転
-				m_angle -= angle;
-			}
-
-			// 角度を循環
-			if (m_angle >= 360)
-			{
-				m_angle -= 360;
-			}
-			else if (m_angle < 0)
-			{
-				m_angle += 360;
-			}
-		}
-
+		UpdateFacingDirection();
 	}
 
 	m_gravity += 0.02;
 
-	nowPos += dir * m_parameter.GetParam().m_moveSpeed;
+	Math::Vector3 dir = GetMoveDir();
+	dir.Normalize();
+
+	nowPos += dir * m_moveSpeed;
+
 
 	nowPos.y -= m_gravity;
 
-	Math::Matrix transMat = Math::Matrix::CreateTranslation(nowPos);
-	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
-	Math::Matrix rotationMat = Math::Matrix::Identity;
-	rotationMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle));
-
-
-	m_mWorld = scaleMat * rotationMat * transMat;
+	SetPos(nowPos);
 
 }
 
