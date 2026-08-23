@@ -12,8 +12,7 @@ public:
 
 	void Init();
 
-
-	bool SphereVsAABB(const DirectX::BoundingSphere& sphere, const DirectX::BoundingBox& box, Math::Vector3& outPush);
+	bool SphereVsAABB(const DirectX::BoundingSphere& sphere, const DirectX::BoundingBox& box, Math::Vector3& outPush, Math::Vector3& outNormal);
 
 	using objectList = std::vector<std::weak_ptr<KdGameObject>>;
 

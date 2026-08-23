@@ -19,13 +19,17 @@ void TurtleShellAnimation::Play(TurtleShellAnimationType _animType)
 	case TurtleShellAnimationType::None:
 		break;
 
-	case TurtleShellAnimationType::RotationAttackST:
+	case TurtleShellAnimationType::SpinAttackST:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("RotationAttackST"), false);
-		m_animSpeed = 1.0f;
+		m_animSpeed = 0.5f;
 		break;
-	case TurtleShellAnimationType::RotationAttackRPT:
+	case TurtleShellAnimationType::SpinAttackRPT:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("RotationAttackRPT"), true);
-		m_animSpeed = 1.0f;
+		m_animSpeed = 3.0f;
+		break;
+	case TurtleShellAnimationType::Dizzy:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Dizzy"), true);
+		m_animSpeed = 1.4f;
 		break;
 	case TurtleShellAnimationType::GetHit:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), true);

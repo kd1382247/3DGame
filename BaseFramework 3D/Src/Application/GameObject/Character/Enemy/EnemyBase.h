@@ -38,7 +38,6 @@ protected:
 	// ウェイポイント移動
 	void UpdateFollowPath();
 
-
 	// 追跡か経路探索移動かを判定する
 	bool CanDirectChase();
 	void CreatePath();
@@ -59,9 +58,16 @@ protected:
 
 	// 現在目指しているWayPointが、m_pathの何番目か
 	size_t m_pathIndex = 0;
-
 	int m_goalWayPointID = 0;
 
-	bool m_moveFlg = false;
+	// プレイヤーに到達したかどうか
+	bool m_hasReachedTarget = false;
+
+	// 攻撃のクールダウン
+	float m_attackCooldown = 0;
+	// クールタイムの量
+	float m_attackCooldownDuration = 0;
+
+	bool m_attackFlg = false;
 
 };

@@ -22,8 +22,19 @@ public:
 private:
 
 
+	void UpdateMove();
+	void UpdateAttack();
+
+	void UpdateActionState();
+
 	void UpdateAnimation();
 
+	void ChangeActionState(SlimeActionState  nextState);
+	void ExitState(SlimeActionState _state);
+	void EnterState(SlimeActionState _state);
+
+
+	
 private:
 
 	SlimeActionState m_actionState = SlimeActionState::Normal;

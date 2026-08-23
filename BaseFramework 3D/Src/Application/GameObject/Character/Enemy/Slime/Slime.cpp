@@ -16,6 +16,8 @@ void Slime::Init()
 		m_parameter.Init();
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+		m_attackCooldownDuration = 60 * 0.5;
+
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
@@ -39,6 +41,44 @@ void Slime::Init()
 
 void Slime::Update()
 {
+	
+	UpdateMove();
+	UpdateAttack();
+
+	UpdateActionState();
+
+}
+
+void Slime::PostUpdate()
+{
+	EnemyBase::PostUpdate();
+
+	UpdateAnimation();
+
+	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
+
+}
+
+void Slime::DrawInspector()
+{
+	EnemyBase::DrawInspector();
+
+	m_parameter.DrawInspecter();
+}
+
+void Slime::UpdateMove()
+{
+	Math::Vector3 nowPos = GetPos();
+	m_gravity += 0.02;
+	nowPos.y -= m_gravity;
+	SetPos(nowPos);
+
+	// 攻撃中は移動をしない
+	if (m_actionState == SlimeActionState::Attack)
+	{
+		return;
+	}
+
 	if (CanDirectChase())
 	{
 		m_moveState = SlimeMoveState::Walk;
@@ -63,27 +103,65 @@ void Slime::Update()
 
 	UpdateFacingDirection();
 
-	Math::Vector3 nowPos = GetPos();
-	m_gravity += 0.02;
-	nowPos.y -= m_gravity;
-	SetPos(nowPos);
-}
 
-void Slime::PostUpdate()
-{
-	EnemyBase::PostUpdate();
-
-	UpdateAnimation();
-
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
 
 }
 
-void Slime::DrawInspector()
+void Slime::UpdateAttack()
 {
-	EnemyBase::DrawInspector();
+	// ターゲットに到達したら攻撃する
+	if (m_hasReachedTarget)
+	{
+		m_attackFlg = true;
+	}
 
-	m_parameter.DrawInspecter();
+	m_attackCooldown--;
+	if (m_attackCooldown <= 0)
+	{
+		m_attackCooldown = 0;
+	}
+
+	// クールタイムがある場合は攻撃しない
+	if (m_attackFlg)
+	{
+		if (m_attackCooldown != 0)
+		{
+			m_attackFlg = false;
+		}
+	}
+}
+
+void Slime::UpdateActionState()
+{
+	if (m_actionState == SlimeActionState::Death)
+	{
+
+		return;
+	}
+
+	if (m_actionState == SlimeActionState::Damage)
+	{
+		if (m_animation.IsFinished())
+		{
+			ChangeActionState(SlimeActionState::Normal);
+		}
+		return;
+	}
+
+	if (m_actionState == SlimeActionState::Attack)
+	{
+		if (m_animation.IsFinished())
+		{
+			ChangeActionState(SlimeActionState::Normal);
+		}
+		return;
+	}
+
+	if (m_attackFlg)
+	{
+		ChangeActionState(SlimeActionState::Attack);
+		return;
+	}
 }
 
 void Slime::UpdateAnimation()
@@ -110,4 +188,58 @@ void Slime::UpdateAnimation()
 	m_animation.Play(nextAnimation);
 	m_animation.Update();
 
+}
+
+void Slime::ChangeActionState(SlimeActionState nextState)
+{
+	if (m_actionState == nextState)
+	{
+		return;
+	}
+
+	ExitState(m_actionState);
+	m_actionState = nextState;
+	EnterState(m_actionState);
+}
+
+void Slime::ExitState(SlimeActionState _state)
+{
+	switch (_state)
+	{
+	case SlimeActionState::Normal:
+
+		break;
+	case SlimeActionState::Attack:
+		m_attackFlg = false;
+		m_attackCooldown = m_attackCooldownDuration;
+		break;
+	case SlimeActionState::Damage:
+
+
+		break;
+	case SlimeActionState::Death:
+
+
+		break;
+	}
+}
+
+void Slime::EnterState(SlimeActionState _state)
+{
+	switch (_state)
+	{
+	case SlimeActionState::Normal:
+
+		break;
+	case SlimeActionState::Attack:
+		break;
+	case SlimeActionState::Damage:
+
+
+		break;
+	case SlimeActionState::Death:
+
+
+		break;
+	}
 }

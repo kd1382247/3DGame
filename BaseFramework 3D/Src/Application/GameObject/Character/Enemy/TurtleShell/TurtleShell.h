@@ -22,20 +22,37 @@ public:
 
 private:
 
-	enum AttackState
-	{
-		RotationAttackST,
-		RotationAttackRPT
-	};
+
+	void UpdateMove();
+	void UpdateAttack();
+	void UpdateSpinAttackMove();
+
+	bool SpinAttackRemaining();
+	bool DizyyRemaining();
 
 	void UpdateAnimation();
+
+	void ChangeActionState(TurtleShellActionState  nextState);
+	void ExitState(TurtleShellActionState _state);
+	void EnterState(TurtleShellActionState _state);
+
+
+	void UpdateActionState();
 
 private:
 
 	TurtleShellActionState m_actionState = TurtleShellActionState::Normal;
 	TurtleShellMoveState   m_moveState = TurtleShellMoveState::Idle;
 
-	AttackState            m_attackState = AttackState::RotationAttackST;
+
+	float m_spinAttackDuration = 0;
+	float m_spinAttackRemaining = 0;
+
+	float m_dizzyDuration = 0;
+	float m_dizzyRemaining = 0;
+
+	Math::Vector3          m_targetPos = {};
+
 	// アニメーションクラス
 	TurtleShellAnimation   m_animation;
 

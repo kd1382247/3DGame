@@ -29,7 +29,7 @@ void CactasAnimation::Play(CactasAnimationType _animType)
 		break;
 	case CactasAnimationType::Idle:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Idle"), true);
-		m_animSpeed = 1.0f;
+		m_animSpeed = 1.5f;
 		break;
 	case CactasAnimationType::Walk:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Walk"), true);

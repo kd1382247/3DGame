@@ -22,7 +22,16 @@ public:
 
 private:
 
+	void UpdateMove();
+	void UpdateAttack();
+
 	void UpdateAnimation();
+
+	void ChangeActionState(CactasActionState  nextState);
+	void ExitState(CactasActionState _state);
+	void EnterState(CactasActionState _state);
+
+	void UpdateActionState();
 
 private:
 

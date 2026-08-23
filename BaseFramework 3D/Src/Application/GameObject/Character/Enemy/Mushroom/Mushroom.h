@@ -22,8 +22,18 @@ public:
 
 private:
 
+	void UpdateMove();
+	void UpdateAttack();
 
 	void UpdateAnimation();
+
+	void ChangeActionState(MushroomActionState  nextState);
+	void ExitState(MushroomActionState _state);
+	void EnterState(MushroomActionState _state);
+
+
+	void UpdateActionState();
+
 
 private:
 

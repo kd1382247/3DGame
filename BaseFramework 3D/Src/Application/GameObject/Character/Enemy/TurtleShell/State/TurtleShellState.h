@@ -3,9 +3,10 @@
 enum class TurtleShellAnimationType
 {
 	None,
-	RotationAttackST,
-	RotationAttackRPT,
+	SpinAttackST,
+	SpinAttackRPT,
 	GetHit,
+	Dizzy,
 	Idle,
 	Walk,
 	Die
@@ -16,7 +17,9 @@ enum class TurtleShellActionState
 {
 	Normal,
 	Damage,
-	Attack,
+	Dizzy,
+	SpinAttackST,
+	SpinAttackRPT,
 	Death
 };
 

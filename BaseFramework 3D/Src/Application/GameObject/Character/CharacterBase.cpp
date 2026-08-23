@@ -47,8 +47,6 @@ void CharacterBase::DrawInspector()
 	DrawBasicInspecter();
 
 	ImGui::Separator();
-
-	ImGui::Text("----------Parameter----------");
 }
 
 DirectX::BoundingSphere CharacterBase::GetBumpSphere() const

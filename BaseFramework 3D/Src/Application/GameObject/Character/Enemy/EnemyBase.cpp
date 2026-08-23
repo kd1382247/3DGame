@@ -64,9 +64,14 @@ void EnemyBase::UpdateDirectChase()
 	// 残りの距離を移動量にする
 	//if (targetDir.Length() < moveSpeed)moveSpeed = targetDir.Length();
 
-	if (targetDir.Length()<=1.2f)
+	if (targetDir.Length()<=1.5f)
 	{
+		m_hasReachedTarget = true;
 		return;
+	}
+	else
+	{
+		m_hasReachedTarget = false;
 	}
 
 	targetDir.Normalize();
@@ -109,7 +114,6 @@ void EnemyBase::UpdateFollowPath()
 	Math::Vector3 targetDir = targetPoint->GetPos() - GetPos();
 
 	
-
 	// X・Z平面だけで移動・到着判定する
 	targetDir.y = 0.0f;
 
@@ -144,21 +148,19 @@ void EnemyBase::UpdateFollowPath()
 
 bool EnemyBase::CanDirectChase()
 {
+	// プレイヤーに到達していたらスキップ
+	if (m_hasReachedTarget)
+	{
+		return false;
+	}
 
 	auto player = m_wpPlayer.lock();
 
 	if (!player)
 	{
-		// プレイヤーがいない場合は動かない
-		m_moveFlg = false;
 		return false;
 	}
 
-
-	if (m_gravity != 0)
-	{
-		return false;
-	}
 
 	Math::Vector3 startPos = GetPos();
 	Math::Vector3 playerPos = player->GetPos();
@@ -224,7 +226,6 @@ bool EnemyBase::CanDirectChase()
 		m_nextMoveState = MoveState::DirectChase;
 	}
 	
-	m_moveFlg = true;
 	return true;
 
 }

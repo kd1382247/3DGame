@@ -21,7 +21,11 @@ void CollisionManager::Init()
 	m_pDebagWire = std::make_unique<KdDebugWireFrame>();
 }
 
-bool CollisionManager::SphereVsAABB(const DirectX::BoundingSphere& sphere, const DirectX::BoundingBox& box, Math::Vector3& outPush)
+bool CollisionManager::SphereVsAABB(
+	const DirectX::BoundingSphere& sphere,
+	const DirectX::BoundingBox& box,
+	Math::Vector3& outPush,
+	Math::Vector3&outNormal)
 {
 	outPush = Math::Vector3::Zero;
 
@@ -73,11 +77,13 @@ bool CollisionManager::SphereVsAABB(const DirectX::BoundingSphere& sphere, const
 	{
 		float distance = std::sqrt(distanceSq);
 
-		Math::Vector3 pushDir = diff / distance;
+		Math::Vector3 normal = diff / distance;
 
 		float overlap = sphere.Radius - distance;
 
-		outPush = pushDir * overlap;
+		outPush = normal * overlap;
+
+		outNormal = normal;
 
 		return true;
 	}
@@ -243,8 +249,9 @@ Math::Vector3 CollisionManager::ResolveWallCollisionForCharacter(const std::shar
 		}
 
 		Math::Vector3 push;
+		Math::Vector3 normal;
 
-		if (SphereVsAABB(character->GetBumpSphere(),wall->GetBox(),push))
+		if (SphereVsAABB(character->GetBumpSphere(),wall->GetBox(),push,normal))
 		{
 			character->SetPos(character->GetPos() + push);
 
@@ -460,9 +467,11 @@ void CollisionManager::ResolveCharacterCollision()
 
 					float total = rateA + rateB;
 
-					if (total <= 0.0001f)
+					if (total <= 0)
 					{
-						continue;
+						total = 2.0f;
+						rateA = total / 2;
+						rateB = total / 2;
 					}
 
 					Math::Vector3 pushA = push * (rateA / total);

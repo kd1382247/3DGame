@@ -58,12 +58,12 @@
             }
         },
         {
-            "Class": "Cactas",
-            "Name": "Cactas",
+            "Class": "TurtleShell",
+            "Name": "TurtleShell",
             "Position": {
-                "x": 7.599999904632568,
+                "x": 0.0,
                 "y": 0.0,
-                "z": 0.0
+                "z": -3.700000047683716
             },
             "Rotation": {
                 "x": 0.0,

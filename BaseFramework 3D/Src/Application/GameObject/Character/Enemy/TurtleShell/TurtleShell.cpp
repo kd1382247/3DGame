@@ -1,6 +1,11 @@
 ﻿#include "TurtleShell.h"
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
+#include"../../../Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
+#include"../../../Stage/Stage01/Collision/WallCollision/WallCollision.h"
+
+#include"../../Player/Player.h"
+
 
 void TurtleShell::Init()
 {
@@ -15,7 +20,12 @@ void TurtleShell::Init()
 		// パラメータクラス初期化
 		m_parameter.Init();
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
+		//m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+
+		m_attackCooldownDuration = 60 * 1;
+		m_dizzyDuration = 60 * 3;
+		m_spinAttackDuration = 60 * 5;
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
@@ -36,8 +46,58 @@ void TurtleShell::Init()
 
 void TurtleShell::Update()
 {
-	
-	
+
+	////// 現在のオブジェクト数をデバッグ
+	KdDebugGUI::Instance().ClearLog();
+	KdDebugGUI::Instance().AddLog("moveDir.x%f\n", GetMoveDir().x);
+	KdDebugGUI::Instance().AddLog("moveDir.y%f\n", GetMoveDir().y);
+	KdDebugGUI::Instance().AddLog("moveDir.z%f\n", GetMoveDir().z);
+
+
+	UpdateMove();
+
+
+
+
+	UpdateSpinAttackMove();
+	UpdateAttack();
+
+	UpdateActionState();
+
+}
+
+void TurtleShell::PostUpdate()
+{
+	EnemyBase::PostUpdate();
+
+	UpdateAnimation();
+
+	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
+
+}
+
+void TurtleShell::DrawInspector()
+{
+	EnemyBase::DrawInspector();
+
+	m_parameter.DrawInspecter();
+}
+
+void TurtleShell::UpdateMove()
+{
+
+	Math::Vector3 nowPos = GetPos();
+	m_gravity += 0.02;
+	nowPos.y -= m_gravity;
+	SetPos(nowPos);
+
+
+	if (m_actionState == TurtleShellActionState::Dizzy||
+		m_actionState==TurtleShellActionState::SpinAttackRPT)
+	{
+		return;
+	}
+
 	if (CanDirectChase())
 	{
 		m_moveState = TurtleShellMoveState::Walk;
@@ -61,27 +121,162 @@ void TurtleShell::Update()
 
 	UpdateFacingDirection();
 
-	Math::Vector3 nowPos = GetPos();
-	m_gravity += 0.02;
-	nowPos.y -= m_gravity;
-	SetPos(nowPos);
 }
 
-void TurtleShell::PostUpdate()
+void TurtleShell::UpdateActionState()
 {
-	EnemyBase::PostUpdate();
+	if (m_actionState == TurtleShellActionState::Death)
+	{
 
-	UpdateAnimation();
+		return;
+	}
 
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
+	if (m_actionState == TurtleShellActionState::Damage)
+	{
+		if (m_animation.IsFinished())
+		{
+			ChangeActionState(TurtleShellActionState::Normal);
+		}
+		return;
+	}
+
+	// 回転攻撃
+	if (m_actionState == TurtleShellActionState::SpinAttackST)
+	{
+		if (m_animation.IsFinished())
+		{
+			ChangeActionState(TurtleShellActionState::SpinAttackRPT);
+		}
+		return;
+	}
+
+	if (m_actionState == TurtleShellActionState::SpinAttackRPT)
+	{
+		if(SpinAttackRemaining())
+		{
+			ChangeActionState(TurtleShellActionState::Dizzy);
+		}
+		return;
+	}
+
+	// ふらつきのアニメーション
+	if (m_actionState == TurtleShellActionState::Dizzy)
+	{
+		if (DizyyRemaining())
+		{
+			ChangeActionState(TurtleShellActionState::Normal);
+		}
+		return;
+	}
+
+	if (m_attackFlg)
+	{
+		ChangeActionState(TurtleShellActionState::SpinAttackST);
+		return;
+	}
 
 }
 
-void TurtleShell::DrawInspector()
-{
-	EnemyBase::DrawInspector();
 
-	m_parameter.DrawInspecter();
+void TurtleShell::UpdateAttack()
+{
+	// ターゲットに到達したら攻撃する
+	if (m_hasReachedTarget)
+	{
+		m_attackFlg = true;
+	}
+
+	m_attackCooldown--;
+	if (m_attackCooldown <= 0)
+	{
+		m_attackCooldown = 0;
+	}
+
+	// クールタイムがある場合は攻撃しない
+	if (m_attackFlg)
+	{
+		if (m_attackCooldown != 0)
+		{
+			m_attackFlg = false;
+		}
+	}
+}
+
+void TurtleShell::UpdateSpinAttackMove()
+{
+
+	if (m_actionState != TurtleShellActionState::SpinAttackRPT)
+	{
+		return;
+	}
+
+	if (m_wpPlayer.lock())
+	{
+		m_targetPos = m_wpPlayer.lock()->GetPos();
+	}
+
+	Math::Vector3 moveDir = GetMoveDir();
+	moveDir.Normalize();
+
+	for (auto wall : WallCollisionManager::Instance().GetWallCollisionList())
+	{
+		if (!wall)
+		{
+			continue;
+		}
+
+		Math::Vector3 push;
+		Math::Vector3 normal;
+
+		if (CollisionManager::Instance().SphereVsAABB(
+			GetBumpSphere(), wall->GetBox(),push,normal))
+		{
+			// ボックスとぶつかったら反転
+			// 反射ベクトルを求める
+
+			float dot = moveDir.Dot(normal);
+
+			if(dot<0.0f)
+			{
+				Math::Vector3 R = moveDir - 2 * dot * normal;
+				R.Normalize();
+				moveDir = R;
+
+				SetMoveDir(moveDir);
+			}
+		}
+	}
+
+
+	Math::Vector3 pos = GetPos();
+	pos += moveDir * m_moveSpeed;
+	SetPos(pos);
+}
+
+bool TurtleShell::SpinAttackRemaining()
+{
+	
+	m_spinAttackRemaining--;
+
+	if (m_spinAttackRemaining <= 0)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool TurtleShell::DizyyRemaining()
+{
+
+	m_dizzyRemaining--;
+
+	if (m_dizzyRemaining <= 0)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void TurtleShell::UpdateAnimation()
@@ -92,16 +287,17 @@ void TurtleShell::UpdateAnimation()
 	{
 		nextAnimation = TurtleShellAnimationType::GetHit;
 	}
-	else if (m_actionState == TurtleShellActionState::Attack)
+	else if (m_actionState == TurtleShellActionState::SpinAttackST)
 	{
-		if(m_attackState==AttackState::RotationAttackST)
-		{
-			nextAnimation = TurtleShellAnimationType::RotationAttackST;
-		}
-		else if (m_attackState == AttackState::RotationAttackRPT)
-		{
-			nextAnimation = TurtleShellAnimationType::RotationAttackRPT;
-		}
+		nextAnimation = TurtleShellAnimationType::SpinAttackST;
+	}
+	else if (m_actionState == TurtleShellActionState::SpinAttackRPT)
+	{
+		nextAnimation = TurtleShellAnimationType::SpinAttackRPT;
+	}
+	else if (m_actionState == TurtleShellActionState::Dizzy)
+	{
+		nextAnimation = TurtleShellAnimationType::Dizzy;
 	}
 	else if (m_moveState == TurtleShellMoveState::Walk)
 	{
@@ -115,4 +311,79 @@ void TurtleShell::UpdateAnimation()
 	m_animation.Play(nextAnimation);
 	m_animation.Update();
 
+}
+
+void TurtleShell::ChangeActionState(TurtleShellActionState nextState)
+{
+	if (m_actionState == nextState)
+	{
+		return;
+	}
+
+	ExitState(m_actionState);
+	m_actionState = nextState;
+	EnterState(m_actionState);
+}
+
+void TurtleShell::ExitState(TurtleShellActionState _state)
+{
+	switch (_state)
+	{
+	case TurtleShellActionState::Normal:
+
+		break;
+	case TurtleShellActionState::SpinAttackST:
+
+		
+		break;
+	case TurtleShellActionState::SpinAttackRPT:
+
+		m_bumpPushRate = 1.0f;
+		
+		break;
+	case TurtleShellActionState::Dizzy:
+
+		m_attackFlg = false;
+		m_attackCooldown = m_attackCooldownDuration;
+		
+		break;
+	case TurtleShellActionState::Damage:
+
+
+		break;
+	case TurtleShellActionState::Death:
+
+		break;
+	}
+}
+
+void TurtleShell::EnterState(TurtleShellActionState _state)
+{
+
+	switch (_state)
+	{
+	case TurtleShellActionState::Normal:
+
+		break;
+	case TurtleShellActionState::SpinAttackST:
+
+		break;
+	case TurtleShellActionState::SpinAttackRPT:
+
+		// 回転攻撃の持続時間
+		m_spinAttackRemaining = m_spinAttackDuration;
+		m_bumpPushRate = 0.0f;
+
+		break;
+	case TurtleShellActionState::Dizzy:
+
+		m_dizzyRemaining = m_dizzyDuration;
+
+		break;
+	case TurtleShellActionState::Damage:
+		break;
+	case TurtleShellActionState::Death:
+
+		break;
+	}
 }

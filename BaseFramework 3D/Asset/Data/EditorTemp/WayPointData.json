@@ -4,8 +4,10 @@
             "AreaID": 0,
             "ID": 3,
             "Links": [
-                0,
-                5
+                5,
+                40,
+                49,
+                45
             ],
             "Name": "WayPoint_3",
             "Position": {
@@ -246,8 +248,10 @@
             "AreaID": 0,
             "ID": 40,
             "Links": [
-                0,
-                2
+                2,
+                45,
+                3,
+                49
             ],
             "Name": "WayPoint_40",
             "Position": {
@@ -260,8 +264,10 @@
             "AreaID": 0,
             "ID": 45,
             "Links": [
-                0,
-                1
+                1,
+                40,
+                49,
+                3
             ],
             "Name": "WayPoint_45",
             "Position": {
@@ -274,30 +280,16 @@
             "AreaID": 0,
             "ID": 49,
             "Links": [
-                0,
-                4
+                4,
+                3,
+                45,
+                40
             ],
             "Name": "WayPoint_49",
             "Position": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": -5.0
-            }
-        },
-        {
-            "AreaID": 0,
-            "ID": 0,
-            "Links": [
-                49,
-                3,
-                40,
-                45
-            ],
-            "Name": "WayPoint_0",
-            "Position": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
             }
         },
         {

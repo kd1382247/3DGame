@@ -20,6 +20,8 @@ void Cactas::Init()
 		m_parameter.Init();
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+		m_attackCooldownDuration = 60*0.5;
+
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
@@ -43,13 +45,48 @@ void Cactas::Init()
 void Cactas::Update()
 {
 
-	////// 現在のオブジェクト数をデバッグ
-	KdDebugGUI::Instance().ClearLog();
-	KdDebugGUI::Instance().AddLog("%fY\n", GetPos().y);
-	KdDebugGUI::Instance().AddLog("%fMoveDir.x\n", GetMoveDir().x);
-	KdDebugGUI::Instance().AddLog("%fMoveDir.y\n", GetMoveDir().y);
-	KdDebugGUI::Instance().AddLog("%fMoveDir.z\n", GetMoveDir().z);
+	UpdateMove();
+
+	UpdateAttack();
+
+
+	UpdateActionState();
+
+
 	
+}
+
+void Cactas::PostUpdate()
+{
+
+	UpdateAnimation();
+
+	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
+
+	EnemyBase::PostUpdate();
+
+}
+
+void Cactas::DrawInspector()
+{
+	EnemyBase::DrawInspector();
+
+	m_parameter.DrawInspecter();
+}
+
+void Cactas::UpdateMove()
+{
+	Math::Vector3 nowPos = GetPos();
+	m_gravity += 0.02;
+	nowPos.y -= m_gravity;
+	SetPos(nowPos);
+
+	// 攻撃中は移動をしない
+	if (m_actionState == CactasActionState::Attack)
+	{
+		return;
+	}
+
 	if (CanDirectChase())
 	{
 		m_moveState = CactasMoveState::Walk;
@@ -72,31 +109,30 @@ void Cactas::Update()
 	}
 
 	UpdateFacingDirection();
-
-	// 重力
-	Math::Vector3 nowPos = GetPos();
-	m_gravity += 0.02;
-	nowPos.y -= m_gravity;
-	SetPos(nowPos);
-
 }
 
-void Cactas::PostUpdate()
+void Cactas::UpdateAttack()
 {
+	// ターゲットに到達したら攻撃する
+	if (m_hasReachedTarget)
+	{
+		m_attackFlg = true;
+	}
 
-	UpdateAnimation();
+	m_attackCooldown--;
+	if (m_attackCooldown <= 0)
+	{
+		m_attackCooldown = 0;
+	}
 
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
-
-	EnemyBase::PostUpdate();
-
-}
-
-void Cactas::DrawInspector()
-{
-	EnemyBase::DrawInspector();
-
-	m_parameter.DrawInspecter();
+	// クールタイムがある場合は攻撃しない
+	if(m_attackFlg)
+	{
+		if (m_attackCooldown != 0)
+		{
+			m_attackFlg = false;
+		}
+	}
 }
 
 void Cactas::UpdateAnimation()
@@ -122,5 +158,95 @@ void Cactas::UpdateAnimation()
 
 	m_animation.Play(nextAnimation);
 	m_animation.Update();
+
+}
+
+void Cactas::ChangeActionState(CactasActionState nextState)
+{
+	if (m_actionState == nextState)
+	{
+		return;
+	}
+
+	ExitState(m_actionState);
+	m_actionState = nextState;
+	EnterState(m_actionState);
+	
+}
+
+void Cactas::ExitState(CactasActionState _state)
+{
+	switch (_state)
+	{
+	case CactasActionState::Normal:
+
+		break;
+	case CactasActionState::Attack:
+		m_attackFlg = false;
+		m_attackCooldown = m_attackCooldownDuration;
+		break;
+	case CactasActionState::Damage:
+
+
+		break;
+	case CactasActionState::Death:
+
+
+		break;
+	}
+}
+
+void Cactas::EnterState(CactasActionState _state)
+{
+	switch (_state)
+	{
+	case CactasActionState::Normal:
+
+		break;
+	case CactasActionState::Attack:
+
+		break;
+	case CactasActionState::Damage:
+
+
+		break;
+	case CactasActionState::Death:
+
+
+		break;
+	}
+}
+
+void Cactas::UpdateActionState()
+{
+	if (m_actionState == CactasActionState::Death)
+	{
+
+		return;
+	}
+
+	if (m_actionState == CactasActionState::Damage)
+	{
+		if (m_animation.IsFinished())
+		{
+			ChangeActionState(CactasActionState::Normal);
+		}
+		return;
+	}
+
+	if (m_actionState == CactasActionState::Attack)
+	{
+		if (m_animation.IsFinished())
+		{
+			ChangeActionState(CactasActionState::Normal);
+		}
+		return;
+	}
+
+	if (m_attackFlg)
+	{
+		ChangeActionState(CactasActionState::Attack);
+		return;
+	}
 
 }
