@@ -33,6 +33,13 @@ private:
 
 	void UpdateActionState();
 
+	void SetAttackTiming();
+
+
+	// 攻撃判定
+	void UpdateAttackCollision();
+
+
 private:
 
 	CactasActionState m_actionState = CactasActionState::Normal;
@@ -43,5 +50,8 @@ private:
 
 	// パラメータクラス
 	CactasParameter   m_parameter;
+
+
+
 
 };

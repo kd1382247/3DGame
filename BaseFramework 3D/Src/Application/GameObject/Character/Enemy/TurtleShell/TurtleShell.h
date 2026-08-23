@@ -29,6 +29,8 @@ private:
 
 	bool SpinAttackRemaining();
 	bool DizyyRemaining();
+	void HitCoolDownRemaining();
+
 
 	void UpdateAnimation();
 
@@ -38,6 +40,9 @@ private:
 
 
 	void UpdateActionState();
+
+	// 攻撃判定
+	void UpdateAttackCollision();
 
 private:
 
@@ -58,5 +63,9 @@ private:
 
 	// パラメータクラス
 	TurtleShellParameter   m_parameter;
+
+
+	float m_hitCooldownDuration = 0.0f;
+	float m_hitCooldownRemaining = 0.0f;
 
 };

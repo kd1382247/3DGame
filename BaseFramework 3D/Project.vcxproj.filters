@@ -307,6 +307,9 @@
     <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision">
       <UniqueIdentifier>{567349c9-f5fb-4004-a44c-aee239827de9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\System\CombatCollisionManager">
+      <UniqueIdentifier>{92f6603e-1b19-499d-8558-f3fb6857775c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -705,6 +708,12 @@
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollisionManager.h">
       <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\System\CombatCollisionManager\CombatCollisionManager.h">
+      <Filter>Src\Application\System\CombatCollisionManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\AttackInfo.h">
+      <Filter>Src\Application\GameObject\Character</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1033,6 +1042,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollisionManager.cpp">
       <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\CombatCollisionManager\CombatCollisionManager.cpp">
+      <Filter>Src\Application\System\CombatCollisionManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -44,16 +44,12 @@ void Cactas::Init()
 
 void Cactas::Update()
 {
-
 	UpdateMove();
 
 	UpdateAttack();
-
-
 	UpdateActionState();
 
-
-	
+	UpdateAttackCollision();
 }
 
 void Cactas::PostUpdate()
@@ -83,6 +79,11 @@ void Cactas::UpdateMove()
 
 	// 攻撃中は移動をしない
 	if (m_actionState == CactasActionState::Attack)
+	{
+		return;
+	}
+
+	if (m_knockBack != Math::Vector3::Zero)
 	{
 		return;
 	}
@@ -187,7 +188,6 @@ void Cactas::ExitState(CactasActionState _state)
 		break;
 	case CactasActionState::Damage:
 
-
 		break;
 	case CactasActionState::Death:
 
@@ -204,6 +204,10 @@ void Cactas::EnterState(CactasActionState _state)
 
 		break;
 	case CactasActionState::Attack:
+
+		m_hitTarget = false;
+
+		SetAttackTiming();
 
 		break;
 	case CactasActionState::Damage:
@@ -248,5 +252,89 @@ void Cactas::UpdateActionState()
 		ChangeActionState(CactasActionState::Attack);
 		return;
 	}
+
+}
+
+void Cactas::SetAttackTiming()
+{
+	m_attackTiming.hitStart=16.0f;
+	m_attackTiming.hitEnd=20.0f;
+
+	// フレームを0に
+	m_animFrame = 0.0f;
+}
+
+void Cactas::UpdateAttackCollision()
+{
+	auto spPlayer = m_wpPlayer.lock();
+	if (!spPlayer)
+	{
+		return;
+	}
+
+	if (m_actionState != CactasActionState::Attack)
+	{
+		return;
+	}
+
+	// 攻撃が当たっていたら
+	if (m_hitTarget)
+	{
+		return;
+	}
+
+	m_animFrame++;
+
+	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
+	{
+		return;
+	}
+
+
+	// 攻撃する位置
+	Math::Vector3 attackPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
+
+	// 攻撃する方向
+	Math::Vector3 attackDir = m_mWorld.Backward();
+	attackDir.y = 0;
+
+	if (attackDir.LengthSquared() <= 0.000001f)
+	{
+		return;
+	}
+
+	// プレイヤーの少し前に出す
+	attackPos += attackDir * 0.8f;
+
+	DirectX::BoundingSphere sphere;
+
+	sphere.Center = attackPos;
+	sphere.Radius = 0.6;
+
+	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
+
+	if (spPlayer->Intersects(sphereInfo, nullptr))
+	{
+		// ノックバックの方向を作る
+		Math::Vector3 knockBackDir = spPlayer->GetPos() - GetPos();
+		knockBackDir.y = 0;
+		if (knockBackDir.LengthSquared() > 0.000001f)
+		{
+			knockBackDir.Normalize();
+		}
+
+		AttackInfo attackInfo;
+
+		attackInfo.knockBackDir = knockBackDir;
+		attackInfo.knockBackPower = 0.08;
+		attackInfo.damage = 10;
+
+		spPlayer->OnHit(attackInfo);
+
+		m_hitTarget = true;
+	}
+
+
+	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
 
 }

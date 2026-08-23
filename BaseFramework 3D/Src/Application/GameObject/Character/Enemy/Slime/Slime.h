@@ -34,6 +34,12 @@ private:
 	void EnterState(SlimeActionState _state);
 
 
+
+	void SetAttackTiming();
+
+	// 攻撃判定
+	void UpdateAttackCollision();
+
 	
 private:
 

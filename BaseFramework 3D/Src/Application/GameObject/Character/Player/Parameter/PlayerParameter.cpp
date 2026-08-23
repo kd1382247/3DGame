@@ -75,10 +75,6 @@ void PlayerParameter::SaveToJson()
 
 		return;
 	}
-
-	// セーブした後にすぐ反映
-	Init();
-
 }
 
 void PlayerParameter::LoadFromJson()

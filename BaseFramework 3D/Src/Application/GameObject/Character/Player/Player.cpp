@@ -1,10 +1,10 @@
 ﻿#include "Player.h"
 
 #include"../../Camera/CameraBase.h"
+#include"../Enemy/EnemyBase.h"
 
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../../System/CollisionManager/CollisionManager.h"
-
 
 void Player::Init()
 {
@@ -32,6 +32,8 @@ void Player::Init()
 		m_parameter.Init();
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
+		m_hp = m_parameter.GetParam().m_maxHP;
+
 
 		m_bumpPushRate = 0.0f;
 	}
@@ -43,14 +45,20 @@ void Player::Init()
 
 void Player::Update()
 {
+	
+	////// 現在のオブジェクト数をデバッグ
+	KdDebugGUI::Instance().ClearLog();
 
-
+	KdDebugGUI::Instance().AddLog("HP%f\n", m_hp);
 
 	UpdateInput();
 	UpdateActionState();
 	UpdateMoveState();
 
 	UpdateMove();
+	
+
+	UpdateAttackCollision();
 }
 
 void Player::PostUpdate()
@@ -59,7 +67,7 @@ void Player::PostUpdate()
 	UpdateGroundState();
 
 	UpdateAnimation();
-
+	
 	CharacterBase::PostUpdate();
 }
 
@@ -83,6 +91,106 @@ void Player::DrawInspector()
 	CharacterBase::DrawInspector();
 	// パラメーター変更
 	m_parameter.DrawInspecter();
+}
+
+void Player::UpdateAttackCollision()
+{
+
+	if (m_actionState != PlayerActionState::Attack)
+	{
+		return;
+	}
+
+	m_animFrame++;
+
+	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
+	{
+		return;
+	}
+
+	// 攻撃判定を出す位置
+	Math::Vector3 attackPos = GetPos()+Math::Vector3(0.0f,0.5f,0.0f);
+	// プレイヤーの向いてる方向
+	Math::Vector3 attackDir = m_mWorld.Backward();
+
+	attackDir.y = 0;
+	if (attackDir.LengthSquared() < 0.000001f)
+	{
+		return;
+	}
+
+	attackDir.Normalize();
+
+	// プレイヤーの少し前に出す
+	attackPos += attackDir * 0.8f;
+	
+	// 攻撃判定用のスフィアを作成
+	DirectX::BoundingSphere sphere;
+	sphere.Center = attackPos;
+	sphere.Radius = 0.7;
+
+	const auto& characters =
+		CollisionManager::Instance().GetObjects(CollisionLayer::CharacterBump);
+
+	for (const auto& weakObj : characters)
+	{
+		auto obj = weakObj.lock();
+
+		if (!obj)
+		{
+			continue;
+		}
+		// 自分自身は攻撃しない
+		if (obj == shared_from_this())
+		{
+			continue;
+		}
+
+		// Enemyだけ取得
+		auto enemy = std::dynamic_pointer_cast<EnemyBase>(obj);
+
+		if (!enemy)
+		{
+			continue;
+		}
+
+		// 一度当たった敵はスキップ
+		if (IsAlreadyHit(enemy))
+		{
+			continue;
+		}
+
+
+		KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
+
+		std::list < KdCollider::CollisionResult>result;
+
+		if (enemy->Intersects(sphereInfo, &result));
+
+		if (!result.empty())
+		{
+
+			// ノックバック方向を作る
+			Math::Vector3 knockBackDir = enemy->GetPos() - GetPos();
+			knockBackDir.y = 0.0f;
+
+			if (knockBackDir.LengthSquared() > 0.000001f)
+			{
+				knockBackDir.Normalize();
+			}
+
+			AttackInfo attackInfo;
+			attackInfo.damage = 10;
+			attackInfo.knockBackDir = knockBackDir;
+			attackInfo.knockBackPower = 0.1f;
+
+			enemy->OnHit(attackInfo);
+			m_hitTargets.emplace_back(enemy);
+		}
+	}
+
+	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
+
 }
 
 void Player::UpdateInput()
@@ -200,7 +308,8 @@ void Player::UpdateComboInput()
 			m_canCombo = false;
 			m_comboInputCnt = 0;
 
-			m_currentAttackCombo = m_nextAttackCombo;
+			UpdateComboState();
+
 			ChangeActionState(PlayerActionState::Attack);
 			return;
 		}
@@ -237,7 +346,6 @@ void Player::UpdateMove()
 	dir.Normalize();
 
 	nowPos += dir * m_moveSpeed;
-
 
 	nowPos.y -= m_gravity;
 
@@ -359,18 +467,13 @@ void Player::UpdateMoveState()
 
 void Player::UpdateComboState()
 {
-	// 次の攻撃パターンを予約
-	switch (m_currentAttackCombo)
+	if (m_preAttackCombo == AttackCombo::Attack1)
 	{
-	case Player::AttackCombo::Attack1:
-		m_nextAttackCombo = AttackCombo::Attack2;
-		break;
-	case Player::AttackCombo::Attack2:
-		m_nextAttackCombo = AttackCombo::Attack3;
-		break;
-	case Player::AttackCombo::Attack3:
-		m_nextAttackCombo = AttackCombo::Attack1;
-		break;
+		m_currentAttackCombo = AttackCombo::Attack2;
+	}
+	else if (m_preAttackCombo == AttackCombo::Attack2)
+	{
+		m_currentAttackCombo = AttackCombo::Attack3;
 	}
 }
 
@@ -468,11 +571,68 @@ void Player::UpdateAnimation()
 	m_animation.Update();
 }
 
+void Player::SetAttackTiming()
+{
+	if (m_currentAttackCombo == AttackCombo::Attack1)
+	{
+		m_attackTiming.hitStart=1;
+		m_attackTiming.hitEnd=7;
+	}
+	if (m_currentAttackCombo == AttackCombo::Attack2)
+	{
+		m_attackTiming.hitStart=1;
+		m_attackTiming.hitEnd=7;
+	}
+	if (m_currentAttackCombo == AttackCombo::Attack3)
+	{
+		m_attackTiming.hitStart=3;
+		m_attackTiming.hitEnd=9;
+	}
+	// フレームを0に
+	m_animFrame = 0.0f;
+}
+
+bool Player::IsAlreadyHit(const std::shared_ptr<EnemyBase>& enemy) const
+{
+
+	for (const auto& weakEnemy : m_hitTargets)
+	{
+		auto hitEnemy = weakEnemy.lock();
+
+		if (!hitEnemy)
+		{
+			continue;
+		}
+
+		if (hitEnemy == enemy)
+		{
+			return true;
+		}
+
+	}
+
+	return false;
+
+}
+
+void Player::OnHit(const AttackInfo& attackInfo)
+{
+	m_hp -= attackInfo.damage;
+
+	if (m_hp <= 0)
+	{
+		m_hp = 0;
+	}
+
+	AddKnockBack(attackInfo.knockBackDir,attackInfo.knockBackPower);
+}
+
 
 void Player::ResetCombo()
 {
 	m_currentAttackCombo = AttackCombo::Attack1;
-	m_nextAttackCombo = AttackCombo::Attack1;
+
+	m_preAttackCombo = AttackCombo::Attack1;
 
 	m_canCombo = false;
 	m_comboInputCnt = 0;
@@ -498,28 +658,54 @@ void Player::EnterState(PlayerActionState _state)
 	case PlayerActionState::Normal:
 		break;
 	case PlayerActionState::Attack:
-		UpdateComboState();
+
+		// 攻撃がHitした敵リストをクリア
+		m_hitTargets.clear();
+
+		// 当たり判定をするタイミングをセット
+		SetAttackTiming();
+		
 		break;
 	case PlayerActionState::Damage:
 		break;
 	case PlayerActionState::Die:
 		break;
 	case PlayerActionState::JumpStart:
+
 		ResetCombo();
 		m_jumpFlg = true;
 		m_gravity = -m_parameter.GetParam().m_jumpPow;
+
 		break;
 	case PlayerActionState::JumpAir:
 
 		break;
 	case PlayerActionState::JumpLand:
 		break;
-	default:
-		break;
 	}
 }
 
 void Player::ExitState(PlayerActionState _state)
 {
+	switch (_state)
+	{
+	case PlayerActionState::Normal:
+		break;
+	case PlayerActionState::Attack:
+		
+		m_preAttackCombo = m_currentAttackCombo;
+	
+		break;
+	case PlayerActionState::Damage:
+		break;
+	case PlayerActionState::Die:
+		break;
+	case PlayerActionState::JumpStart:
+		break;
+	case PlayerActionState::JumpAir:
 
+		break;
+	case PlayerActionState::JumpLand:
+		break;
+	}
 }

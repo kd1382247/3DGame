@@ -42,6 +42,8 @@ private:
 
 	void ApplyCharacterPush(const std::shared_ptr<CharacterBase>& character);
 
+	void ApplyKnockBack(const std::shared_ptr<CharacterBase>& character);
+
 	std::vector<std::shared_ptr<CharacterBase>>GetCharacters();
 
 
@@ -50,7 +52,6 @@ private:
 	void ResolveWallCollision();
 	void ResolveGroundCollision();
 
-	void ApplyPush();
 
 	// レイヤーのサイズを取得
 	static constexpr size_t LayerCount =

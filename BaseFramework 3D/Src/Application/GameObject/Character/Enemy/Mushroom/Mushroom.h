@@ -34,6 +34,11 @@ private:
 
 	void UpdateActionState();
 
+	void SetAttackTiming();
+
+	// 攻撃判定
+	void UpdateAttackCollision();
+
 
 private:
 
@@ -45,5 +50,4 @@ private:
 
 	// パラメータクラス
 	MushroomParameter   m_parameter;
-
 };

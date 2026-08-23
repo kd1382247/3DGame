@@ -8,6 +8,7 @@
 
 
 class CameraBase;
+class EnemyBase;
 
 class Player : public CharacterBase
 {
@@ -21,15 +22,12 @@ public:
 	void PostUpdate()   override;
 	void SetUpReference()override;
 
-
 	void DrawLit()override;
 
 	void DrawInspector()override;
 
-	int GetCurrentAreaID(const Math::Vector3&pos)
-	{
-		 return CharacterBase::GetCurrentAreaID(pos);
-	}
+
+	void OnHit(const AttackInfo& attackInfo)override;
 
 private:
 
@@ -75,6 +73,13 @@ private:
 
 	void UpdateAnimation();
 
+	void SetAttackTiming();
+
+
+	void UpdateAttackCollision();
+	bool IsAlreadyHit(const std::shared_ptr<EnemyBase>&enemy)const;
+
+
 private:
 
 	// カメラ
@@ -101,7 +106,9 @@ private:
 
 	// 攻撃コンボ
 	AttackCombo     m_currentAttackCombo = AttackCombo::Attack1;
-	AttackCombo     m_nextAttackCombo = m_currentAttackCombo;
+
+	AttackCombo     m_preAttackCombo = AttackCombo::Attack1;
+
 	int             m_comboInputCnt = 0;
 	bool            m_canCombo = false;
 
@@ -116,5 +123,7 @@ private:
 	// ジャンプキー
 	bool            m_jumpButton = false;
 
+	// 攻撃が当たった敵リスト
+	std::vector<std::weak_ptr<EnemyBase>>m_hitTargets = {};
 
 };

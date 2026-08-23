@@ -219,6 +219,12 @@ void CollisionManager::Resolve()
 	// Character同士からPushを計算
 	ResolveCharacterCollision();
 
+	// ノックバックをSubStepで適用
+	for (auto& character : GetCharacters())
+	{
+		ApplyKnockBack(character);
+	}
+
 	// 最後に全員まとめて壁とのめり込みを再確認
 	ResolveWallCollision();
 
@@ -380,6 +386,51 @@ void CollisionManager::ApplyCharacterPush(const std::shared_ptr<CharacterBase>& 
 
 }
 
+void CollisionManager::ApplyKnockBack(const std::shared_ptr<CharacterBase>& character)
+{
+
+	if (!character)
+	{
+		return;
+	}
+
+	Math::Vector3 knockBack = character->GetKnockBack();
+
+	float length = knockBack.Length();
+
+	if (length <= 0.000001f)
+	{
+		return;
+	}
+
+	constexpr float maxStap = 0.05;
+
+	int stepCount = static_cast<int>(std::ceil(length / maxStap));
+
+	Math::Vector3 delta = knockBack / static_cast<float>(stepCount);
+
+
+	for (int i = 0; i < stepCount; ++i)
+	{
+		character->SetPos(character->GetPos() + delta);
+
+		ResolveGroundCollisionForCharacter(character);
+
+		ResolveGroundCollisionForCharacter(character);
+	}
+
+	// 徐々に減衰
+	knockBack *= 0.88;
+
+	if (knockBack.LengthSquared() <= 0.000001f)
+	{
+		knockBack = Math::Vector3::Zero;
+	}
+
+	character->SetKnockBack(knockBack);
+
+}
+
 std::vector<std::shared_ptr<CharacterBase>> CollisionManager::GetCharacters()
 {
 	std::vector<std::shared_ptr<CharacterBase>> characters;
@@ -487,8 +538,7 @@ void CollisionManager::ResolveCharacterCollision()
 		// 補正済みPushをSubStepで適用
 		for (auto& character : characters)
 		{
-			ApplyCharacterPush(
-				character);
+			ApplyCharacterPush(character);
 		}
 	}
 
@@ -564,26 +614,6 @@ void CollisionManager::ResolveGroundCollision()
 				character->SetJumpFlg(false);
 			}
 		}
-	}
-
-}
-
-void CollisionManager::ApplyPush()
-{
-	const auto& objects = GetObjects(CollisionLayer::CharacterBump);
-
-	for (const auto& weakObj : objects)
-	{
-		auto character = std::dynamic_pointer_cast<CharacterBase>(weakObj.lock());
-
-		if (!character)
-		{
-			continue;
-		}
-
-		character->ApplyPush();
-
-		character->ClearPush();
 	}
 
 }

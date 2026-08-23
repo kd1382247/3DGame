@@ -39,9 +39,24 @@ void EnemyBase::SetUpReference()
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
 }
 
+void EnemyBase::OnHit(const AttackInfo& attackInfo)
+{
+	m_hp -= attackInfo.damage;
+
+	if (m_hp <= 0)
+	{
+		m_hp = 0;
+	}
+
+	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
+}
+
 
 void EnemyBase::UpdateDirectChase()
 {
+
+
+
 	auto spPlayer = m_wpPlayer.lock();
 
 	if (!spPlayer)
@@ -160,7 +175,6 @@ bool EnemyBase::CanDirectChase()
 	{
 		return false;
 	}
-
 
 	Math::Vector3 startPos = GetPos();
 	Math::Vector3 playerPos = player->GetPos();

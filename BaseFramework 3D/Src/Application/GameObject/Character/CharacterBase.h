@@ -1,8 +1,19 @@
 ﻿#pragma once
 
+
+#include"AttackInfo.h"
+
 class CharacterBase : public KdGameObject
 {
 public:
+
+
+	struct AttackTiming
+	{
+		float hitStart;
+		float hitEnd;
+	};
+
 	CharacterBase();
 	~CharacterBase()	override;
 
@@ -21,8 +32,6 @@ public:
 
 	// 現在の押し戻しの影響を受ける割合
 	float GetBumpPushRate()const { return m_bumpPushRate; }
-
-
 	// 押し戻しの量を加算
 	void AddPush(const Math::Vector3& push) { m_totalPush += push; }
 
@@ -33,6 +42,8 @@ public:
 	void ApplyPush() { SetPos(GetPos() + m_totalPush); }
 	void ClearPush() { m_totalPush = Math::Vector3::Zero; }
 
+	// 現在のエリアIDを返す
+	int   GetCurrentAreaID(const Math::Vector3& pos);
 
 
 	// 重力を返す
@@ -41,7 +52,14 @@ public:
 
 	void SetJumpFlg(bool flg) { m_jumpFlg = flg; }
 
+	Math::Vector3 GetKnockBack()const { return m_knockBack; }
+	void SetKnockBack(const Math::Vector3& knockBack) { m_knockBack = knockBack; }
 
+	virtual void OnHit(const AttackInfo& attackInfo) {}
+	void AddKnockBack(const Math::Vector3& dir, const float power)
+	{
+		m_knockBack += dir * power;
+	}
 
 
 private:
@@ -52,14 +70,11 @@ private:
 	// 解放処理
 	void Release();
 
-
 protected:
+
 
 	void  UpdateFacingDirection();
 	void  UpdateMatrix();
-
-	int   GetCurrentAreaID(const Math::Vector3& pos);
-
 
 	void SetMoveDir(const Math::Vector3& moveDir) { m_moveDir = moveDir; }
 	Math::Vector3 GetMoveDir() { return m_moveDir; }
@@ -82,10 +97,17 @@ protected:
 	// 移動スピード
 	float         m_moveSpeed = {};
 
+	float         m_hp = {};
+
 	float         m_angle = 0;
 
 	// エリアID
 	int m_currentAreaID = 0;
 
+	// 攻撃判定のタイミング
+	float        m_animFrame = 0;
+	AttackTiming m_attackTiming = {};
+	
+	Math::Vector3 m_knockBack = {};
 
 };

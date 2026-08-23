@@ -26,8 +26,9 @@ public:
 
 	void DrawInspector()override;
 
-
 	void SetUpReference()override;
+
+	void OnHit(const AttackInfo& attackInfo)override;
 
 protected:
 
@@ -69,5 +70,7 @@ protected:
 	float m_attackCooldownDuration = 0;
 
 	bool m_attackFlg = false;
+
+	bool m_hitTarget = false;
 
 };

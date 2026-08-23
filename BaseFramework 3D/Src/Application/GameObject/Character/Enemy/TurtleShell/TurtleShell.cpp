@@ -20,12 +20,14 @@ void TurtleShell::Init()
 		// パラメータクラス初期化
 		m_parameter.Init();
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
-		//m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+		m_hp = m_parameter.GetParam().m_maxHP;
 
-		m_attackCooldownDuration = 60 * 1;
-		m_dizzyDuration = 60 * 3;
-		m_spinAttackDuration = 60 * 5;
+		m_attackCooldownDuration = 60 * 1.0f;
+		m_dizzyDuration = 60 * 3.0f;
+		m_spinAttackDuration = 60 * 5.0f;
+		m_hitCooldownDuration = 60 * 0.5f;
+
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
@@ -48,21 +50,22 @@ void TurtleShell::Update()
 {
 
 	////// 現在のオブジェクト数をデバッグ
-	KdDebugGUI::Instance().ClearLog();
-	KdDebugGUI::Instance().AddLog("moveDir.x%f\n", GetMoveDir().x);
-	KdDebugGUI::Instance().AddLog("moveDir.y%f\n", GetMoveDir().y);
-	KdDebugGUI::Instance().AddLog("moveDir.z%f\n", GetMoveDir().z);
+	//KdDebugGUI::Instance().ClearLog();
+
+	//KdDebugGUI::Instance().AddLog("HP%f\n", m_hp);
+	//KdDebugGUI::Instance().AddLog("moveDir.x%f\n", GetMoveDir().x);
+	//KdDebugGUI::Instance().AddLog("moveDir.y%f\n", GetMoveDir().y);
+	//KdDebugGUI::Instance().AddLog("moveDir.z%f\n", GetMoveDir().z);
 
 
 	UpdateMove();
-
-
-
 
 	UpdateSpinAttackMove();
 	UpdateAttack();
 
 	UpdateActionState();
+
+	UpdateAttackCollision();
 
 }
 
@@ -94,6 +97,11 @@ void TurtleShell::UpdateMove()
 
 	if (m_actionState == TurtleShellActionState::Dizzy||
 		m_actionState==TurtleShellActionState::SpinAttackRPT)
+	{
+		return;
+	}
+
+	if (m_knockBack != Math::Vector3::Zero)
 	{
 		return;
 	}
@@ -177,6 +185,60 @@ void TurtleShell::UpdateActionState()
 
 }
 
+void TurtleShell::UpdateAttackCollision()
+{
+	
+	auto spPlayer = m_wpPlayer.lock();
+	if (!spPlayer)
+	{
+		return;
+	}
+
+	if (m_actionState != TurtleShellActionState::SpinAttackRPT)
+	{
+		return;
+	}
+
+	// 攻撃が当たっていたら
+	if (m_hitTarget)
+	{
+		HitCoolDownRemaining();
+		return;
+	}
+	
+	DirectX::BoundingSphere sphere;
+
+	sphere.Center = GetPos()+Math::Vector3(0.0f,0.5f,0.0f);
+	sphere.Radius = 0.5;
+
+	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
+
+	if (spPlayer->Intersects(sphereInfo, nullptr))
+	{	
+		// ノックバックの方向を作成
+		Math::Vector3 knockBackDir = spPlayer->GetPos()-GetPos();
+		knockBackDir.y = 0;
+		if (knockBackDir.LengthSquared() > 0.000001f)
+		{
+			knockBackDir.Normalize();
+		}
+
+		AttackInfo attackInfo;
+
+		attackInfo.knockBackDir = knockBackDir;
+		attackInfo.knockBackPower = 0.3;
+		attackInfo.damage = 10;
+
+		spPlayer->OnHit(attackInfo);
+
+		m_hitTarget = true;
+	}
+
+
+	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
+
+}
+
 
 void TurtleShell::UpdateAttack()
 {
@@ -233,7 +295,6 @@ void TurtleShell::UpdateSpinAttackMove()
 		{
 			// ボックスとぶつかったら反転
 			// 反射ベクトルを求める
-
 			float dot = moveDir.Dot(normal);
 
 			if(dot<0.0f)
@@ -249,7 +310,8 @@ void TurtleShell::UpdateSpinAttackMove()
 
 
 	Math::Vector3 pos = GetPos();
-	pos += moveDir * m_moveSpeed;
+
+	pos += moveDir * (m_moveSpeed+0.07);
 	SetPos(pos);
 }
 
@@ -277,6 +339,17 @@ bool TurtleShell::DizyyRemaining()
 	}
 
 	return false;
+}
+
+void TurtleShell::HitCoolDownRemaining()
+{
+	m_hitCooldownRemaining--;
+
+	if (m_hitCooldownRemaining<= 0)
+	{
+		m_hitCooldownRemaining = m_hitCooldownDuration;
+		m_hitTarget = false;
+	}
 }
 
 void TurtleShell::UpdateAnimation()
@@ -372,7 +445,12 @@ void TurtleShell::EnterState(TurtleShellActionState _state)
 
 		// 回転攻撃の持続時間
 		m_spinAttackRemaining = m_spinAttackDuration;
+
+		m_hitCooldownRemaining = m_hitCooldownDuration;
+
 		m_bumpPushRate = 0.0f;
+
+		m_hitTarget = false;
 
 		break;
 	case TurtleShellActionState::Dizzy:
