@@ -2,6 +2,8 @@
 
 #include "../EditorManager.h"
 #include "../../Scene/SceneManager.h"
+#include"../../Scene/EditorScene/EditorScene.h"
+
 #include "../../System/WayPointManager/WayPointManager.h"
 #include"../../System/StageDataManager/StageDataManager.h"
 #include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
@@ -414,7 +416,13 @@ void StageEditor::LoadConfirmationPopup()
 void StageEditor::LoadSucceeded(const std::string& stageName)
 {
 	// ロードに成功したのでバックアップをクリア
-	SceneManager::Instance().ClearBackupList();
+	auto editorScene = SceneManager::Instance().GetCurrentScene<EditorScene>();
+	if (!editorScene)
+	{
+		return;
+	}
+
+	editorScene->ClearBackupList();
 	WayPointManager::Instance().ClearBackup();
 	WallCollisionManager::Instance().ClearBackup();
 
@@ -435,7 +443,13 @@ void StageEditor::LoadSucceeded(const std::string& stageName)
 void StageEditor::LoadFailed()
 {
 	// ロードに失敗した場合は復元
-	SceneManager::Instance().RestoreObjList();
+	auto editorScene = SceneManager::Instance().GetCurrentScene<EditorScene>();
+	if (!editorScene)
+	{
+		return;
+	}
+
+	editorScene->RestoreObjectList();;
 
 	// ウェイポイントを復元
 	WayPointManager::Instance().RestoreWayPoints();
@@ -575,5 +589,10 @@ void StageEditor::ClearStage()
 	WayPointManager::Instance().ClearWayPoints();
 
 	// ゲームオブジェクトをクリア
-	SceneManager::Instance().ClearObjectList();
+	auto editorScene = SceneManager::Instance().GetCurrentScene<EditorScene>();
+	if (!editorScene)
+	{
+		return;
+	}
+	editorScene->BackupObjectList();
 }

@@ -4,6 +4,7 @@
 class Hierarchy;
 class Inspector;
 class StageEditor;
+class SceneView;
 
 class CameraBase;
 class MessageWindow;
@@ -30,6 +31,11 @@ public:
 	// エディタの状態を返す
 	bool IsEditMode() const { return m_editorMode == EditorMode::Edit; }
 	bool IsPlayMode() const { return m_editorMode == EditorMode::Play; }
+
+	// レンダーターゲットを切り替え
+	void BeginSceneViewRender();
+	void EndSceneViewRender();
+
 
 	// 現在選択されているオブジェクト
 	void SetSelectedObject(const std::shared_ptr<KdGameObject>& obj)
@@ -64,11 +70,15 @@ private:
 	// メニュー表示
 	void DrawToolBar();
 
+
 	// ステージ名の長さを調べて返す
 	std::string MakeEllipsisText(const std::string& text, float maxWidth);
 
 	// レイ情報を生成
-	KdCollider::RayInfo CreateReyInfo(KdCollider::Type type);
+	KdCollider::RayInfo CreateRayInfo(KdCollider::Type type);
+
+	// SceneViewのアスペクト比のに合わせて更新
+	void UpdateSceneViewProjection();
 
 	// マウスクリックでオブジェクトを選択
 	void UpdateMouseSelection();
@@ -93,6 +103,8 @@ private:
 	std::shared_ptr<Hierarchy> m_spHierarchy=nullptr;
 	std::shared_ptr<Inspector> m_spInspector=nullptr;
 	std::shared_ptr<StageEditor> m_spStageEditor=nullptr;
+	std::shared_ptr<SceneView>m_spSceneView = nullptr;
+
 
 	// エディタのモード
 	EditorMode m_editorMode = EditorMode::Edit;

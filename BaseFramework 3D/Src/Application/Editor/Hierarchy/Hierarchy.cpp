@@ -9,7 +9,6 @@
 #include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 
 
-
 void Hierarchy::Draw()
 {
 	ImGui::Begin("Hierarchy");
@@ -188,13 +187,10 @@ void Hierarchy::AddCollisionBox()
 			     WallCollisionManager::Instance().SetDebugFlg(false);
 	}
 
-
-
 }
 
 void Hierarchy::DrawGameObjects()
 {
-	ImGui::Text("--------GameObjects--------");
 	DrawObjectList(KdGameObject::ObjectCategory::Character);
 }
 
@@ -211,22 +207,17 @@ void Hierarchy::DrawWayPoints()
 	}
 }
 
-
 void Hierarchy::DrawStage()
 {
-	ImGui::Text("-----------Stage-----------");
 	DrawObjectList(KdGameObject::ObjectCategory::Stage);
 
 	ImGui::Separator();
 
-	ImGui::Text("----------Gimmick----------");
 	DrawObjectList(KdGameObject::ObjectCategory::Gimmick);
 }
 
 void Hierarchy::DrawCollisionBox()
 {
-
-	ImGui::Text("-------CollisionBox-------");
 
 	for (const auto& wallBox : WallCollisionManager::Instance().GetWallCollisionList())
 	{

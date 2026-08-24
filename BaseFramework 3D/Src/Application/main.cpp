@@ -122,10 +122,14 @@ void Application::Draw()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // アプリケーション描画の後処理
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-void Application::PostDraw()
+void Application::PostDraw(bool usePostProcess)
 {
-	// 画面のぼかしや被写界深度処理の実施
-	KdShaderManager::Instance().m_postProcessShader.PostEffectProcess();
+
+	if(usePostProcess)
+	{
+		// 画面のぼかしや被写界深度処理の実施
+		KdShaderManager::Instance().m_postProcessShader.PostEffectProcess();
+	}
 
 	// 現在のシーンのデバッグ描画
 	SceneManager::Instance().DrawDebug();
@@ -300,13 +304,16 @@ void Application::Execute()
 		//
 		//=========================================
 
-		KdBeginDraw();
+		const bool usePostProcess =
+			SceneManager::Instance().UseProcess();
+
+		KdBeginDraw(usePostProcess);
 		{
 			PreDraw();
 
 			Draw();
 
-			PostDraw();
+			PostDraw(usePostProcess);
 
 			DrawSprite();
 		}

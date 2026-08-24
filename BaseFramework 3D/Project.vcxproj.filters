@@ -310,6 +310,12 @@
     <Filter Include="Src\Application\System\CombatCollisionManager">
       <UniqueIdentifier>{92f6603e-1b19-499d-8558-f3fb6857775c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\FlyText">
+      <UniqueIdentifier>{b249e094-3b7c-4df9-aa3e-ccc6e6780a27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Editor\SceneView">
+      <UniqueIdentifier>{b980eb43-3341-416b-9891-4194bd82988b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -714,6 +720,15 @@
     <ClInclude Include="Src\Application\GameObject\Character\AttackInfo.h">
       <Filter>Src\Application\GameObject\Character</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\FlyText\FlyText.h">
+      <Filter>Src\Application\GameObject\FlyText</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\FlyText\FlyTextManager.h">
+      <Filter>Src\Application\GameObject\FlyText</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\SceneView\SceneView.h">
+      <Filter>Src\Application\Editor\SceneView</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1045,6 +1060,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\System\CombatCollisionManager\CombatCollisionManager.cpp">
       <Filter>Src\Application\System\CombatCollisionManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\FlyText\FlyText.cpp">
+      <Filter>Src\Application\GameObject\FlyText</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\FlyText\FlyTextManager.cpp">
+      <Filter>Src\Application\GameObject\FlyText</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\SceneView\SceneView.cpp">
+      <Filter>Src\Application\Editor\SceneView</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -15,7 +15,6 @@ namespace
 	}
 }
 
-
 void CollisionManager::Init()
 {
 	m_pDebagWire = std::make_unique<KdDebugWireFrame>();
@@ -474,7 +473,6 @@ void CollisionManager::ResolveCharacterCollision()
 				auto& charaA = characters[i];
 				auto& charaB = characters[j];
 
-
 				KdCollider::SphereInfo sphereInfo(
 					KdCollider::TypeBump,
 					charaA->GetBumpSphere());
@@ -509,9 +507,7 @@ void CollisionManager::ResolveCharacterCollision()
 						continue;
 					}
 
-
 					Math::Vector3 push = dir * overlap * CorrectionRate;
-
 
 					float rateA = charaA->GetBumpPushRate();
 					float rateB = charaB->GetBumpPushRate();
@@ -541,7 +537,6 @@ void CollisionManager::ResolveCharacterCollision()
 			ApplyCharacterPush(character);
 		}
 	}
-
 }
 
 void CollisionManager::ResolveWallCollision()
@@ -552,7 +547,6 @@ void CollisionManager::ResolveWallCollision()
 	{
 		ResolveWallCollisionForCharacter(character);
 	}
-
 }
 
 void CollisionManager::ResolveGroundCollision()
@@ -560,7 +554,6 @@ void CollisionManager::ResolveGroundCollision()
 	std::vector<std::shared_ptr<CharacterBase>>characters = GetCharacters();
 
 	const auto& grounds = GetObjects(CollisionLayer::Ground);
-
 
 	for(auto&character:characters)
 	{

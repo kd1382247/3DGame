@@ -18,6 +18,11 @@ public :
 	void DrawSprite();
 	virtual void DrawDebug();
 
+	virtual bool UsePostProcess()const
+	{
+		return true;
+	}
+
 	virtual void EditorUpdate();
 
 	// オブジェクトリストを取得
@@ -31,15 +36,6 @@ public :
 	{
 		m_objList.push_back(_obj);
 	}
-
-	// オブジェクトをクリア
-	virtual void ClearObjectList(){}
-
-	// オブジェクトリストを復元
-	virtual void RestoreObjList(){}
-
-	// バックアップリストをクリア
-	virtual void ClearBackupList(){}
 
 protected :
 

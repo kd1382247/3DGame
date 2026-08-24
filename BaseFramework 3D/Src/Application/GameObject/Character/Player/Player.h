@@ -75,10 +75,8 @@ private:
 
 	void SetAttackTiming();
 
-
 	void UpdateAttackCollision();
 	bool IsAlreadyHit(const std::shared_ptr<EnemyBase>&enemy)const;
-
 
 private:
 

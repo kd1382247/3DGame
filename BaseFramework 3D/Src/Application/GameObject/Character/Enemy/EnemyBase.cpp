@@ -3,6 +3,8 @@
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 
 #include"../../../System/CollisionManager/CollisionManager.h"
+#include"../../FlyText/FlyTextManager.h"
+
 
 #include"../../../System/WayPointManager/WayPointManager.h"
 #include"../../../GameObject/WayPoint/WayPoint.h"
@@ -47,6 +49,8 @@ void EnemyBase::OnHit(const AttackInfo& attackInfo)
 	{
 		m_hp = 0;
 	}
+
+	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
 
 	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }

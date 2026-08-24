@@ -68,6 +68,7 @@ public:
 
 	// スクリーン座標から3D座標への変換
 	void ClientToWorld(const POINT& screenPos, float porjZ, Math::Vector3& dst, const Math::Matrix& mCam, const Math::Matrix& mProj);
+	void ClientToWorld(const POINT& screenPos,float porjZ,Math::Vector3& dst,const Math::Matrix& mCam,const Math::Matrix& mProj,float screenWidth,float screenHeight);
 	void WorldToClient(const Math::Vector3& srcWorld, POINT& dst, const Math::Matrix& mCam, const Math::Matrix& mProj);
 
 	//==============================================================

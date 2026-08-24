@@ -6,6 +6,8 @@
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../../System/CollisionManager/CollisionManager.h"
 
+#include"../../FlyText/FlyTextManager.h"
+
 void Player::Init()
 {
 	if (!m_spModel)
@@ -33,7 +35,6 @@ void Player::Init()
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
 		m_hp = m_parameter.GetParam().m_maxHP;
-
 
 		m_bumpPushRate = 0.0f;
 	}
@@ -623,10 +624,11 @@ void Player::OnHit(const AttackInfo& attackInfo)
 	{
 		m_hp = 0;
 	}
+	
+	FlyTextManager::Instance().CreateDamateText(attackInfo.damage,GetPos());
 
 	AddKnockBack(attackInfo.knockBackDir,attackInfo.knockBackPower);
 }
-
 
 void Player::ResetCombo()
 {

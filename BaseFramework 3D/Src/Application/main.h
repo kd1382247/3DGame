@@ -32,7 +32,7 @@ private:
 	void KdBeginDraw(bool usePostProcess = true);
 	void PreDraw();
 	void Draw();
-	void PostDraw();
+	void PostDraw(bool usePostProcess = true);
 	void DrawSprite();
 	void KdPostDraw();
 

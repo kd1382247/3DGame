@@ -277,6 +277,7 @@
     <ClInclude Include="Src\Application\Editor\Hierarchy\Hierarchy.h" />
     <ClInclude Include="Src\Application\Editor\Inspector\Inspector.h" />
     <ClInclude Include="Src\Application\Editor\MessageWindow\MessageWindow.h" />
+    <ClInclude Include="Src\Application\Editor\SceneView\SceneView.h" />
     <ClInclude Include="Src\Application\Editor\StageEditor\StageEditor.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\CameraBase.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.h" />
@@ -334,6 +335,8 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Player.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerState.h" />
+    <ClInclude Include="Src\Application\GameObject\FlyText\FlyText.h" />
+    <ClInclude Include="Src\Application\GameObject\FlyText\FlyTextManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision\GroundCollision.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollision.h" />
@@ -406,6 +409,7 @@
     <ClCompile Include="Src\Application\Editor\Hierarchy\Hierarchy.cpp" />
     <ClCompile Include="Src\Application\Editor\Inspector\Inspector.cpp" />
     <ClCompile Include="Src\Application\Editor\MessageWindow\MessageWindow.cpp" />
+    <ClCompile Include="Src\Application\Editor\SceneView\SceneView.cpp" />
     <ClCompile Include="Src\Application\Editor\StageEditor\StageEditor.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\CameraBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.cpp" />
@@ -450,6 +454,8 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Player.cpp" />
+    <ClCompile Include="Src\Application\GameObject\FlyText\FlyText.cpp" />
+    <ClCompile Include="Src\Application\GameObject\FlyText\FlyTextManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision\GroundCollision.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollision.cpp" />

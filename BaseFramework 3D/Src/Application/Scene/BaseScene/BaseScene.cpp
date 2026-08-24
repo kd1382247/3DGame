@@ -162,11 +162,6 @@ void BaseScene::DrawDebug()
 
 void BaseScene::EditorUpdate()
 {
-	if (IsEditing())
-	{
-		EditorUpdate();
-		return;
-	}
 
 }
 

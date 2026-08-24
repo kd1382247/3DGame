@@ -56,19 +56,9 @@ void SceneManager::AddObject(const std::shared_ptr<KdGameObject>& _obj)
 	m_currentScene->AddObject(_obj);
 }
 
-void SceneManager::ClearObjectList()
+bool SceneManager::UseProcess() const
 {
-	m_currentScene->ClearObjectList();
-}
-
-void SceneManager::RestoreObjList()
-{
-	m_currentScene->RestoreObjList();
-}
-
-void SceneManager::ClearBackupList()
-{
-	m_currentScene->ClearBackupList();
+	return m_currentScene->UsePostProcess();
 }
 
 void SceneManager::ChangeScene(SceneType _sceneType)

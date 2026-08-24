@@ -16,9 +16,12 @@ public:
 	void PreDraw()override;
 	void DrawDebug()override;
 
-	void ClearObjectList()override;
-	void RestoreObjList()override;
-	void ClearBackupList()override;
+	void BackupObjectList();
+	void RestoreObjectList();
+	void ClearBackupList();
+
+	bool UsePostProcess()const override;
+	
 
 private:
 

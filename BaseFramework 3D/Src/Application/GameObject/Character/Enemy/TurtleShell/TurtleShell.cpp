@@ -234,7 +234,6 @@ void TurtleShell::UpdateAttackCollision()
 		m_hitTarget = true;
 	}
 
-
 	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
 
 }

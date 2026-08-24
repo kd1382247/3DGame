@@ -12,14 +12,11 @@ public:
 	bool RegisterWayPoint(const std::shared_ptr<WayPoint>& wayPoint);
 	bool RemoveWayPoint(int id);
 
-
 	void ClearWayPoints();
 	// ウェイポイントを復元
 	void RestoreWayPoints();
 	// バックアップをクリア
 	void ClearBackup();
-
-
 
 	// 指定IDが登録されていない場合はnullptrを返す
 	std::shared_ptr<WayPoint> FindWayPoint(int id) const;

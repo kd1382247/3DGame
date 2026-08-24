@@ -35,14 +35,14 @@ public:
 	// 現在のシーンにオブジェクトを追加
 	void AddObject(const std::shared_ptr<KdGameObject>& _obj);
 
-	// オブジェクトリストをクリア
-	void ClearObjectList();
+	bool UseProcess()const;
 
-	// オブジェクトリストを復元
-	void RestoreObjList();
-
-	// バックアップリストをクリア
-	void ClearBackupList();
+	// 現在のシーンを取得
+	template<class T>
+	std::shared_ptr<T>GetCurrentScene()const
+	{
+		return std::dynamic_pointer_cast<T>(m_currentScene);
+	}
 
 private:
 
@@ -66,8 +66,6 @@ private:
 	// 次のシーンの種類を保持している変数
 	SceneType m_nextSceneType = m_currentSceneType;
 
-	// バックアップリスト
-	std::list<std::shared_ptr<KdGameObject>> m_spBackupList;
 
 private:
 

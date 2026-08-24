@@ -30,6 +30,38 @@ void KdDirect3D::ClientToWorld(const POINT& screenPos, float porjZ, Math::Vector
 	Math::Vector3::Transform({ (float)screenPos.x, (float)screenPos.y, porjZ }, convertMat, dst);
 }
 
+void KdDirect3D::ClientToWorld(const POINT& screenPos, float porjZ, Math::Vector3& dst, const Math::Matrix& mCam, const Math::Matrix& mProj, float screenWidth, float screenHeight)
+{
+	porjZ = std::clamp(porjZ, 0.0f, 1.0f);
+
+	// 各行列の逆行列を算出
+	Math::Matrix invView = mCam;
+	Math::Matrix incPrj = mProj.Invert();
+
+	// 画面座標→射影空間用
+	Math::Matrix mVP;
+
+	mVP._11 = screenWidth * 0.5f;
+	mVP._22 = -screenHeight * 0.5;
+	mVP._41 = screenWidth * 0.5f;
+	mVP._42 = screenHeight * 0.5f;
+	
+	Math::Matrix invViewport = mVP.Invert();
+
+	// 2D→3D
+	Math::Matrix convertMat = invViewport * incPrj * invView;
+
+	Math::Vector3::Transform(
+		{
+			static_cast<float>(screenPos.x),
+			static_cast<float>(screenPos.y),
+			porjZ
+		},
+		convertMat,
+		dst);
+
+}
+
 void KdDirect3D::WorldToClient(const Math::Vector3& srcWorld, POINT& dst, const Math::Matrix& mCam, const Math::Matrix& mProj)
 {
 	Math::Matrix mVP;

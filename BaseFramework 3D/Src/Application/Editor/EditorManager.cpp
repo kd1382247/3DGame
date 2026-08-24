@@ -2,12 +2,13 @@
 
 #include"../main.h"
 #include"../GameObject/Camera/CameraBase.h"
-#include"../GameObject/Camera/TPSCamera/TPSCamera.h"
 #include "../../Framework/GameObject/KdGameObjectFactory.h"
 #include"../System/WayPointManager/WayPointManager.h"
 #include"../GameObject/WayPoint/WayPoint.h"
 #include"../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 #include"../GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
+
+#include"../Scene/EditorScene/EditorScene.h"
 
 #include"../System/ReferenceManager/ReferenceManager.h"
 #include "../Scene/SceneManager.h"
@@ -17,6 +18,7 @@
 #include "Hierarchy/Hierarchy.h"
 #include "Inspector/Inspector.h"
 #include "StageEditor/StageEditor.h"
+#include"SceneView/SceneView.h"
 
 
 void EditorManager::Init()
@@ -40,18 +42,37 @@ void EditorManager::Init()
 	{
 		m_spMessageWindow = std::make_shared<MessageWindow>();
 	}
+
+	if (!m_spSceneView)
+	{
+		m_spSceneView = std::make_shared<SceneView>();
+		m_spSceneView->Init();
+	}
+
+	auto spCamera = m_wpEditorCamera.lock();
+	if (!spCamera)
+	{
+		return;
+	}
+	float aspect = m_spSceneView->GetAspectRatio();
+	spCamera->GetCamera()->SetProjectionMatrix(60.0f, 2000.0f, 0.01, aspect);
+
 }
 
 
 void EditorManager::Draw()
 {
-
-
 	if(m_editorMode==EditorMode::Edit)
 	{
 		DrawToolBar();
 		m_spHierarchy->Draw();
 		m_spInspector->Draw();
+		m_spSceneView->Draw();
+
+		if (m_spSceneView->SizeChanged())
+		{
+			UpdateSceneViewProjection();
+		}
 
 		UpdateMouseSelection();
 	}
@@ -76,8 +97,14 @@ void EditorManager::StartPlayMode()
 		return;
 	}
 
+	auto editorScene = SceneManager::Instance().GetCurrentScene<EditorScene>();
+	if (!editorScene)
+	{
+		return;
+	}
+
 	// Play中の状態を削除
-	SceneManager::Instance().ClearObjectList();
+	editorScene->BackupObjectList();
 	WayPointManager::Instance().ClearWayPoints();
 	WallCollisionManager::Instance().ClearWallCollisionList();
 
@@ -85,7 +112,7 @@ void EditorManager::StartPlayMode()
 	if (!StageDataManager::Instance().LoadTemporary())
 	{
 		// ロードに失敗したため復元する
-		SceneManager::Instance().RestoreObjList();
+		editorScene->RestoreObjectList();
 		WayPointManager::Instance().RestoreWayPoints();
 		WallCollisionManager::Instance().RestoreWallCollisionList();
 
@@ -93,7 +120,7 @@ void EditorManager::StartPlayMode()
 	}
 
 	// バックアップリストをクリア
-	SceneManager::Instance().ClearBackupList();
+	editorScene->ClearBackupList();
 	WayPointManager::Instance().ClearBackup();
 	WallCollisionManager::Instance().ClearBackup();
 
@@ -111,8 +138,15 @@ void EditorManager::StartPlayMode()
 void EditorManager::StopPlayMode()
 {
 
+	auto editorScene = SceneManager::Instance().GetCurrentScene<EditorScene>();
+	if (!editorScene)
+	{
+		return;
+	}
+
+
 	// Play中の状態を削除
-	SceneManager::Instance().ClearObjectList();
+	editorScene->BackupObjectList();
 	WayPointManager::Instance().ClearWayPoints();
 	WallCollisionManager::Instance().ClearWallCollisionList();
 
@@ -120,7 +154,7 @@ void EditorManager::StopPlayMode()
 	if (!StageDataManager::Instance().LoadTemporary())
 	{
 		// ロードに失敗したため復元する
-		SceneManager::Instance().RestoreObjList();
+		editorScene->RestoreObjectList();
 		WayPointManager::Instance().RestoreWayPoints();
 		WallCollisionManager::Instance().RestoreWallCollisionList();
 
@@ -128,12 +162,22 @@ void EditorManager::StopPlayMode()
 	}
 
 	// バックアップリストをクリア
-	SceneManager::Instance().ClearBackupList();
+	editorScene->ClearBackupList();
 	WayPointManager::Instance().ClearBackup();
 	WallCollisionManager::Instance().ClearBackup();
 
 	// モードを切り替える
 	SetEditorMode(EditorMode::Edit);
+}
+
+void EditorManager::BeginSceneViewRender()
+{
+	m_spSceneView->BeginRender();
+}
+
+void EditorManager::EndSceneViewRender()
+{
+	m_spSceneView->EndRender();
 }
 
 
@@ -238,30 +282,45 @@ std::string EditorManager::MakeEllipsisText(const std::string& text, float maxWi
 	return ellipsis;
 }
 
-KdCollider::RayInfo EditorManager::CreateReyInfo(KdCollider::Type type)
+KdCollider::RayInfo EditorManager::CreateRayInfo(KdCollider::Type type)
 {
+
+	// SceneView内のマウス座標
+	ImVec2 sceneMousePos =
+		m_spSceneView->GetLocalMousePos();
+
+	// SceneViewのウィンドウ幅
+	float sceneWidth = static_cast<float>( m_spSceneView->GetWidth());
+	float sceneHeight = static_cast<float>(m_spSceneView->GetHeight());
+
 	// マウス座標を取得
 	POINT mousePos;
-	GetCursorPos(&mousePos);
-	ScreenToClient(Application::Instance().GetWindowHandle(), &mousePos);
+	mousePos.x =static_cast<LONG>(sceneMousePos.x);
+	mousePos.y =static_cast<LONG>(sceneMousePos.y);
+
 
 	// マウスを3D座標へ変換する
-	auto& camera = m_wpEditorCamera.lock()->GetCamera();
-	Math::Vector3 rayPos = camera->GetCameraMatrix().Translation();
+	auto spCamera = m_wpEditorCamera.lock()->GetCamera();
+
+	if (!spCamera)
+	{
+		return{};
+	}
+
+	Math::Vector3 rayPos = spCamera->GetCameraMatrix().Translation();
 	Math::Vector3 rayDir = Math::Vector3::Zero;
 	float         range = 2000.f;
 
-	camera->GenerateRayInfoFromClientPos(
+	spCamera->GenerateRayInfoFromClientPos(
 		mousePos,
 		rayPos,
 		rayDir,
-		range
+		range,
+		sceneWidth,
+		sceneHeight
 	);
 
 	// 生成したレイ情報でオブジェクトの当たり判定を行う
-
-	Math::Vector3 endRayPos = rayPos + (rayDir * range);
-
 	KdCollider::RayInfo rayInfo;
 
 	rayInfo.m_dir = rayDir;
@@ -272,11 +331,26 @@ KdCollider::RayInfo EditorManager::CreateReyInfo(KdCollider::Type type)
 	return rayInfo;
 }
 
+void EditorManager::UpdateSceneViewProjection()
+{
+	auto spCamera = m_wpEditorCamera.lock();
+
+	if (!spCamera)
+	{
+		return;
+	}
+
+	float aspect = m_spSceneView->GetAspectRatio();
+
+	spCamera->GetCamera()->SetProjectionMatrix(60.0f, 2000.0f, 0.01, aspect);
+}
+
 void EditorManager::UpdateMouseSelection()
 {
 	if (!IsEditMode()){return;}
-	if (ImGui::GetIO().WantCaptureMouse){return;}
 	if (!(GetAsyncKeyState(VK_LBUTTON) & 0x8000)) { return; }
+	if (!m_spSceneView->IsHovered()) { return; }
+
 
 	switch (m_spHierarchy->GetHierarchyCategory())
 	{
@@ -303,7 +377,7 @@ void EditorManager::UpdateMouseSelection()
 void EditorManager::SelectGameObjectByMouse()
 {
 	
-	KdCollider::RayInfo rayInfo=CreateReyInfo(KdCollider::TypeBump);
+	KdCollider::RayInfo rayInfo=CreateRayInfo(KdCollider::TypeBump);
 	
 	float maxOverLap = 0;
 
@@ -317,11 +391,14 @@ void EditorManager::SelectGameObjectByMouse()
 		}
 
 		std::list<KdCollider::CollisionResult> retRayList;
-		if (obj->Intersects(rayInfo, &retRayList));
 
-		
+		if (!obj->Intersects(rayInfo, &retRayList))
+		{
+			continue;
+		}
 
-		for (auto& ret : retRayList)
+	
+		for (const auto& ret : retRayList)
 		{
 			// レイを遮断しオーバーした長さが
 			// 一番長いものを探す
@@ -340,7 +417,7 @@ void EditorManager::SelectGameObjectByMouse()
 
 void EditorManager::SelectStageObjectByMouse()
 {
-	KdCollider::RayInfo rayInfo = CreateReyInfo(KdCollider::TypeEvent);
+	KdCollider::RayInfo rayInfo = CreateRayInfo(KdCollider::TypeEvent);
 
 	float maxOverLap = 0;
 
@@ -355,7 +432,10 @@ void EditorManager::SelectStageObjectByMouse()
 		}
 
 		std::list<KdCollider::CollisionResult> retRayList;
-		if (obj->Intersects(rayInfo, &retRayList));
+		if (!obj->Intersects(rayInfo, &retRayList))
+		{
+			continue;
+		}
 
 		for (auto& ret : retRayList)
 		{
@@ -375,7 +455,7 @@ void EditorManager::SelectStageObjectByMouse()
 
 void EditorManager::SelectWayPointByMouse()
 {
-	KdCollider::RayInfo rayInfo = CreateReyInfo(KdCollider::TypeBump);
+	KdCollider::RayInfo rayInfo = CreateRayInfo(KdCollider::TypeBump);
 
 	float maxOverlap = 0.0f;
 
@@ -413,7 +493,7 @@ void EditorManager::SelectWayPointByMouse()
 void EditorManager::SelectBoxByMouse()
 {
 
-	KdCollider::RayInfo rayInfo = CreateReyInfo(KdCollider::TypeBump);
+	KdCollider::RayInfo rayInfo = CreateRayInfo(KdCollider::TypeBump);
 
 	float maxOverlap=0;
 	
@@ -428,7 +508,11 @@ void EditorManager::SelectBoxByMouse()
 
 		std::list<KdCollider::CollisionResult>result;
 
-		selectObj->Intersects(rayInfo, &result);
+		if (!selectObj->Intersects(rayInfo, &result))
+		{
+			continue;
+		}
+
 
 		for (const auto& ret : result)
 		{

@@ -100,6 +100,21 @@ void KdCamera::GenerateRayInfoFromClientPos(const POINT& clientPos, Math::Vector
 	rayDir.Normalize();
 }
 
+void KdCamera::GenerateRayInfoFromClientPos(const POINT& clientPos, Math::Vector3& rayPos, Math::Vector3& rayDir, float& rayRange, float screenWidth, float screenHeight)
+{
+	Math::Vector3 farPos;
+
+	KdDirect3D::Instance().ClientToWorld(clientPos, 0.0f, rayPos, m_mCam, m_mProj, screenWidth, screenHeight);
+	KdDirect3D::Instance().ClientToWorld(clientPos, 1.0f, farPos, m_mCam, m_mProj, screenWidth, screenHeight);
+	
+	rayDir = farPos - rayPos;
+
+	rayRange = rayDir.Length();
+
+	rayDir.Normalize();
+
+}
+
 // ワールド座標(3D座標)をスクリーン座標(2D座標)に変換する
 void KdCamera::ConvertWorldToScreenDetail(const Math::Vector3& pos, Math::Vector3& result)
 {

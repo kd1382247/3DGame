@@ -10,8 +10,6 @@
 
 void EditorScene::EditorUpdate()
 {
-	OutputDebugStringA("GameScene EditorUpdate\n");
-
 	if (m_spEditorCamera)
 	{
 		m_spEditorCamera->Update();
@@ -20,6 +18,12 @@ void EditorScene::EditorUpdate()
 
 void EditorScene::PreDraw()
 {
+	// EditModeならSceneViewへ描画
+	if (EditorManager::Instance().IsEditMode())
+	{
+		EditorManager::Instance().BeginSceneViewRender();
+	}
+
 	BaseScene::PreDraw();
 
 	if (EditorManager::Instance().IsEditMode() && m_spEditorCamera)
@@ -30,20 +34,27 @@ void EditorScene::PreDraw()
 
 void EditorScene::DrawDebug()
 {
+
 	BaseScene::DrawDebug();
 
 	WallCollisionManager::Instance().DrawDebug();
 
 	WayPointManager::Instance().DrawDebug();
+
+	// SceneViewへの描画終了
+	if (EditorManager::Instance().IsEditMode())
+	{
+		EditorManager::Instance().EndSceneViewRender();
+	}
 }
 
-void EditorScene::ClearObjectList()
+void EditorScene::BackupObjectList()
 {
 	m_spBackupList = std::move(m_objList);
 	m_objList.clear();
 }
 
-void EditorScene::RestoreObjList()
+void EditorScene::RestoreObjectList()
 {
 	m_objList = std::move(m_spBackupList);
 	m_spBackupList.clear();
@@ -54,8 +65,17 @@ void EditorScene::ClearBackupList()
 	m_spBackupList.clear();
 }
 
+bool EditorScene::UsePostProcess() const
+{
+
+	return !EditorManager::Instance().IsEditMode();
+
+}
+
 void EditorScene::SetupObjectReferences()
-{}
+{
+
+}
 
 void EditorScene::Event()
 {
