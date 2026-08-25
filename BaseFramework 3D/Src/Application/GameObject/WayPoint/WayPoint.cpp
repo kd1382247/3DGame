@@ -202,7 +202,6 @@ void WayPoint::SetUpDrawID()
 {
 	// ウェイポイント数を表示
 	// 配列に各桁の数値を格納
-
 	m_wayPointID = GetID();
 	int tmp = m_wayPointID;
 	
@@ -249,6 +248,5 @@ void WayPoint::SetUpDrawID()
 
 		m_localNumberPos[i]=-pos;
 	}
-
 
 }

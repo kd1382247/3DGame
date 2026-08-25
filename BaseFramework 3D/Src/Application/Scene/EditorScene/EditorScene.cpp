@@ -40,7 +40,7 @@ void EditorScene::DrawDebug()
 	WallCollisionManager::Instance().DrawDebug();
 
 	WayPointManager::Instance().DrawDebug();
-
+	
 	// SceneViewへの描画終了
 	if (EditorManager::Instance().IsEditMode())
 	{

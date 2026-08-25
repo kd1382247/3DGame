@@ -31,7 +31,7 @@ void Beholder::Init()
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
-	SetPos({ 0,0,5 });
+	SetPos({ 0.0f,0.0f,0.0f });
 
 }
 

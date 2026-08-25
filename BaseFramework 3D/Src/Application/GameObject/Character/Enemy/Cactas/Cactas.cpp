@@ -4,6 +4,8 @@
 #include"../../../../System/WayPointManager/WayPointManager.h"
 #include"../../../../GameObject/WayPoint/WayPoint.h"
 
+#include"../../../EnemyHPBar/EnemyHPBarManager.h"
+
 #include"../../Player/Player.h"
 
 void Cactas::Init()
@@ -20,8 +22,11 @@ void Cactas::Init()
 		m_parameter.Init();
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
-		m_attackCooldownDuration = 60*0.5;
 
+		m_maxHP = m_parameter.GetParam().m_maxHP;
+		m_hp = m_maxHP;
+
+		m_attackCooldownDuration = 60*0.5f;
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
@@ -30,16 +35,19 @@ void Cactas::Init()
 		
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-
 		// オブジェクト名セット
 		SetObjectName("Cactas");
+
+		// HPBarを生成
+		EnemyHPBarManager::Instance().CreateHPBar(
+			std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
 	}
 
 	EnemyBase::Init();
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
-	SetPos({ 5,0,0 });
+	SetPos({ 0.0f,0.0f,0.0f });
 }
 
 void Cactas::Update()
@@ -83,6 +91,9 @@ void Cactas::UpdateMove()
 		return;
 	}
 
+	// キャラの向き
+	UpdateFacingDirection();
+
 	if (m_knockBack != Math::Vector3::Zero)
 	{
 		return;
@@ -108,8 +119,6 @@ void Cactas::UpdateMove()
 		UpdateFollowPath();
 		break;
 	}
-
-	UpdateFacingDirection();
 }
 
 void Cactas::UpdateAttack()
@@ -290,7 +299,6 @@ void Cactas::UpdateAttackCollision()
 		return;
 	}
 
-
 	// 攻撃する位置
 	Math::Vector3 attackPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
 
@@ -333,7 +341,6 @@ void Cactas::UpdateAttackCollision()
 
 		m_hitTarget = true;
 	}
-
 
 	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
 

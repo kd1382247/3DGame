@@ -7,7 +7,7 @@ class FlyText:public KdGameObject
 public:
 
 	FlyText(){}
-	~FlyText(){}
+	~FlyText()override{}
 	 
 	void Init(int damage, const Math::Vector3& spawnPos);
 	void Update();

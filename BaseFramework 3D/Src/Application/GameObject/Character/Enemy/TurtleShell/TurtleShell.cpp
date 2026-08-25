@@ -21,7 +21,9 @@ void TurtleShell::Init()
 		m_parameter.Init();
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
-		m_hp = m_parameter.GetParam().m_maxHP;
+		
+		m_maxHP = m_parameter.GetParam().m_maxHP;
+		m_hp = m_maxHP;
 
 		m_attackCooldownDuration = 60 * 1.0f;
 		m_dizzyDuration = 60 * 3.0f;
@@ -43,7 +45,7 @@ void TurtleShell::Init()
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
-	SetPos({ 0,0,-10 });
+	SetPos({ 0.0f,0.0f,0.0f });
 }
 
 void TurtleShell::Update()

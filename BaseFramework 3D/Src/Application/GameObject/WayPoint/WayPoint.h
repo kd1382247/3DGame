@@ -4,7 +4,7 @@ class WayPoint : public KdGameObject
 {
 public:
 	WayPoint() { Init(); }
-	~WayPoint() override = default;
+	~WayPoint() override {}
 
 	void Init() override;
 	void DrawDebug() override;

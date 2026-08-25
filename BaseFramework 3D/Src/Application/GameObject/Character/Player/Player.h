@@ -58,6 +58,9 @@ private:
 
 	void UpdateMove();
 
+	// 攻撃時のキャラの向き
+	void AttackFacingDirection();
+
 	// 状態を更新
 	void UpdateActionState();
 	void UpdateMoveState();
@@ -106,6 +109,9 @@ private:
 	AttackCombo     m_currentAttackCombo = AttackCombo::Attack1;
 
 	AttackCombo     m_preAttackCombo = AttackCombo::Attack1;
+
+	// 攻撃時のキャラの回転速度
+	const float     m_attackTurnSpeed = 30.0f;
 
 	int             m_comboInputCnt = 0;
 	bool            m_canCombo = false;

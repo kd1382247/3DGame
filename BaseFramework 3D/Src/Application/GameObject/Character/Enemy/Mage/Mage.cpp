@@ -34,7 +34,7 @@ void Mage::Init()
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
 
-	SetPos({ 0,0,0 });
+	SetPos({ 0.0f,0.0f,0.0f });
 }
 
 void Mage::Update()

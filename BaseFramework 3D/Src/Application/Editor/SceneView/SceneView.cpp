@@ -71,10 +71,8 @@ bool SceneView::UpdateRenderTargetSize(const ImVec2& viewSize)
 	return true;
 }
 
-
 void SceneView::BeginRender()
 {
-
 	// SceneView用RenderTargetへ変更
 	if (!m_renderTargetChanger.ChangeRenderTarget(m_renderTarget))
 	{

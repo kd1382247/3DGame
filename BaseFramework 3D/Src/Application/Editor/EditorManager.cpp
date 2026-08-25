@@ -75,6 +75,8 @@ void EditorManager::Draw()
 		}
 
 		UpdateMouseSelection();
+
+
 	}
 
 	if (m_editorMode == EditorMode::Play)
@@ -133,6 +135,9 @@ void EditorManager::StartPlayMode()
 
 	// 全てのオブジェクトを生成後に関連付け
 	ReferenceManager::Instance().AssociateObjects(SceneManager::Instance().GetObjList());
+
+	// マウスカーソル
+	ShowCursor(false);
 }
 
 void EditorManager::StopPlayMode()
@@ -168,6 +173,9 @@ void EditorManager::StopPlayMode()
 
 	// モードを切り替える
 	SetEditorMode(EditorMode::Edit);
+
+	// マウスカーソル
+	ShowCursor(true);
 }
 
 void EditorManager::BeginSceneViewRender()
@@ -211,7 +219,7 @@ void EditorManager::DrawToolBar()
 
 	const float windowWidth =ImGui::GetWindowWidth();
 
-	const float stageEndX =windowWidth -playButtonWidth -rightMargin -20.0f;
+	const float stageEndX =windowWidth/2 -playButtonWidth -rightMargin -20.0f;
 
 	// Stage名を描画できる幅
 	const float stageWidth =stageEndX - stageStartX;
@@ -229,11 +237,11 @@ void EditorManager::DrawToolBar()
 	//  右:プレイ
 	//-----------------------------
 
-	const float playWidth = 70.0f;
+	const float playStartX = ImGui::GetCursorPosX()+10.0f;
 
-	ImGui::SetCursorPosX(windowWidth - playWidth - 10.0f);
+	ImGui::SetCursorPosX(playStartX);
 
-	if (ImGui::Button("Play", ImVec2(playWidth, 0.0f)))
+	if (ImGui::Button("Play", ImVec2(playButtonWidth, 0.0f)))
 	{
 		if(m_spStageEditor->IsEditStage())
 		{

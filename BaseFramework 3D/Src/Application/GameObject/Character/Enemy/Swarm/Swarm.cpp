@@ -32,7 +32,7 @@ void Swarm::Init()
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
 
-	SetPos({ -5,0,-10 });
+	SetPos({ 0.0f,0.0f,0.0f });
 }
 
 void Swarm::Update()

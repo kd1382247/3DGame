@@ -61,6 +61,9 @@ public:
 		m_knockBack += dir * power;
 	}
 
+	float GetCurrentHP() { return m_hp; }
+	float GetMaxHP() { return m_maxHP; }
+
 
 private:
 
@@ -97,7 +100,9 @@ protected:
 	// 移動スピード
 	float         m_moveSpeed = {};
 
+	float         m_maxHP = {};
 	float         m_hp = {};
+
 
 	float         m_angle = 0;
 

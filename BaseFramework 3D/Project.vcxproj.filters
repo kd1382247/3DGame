@@ -316,6 +316,9 @@
     <Filter Include="Src\Application\Editor\SceneView">
       <UniqueIdentifier>{b980eb43-3341-416b-9891-4194bd82988b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\EnemyHPBar">
+      <UniqueIdentifier>{723d1046-575a-4310-b458-b0981a8998d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -729,6 +732,12 @@
     <ClInclude Include="Src\Application\Editor\SceneView\SceneView.h">
       <Filter>Src\Application\Editor\SceneView</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBar.h">
+      <Filter>Src\Application\GameObject\EnemyHPBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBarManager.h">
+      <Filter>Src\Application\GameObject\EnemyHPBar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1069,6 +1078,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Editor\SceneView\SceneView.cpp">
       <Filter>Src\Application\Editor\SceneView</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBar.cpp">
+      <Filter>Src\Application\GameObject\EnemyHPBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBarManager.cpp">
+      <Filter>Src\Application\GameObject\EnemyHPBar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

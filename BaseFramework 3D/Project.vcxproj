@@ -335,6 +335,8 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Player.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerState.h" />
+    <ClInclude Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBar.h" />
+    <ClInclude Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBarManager.h" />
     <ClInclude Include="Src\Application\GameObject\FlyText\FlyText.h" />
     <ClInclude Include="Src\Application\GameObject\FlyText\FlyTextManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.h" />
@@ -454,6 +456,8 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Player.cpp" />
+    <ClCompile Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBar.cpp" />
+    <ClCompile Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBarManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\FlyText\FlyText.cpp" />
     <ClCompile Include="Src\Application\GameObject\FlyText\FlyTextManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.cpp" />

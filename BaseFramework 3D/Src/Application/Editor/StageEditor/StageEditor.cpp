@@ -31,7 +31,7 @@ void StageEditor::Draw()
 		// ステージリストを整理
 		RefreshStageList();
 		// ポップアップウィンドウを表示
-		ImGui::OpenPopup("OpenStagePopup");
+		ImGui::OpenPopup("OpenStage");
 	}
 
 	ImGui::SameLine();
@@ -239,7 +239,7 @@ void StageEditor::RefreshStageList()
 }
 void StageEditor::OpenStagePopup()
 {
-	if (ImGui::BeginPopupModal("OpenStagePopup", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	if (ImGui::BeginPopupModal("OpenStage", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::Text("Select Stage");
 

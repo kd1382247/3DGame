@@ -34,7 +34,10 @@ void Player::Init()
 		m_parameter.Init();
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
-		m_hp = m_parameter.GetParam().m_maxHP;
+
+		m_maxHP = m_parameter.GetParam().m_maxHP;
+		m_hp = m_maxHP;
+
 
 		m_bumpPushRate = 0.0f;
 	}
@@ -48,16 +51,15 @@ void Player::Update()
 {
 	
 	////// 現在のオブジェクト数をデバッグ
-	KdDebugGUI::Instance().ClearLog();
+	//KdDebugGUI::Instance().ClearLog();
 
-	KdDebugGUI::Instance().AddLog("HP%f\n", m_hp);
+	//KdDebugGUI::Instance().AddLog("HP%f\n", m_hp);
 
 	UpdateInput();
 	UpdateActionState();
 	UpdateMoveState();
 
 	UpdateMove();
-	
 
 	UpdateAttackCollision();
 }
@@ -244,7 +246,6 @@ void Player::UpdateMoveInput()
 	}
 
 	SetMoveDir(moveDir);
-
 }
 
 void Player::UpdateJumpInput()
@@ -329,17 +330,29 @@ void Player::UpdateMove()
 
 	Math::Matrix camRotYMat = Math::Matrix::Identity;
 
-	if (auto camera=m_wpCamera.lock())
+	auto spCamera = m_wpCamera.lock();
+	if (!spCamera)
 	{
-		camRotYMat = camera->GetRotationYMatrix();
+		return;
 	}
 
+	camRotYMat = spCamera->GetRotationYMatrix();
 	SetMoveDir(Math::Vector3::TransformNormal(GetMoveDir(), camRotYMat));
 
-	if (m_moveFlg)
+
+	if (m_moveFlg&&
+		m_actionState!=PlayerActionState::Attack&&
+		m_actionState!=PlayerActionState::Guard)
 	{
 		UpdateFacingDirection();
 	}
+	
+	if (m_actionState == PlayerActionState::Attack||
+		m_actionState==PlayerActionState::Guard)
+	{
+		AttackFacingDirection();
+	}
+
 
 	m_gravity += 0.02;
 
@@ -352,6 +365,79 @@ void Player::UpdateMove()
 
 	SetPos(nowPos);
 
+}
+
+void Player::AttackFacingDirection()
+{
+	Math::Matrix camRotYMat = Math::Matrix::Identity;
+
+	auto spCamera = m_wpCamera.lock();
+	if (!spCamera)
+	{
+		return;
+	}
+
+	camRotYMat = spCamera->GetRotationYMatrix();
+	
+	// 現在向いている方向
+	Math::Vector3 nowDir = m_mWorld.Backward();
+
+	nowDir.y = 0;
+
+	if (nowDir.LengthSquared() <= 0.000001f)
+	{
+		return;
+	}
+
+    // カメラから見て前方向に向かせたい
+	Math::Vector3 toDir = Math::Vector3::TransformNormal(Math::Vector3::Backward, camRotYMat);
+
+	toDir.y = 0;
+	if (toDir.LengthSquared() <= 0.000001f)
+	{
+		return;
+	}
+
+	toDir.Normalize();
+
+	// 内積を求める
+	float dot = nowDir.Dot(toDir);
+	dot = std::clamp(dot, -1.0f, 1.0f);
+	// 角度に変換
+	float angle = DirectX::XMConvertToDegrees(acos(dot));
+
+	// 少しでも回転する必要があったら
+	if (angle >= 0.1f)
+	{
+		// 回転角度の上限を設定
+		if (angle > m_attackTurnSpeed)
+		{
+			angle = m_attackTurnSpeed;
+		}
+
+		// 外積を求める
+		Math::Vector3 cross = nowDir.Cross(toDir);
+		if (cross.y >= 0)
+		{
+			// 右回転
+			m_angle += angle;
+		}
+		else
+		{
+			// 左回転
+			m_angle -= angle;
+		}
+
+		// 角度を循環
+		if (m_angle >= 360)
+		{
+			m_angle -= 360;
+		}
+		else if (m_angle < 0)
+		{
+			m_angle += 360;
+		}
+	}
 }
 
 void Player::UpdateActionState()

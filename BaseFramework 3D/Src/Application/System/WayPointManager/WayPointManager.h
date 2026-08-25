@@ -42,7 +42,6 @@ public:
 	bool IsDebug() { return m_isDebug; }
 	void SetDebugFlg(const bool flg) { m_isDebug = flg; }
 
-
 	bool Save(const std::string& filePath);
 
 	bool Load(const std::string& filePath);
@@ -64,7 +63,6 @@ private:
 
 		int parentId = -1;   // 経路を復元するための親(0番の親-1 → 1番の親0)
 	};
-
 
 	// 現在使われていない最小のIDを返す
 	int FindAvailableID() const;

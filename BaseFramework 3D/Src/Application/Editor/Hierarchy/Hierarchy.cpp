@@ -85,7 +85,6 @@ void Hierarchy::DrawAddButtons()
 		AddCollisionBox();
 		break;
 	}
-
 }
 
 void Hierarchy::AddGameObject()

@@ -331,7 +331,6 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 
 	return{};
 
-
 }
 
 std::shared_ptr<WayPoint> WayPointManager::CreateWayPoint()

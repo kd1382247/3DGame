@@ -32,7 +32,7 @@ void ChestMonster::Init()
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
 
-	SetPos({ -5,0,5 });
+	SetPos({ 0.0f,0.0f,0.0f });
 }
 
 void ChestMonster::Update()

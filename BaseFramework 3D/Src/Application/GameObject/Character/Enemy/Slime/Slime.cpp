@@ -20,6 +20,10 @@ void Slime::Init()
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
 		m_attackCooldownDuration = 60 * 0.5;
 
+		m_maxHP = m_parameter.GetParam().m_maxHP;
+		m_hp = m_maxHP;
+
+
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
@@ -37,8 +41,7 @@ void Slime::Init()
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
-
-	SetPos({ 0,0,-5 });
+	SetPos({ 0.0f,0.0f,0.0f });
 }
 
 void Slime::Update()
@@ -81,12 +84,13 @@ void Slime::UpdateMove()
 		return;
 	}
 
+	// キャラの向き
+	UpdateFacingDirection();
+
 	if (m_knockBack != Math::Vector3::Zero)
 	{
 		return;
 	}
-
-
 
 	if (CanDirectChase())
 	{
@@ -109,10 +113,6 @@ void Slime::UpdateMove()
 		UpdateFollowPath();
 		break;
 	}
-
-	UpdateFacingDirection();
-
-
 
 }
 

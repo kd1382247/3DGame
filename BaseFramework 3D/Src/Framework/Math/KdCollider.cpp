@@ -543,6 +543,11 @@ bool KdBoxCollision::Intersects(const DirectX::BoundingOrientedBox& target, cons
 	// 即結果を返す(HITしたかどうかだけが知れる)
 	return isHit;
 }
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+// RAYvsBOX(OBB)の当たり判定
+// 判定回数は 1 回　計算自体も軽く最も軽量な当たり判定　計算回数も固定なので処理効率は安定
+// 片方の球の判定を0にすれば単純な距離判定も作れる
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 bool KdBoxCollision::Intersects(const KdCollider::RayInfo& target, const Math::Matrix& world, KdCollider::CollisionResult* pRes)
 {
 	if (!m_enable) { return false; }

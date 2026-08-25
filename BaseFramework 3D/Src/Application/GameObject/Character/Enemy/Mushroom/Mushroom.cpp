@@ -18,6 +18,10 @@ void Mushroom::Init()
 		m_parameter.Init();
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+
+		m_maxHP = m_parameter.GetParam().m_maxHP;
+		m_hp = m_maxHP;
+
 		m_attackCooldownDuration = 60 * 1;
 
 
@@ -37,7 +41,7 @@ void Mushroom::Init()
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
 
-	SetPos({ -5,0,-5});
+	SetPos({ 0.0f,0.0f,0.0f });
 }
 
 void Mushroom::Update()
@@ -85,6 +89,9 @@ void Mushroom::UpdateMove()
 		return;
 	}
 
+	// キャラの向き
+	UpdateFacingDirection();
+
 	if (m_knockBack != Math::Vector3::Zero)
 	{
 		return;
@@ -111,10 +118,6 @@ void Mushroom::UpdateMove()
 		UpdateFollowPath();
 		break;
 	}
-
-	UpdateFacingDirection();
-
-
 }
 
 void Mushroom::UpdateAttack()

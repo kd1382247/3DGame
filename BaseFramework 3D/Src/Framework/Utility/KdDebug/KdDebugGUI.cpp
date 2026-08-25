@@ -61,7 +61,6 @@ void KdDebugGUI::GuiProcess()
 //	ImGui::End();
 
 	
-
 	EditorManager::Instance().Draw();
 	// ログウィンドウ
 	m_uqLog->Draw("Log Window");
