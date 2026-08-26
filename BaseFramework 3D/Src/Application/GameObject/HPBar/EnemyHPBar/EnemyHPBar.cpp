@@ -1,9 +1,9 @@
 ﻿#include "EnemyHPBar.h"
 
-#include"../Character/Enemy/EnemyBase.h"
+#include"../../Character/Enemy/EnemyBase.h"
 
-#include"../Camera/CameraBase.h"
-#include"../../System/GameObjectFinder/GameObjectFinder.h"
+#include"../../Camera/CameraBase.h"
+#include"../../../System/GameObjectFinder/GameObjectFinder.h"
 
 void EnemyHPBar::Init()
 {
@@ -88,7 +88,7 @@ void EnemyHPBar::DrawEffect()
 	}
 
 	KdShaderManager::Instance().ChangeDepthStencilState(
-		KdDepthStencilState::ZWriteDisable);
+		KdDepthStencilState::ZDisable);
 
 	DrawBackground();
 	DrawDamageBar();

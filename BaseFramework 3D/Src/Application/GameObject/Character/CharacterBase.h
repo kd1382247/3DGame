@@ -1,17 +1,15 @@
 ﻿#pragma once
 
-
 #include"AttackInfo.h"
 
 class CharacterBase : public KdGameObject
 {
 public:
 
-
 	struct AttackTiming
 	{
-		float hitStart;
-		float hitEnd;
+		float hitStart=0.0f;
+		float hitEnd=0.0f;
 	};
 
 	CharacterBase();
@@ -25,7 +23,6 @@ public:
 	void GenerateDepthMapFromLight()	override;
 
 	void DrawInspector()override;
-
 
 	// スフィア情報
 	DirectX::BoundingSphere GetBumpSphere()const;
@@ -45,7 +42,6 @@ public:
 	// 現在のエリアIDを返す
 	int   GetCurrentAreaID(const Math::Vector3& pos);
 
-
 	// 重力を返す
 	float GetGravity()const { return m_gravity; }
 	void SetGravity(float gravity) { m_gravity = gravity; }
@@ -55,15 +51,22 @@ public:
 	Math::Vector3 GetKnockBack()const { return m_knockBack; }
 	void SetKnockBack(const Math::Vector3& knockBack) { m_knockBack = knockBack; }
 
+
 	virtual void OnHit(const AttackInfo& attackInfo) {}
+
 	void AddKnockBack(const Math::Vector3& dir, const float power)
 	{
+		if (m_knockBack.Length() >= 0.6)
+		{
+			return;
+		}
 		m_knockBack += dir * power;
 	}
 
 	float GetCurrentHP() { return m_hp; }
 	float GetMaxHP() { return m_maxHP; }
 
+	bool IsInOutro()const { return m_outroFlg; }
 
 private:
 
@@ -74,7 +77,6 @@ private:
 	void Release();
 
 protected:
-
 
 	void  UpdateFacingDirection();
 	void  UpdateMatrix();
@@ -104,7 +106,7 @@ protected:
 	float         m_hp = {};
 
 
-	float         m_angle = 0;
+	float         m_charaAngle = 0;
 
 	// エリアID
 	int m_currentAreaID = 0;
@@ -113,6 +115,10 @@ protected:
 	float        m_animFrame = 0;
 	AttackTiming m_attackTiming = {};
 	
+	// ノックバック
 	Math::Vector3 m_knockBack = {};
+
+	// キャラが死亡したときに行う処理
+	bool m_outroFlg = false;
 
 };

@@ -20,6 +20,8 @@ public:
 
 	void DrawInspector()override;
 
+	void SetUpReference()override;
+
 private:
 
 

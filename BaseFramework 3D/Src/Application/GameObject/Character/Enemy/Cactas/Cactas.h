@@ -19,8 +19,12 @@ public:
 
 	void DrawInspector()override;
 
+	void SetUpReference()override;
+
 
 private:
+
+	void OutroUpdate();
 
 	void UpdateMove();
 	void UpdateAttack();

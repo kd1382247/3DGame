@@ -1,10 +1,10 @@
 ﻿#include "EnemyHPBarManager.h"
 
-#include"../Character/Enemy/EnemyBase.h"
+#include"../../Character/Enemy/EnemyBase.h"
 
 #include"EnemyHPBar.h"
 
-#include"../../Scene/SceneManager.h"
+#include"../../../Scene/SceneManager.h"
 
 void EnemyHPBarManager::CreateHPBar(const std::shared_ptr<EnemyBase>& enemy)
 {

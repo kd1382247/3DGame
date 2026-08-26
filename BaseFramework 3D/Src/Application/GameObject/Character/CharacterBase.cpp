@@ -103,22 +103,22 @@ void CharacterBase::UpdateFacingDirection()
 		if (cross.y >= 0)
 		{
 			// 右回転
-			m_angle += angle;
+			m_charaAngle += angle;
 		}
 		else
 		{
 			// 左回転
-			m_angle -= angle;
+			m_charaAngle -= angle;
 		}
 
 		// 角度を循環
-		if (m_angle >= 360)
+		if (m_charaAngle >= 360)
 		{
-			m_angle -= 360;
+			m_charaAngle -= 360;
 		}
-		else if (m_angle < 0)
+		else if (m_charaAngle < 0)
 		{
-			m_angle += 360;
+			m_charaAngle += 360;
 		}
 	}
 
@@ -127,7 +127,7 @@ void CharacterBase::UpdateFacingDirection()
 void CharacterBase::UpdateMatrix()
 {
 	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
-	Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle));
+	Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_charaAngle));
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos());
 
 	m_mWorld = scaleMat * rotYMat * transMat;

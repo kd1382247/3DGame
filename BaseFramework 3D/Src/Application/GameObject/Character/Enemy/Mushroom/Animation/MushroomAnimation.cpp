@@ -37,7 +37,7 @@ void MushroomAnimation::Play(MushroomAnimationType _animType)
 		break;
 
 	case MushroomAnimationType::Die:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false);
 		m_animSpeed = 1.0f;
 		break;
 	}

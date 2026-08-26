@@ -4,7 +4,7 @@
 #include"../../../../System/WayPointManager/WayPointManager.h"
 #include"../../../../GameObject/WayPoint/WayPoint.h"
 
-#include"../../../EnemyHPBar/EnemyHPBarManager.h"
+#include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 
 #include"../../Player/Player.h"
 
@@ -38,9 +38,6 @@ void Cactas::Init()
 		// オブジェクト名セット
 		SetObjectName("Cactas");
 
-		// HPBarを生成
-		EnemyHPBarManager::Instance().CreateHPBar(
-			std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
 	}
 
 	EnemyBase::Init();
@@ -52,17 +49,23 @@ void Cactas::Init()
 
 void Cactas::Update()
 {
+
+	if (IsInOutro())
+	{
+		ChangeActionState(CactasActionState::Death);
+		return;
+	}
+
 	UpdateMove();
 
 	UpdateAttack();
-	UpdateActionState();
-
+	
 	UpdateAttackCollision();
 }
 
 void Cactas::PostUpdate()
 {
-
+	UpdateActionState();
 	UpdateAnimation();
 
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
@@ -78,6 +81,21 @@ void Cactas::DrawInspector()
 	m_parameter.DrawInspecter();
 }
 
+void Cactas::SetUpReference()
+{
+
+	EnemyBase::SetUpReference();
+
+	// HPBarを生成
+	EnemyHPBarManager::Instance().CreateHPBar(
+		std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
+}
+
+void Cactas::OutroUpdate()
+{
+	m_outroFlg = true;
+}
+
 void Cactas::UpdateMove()
 {
 	Math::Vector3 nowPos = GetPos();
@@ -91,11 +109,18 @@ void Cactas::UpdateMove()
 		return;
 	}
 
-	// キャラの向き
-	UpdateFacingDirection();
-
 	if (m_knockBack != Math::Vector3::Zero)
 	{
+		// キャラの向き
+		auto spPlayer = m_wpPlayer.lock();
+		if (!spPlayer)
+		{
+			return;
+		}
+
+		Math::Vector3 toDir = spPlayer->GetPos() - GetPos();
+		SetMoveDir(toDir);
+		UpdateFacingDirection();
 		return;
 	}
 
@@ -119,6 +144,10 @@ void Cactas::UpdateMove()
 		UpdateFollowPath();
 		break;
 	}
+
+
+	UpdateFacingDirection();
+
 }
 
 void Cactas::UpdateAttack()
@@ -149,7 +178,11 @@ void Cactas::UpdateAnimation()
 {
 	CactasAnimationType nextAnimation = CactasAnimationType::Idle;
 
-	if (m_actionState == CactasActionState::Damage)
+	if (m_actionState == CactasActionState::Death)
+	{
+		nextAnimation = CactasAnimationType::Die;
+	}
+	else if (m_actionState == CactasActionState::Damage)
 	{
 		nextAnimation = CactasAnimationType::GetHit;
 	}
@@ -225,7 +258,6 @@ void Cactas::EnterState(CactasActionState _state)
 		break;
 	case CactasActionState::Death:
 
-
 		break;
 	}
 }
@@ -234,7 +266,10 @@ void Cactas::UpdateActionState()
 {
 	if (m_actionState == CactasActionState::Death)
 	{
-
+		if (m_animation.IsFinished())
+		{
+			Destroy();
+		}
 		return;
 	}
 

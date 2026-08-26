@@ -60,10 +60,16 @@ void KdDebugGUI::GuiProcess()
 //	}
 //	ImGui::End();
 
-	
+
+
+	if(EditorManager::Instance().IsEditMode())
+	{
+		// ログウィンドウ
+		m_uqLog->Draw("Log Window");
+	}
+
 	EditorManager::Instance().Draw();
-	// ログウィンドウ
-	m_uqLog->Draw("Log Window");
+
 
 	//=====================================================
 	// ログ出力 ・・・ AddLog("～") で追加

@@ -316,8 +316,14 @@
     <Filter Include="Src\Application\Editor\SceneView">
       <UniqueIdentifier>{b980eb43-3341-416b-9891-4194bd82988b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\EnemyHPBar">
+    <Filter Include="Src\Application\GameObject\HPBar">
       <UniqueIdentifier>{723d1046-575a-4310-b458-b0981a8998d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\HPBar\PlayerHPBar">
+      <UniqueIdentifier>{137db389-b846-420d-a3e6-17c21412b563}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\HPBar\EnemyHPBar">
+      <UniqueIdentifier>{1f8f95d0-5f53-412e-ad4c-9290615cf4c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -732,11 +738,14 @@
     <ClInclude Include="Src\Application\Editor\SceneView\SceneView.h">
       <Filter>Src\Application\Editor\SceneView</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBar.h">
-      <Filter>Src\Application\GameObject\EnemyHPBar</Filter>
+    <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.h">
+      <Filter>Src\Application\GameObject\HPBar\EnemyHPBar</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBarManager.h">
-      <Filter>Src\Application\GameObject\EnemyHPBar</Filter>
+    <ClInclude Include="Src\Application\GameObject\HPBar\PlayerHPBar\PlayerHPBar.h">
+      <Filter>Src\Application\GameObject\HPBar\PlayerHPBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.h">
+      <Filter>Src\Application\GameObject\HPBar\EnemyHPBar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1079,11 +1088,14 @@
     <ClCompile Include="Src\Application\Editor\SceneView\SceneView.cpp">
       <Filter>Src\Application\Editor\SceneView</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBar.cpp">
-      <Filter>Src\Application\GameObject\EnemyHPBar</Filter>
+    <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.cpp">
+      <Filter>Src\Application\GameObject\HPBar\EnemyHPBar</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\EnemyHPBar\EnemyHPBarManager.cpp">
-      <Filter>Src\Application\GameObject\EnemyHPBar</Filter>
+    <ClCompile Include="Src\Application\GameObject\HPBar\PlayerHPBar\PlayerHPBar.cpp">
+      <Filter>Src\Application\GameObject\HPBar\PlayerHPBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.cpp">
+      <Filter>Src\Application\GameObject\HPBar\EnemyHPBar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

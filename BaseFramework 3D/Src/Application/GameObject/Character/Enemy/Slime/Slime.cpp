@@ -2,6 +2,8 @@
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
+#include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
+
 #include"../../Player/Player.h"
 
 void Slime::Init()
@@ -24,7 +26,6 @@ void Slime::Init()
 		m_hp = m_maxHP;
 
 
-
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
 		("Slime", Math::Vector3(0, 0.5, 0), 0.4, KdCollider::TypeBump);
@@ -35,6 +36,7 @@ void Slime::Init()
 
 		// オブジェクト名セット
 		SetObjectName("Slime");
+
 	}
 
 	EnemyBase::Init();
@@ -47,21 +49,37 @@ void Slime::Init()
 void Slime::Update()
 {
 
+	if (IsInOutro())
+	{
+		ChangeActionState(SlimeActionState::Death);
+		return;
+	}
+
 	UpdateMove();
 	UpdateAttack();
 
-	UpdateActionState();
 	UpdateAttackCollision();
 }
 
 void Slime::PostUpdate()
 {
-	EnemyBase::PostUpdate();
-
+	
+	UpdateActionState();
 	UpdateAnimation();
 
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
 
+	EnemyBase::PostUpdate();
+}
+
+void Slime::SetUpReference()
+{
+
+	EnemyBase::SetUpReference();
+
+	// HPBarを生成
+	EnemyHPBarManager::Instance().CreateHPBar(
+		std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
 }
 
 void Slime::DrawInspector()
@@ -84,11 +102,19 @@ void Slime::UpdateMove()
 		return;
 	}
 
-	// キャラの向き
-	UpdateFacingDirection();
-
 	if (m_knockBack != Math::Vector3::Zero)
 	{
+		// キャラの向き
+		auto spPlayer = m_wpPlayer.lock();
+		if (!spPlayer)
+		{
+			return;
+		}
+
+		Math::Vector3 toDir = spPlayer->GetPos() - GetPos();
+		SetMoveDir(toDir);
+		UpdateFacingDirection();
+
 		return;
 	}
 
@@ -113,6 +139,9 @@ void Slime::UpdateMove()
 		UpdateFollowPath();
 		break;
 	}
+
+	// キャラの向き
+	UpdateFacingDirection();
 
 }
 
@@ -144,6 +173,10 @@ void Slime::UpdateActionState()
 {
 	if (m_actionState == SlimeActionState::Death)
 	{
+		if (m_animation.IsFinished())
+		{
+			Destroy();
+		}
 
 		return;
 	}
@@ -177,7 +210,11 @@ void Slime::UpdateAnimation()
 {
 	SlimeAnimationType nextAnimation = SlimeAnimationType::Idle;
 
-	if (m_actionState == SlimeActionState::Damage)
+	if (m_actionState == SlimeActionState::Death)
+	{
+		nextAnimation = SlimeAnimationType::Die;
+	}	
+	else if (m_actionState == SlimeActionState::Damage)
 	{
 		nextAnimation = SlimeAnimationType::GetHit;
 	}

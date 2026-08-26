@@ -48,6 +48,7 @@ void EnemyBase::OnHit(const AttackInfo& attackInfo)
 	if (m_hp <= 0)
 	{
 		m_hp = 0;
+		m_outroFlg = true;
 	}
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());

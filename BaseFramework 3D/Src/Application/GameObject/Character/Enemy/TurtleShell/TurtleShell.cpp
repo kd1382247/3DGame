@@ -4,6 +4,8 @@
 #include"../../../Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 #include"../../../Stage/Stage01/Collision/WallCollision/WallCollision.h"
 
+#include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
+
 #include"../../Player/Player.h"
 
 
@@ -39,6 +41,7 @@ void TurtleShell::Init()
 
 		// オブジェクト名セット
 		SetObjectName("TurtleShell");
+
 	}
 
 	EnemyBase::Init();
@@ -51,21 +54,16 @@ void TurtleShell::Init()
 void TurtleShell::Update()
 {
 
-	////// 現在のオブジェクト数をデバッグ
-	//KdDebugGUI::Instance().ClearLog();
-
-	//KdDebugGUI::Instance().AddLog("HP%f\n", m_hp);
-	//KdDebugGUI::Instance().AddLog("moveDir.x%f\n", GetMoveDir().x);
-	//KdDebugGUI::Instance().AddLog("moveDir.y%f\n", GetMoveDir().y);
-	//KdDebugGUI::Instance().AddLog("moveDir.z%f\n", GetMoveDir().z);
-
+	if (IsInOutro())
+	{
+		ChangeActionState(TurtleShellActionState::Death);
+		return;
+	}
 
 	UpdateMove();
 
 	UpdateSpinAttackMove();
 	UpdateAttack();
-
-	UpdateActionState();
 
 	UpdateAttackCollision();
 
@@ -73,11 +71,15 @@ void TurtleShell::Update()
 
 void TurtleShell::PostUpdate()
 {
-	EnemyBase::PostUpdate();
+
+	UpdateActionState();
 
 	UpdateAnimation();
 
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
+
+	EnemyBase::PostUpdate();
+
 
 }
 
@@ -86,6 +88,15 @@ void TurtleShell::DrawInspector()
 	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
+}
+
+void TurtleShell::SetUpReference()
+{
+	EnemyBase::SetUpReference();
+
+	// HPBarを生成
+	EnemyHPBarManager::Instance().CreateHPBar(
+		std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
 }
 
 void TurtleShell::UpdateMove()
@@ -105,6 +116,17 @@ void TurtleShell::UpdateMove()
 
 	if (m_knockBack != Math::Vector3::Zero)
 	{
+		// キャラの向き
+		auto spPlayer = m_wpPlayer.lock();
+		if (!spPlayer)
+		{
+			return;
+		}
+
+		Math::Vector3 toDir = spPlayer->GetPos() - GetPos();
+		SetMoveDir(toDir);
+		UpdateFacingDirection();
+
 		return;
 	}
 
@@ -138,6 +160,10 @@ void TurtleShell::UpdateActionState()
 	if (m_actionState == TurtleShellActionState::Death)
 	{
 
+		if (m_animation.IsFinished())
+		{
+			Destroy();
+		}
 		return;
 	}
 
@@ -357,7 +383,11 @@ void TurtleShell::UpdateAnimation()
 {
 	TurtleShellAnimationType nextAnimation = TurtleShellAnimationType::Idle;
 
-	if (m_actionState == TurtleShellActionState::Damage)
+	if (m_actionState==TurtleShellActionState::Death)
+	{
+		nextAnimation = TurtleShellAnimationType::Die;
+	}
+	else if (m_actionState == TurtleShellActionState::Damage)
 	{
 		nextAnimation = TurtleShellAnimationType::GetHit;
 	}

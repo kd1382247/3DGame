@@ -124,7 +124,6 @@ void Application::Draw()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::PostDraw(bool usePostProcess)
 {
-
 	if(usePostProcess)
 	{
 		// 画面のぼかしや被写界深度処理の実施

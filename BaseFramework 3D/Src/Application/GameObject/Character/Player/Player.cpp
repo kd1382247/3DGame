@@ -6,7 +6,11 @@
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../../System/CollisionManager/CollisionManager.h"
 
+#include"../../../Scene/SceneManager.h"
+
 #include"../../FlyText/FlyTextManager.h"
+
+#include"../../HPBar/PlayerHPBar/PlayerHPBar.h"
 
 void Player::Init()
 {
@@ -40,6 +44,7 @@ void Player::Init()
 
 
 		m_bumpPushRate = 0.0f;
+
 	}
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
@@ -80,6 +85,12 @@ void Player::SetUpReference()
 	{
 		m_wpCamera = GameObjectFinder::Instance().FindObject<CameraBase>();
 	}
+
+	std::shared_ptr<PlayerHPBar>hpBar = std::make_shared<PlayerHPBar>();
+	hpBar->Init();
+	hpBar->SetPlayer(std::dynamic_pointer_cast<Player>(shared_from_this()));
+	SceneManager::Instance().AddObject(hpBar);
+
 }
 
 void Player::DrawLit()
@@ -420,22 +431,22 @@ void Player::AttackFacingDirection()
 		if (cross.y >= 0)
 		{
 			// 右回転
-			m_angle += angle;
+			m_charaAngle += angle;
 		}
 		else
 		{
 			// 左回転
-			m_angle -= angle;
+			m_charaAngle -= angle;
 		}
 
 		// 角度を循環
-		if (m_angle >= 360)
+		if (m_charaAngle >= 360)
 		{
-			m_angle -= 360;
+			m_charaAngle -= 360;
 		}
-		else if (m_angle < 0)
+		else if (m_charaAngle < 0)
 		{
-			m_angle += 360;
+			m_charaAngle += 360;
 		}
 	}
 }
@@ -709,6 +720,7 @@ void Player::OnHit(const AttackInfo& attackInfo)
 	if (m_hp <= 0)
 	{
 		m_hp = 0;
+		m_outroFlg = true;
 	}
 	
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage,GetPos());

@@ -16,6 +16,7 @@ public:
 	void Init()override;
 	void Update()override;
 	void PostUpdate()override;
+	void SetUpReference()override;
 
 	void DrawInspector()override;
 

@@ -37,7 +37,7 @@ void SlimeAnimation::Play(SlimeAnimationType _animType)
 		break;
 
 	case SlimeAnimationType::Die:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false);
 		m_animSpeed = 1.0f;
 		break;
 	}

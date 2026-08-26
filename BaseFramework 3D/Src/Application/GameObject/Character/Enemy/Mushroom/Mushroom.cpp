@@ -1,6 +1,7 @@
 ﻿#include "Mushroom.h"
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
+#include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 
 #include"../../Player/Player.h"
 
@@ -34,6 +35,7 @@ void Mushroom::Init()
 
 		// オブジェクト名セット
 		SetObjectName("Mushroom");
+
 	}
 
 	EnemyBase::Init();
@@ -47,10 +49,14 @@ void Mushroom::Init()
 void Mushroom::Update()
 {
 
+	if (IsInOutro())
+	{
+		ChangeActionState(MushroomActionState::Death);
+		return;
+	}
+
 	UpdateMove();
 	UpdateAttack();
-
-	UpdateActionState();
 
 	UpdateAttackCollision();
 
@@ -59,6 +65,7 @@ void Mushroom::Update()
 void Mushroom::PostUpdate()
 {
 	
+	UpdateActionState();
 
 	UpdateAnimation();
 
@@ -75,6 +82,15 @@ void Mushroom::DrawInspector()
 	m_parameter.DrawInspecter();
 }
 
+void Mushroom::SetUpReference()
+{
+	EnemyBase::SetUpReference();
+
+	// HPBarを生成
+	EnemyHPBarManager::Instance().CreateHPBar(
+		std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
+}
+
 void Mushroom::UpdateMove()
 {
 
@@ -89,11 +105,20 @@ void Mushroom::UpdateMove()
 		return;
 	}
 
-	// キャラの向き
-	UpdateFacingDirection();
-
+	
 	if (m_knockBack != Math::Vector3::Zero)
 	{
+		// キャラの向き
+		auto spPlayer = m_wpPlayer.lock();
+		if (!spPlayer)
+		{
+			return;
+		}
+
+		Math::Vector3 toDir = spPlayer->GetPos() - GetPos();
+		SetMoveDir(toDir);
+		UpdateFacingDirection();
+
 		return;
 	}
 
@@ -118,6 +143,10 @@ void Mushroom::UpdateMove()
 		UpdateFollowPath();
 		break;
 	}
+
+	// キャラの向き
+	UpdateFacingDirection();
+
 }
 
 void Mushroom::UpdateAttack()
@@ -148,7 +177,11 @@ void Mushroom::UpdateAnimation()
 {
 	MushroomAnimationType nextAnimation = MushroomAnimationType::Idle;
 
-	if (m_actionState == MushroomActionState::Damage)
+	if (m_actionState == MushroomActionState::Death)
+	{
+		nextAnimation = MushroomAnimationType::Die;
+	}
+	else if (m_actionState == MushroomActionState::Damage)
 	{
 		nextAnimation = MushroomAnimationType::GetHit;
 	}
@@ -174,6 +207,10 @@ void Mushroom::UpdateActionState()
 {
 	if (m_actionState == MushroomActionState::Death)
 	{
+		if (m_animation.IsFinished())
+		{
+			Destroy();
+		}
 
 		return;
 	}
