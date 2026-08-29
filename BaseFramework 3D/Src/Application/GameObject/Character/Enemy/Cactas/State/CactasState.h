@@ -14,6 +14,7 @@ enum class CactasAnimationType
 enum class CactasActionState
 {
 	Normal,
+	Launch,
 	Damage,
 	Attack,
 	Death

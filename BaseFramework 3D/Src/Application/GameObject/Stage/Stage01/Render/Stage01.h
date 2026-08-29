@@ -17,8 +17,11 @@ public:
 	void Update()override;
 	void DrawInspector()override;
 
+	void DrawLit()override;
+
 private:
 
+	std::shared_ptr<KdModelWork>m_model = nullptr;
 
 	std::shared_ptr<GroundCollision> m_spGroundCollision=nullptr;
 	std::shared_ptr<WallCollision>   m_spWallCollision=nullptr;

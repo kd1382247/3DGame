@@ -8,6 +8,7 @@ enum class CollisionLayer
 	PlayerAttack,
 	EnemyAttac,
 	CharacterBump,
+	Gimmick,
 	Wall,
 	AIBlock,
 	Max

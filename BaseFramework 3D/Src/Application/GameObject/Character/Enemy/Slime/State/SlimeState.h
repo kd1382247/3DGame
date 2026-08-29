@@ -14,6 +14,7 @@ enum class SlimeAnimationType
 enum class SlimeActionState
 {
 	Normal,
+	Launch,
 	Damage,
 	Attack,
 	Death

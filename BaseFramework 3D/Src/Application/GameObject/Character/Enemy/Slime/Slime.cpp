@@ -1,5 +1,6 @@
 ﻿#include "Slime.h"
 
+#include"../../../../Scene/SceneManager.h"
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
@@ -16,42 +17,64 @@ void Slime::Init()
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 
-		// パラメータクラス初期化
-		m_parameter.Init();
-		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
-		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
-		m_attackCooldownDuration = 60 * 0.5;
-
-		m_maxHP = m_parameter.GetParam().m_maxHP;
-		m_hp = m_maxHP;
-
-
+		
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
-		("Slime", Math::Vector3(0, 0.5, 0), 0.4, KdCollider::TypeBump);
+		("Slime", Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, KdCollider::TypeBump);
 
-	
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
-
 
 		// オブジェクト名セット
 		SetObjectName("Slime");
 
+
+		// パラメータクラス初期化
+		m_parameter.Init();
+
+		switch (GetSlimeSize())
+		{
+		case SlimeSize::Large:
+
+			m_maxHP = m_parameter.GetParam().m_maxHP;
+			SetScale(2.0f);
+
+			break;
+		case SlimeSize::Small:
+
+			// HPを半分にする
+			m_maxHP = m_parameter.GetParam().m_maxHP/2;
+			SetScale(1.0f);
+
+			break;
+		}
+
+		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
+		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+		m_attackPower = m_parameter.GetParam().m_attackPower;
+		m_attackCooldownDuration = 60 * 0.5;
+		m_hp = m_maxHP;
 	}
 
 	EnemyBase::Init();
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
-	SetPos({ 0.0f,0.0f,0.0f });
 }
 
 void Slime::Update()
 {
 
+	UpdateGravity();
+
 	if (IsInOutro())
 	{
 		ChangeActionState(SlimeActionState::Death);
+		return;
+	}
+
+	if (m_launchFlg)
+	{
+		UpdateLaunch();
 		return;
 	}
 
@@ -67,7 +90,6 @@ void Slime::PostUpdate()
 	UpdateActionState();
 	UpdateAnimation();
 
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
 
 	EnemyBase::PostUpdate();
 }
@@ -78,8 +100,11 @@ void Slime::SetUpReference()
 	EnemyBase::SetUpReference();
 
 	// HPBarを生成
-	EnemyHPBarManager::Instance().CreateHPBar(
-		std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
+	if (EnemyHPBarManager::Instance().CreateHPBar(
+		std::dynamic_pointer_cast<EnemyBase>(shared_from_this())))
+	{
+		return;
+	}
 }
 
 void Slime::DrawInspector()
@@ -89,13 +114,53 @@ void Slime::DrawInspector()
 	m_parameter.DrawInspecter();
 }
 
+void Slime::DrawDebug()
+{
+
+	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
+	m_pDebugWire->Draw();
+}
+
+void Slime::Split()
+{
+	if (m_slimeSize != SlimeSize::Large)
+	{
+		return;
+	}
+
+	for(int i=0;i<spawnNum;i++)
+	{
+
+		std::shared_ptr<Slime>slime = std::make_shared<Slime>();
+		slime->SetSlimeSize(SlimeSize::Small);
+		slime->Init();
+		slime->SetPos(GetPos());
+		slime->SetUpReference();
+
+		slime->Launch(m_launchDir[i]*0.05f, 0.3);
+
+		SceneManager::Instance().AddObject(slime);
+	}
+}
+
+void Slime::UpdateLaunch()
+{
+
+	if (IsGrounded())
+	{
+		m_launchFlg = false;
+	}
+
+	Math::Vector3 pos = GetPos();
+
+	pos += m_launchVec;
+
+	SetPos(pos);
+}
+
 void Slime::UpdateMove()
 {
-	Math::Vector3 nowPos = GetPos();
-	m_gravity += 0.02;
-	nowPos.y -= m_gravity;
-	SetPos(nowPos);
-
+	
 	// 攻撃中は移動をしない
 	if (m_actionState == SlimeActionState::Attack)
 	{
@@ -175,6 +240,7 @@ void Slime::UpdateActionState()
 	{
 		if (m_animation.IsFinished())
 		{
+			Split();
 			Destroy();
 		}
 
@@ -346,7 +412,7 @@ void Slime::UpdateAttackCollision()
 	DirectX::BoundingSphere sphere;
 
 	sphere.Center = attackPos;
-	sphere.Radius = 0.6;
+	sphere.Radius = 0.6f;
 
 	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
 
@@ -363,7 +429,7 @@ void Slime::UpdateAttackCollision()
 		AttackInfo attackInfo;
 
 		attackInfo.knockBackDir = knockBackDir;
-		attackInfo.knockBackPower = 0.05;
+		attackInfo.knockBackPower = 0.05f;
 		attackInfo.damage = 10;
 
 		spPlayer->OnHit(attackInfo);

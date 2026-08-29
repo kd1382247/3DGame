@@ -12,6 +12,10 @@
 
 #include"../../HPBar/PlayerHPBar/PlayerHPBar.h"
 
+
+#include"State/States/PlayerNormalState.h"
+
+
 void Player::Init()
 {
 	if (!m_spModel)
@@ -35,15 +39,20 @@ void Player::Init()
 		m_animation.Init(m_spModel);
 
 		// パラメータークラス初期化
-		m_parameter.Init();
-		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
-		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
 
-		m_maxHP = m_parameter.GetParam().m_maxHP;
+		m_parameter.Init();
+		const auto& param = m_parameter.GetParam();
+	
+		m_moveSpeed = param.m_moveSpeed;
+		m_turnSpeed = param.m_turnSpeed;
+		m_attackPower = param.m_attackPower;
+
+		m_maxHP = param.m_maxHP;
 		m_hp = m_maxHP;
 
-
 		m_bumpPushRate = 0.0f;
+
+		m_stateMachine.ChangeState(*this, std::make_unique<PlayerNormalState>());
 
 	}
 
@@ -55,16 +64,17 @@ void Player::Init()
 void Player::Update()
 {
 	
-	////// 現在のオブジェクト数をデバッグ
-	//KdDebugGUI::Instance().ClearLog();
-
-	//KdDebugGUI::Instance().AddLog("HP%f\n", m_hp);
-
 	UpdateInput();
 	UpdateActionState();
 	UpdateMoveState();
 
+	m_stateMachine.Update(*this);
+
+	UpdateGravity();
+
 	UpdateMove();
+	
+	UpdateSpecialMove();
 
 	UpdateAttackCollision();
 }
@@ -97,7 +107,12 @@ void Player::DrawLit()
 {
 	CharacterBase::DrawLit();
 
+}
+
+void Player::DrawDebug()
+{
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.5, kRedColor);
+	m_pDebugWire->Draw();
 }
 
 void Player::DrawInspector()
@@ -107,10 +122,30 @@ void Player::DrawInspector()
 	m_parameter.DrawInspecter();
 }
 
+void Player::SetSpecialMoveTiming()
+{
+	m_attackTiming.hitStart = 10.0f;
+	m_attackTiming.hitEnd = 40.0f;
+
+	m_animFrame = 0.0f;
+}
+
+void Player::ClearHitTargets()
+{
+	m_hitCooldownTimer--;
+
+	if (m_hitCooldownTimer <= 0)
+	{
+		m_hitTargets.clear();
+		m_hitCooldownTimer = m_HitCooldownDuration;
+	}
+}
+
 void Player::UpdateAttackCollision()
 {
 
-	if (m_actionState != PlayerActionState::Attack)
+	if (m_actionState != PlayerActionState::Attack&&
+		m_actionState!=PlayerActionState::SpecialMove)
 	{
 		return;
 	}
@@ -122,26 +157,17 @@ void Player::UpdateAttackCollision()
 		return;
 	}
 
-	// 攻撃判定を出す位置
-	Math::Vector3 attackPos = GetPos()+Math::Vector3(0.0f,0.5f,0.0f);
-	// プレイヤーの向いてる方向
-	Math::Vector3 attackDir = m_mWorld.Backward();
-
-	attackDir.y = 0;
-	if (attackDir.LengthSquared() < 0.000001f)
-	{
-		return;
-	}
-
-	attackDir.Normalize();
-
-	// プレイヤーの少し前に出す
-	attackPos += attackDir * 0.8f;
-	
-	// 攻撃判定用のスフィアを作成
+	// スフィアを作る
 	DirectX::BoundingSphere sphere;
-	sphere.Center = attackPos;
-	sphere.Radius = 0.7;
+
+	if(m_actionState==PlayerActionState::Attack)
+	{
+		sphere = CreateAttackSphere();
+	}
+	if (m_actionState == PlayerActionState::SpecialMove)
+	{
+		sphere = CreateSpecialMoveSphere();
+	}
 
 	const auto& characters =
 		CollisionManager::Instance().GetObjects(CollisionLayer::CharacterBump);
@@ -168,18 +194,22 @@ void Player::UpdateAttackCollision()
 			continue;
 		}
 
+		if (enemy->IsInOutro())
+		{
+			continue;
+		}
+
 		// 一度当たった敵はスキップ
 		if (IsAlreadyHit(enemy))
 		{
 			continue;
 		}
 
-
 		KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
 
 		std::list < KdCollider::CollisionResult>result;
 
-		if (enemy->Intersects(sphereInfo, &result));
+		if (enemy->Intersects(sphereInfo, &result))
 
 		if (!result.empty())
 		{
@@ -221,11 +251,18 @@ void Player::UpdateInput()
 	}
 	UpdateJumpInput();
 	UpdateAttackInput();
-	
+	UpdateSpecialMoveInput();
 }
 
 void Player::UpdateMoveInput()
 {
+
+	if (m_actionState == PlayerActionState::SpecialMove)
+	{
+		return;
+	}
+
+
 	Math::Vector3 moveDir = Math::Vector3::Zero;
 	m_dirType = 0;
 	m_moveFlg = false;
@@ -309,6 +346,15 @@ void Player::UpdateParryInput()
 	}
 }
 
+void Player::UpdateSpecialMoveInput()
+{
+
+	bool currentSpecialButton = (GetAsyncKeyState('E') & 0x8000);
+
+	m_specialButton = currentSpecialButton;
+
+}
+
 void Player::UpdateComboInput()
 {
 	// コンボ受付
@@ -337,6 +383,11 @@ void Player::UpdateComboInput()
 void Player::UpdateMove()
 {
 	
+	if (m_actionState == PlayerActionState::SpecialMove)
+	{
+		return;
+	}
+
 	Math::Vector3 nowPos = GetPos();
 
 	Math::Matrix camRotYMat = Math::Matrix::Identity;
@@ -364,17 +415,46 @@ void Player::UpdateMove()
 		AttackFacingDirection();
 	}
 
-
-	m_gravity += 0.02;
-
+	
 	Math::Vector3 dir = GetMoveDir();
 	dir.Normalize();
 
 	nowPos += dir * m_moveSpeed;
-
-	nowPos.y -= m_gravity;
-
 	SetPos(nowPos);
+
+}
+
+void Player::UpdateGravity()
+{
+	Math::Vector3 nowPos = GetPos();
+	m_gravity += 0.02f;
+	nowPos.y -= m_gravity;
+	SetPos(nowPos);
+}
+
+void Player::UpdateSpecialMove()
+{
+	if (m_actionState != PlayerActionState::SpecialMove)
+	{
+		return;
+	}
+
+	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
+	{
+		return;
+	}
+
+	Math::Vector3 pos = GetPos();
+	Math::Vector3 dir = GetMoveDir();
+	dir.Normalize();
+
+	m_specialMoveDir= dir * m_moveSpeed;
+
+	AttackFacingDirection();
+
+	UpdateGroundCollision();
+
+	ClearHitTargets();
 
 }
 
@@ -485,6 +565,16 @@ void Player::UpdateActionState()
 		return;
 	}
 
+	if (m_actionState == PlayerActionState::SpecialMove)
+	{
+		if (m_animation.IsFinished())
+		{
+			ChangeActionState(PlayerActionState::Normal);
+		}
+		return;
+	}
+
+
 	if (m_actionState == PlayerActionState::Attack)
 	{
 		if (m_animation.IsFinished())
@@ -540,6 +630,13 @@ void Player::UpdateActionState()
 		return;
 	}
 
+	if (m_specialButton)
+	{
+		ChangeActionState(PlayerActionState::SpecialMove);
+		return;
+	}
+
+
 	// ガードキーが押されたら
 	if (m_guardTrigger)
 	{
@@ -582,8 +679,7 @@ void Player::UpdateGroundState()
 		return;
 	}
 
-	// 地面判定でジャンプフラグがfalseになったら着地
-	if (!m_jumpFlg)
+	if (IsGrounded())
 	{
 		ChangeActionState(PlayerActionState::JumpLand);
 	}
@@ -591,81 +687,6 @@ void Player::UpdateGroundState()
 
 void Player::UpdateAnimation()
 {
-
-	PlayerAnimationType nextAnimation = PlayerAnimationType::Idle;
-
-	if (m_actionState == PlayerActionState::Damage)
-	{
-		nextAnimation = PlayerAnimationType::GetHit;
-	}
-	else if (m_actionState == PlayerActionState::Guard)
-	{
-		if (m_guardState == GuardState::Guard)
-		{
-			nextAnimation = PlayerAnimationType::Defend;
-		}
-		else if (m_guardState == GuardState::GuardHit)
-		{
-			nextAnimation = PlayerAnimationType::Defend;
-		}
-		else if (m_guardState == GuardState::Parry)
-		{
-			nextAnimation = PlayerAnimationType::Parry;
-		}
-
-	}
-	else if (m_actionState == PlayerActionState::JumpStart)
-	{
-		nextAnimation = PlayerAnimationType::JumpStart;
-	}
-	else if (m_actionState == PlayerActionState::JumpAir)
-	{
-		nextAnimation = PlayerAnimationType::JumpAir;
-	}
-	else if (m_actionState == PlayerActionState::JumpLand)
-	{
-		nextAnimation = PlayerAnimationType::JumpLand;
-	}
-	else if(m_actionState==PlayerActionState::Attack)
-	{
-		switch (m_currentAttackCombo)
-		{
-		case Player::AttackCombo::Attack1:
-			nextAnimation = PlayerAnimationType::Attack1;
-			break;
-		case Player::AttackCombo::Attack2:
-			nextAnimation = PlayerAnimationType::Attack2;
-			break;
-		case Player::AttackCombo::Attack3:
-			nextAnimation = PlayerAnimationType::Attack3;
-			break;
-		}
-	}
-	else if (m_moveState == PlayerMoveState::Run)
-	{
-		if (m_dirType & Up)
-		{
-			nextAnimation = PlayerAnimationType::MoveFWD;
-		}
-		if (m_dirType & Down)
-		{
-			nextAnimation = PlayerAnimationType::MoveFWD;
-		}
-		if (m_dirType & Left)
-		{
-			nextAnimation = PlayerAnimationType::MoveFWD;
-		}
-		if (m_dirType & Right)
-		{
-			nextAnimation = PlayerAnimationType::MoveFWD;
-		}
-	}
-	else
-	{
-		nextAnimation = PlayerAnimationType::Idle;
-	}
-
-	m_animation.Play(nextAnimation);
 	m_animation.Update();
 }
 
@@ -713,7 +734,106 @@ bool Player::IsAlreadyHit(const std::shared_ptr<EnemyBase>& enemy) const
 
 }
 
-void Player::OnHit(const AttackInfo& attackInfo)
+void Player::CreateSpecialMoveDir()
+{
+	Math::Matrix camRotYMat = Math::Matrix::Identity;
+
+	auto spCamera = m_wpCamera.lock();
+	if (!spCamera)
+	{
+		return;
+	}
+
+
+
+	camRotYMat = spCamera->GetRotationYMatrix();
+
+	// カメラから見て前方向に向かせたい
+	Math::Vector3 toDir = Math::Vector3::TransformNormal(Math::Vector3::Backward, camRotYMat);
+
+	toDir.y = 0;
+	toDir.Normalize();
+
+	SetMoveDir(toDir);
+}
+
+void Player::UpdateGroundCollision()
+{
+
+	auto character = std::dynamic_pointer_cast<CharacterBase>(shared_from_this());
+
+	Math::Vector3 push = m_specialMoveDir;
+
+	constexpr float MaxStep = 0.05f;
+
+	float length = push.Length();
+
+	if (length <= 0.000001f)
+	{
+		return;
+	}
+
+	int stepCount = static_cast<int>(std::ceil(length / MaxStep));
+
+	Math::Vector3 delta = push / static_cast<float>(stepCount);
+
+	for (int i = 0; i < stepCount; ++i)
+	{
+		// すでに進める方向が残っていない
+		if (delta.LengthSquared() <= 0.000001f)
+		{
+			break;
+		}
+
+		SetPos(GetPos() + delta);
+
+		CollisionManager::Instance().ResolveWallCollisionForCharacter(character);
+
+		CollisionManager::Instance().ResolveGroundCollisionForCharacter(character);
+	}
+	
+}
+
+DirectX::BoundingSphere Player::CreateAttackSphere() const
+{
+	// 攻撃判定を出す位置
+	Math::Vector3 attackPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
+	// プレイヤーの向いてる方向
+	Math::Vector3 attackDir = m_mWorld.Backward();
+
+	attackDir.y = 0;
+	if (attackDir.LengthSquared() < 0.000001f)
+	{
+		return {};
+	}
+
+	attackDir.Normalize();
+
+	// プレイヤーの少し前に出す
+	attackPos += attackDir * 0.8f;
+
+	// 攻撃判定用のスフィアを作成
+	DirectX::BoundingSphere sphere;
+	sphere.Center = attackPos;
+	sphere.Radius = 0.7f;
+
+	return sphere;
+}
+
+DirectX::BoundingSphere Player::CreateSpecialMoveSphere() const
+{
+	Math::Vector3 spherePos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
+
+	DirectX::BoundingSphere sphere;
+
+	sphere.Center = spherePos;
+	sphere.Radius = 1.5f;
+
+	return sphere;
+
+}
+
+void Player::OnHit(const AttackInfo attackInfo)
 {
 	m_hp -= attackInfo.damage;
 
@@ -727,6 +847,49 @@ void Player::OnHit(const AttackInfo& attackInfo)
 
 	AddKnockBack(attackInfo.knockBackDir,attackInfo.knockBackPower);
 }
+
+void Player::StartAttack()
+{
+	m_hitTargets.clear();
+	SetAttackTiming();
+	m_moveSpeed = m_attackMoveSpeed;
+}
+
+void Player::EntAttack()
+{
+	m_preAttackCombo = m_currentAttackCombo;
+	m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+}
+
+void Player::StartJump()
+{
+	ResetCombo();
+
+	m_isGrounded = false;
+	m_gravity -= m_parameter.GetParam().m_jumpPow;
+}
+
+void Player::PlayAnimation(PlayerAnimationType type)
+{
+	m_animation.Play(type);
+}
+
+PlayerAnimationType Player::GetAttackAnimation() const
+{
+	switch (m_currentAttackCombo)
+	{
+	case Player::AttackCombo::Attack1:
+		return PlayerAnimationType::Attack1;
+
+	case Player::AttackCombo::Attack2:
+		return PlayerAnimationType::Attack2;
+
+	case Player::AttackCombo::Attack3:
+		return PlayerAnimationType::Attack3;
+
+	}
+}
+
 
 void Player::ResetCombo()
 {
@@ -764,7 +927,21 @@ void Player::EnterState(PlayerActionState _state)
 
 		// 当たり判定をするタイミングをセット
 		SetAttackTiming();
+
+		m_moveSpeed = m_attackMoveSpeed;
 		
+		break;
+	case PlayerActionState::SpecialMove:
+
+		// 攻撃がHitした敵リストをクリア
+		m_hitTargets.clear();
+		m_hitCooldownTimer = m_HitCooldownDuration;
+
+		m_moveSpeed = m_specialSpeed;
+
+		CreateSpecialMoveDir();
+		SetSpecialMoveTiming();
+
 		break;
 	case PlayerActionState::Damage:
 		break;
@@ -773,7 +950,7 @@ void Player::EnterState(PlayerActionState _state)
 	case PlayerActionState::JumpStart:
 
 		ResetCombo();
-		m_jumpFlg = true;
+		m_isGrounded = false;
 		m_gravity = -m_parameter.GetParam().m_jumpPow;
 
 		break;
@@ -794,7 +971,16 @@ void Player::ExitState(PlayerActionState _state)
 	case PlayerActionState::Attack:
 		
 		m_preAttackCombo = m_currentAttackCombo;
+
+		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
 	
+		break;
+	case PlayerActionState::SpecialMove:
+
+		ResetCombo();
+
+		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+
 		break;
 	case PlayerActionState::Damage:
 		break;
@@ -803,7 +989,6 @@ void Player::ExitState(PlayerActionState _state)
 	case PlayerActionState::JumpStart:
 		break;
 	case PlayerActionState::JumpAir:
-
 		break;
 	case PlayerActionState::JumpLand:
 		break;

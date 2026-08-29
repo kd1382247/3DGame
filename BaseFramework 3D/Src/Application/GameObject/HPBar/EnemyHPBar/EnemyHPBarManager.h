@@ -7,7 +7,7 @@ class EnemyHPBarManager
 public:
 
 
-	void CreateHPBar(const std::shared_ptr<EnemyBase>&enemy);
+	bool CreateHPBar(const std::shared_ptr<EnemyBase>&enemy);
 
 private:
 

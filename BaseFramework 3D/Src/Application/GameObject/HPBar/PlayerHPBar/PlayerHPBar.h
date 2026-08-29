@@ -31,7 +31,7 @@ private:
 	std::shared_ptr<KdTexture>m_spHPBar = nullptr;
 
 
-	const float m_barWidth = 200.0f;
+	const float m_barWidth = 250.0f;
 	const float m_barHeight = 40.0f;
 
 	float m_hpRate = 1.0f;

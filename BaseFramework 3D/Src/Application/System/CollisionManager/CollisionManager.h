@@ -29,23 +29,22 @@ public:
 
 	void Resolve();
 
-	
-private:
-
-
 	// 押し戻し量を細かく分けて壁との当たり判定を行う
 	Math::Vector3 ResolveWallCollisionForCharacter(const std::shared_ptr<CharacterBase>& character);
 
 	// 押し戻し量を細かく分けて地面との当たり判定を行う
 	void ResolveGroundCollisionForCharacter(const std::shared_ptr<CharacterBase>& character);
-	
+
+
+
+private:
+
 
 	void ApplyCharacterPush(const std::shared_ptr<CharacterBase>& character);
 
 	void ApplyKnockBack(const std::shared_ptr<CharacterBase>& character);
 
 	std::vector<std::shared_ptr<CharacterBase>>GetCharacters();
-
 
 
 	void ResolveCharacterCollision();

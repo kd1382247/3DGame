@@ -41,7 +41,7 @@ void EnemyBase::SetUpReference()
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
 }
 
-void EnemyBase::OnHit(const AttackInfo& attackInfo)
+void EnemyBase::OnHit(const AttackInfo attackInfo)
 {
 	m_hp -= attackInfo.damage;
 
@@ -56,6 +56,40 @@ void EnemyBase::OnHit(const AttackInfo& attackInfo)
 	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }
 
+void EnemyBase::Launch(const Math::Vector3& dir, float power)
+{
+	m_launchVec = dir;
+	m_launchFlg = true;
+	
+	// 重力を反転
+	m_gravity -= power;
+}
+
+Math::Vector3 EnemyBase::CreateSpawnDirection()
+{
+	// 飛び出す方向を決める
+	Math::Vector3 launchVec = {};
+
+	float deg = KdRandom::GetFloat(1.0f, 360.0f);
+
+	launchVec.x = sinf(DirectX::XMConvertToRadians(deg));
+	launchVec.z = cosf(DirectX::XMConvertToRadians(deg));
+	launchVec.y = 0;
+
+	launchVec.Normalize();
+
+	return launchVec;
+}
+
+
+void EnemyBase::UpdateGravity()
+{
+	Math::Vector3 nowPos = GetPos();
+	m_gravity += 0.02f;
+	nowPos.y -= m_gravity;
+	SetPos(nowPos);
+
+}
 
 void EnemyBase::UpdateDirectChase()
 {
@@ -127,6 +161,7 @@ void EnemyBase::UpdateFollowPath()
 
 	// IDからWayPointを取得
 	auto targetPoint = WayPointManager::Instance().FindWayPoint(targetId);
+
 
 	if (!targetPoint) { return; }
 

@@ -17,7 +17,7 @@ void StarFish::Init()
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
-		("StarFish", Math::Vector3(0, 0.5, 0), 0.4, KdCollider::TypeBump);
+		("StarFish", Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, KdCollider::TypeBump);
 
 
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
@@ -45,7 +45,7 @@ void StarFish::PostUpdate()
 
 	UpdateAnimation();
 
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
+	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
 
 }
 

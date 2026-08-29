@@ -22,6 +22,7 @@ void Cactas::Init()
 		m_parameter.Init();
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+		m_attackPower = m_parameter.GetParam().m_attackPower;
 
 		m_maxHP = m_parameter.GetParam().m_maxHP;
 		m_hp = m_maxHP;
@@ -30,7 +31,7 @@ void Cactas::Init()
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
-		("Cactas", Math::Vector3(0, 0.5, 0), 0.4, KdCollider::TypeBump);
+		("Cactas", Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, KdCollider::TypeBump);
 
 		
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
@@ -50,9 +51,17 @@ void Cactas::Init()
 void Cactas::Update()
 {
 
+	UpdateGravity();
+
 	if (IsInOutro())
 	{
 		ChangeActionState(CactasActionState::Death);
+		return;
+	}
+
+	if (m_launchFlg)
+	{
+		UpdateLaunch();
 		return;
 	}
 
@@ -67,8 +76,6 @@ void Cactas::PostUpdate()
 {
 	UpdateActionState();
 	UpdateAnimation();
-
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
 
 	EnemyBase::PostUpdate();
 
@@ -91,6 +98,26 @@ void Cactas::SetUpReference()
 		std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
 }
 
+void Cactas::DrawDebug()
+{
+	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
+	m_pDebugWire->Draw();
+}
+
+void Cactas::UpdateLaunch()
+{
+	if (IsGrounded())
+	{
+		m_launchFlg = false;
+	}
+
+	Math::Vector3 pos = GetPos();
+
+	pos += m_launchVec;
+
+	SetPos(pos);
+}
+
 void Cactas::OutroUpdate()
 {
 	m_outroFlg = true;
@@ -98,10 +125,6 @@ void Cactas::OutroUpdate()
 
 void Cactas::UpdateMove()
 {
-	Math::Vector3 nowPos = GetPos();
-	m_gravity += 0.02;
-	nowPos.y -= m_gravity;
-	SetPos(nowPos);
 
 	// 攻撃中は移動をしない
 	if (m_actionState == CactasActionState::Attack)
@@ -352,7 +375,7 @@ void Cactas::UpdateAttackCollision()
 	DirectX::BoundingSphere sphere;
 
 	sphere.Center = attackPos;
-	sphere.Radius = 0.6;
+	sphere.Radius = 0.6f;
 
 	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
 
@@ -369,7 +392,7 @@ void Cactas::UpdateAttackCollision()
 		AttackInfo attackInfo;
 
 		attackInfo.knockBackDir = knockBackDir;
-		attackInfo.knockBackPower = 0.08;
+		attackInfo.knockBackPower = 0.08f;
 		attackInfo.damage = 10;
 
 		spPlayer->OnHit(attackInfo);

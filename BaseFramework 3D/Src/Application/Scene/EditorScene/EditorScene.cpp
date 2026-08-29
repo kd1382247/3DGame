@@ -79,11 +79,6 @@ void EditorScene::SetupObjectReferences()
 
 void EditorScene::Event()
 {
-
-	////// 現在のオブジェクト数をデバッグ
-	KdDebugGUI::Instance().ClearLog();
-	KdDebugGUI::Instance().AddLog("object%d", GetObjList().size());
-
 	m_spEditorCamera->Update();
 }
 

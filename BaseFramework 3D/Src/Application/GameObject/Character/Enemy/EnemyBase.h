@@ -28,11 +28,20 @@ public:
 
 	void SetUpReference()override;
 
-	void OnHit(const AttackInfo& attackInfo)override;
+	void OnHit(const AttackInfo attackInfo)override;
+
+	// 飛び出す
+	void Launch(const Math::Vector3& dir, float power);
+
+	// スポーン方向を作る
+	Math::Vector3 CreateSpawnDirection();
+
 
 protected:
 
 	std::weak_ptr<Player>m_wpPlayer;
+
+	void UpdateGravity();
 
 	// 追跡移動
 	void UpdateDirectChase();
@@ -66,11 +75,17 @@ protected:
 
 	// 攻撃のクールダウン
 	float m_attackCooldown = 0;
+
 	// クールタイムの量
 	float m_attackCooldownDuration = 0;
 
 	bool m_attackFlg = false;
 
 	bool m_hitTarget = false;
+
+	// 飛び出す方向と勢い
+	Math::Vector3 m_launchVec;
+
+	bool          m_launchFlg = false;
 
 };

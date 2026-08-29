@@ -28,6 +28,8 @@
 // 当たり判定(壁)
 #include"../../Application/GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
 
+// ギミック
+#include"../../Application/GameObject/Gimmick/EnemySpawner/EnemySpawner.h"
 
 
 void KdGameObjectFactory::Init()
@@ -91,6 +93,14 @@ void KdGameObjectFactory::Init()
 	// ウェイポイント
 	//===================================================================
 	Register<WayPoint>("WayPoint", KdGameObject::ObjectCategory::None);
+
+
+
+	//===================================================================
+	// ギミック
+	//===================================================================
+	Register<EnemySpawner>("EnemySpawner", KdGameObject::ObjectCategory::Gimmick);
+
 
 }
 

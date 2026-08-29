@@ -282,7 +282,7 @@ void CollisionManager::ResolveGroundCollisionForCharacter(const std::shared_ptr<
 	
 
 	constexpr float enableStepHigh = 0.2f;
-	constexpr float groundSnapDistance = 0.2;
+	constexpr float groundSnapDistance = 0.2f;
 
 	rayInfo.m_pos.y += enableStepHigh;
 
@@ -402,7 +402,7 @@ void CollisionManager::ApplyKnockBack(const std::shared_ptr<CharacterBase>& char
 		return;
 	}
 
-	constexpr float maxStap = 0.05;
+	constexpr float maxStap = 0.05f;
 
 	int stepCount = static_cast<int>(std::ceil(length / maxStap));
 
@@ -415,11 +415,11 @@ void CollisionManager::ApplyKnockBack(const std::shared_ptr<CharacterBase>& char
 
 		ResolveGroundCollisionForCharacter(character);
 
-		ResolveGroundCollisionForCharacter(character);
+		ResolveWallCollisionForCharacter(character);
 	}
 
 	// 徐々に減衰
-	knockBack *= 0.88;
+	knockBack *= 0.88f;
 
 	if (knockBack.LengthSquared() <= 0.000001f)
 	{
@@ -472,6 +472,13 @@ void CollisionManager::ResolveCharacterCollision()
 			{
 				auto& charaA = characters[i];
 				auto& charaB = characters[j];
+
+				if (charaA->IsInOutro() ||
+					charaB->IsInOutro())
+				{
+					continue;
+				}
+
 
 				KdCollider::SphereInfo sphereInfo(
 					KdCollider::TypeBump,
@@ -562,7 +569,7 @@ void CollisionManager::ResolveGroundCollision()
 		rayInfo.m_pos =character->GetPos();
 
 		constexpr float enableStepHigh = 0.2f;
-		constexpr float groundSnapDistance = 0.2;
+		constexpr float groundSnapDistance = 0.2f;
 
 		rayInfo.m_pos.y += enableStepHigh;
 
@@ -604,7 +611,7 @@ void CollisionManager::ResolveGroundCollision()
 				// 地面に当たっている
 				character->SetPos(hitPos);
 				character->SetGravity(0.0f);
-				character->SetJumpFlg(false);
+				character->SetIsGrounded(true);
 			}
 		}
 	}

@@ -141,6 +141,7 @@ public:
 
 	virtual void GetCode(std::vector<int>& ret) const = 0;
 
+
 protected:
 	// 入力の状態
 	short m_state = Free;

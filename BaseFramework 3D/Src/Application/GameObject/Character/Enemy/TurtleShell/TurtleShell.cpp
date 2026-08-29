@@ -35,7 +35,7 @@ void TurtleShell::Init()
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
-		("TurtleShell", Math::Vector3(0, 0.5, 0), 0.4, KdCollider::TypeBump);
+		("TurtleShell", Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, KdCollider::TypeBump);
 
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -53,10 +53,17 @@ void TurtleShell::Init()
 
 void TurtleShell::Update()
 {
+	UpdateGravity();
 
 	if (IsInOutro())
 	{
 		ChangeActionState(TurtleShellActionState::Death);
+		return;
+	}
+
+	if (m_launchFlg)
+	{
+		UpdateLaunch();
 		return;
 	}
 
@@ -71,16 +78,11 @@ void TurtleShell::Update()
 
 void TurtleShell::PostUpdate()
 {
-
 	UpdateActionState();
 
 	UpdateAnimation();
 
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
-
 	EnemyBase::PostUpdate();
-
-
 }
 
 void TurtleShell::DrawInspector()
@@ -88,6 +90,12 @@ void TurtleShell::DrawInspector()
 	EnemyBase::DrawInspector();
 
 	m_parameter.DrawInspecter();
+}
+
+void TurtleShell::DrawDebug()
+{
+	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
+	m_pDebugWire->Draw();
 }
 
 void TurtleShell::SetUpReference()
@@ -99,14 +107,22 @@ void TurtleShell::SetUpReference()
 		std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
 }
 
+void TurtleShell::UpdateLaunch()
+{
+	if (IsGrounded())
+	{
+		m_launchFlg = false;
+	}
+
+	Math::Vector3 pos = GetPos();
+
+	pos += m_launchVec;
+
+	SetPos(pos);
+}
+
 void TurtleShell::UpdateMove()
 {
-
-	Math::Vector3 nowPos = GetPos();
-	m_gravity += 0.02;
-	nowPos.y -= m_gravity;
-	SetPos(nowPos);
-
 
 	if (m_actionState == TurtleShellActionState::Dizzy||
 		m_actionState==TurtleShellActionState::SpinAttackRPT)
@@ -254,7 +270,7 @@ void TurtleShell::UpdateAttackCollision()
 		AttackInfo attackInfo;
 
 		attackInfo.knockBackDir = knockBackDir;
-		attackInfo.knockBackPower = 0.3;
+		attackInfo.knockBackPower = 0.3f;
 		attackInfo.damage = 10;
 
 		spPlayer->OnHit(attackInfo);
@@ -338,7 +354,7 @@ void TurtleShell::UpdateSpinAttackMove()
 
 	Math::Vector3 pos = GetPos();
 
-	pos += moveDir * (m_moveSpeed+0.07);
+	pos += moveDir * (m_moveSpeed+0.07f);
 	SetPos(pos);
 }
 

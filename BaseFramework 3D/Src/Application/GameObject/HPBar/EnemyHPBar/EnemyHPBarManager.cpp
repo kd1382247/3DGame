@@ -6,12 +6,19 @@
 
 #include"../../../Scene/SceneManager.h"
 
-void EnemyHPBarManager::CreateHPBar(const std::shared_ptr<EnemyBase>& enemy)
+bool EnemyHPBarManager::CreateHPBar(const std::shared_ptr<EnemyBase>& enemy)
 {
+	if (!enemy)
+	{
+		return false;
+	}
+
 	auto hpBar = std::make_shared<EnemyHPBar>();
 	
 	hpBar->Init();
 	hpBar->SetTarget(enemy);
 
 	SceneManager::Instance().AddObject(hpBar);
+	
+	return true;
 }

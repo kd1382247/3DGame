@@ -92,7 +92,9 @@ void PlayerHPBar::DrawBar(const std::shared_ptr<KdTexture>&tex, const float rate
 	Math::Color color = { 1.0f,1.0f,1.0f };
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(
-		tex, m_barOffset.x, m_barOffset.y,
+		tex, 
+		static_cast<int>(m_barOffset.x),
+		static_cast<int>(m_barOffset.y),
 		static_cast<int>(m_barWidth * rate),
 		static_cast<int>(m_barHeight),
 		&rc, &color, pivot);

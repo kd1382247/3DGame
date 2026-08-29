@@ -22,7 +22,7 @@ void MushroomParameter::DrawInspecter()
 		}
 
 		// 攻撃力
-		if (ImGui::DragFloat("AttackPow", &m_param.m_attackPow, 1.0f, 0.0f))
+		if (ImGui::DragFloat("AttackPow", &m_param.m_attackPower, 1.0f, 0.0f))
 		{
 			EditorManager::Instance().MarkDirty();
 		}
@@ -59,7 +59,7 @@ void MushroomParameter::SaveToJson()
 	nlohmann::json paramJson;
 
 	paramJson["MaxHP"] = m_param.m_maxHP;
-	paramJson["AttackPower"] = m_param.m_attackPow;
+	paramJson["AttackPower"] = m_param.m_attackPower;
 	paramJson["MoveSpeed"] = m_param.m_moveSpeed;
 	paramJson["JumpPower"] = m_param.m_jumpPow;
 	paramJson["TurnSpeed"] = m_param.m_turnSpeed;
@@ -98,7 +98,7 @@ void MushroomParameter::LoadFromJson()
 		file >> paramJson;
 
 		m_param.m_maxHP = paramJson["MaxHP"].get<int>();
-		m_param.m_attackPow = paramJson["AttackPower"].get<float>();
+		m_param.m_attackPower = paramJson["AttackPower"].get<float>();
 		m_param.m_moveSpeed = paramJson["MoveSpeed"].get<float>();
 		m_param.m_jumpPow = paramJson["JumpPower"].get<float>();
 		m_param.m_turnSpeed = paramJson["TurnSpeed"].get<float>();

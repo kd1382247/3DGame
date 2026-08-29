@@ -1,7 +1,7 @@
 {
-    "AttackPower": 10.0,
+    "AttackPower": 30.0,
     "JumpPower": 0.4000000059604645,
-    "MaxHP": 100,
+    "MaxHP": 600,
     "MoveSpeed": 0.15000000596046448,
     "TurnSpeed": 15.0
 }

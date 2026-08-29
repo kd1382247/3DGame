@@ -88,7 +88,7 @@ void Beholder::UpdateAnimation()
 	}
 	else if (m_moveState == BeholderMoveState::Walk)
 	{
-		nextAnimation == BeholderAnimationType::Walk;
+		nextAnimation = BeholderAnimationType::Walk;
 	}
 	else
 	{

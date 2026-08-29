@@ -3,7 +3,9 @@
 #include"../../System/CollisionManager/CollisionManager.h"
 
 CharacterBase::CharacterBase()
-{}
+{
+
+}
 
 CharacterBase::~CharacterBase()
 {
@@ -35,11 +37,11 @@ void CharacterBase::DrawLit()
 
 void CharacterBase::GenerateDepthMapFromLight()
 {
-	if (m_spModel)
+	/*if (m_spModel)
 	{
 		KdShaderManager::Instance().
 			m_StandardShader.DrawModel(*m_spModel, m_mWorld);
-	}
+	}*/
 }
 
 void CharacterBase::DrawInspector()
@@ -78,9 +80,20 @@ void CharacterBase::UpdateFacingDirection()
 {
 
 	Math::Vector3 nowDir = m_mWorld.Backward();
+	nowDir.y = 0.0f;
+
 
 	Math::Vector3 toDir = GetMoveDir();
+	toDir.y = 0.0f;
 
+	if (nowDir.LengthSquared() <= 0.000001f ||
+		toDir.LengthSquared() <= 0.000001f)
+	{
+		return;
+	}
+
+	// 正規化
+	nowDir.Normalize();
 	toDir.Normalize();
 
 	// 内積を求める

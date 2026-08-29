@@ -16,6 +16,7 @@ enum class TurtleShellAnimationType
 enum class TurtleShellActionState
 {
 	Normal,
+	Launch,
 	Damage,
 	Dizzy,
 	SpinAttackST,

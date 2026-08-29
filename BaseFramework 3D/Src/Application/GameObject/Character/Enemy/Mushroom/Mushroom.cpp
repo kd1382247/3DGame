@@ -19,6 +19,7 @@ void Mushroom::Init()
 		m_parameter.Init();
 		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
 		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
+		m_attackPower = m_parameter.GetParam().m_attackPower;
 
 		m_maxHP = m_parameter.GetParam().m_maxHP;
 		m_hp = m_maxHP;
@@ -28,7 +29,7 @@ void Mushroom::Init()
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
-		("Mushroom", Math::Vector3(0, 0.5, 0), 0.4, KdCollider::TypeBump);
+		("Mushroom", Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, KdCollider::TypeBump);
 
 
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
@@ -49,9 +50,17 @@ void Mushroom::Init()
 void Mushroom::Update()
 {
 
+	UpdateGravity();
+
 	if (IsInOutro())
 	{
 		ChangeActionState(MushroomActionState::Death);
+		return;
+	}
+
+	if (m_launchFlg)
+	{
+		UpdateLaunch();
 		return;
 	}
 
@@ -69,8 +78,7 @@ void Mushroom::PostUpdate()
 
 	UpdateAnimation();
 
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.4, kRedColor);
-
+	
 	EnemyBase::PostUpdate();
 
 }
@@ -82,6 +90,12 @@ void Mushroom::DrawInspector()
 	m_parameter.DrawInspecter();
 }
 
+void Mushroom::DrawDebug()
+{
+	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
+	m_pDebugWire->Draw();
+}
+
 void Mushroom::SetUpReference()
 {
 	EnemyBase::SetUpReference();
@@ -91,14 +105,22 @@ void Mushroom::SetUpReference()
 		std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
 }
 
+void Mushroom::UpdateLaunch()
+{
+	if (IsGrounded())
+	{
+		m_launchFlg = false;
+	}
+
+	Math::Vector3 pos = GetPos();
+
+	pos += m_launchVec;
+
+	SetPos(pos);
+}
+
 void Mushroom::UpdateMove()
 {
-
-	Math::Vector3 nowPos = GetPos();
-	m_gravity += 0.02;
-	nowPos.y -= m_gravity;
-	SetPos(nowPos);
-
 	// 攻撃中は移動をしない
 	if (m_actionState == MushroomActionState::Attack)
 	{
@@ -294,7 +316,7 @@ void Mushroom::UpdateAttackCollision()
 	DirectX::BoundingSphere sphere;
 
 	sphere.Center = attackPos;
-	sphere.Radius = 0.6;
+	sphere.Radius = 0.6f;
 
 	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
 
@@ -311,7 +333,7 @@ void Mushroom::UpdateAttackCollision()
 		AttackInfo attackInfo;
 
 		attackInfo.knockBackDir = knockBackDir;
-		attackInfo.knockBackPower = 0.05;
+		attackInfo.knockBackPower = 0.05f;
 		attackInfo.damage = 10;
 
 		spPlayer->OnHit(attackInfo);

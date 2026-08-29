@@ -325,6 +325,18 @@
     <Filter Include="Src\Application\GameObject\HPBar\EnemyHPBar">
       <UniqueIdentifier>{1f8f95d0-5f53-412e-ad4c-9290615cf4c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Gimmick">
+      <UniqueIdentifier>{e1decf5c-090b-424c-8fed-eebd8dacfee9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Gimmick\EnemySpawner">
+      <UniqueIdentifier>{1c670b40-e00a-4852-be00-a88d6aeedc9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Gimmick\EnemySpawner\Parameter">
+      <UniqueIdentifier>{d3ef75e8-c86c-4d26-a96e-eb851b473b9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\State\States">
+      <UniqueIdentifier>{ccd54508-e89d-4b0b-b891-263f71167816}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -747,6 +759,36 @@
     <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.h">
       <Filter>Src\Application\GameObject\HPBar\EnemyHPBar</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.h">
+      <Filter>Src\Application\GameObject\Gimmick\EnemySpawner</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\Parameter\EnemySpawnerParameter.h">
+      <Filter>Src\Application\GameObject\Gimmick\EnemySpawner\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateMachine.h">
+      <Filter>Src\Application\GameObject\Character\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateBase.h">
+      <Filter>Src\Application\GameObject\Character\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerNormalState.h">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.h">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpStartState.h">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpAirState.h">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpLandState.h">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimationType.h">
+      <Filter>Src\Application\GameObject\Character\Player\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1096,6 +1138,31 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.cpp">
       <Filter>Src\Application\GameObject\HPBar\EnemyHPBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\Parameter\EnemySpawnerParameter.cpp">
+      <Filter>Src\Application\GameObject\Gimmick\EnemySpawner\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\PlayerStateMachine.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\PlayerStateBase.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerNormalState.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpStartState.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpAirState.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpLandState.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -14,12 +14,10 @@
 #include "../Scene/SceneManager.h"
 #include"../System/StageDataManager/StageDataManager.h"
 
-
 #include "Hierarchy/Hierarchy.h"
 #include "Inspector/Inspector.h"
 #include "StageEditor/StageEditor.h"
 #include"SceneView/SceneView.h"
-
 
 void EditorManager::Init()
 {
@@ -126,7 +124,6 @@ void EditorManager::StartPlayMode()
 	WayPointManager::Instance().ClearBackup();
 	WallCollisionManager::Instance().ClearBackup();
 
-
 	// モードを切り替える
 	SetEditorMode(EditorMode::Play);
 
@@ -148,7 +145,6 @@ void EditorManager::StopPlayMode()
 	{
 		return;
 	}
-
 
 	// Play中の状態を削除
 	editorScene->BackupObjectList();
@@ -192,7 +188,13 @@ void EditorManager::EndSceneViewRender()
 
 void EditorManager::DrawToolBar()
 {
-	ImGui::Begin("Menu");
+
+	ImGuiWindowFlags flags =
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoScrollWithMouse;
+
+	ImGui::Begin("Menu",nullptr,flags);
 
 	//-----------------------------
 	//  左:ファイル操作
@@ -422,7 +424,6 @@ void EditorManager::SelectGameObjectByMouse()
 	SetSelectedObject(selectedObj);
 }
 
-
 void EditorManager::SelectStageObjectByMouse()
 {
 	KdCollider::RayInfo rayInfo = CreateRayInfo(KdCollider::TypeEvent);
@@ -434,7 +435,13 @@ void EditorManager::SelectStageObjectByMouse()
 
 	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
-		if (!obj || obj->GetObjectCategory() != KdGameObject::ObjectCategory::Stage)
+		if (!obj)
+		{
+			continue;
+		}
+
+		if (obj->GetObjectCategory() != KdGameObject::ObjectCategory::Stage&&
+			obj->GetObjectCategory() != KdGameObject::ObjectCategory::Gimmick)
 		{
 			continue;
 		}

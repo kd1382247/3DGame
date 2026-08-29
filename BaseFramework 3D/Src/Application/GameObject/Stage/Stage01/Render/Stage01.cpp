@@ -11,6 +11,9 @@ void Stage01::Init()
 		m_spModel = std::make_shared<KdModelWork>();
 		m_spModel->SetModelData("Asset/Models/Stage/Stage01/Stage01.gltf");
 
+		m_model = std::make_shared<KdModelWork>();
+		m_model->SetModelData("Asset/Models/Stage/Stage01/BackGround.gltf");
+
 		SetObjectName("Stage01");
 
 		SetObjectCategory(KdGameObject::ObjectCategory::Stage);
@@ -41,4 +44,11 @@ void Stage01::Update()
 void Stage01::DrawInspector()
 {
 	DrawTransformInspector();
+}
+
+void Stage01::DrawLit()
+{
+	StageBase::DrawLit();
+
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_model, m_mWorld);
 }

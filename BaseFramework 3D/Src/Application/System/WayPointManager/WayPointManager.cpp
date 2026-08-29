@@ -205,6 +205,7 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 	{
 		return{};
 	}
+
 	// スタートIDとゴールIDが同じであればスタートIDを返す
 	if (startId == goalId)
 	{

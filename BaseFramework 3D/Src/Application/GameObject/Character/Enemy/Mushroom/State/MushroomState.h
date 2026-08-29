@@ -14,6 +14,7 @@ enum class MushroomAnimationType
 enum class MushroomActionState
 {
 	Normal,
+	Launch,
 	Damage,
 	Attack,
 	Death

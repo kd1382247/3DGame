@@ -67,7 +67,7 @@ void EnemyHPBar::Update()
 	// ダメージバーを減少
 	if (m_damageRate > m_hpRate)
 	{
-		m_damageRate -= 0.004f;
+		m_damageRate -= 0.008f;
 
 		if (m_damageRate < m_hpRate)
 		{
@@ -75,6 +75,8 @@ void EnemyHPBar::Update()
 		}
 
 	}
+
+	SetUpReference();
 
 }
 

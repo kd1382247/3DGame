@@ -20,9 +20,13 @@ public:
 
 	void DrawInspector()override;
 
+	void DrawDebug()override;
+
 	void SetUpReference()override;
 
 private:
+
+	void UpdateLaunch();
 
 
 	void UpdateMove();

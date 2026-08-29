@@ -21,8 +21,12 @@ public:
 
 	void SetUpReference()override;
 
+	void DrawDebug()override;
+
 
 private:
+
+	void UpdateLaunch();
 
 	void OutroUpdate();
 

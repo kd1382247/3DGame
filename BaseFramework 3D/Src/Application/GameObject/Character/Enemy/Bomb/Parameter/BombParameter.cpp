@@ -47,7 +47,7 @@ void BombParameter::DrawInspecter()
 		}
 
 		// セーブ
-		if (ImGui::Button("SaveToJson"))
+		if (ImGui::Button("SaveParameter"))
 		{
 			SaveToJson();
 		}

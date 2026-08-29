@@ -3,8 +3,11 @@
 #include "../CharacterBase.h"
 // プレイヤー情報
 #include"State/PlayerState.h"
+#include"Animation/PlayerAnimationType.h"
 #include"Animation/PlayerAnimation.h"
 #include"Parameter/PlayerParameter.h"
+
+#include"State/PlayerStateMachine.h"
 
 
 class CameraBase;
@@ -24,10 +27,45 @@ public:
 
 	void DrawLit()override;
 
+	void DrawDebug()override;
+
 	void DrawInspector()override;
 
+	void OnHit(const AttackInfo attackInfo)override;
 
-	void OnHit(const AttackInfo& attackInfo)override;
+	template<class T>
+	void ChangeState()
+	{
+		m_stateMachine.ChangeState(*this, std::make_unique<T>());
+	}
+
+	// 各アクションボタン
+	bool IsAttackButton()const      {return m_attackButton;}
+	bool IsJumpButton()const        {return m_jumpButton;}
+	bool IsGuardTrigger()const      { return m_guardTrigger; }
+	bool IsSpecialButton()const     { return m_specialButton;}
+
+
+	// 移動フラグ
+	bool IsMoving()const            { return m_moveFlg; }
+
+	// アニメーションが終わったかどうかを返す
+	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
+
+
+	// 攻撃
+	void StartAttack();
+	void EntAttack();
+
+	// ジャンプ
+	void StartJump();
+
+	// アニメーション
+	void PlayAnimation(PlayerAnimationType type);
+
+	// コンボ状態
+	PlayerAnimationType GetAttackAnimation()const;
+
 
 private:
 
@@ -53,10 +91,15 @@ private:
 	void UpdateAttackInput();
 	void UpdateGuardInput();
 	void UpdateParryInput();
+	void UpdateSpecialMoveInput();
 
 	void UpdateComboInput();
 
 	void UpdateMove();
+
+	void UpdateGravity();
+
+	void UpdateSpecialMove();
 
 	// 攻撃時のキャラの向き
 	void AttackFacingDirection();
@@ -76,10 +119,27 @@ private:
 
 	void UpdateAnimation();
 
+	// 攻撃判定のタイミングをセット
 	void SetAttackTiming();
+
+	// 必殺技の当たり判定のタイミングをセット
+	void SetSpecialMoveTiming();
+
+
+	void ClearHitTargets();
 
 	void UpdateAttackCollision();
 	bool IsAlreadyHit(const std::shared_ptr<EnemyBase>&enemy)const;
+
+	void CreateSpecialMoveDir();
+
+	void UpdateGroundCollision();
+
+	// 攻撃判定のスフィアを作る
+	DirectX::BoundingSphere CreateAttackSphere()const;
+
+	// 必殺技判定のスフィアを作る
+	DirectX::BoundingSphere CreateSpecialMoveSphere()const;
 
 private:
 
@@ -90,6 +150,9 @@ private:
 	// パラメータークラス
 	PlayerParameter     m_parameter;
 
+	// ステートマシン
+	PlayerStateMachine  m_stateMachine;
+
 
 	// プレイヤーの状態
 	PlayerActionState   m_actionState = PlayerActionState::Normal;
@@ -99,6 +162,7 @@ private:
 	UINT            m_dirType = 0;
 
 	bool            m_moveFlg=false;
+	const float     m_attackMoveSpeed = 0.08f;
 
 	// 攻撃キー
 	bool            m_attackButton = false;
@@ -115,6 +179,11 @@ private:
 
 	int             m_comboInputCnt = 0;
 	bool            m_canCombo = false;
+	
+	// 必殺技キー
+	bool            m_specialButton=false;
+
+	const float     m_specialSpeed = 0.3f;
 
 	// ガードキー
 	bool            m_guardButton = false;
@@ -130,4 +199,9 @@ private:
 	// 攻撃が当たった敵リスト
 	std::vector<std::weak_ptr<EnemyBase>>m_hitTargets = {};
 
+	// 一定時間で当たった敵のリストをクリア
+	float          m_hitCooldownTimer = 0.0f;
+	const float    m_HitCooldownDuration = 5.0f;
+
+	Math::Vector3  m_specialMoveDir = {};
 };

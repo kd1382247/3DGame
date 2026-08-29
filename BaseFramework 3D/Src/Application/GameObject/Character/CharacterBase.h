@@ -46,13 +46,15 @@ public:
 	float GetGravity()const { return m_gravity; }
 	void SetGravity(float gravity) { m_gravity = gravity; }
 
-	void SetJumpFlg(bool flg) { m_jumpFlg = flg; }
+	void SetIsGrounded(const bool flg) { m_isGrounded = flg; }
+	bool IsGrounded()const { return m_isGrounded; }
+
 
 	Math::Vector3 GetKnockBack()const { return m_knockBack; }
 	void SetKnockBack(const Math::Vector3& knockBack) { m_knockBack = knockBack; }
 
 
-	virtual void OnHit(const AttackInfo& attackInfo) {}
+	virtual void OnHit(const AttackInfo) {}
 
 	void AddKnockBack(const Math::Vector3& dir, const float power)
 	{
@@ -90,21 +92,30 @@ protected:
 	std::shared_ptr<KdModelWork>  m_spModel = nullptr;
 
 	float		                  m_gravity = 0;
-	bool                          m_jumpFlg = false;
+	bool                          m_isGrounded = false;
 
 	// 押し戻り量の割合
 	float         m_bumpPushRate = 1.0f;
 	// 押し戻し量をためる
 	Math::Vector3 m_totalPush = {};
 
+
+	////////////////////////////////////
+	// パラメータ系
+	////////////////////////////////////
+
+	// 攻撃力
+	float         m_attackPower = {};
 	// キャラクターの回転スピード
 	float         m_turnSpeed = {};
 	// 移動スピード
 	float         m_moveSpeed = {};
-
+	// 最大HP
 	float         m_maxHP = {};
-	float         m_hp = {};
 
+
+
+	float         m_hp = {};
 
 	float         m_charaAngle = 0;
 

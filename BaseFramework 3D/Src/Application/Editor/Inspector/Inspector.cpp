@@ -5,7 +5,12 @@
 
 void Inspector::Draw()
 {
-	ImGui::Begin("Inspector");
+	ImGuiWindowFlags flags =
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoScrollWithMouse;
+
+	ImGui::Begin("Inspector",nullptr,flags);
 
 	const auto obj = EditorManager::Instance().GetSelectedObject();
 

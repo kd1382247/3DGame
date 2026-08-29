@@ -11,7 +11,13 @@
 
 void Hierarchy::Draw()
 {
-	ImGui::Begin("Hierarchy");
+
+	ImGuiWindowFlags flags =
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoScrollWithMouse;
+
+	ImGui::Begin("Hierarchy",nullptr,flags);
 
 	// 表示するカテゴリを選択
 	DrawCategoryButtons();

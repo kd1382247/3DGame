@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include"../State/PlayerState.h"
+#include"PlayerAnimationType.h"
 
 #include"../../Animation/AnimationBase.h"
 

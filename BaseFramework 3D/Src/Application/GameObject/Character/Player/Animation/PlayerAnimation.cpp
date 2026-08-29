@@ -32,6 +32,8 @@ void PlayerAnimation::Play(PlayerAnimationType _animType)
 		m_animSpeed = 1.4f;
 		break;
 	case PlayerAnimationType::AttackSpin:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("AttackSpin"), false);
+		m_animSpeed = 0.7f;
 		break;
 	case PlayerAnimationType::Defend:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Defend"), true);
