@@ -36,6 +36,8 @@ public:
 	// スポーン方向を作る
 	Math::Vector3 CreateSpawnDirection();
 
+	virtual float GetMoveSpeed()const = 0;
+
 
 protected:
 

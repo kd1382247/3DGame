@@ -21,11 +21,8 @@ void TurtleShell::Init()
 
 		// パラメータクラス初期化
 		m_parameter.Init();
-		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
-		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
 		
-		m_maxHP = m_parameter.GetParam().m_maxHP;
-		m_hp = m_maxHP;
+		m_hp = m_parameter.GetParam().m_maxHP;
 
 		m_attackCooldownDuration = 60 * 1.0f;
 		m_dizzyDuration = 60 * 3.0f;
@@ -354,7 +351,9 @@ void TurtleShell::UpdateSpinAttackMove()
 
 	Math::Vector3 pos = GetPos();
 
-	pos += moveDir * (m_moveSpeed+0.07f);
+	const auto& param = m_parameter.GetParam().m_moveSpeed;
+
+	pos += moveDir * (param+0.07f);
 	SetPos(pos);
 }
 

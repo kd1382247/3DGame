@@ -94,8 +94,6 @@ void EnemyBase::UpdateGravity()
 void EnemyBase::UpdateDirectChase()
 {
 
-
-
 	auto spPlayer = m_wpPlayer.lock();
 
 	if (!spPlayer)
@@ -104,7 +102,9 @@ void EnemyBase::UpdateDirectChase()
 	}
 
 	Math::Vector3 pos = GetPos();
-	float         moveSpeed = m_moveSpeed;
+
+
+	float         moveSpeed = GetMoveSpeed();
 
 	Math::Vector3 targetDir = spPlayer->GetPos() - pos;
 	
@@ -185,7 +185,7 @@ void EnemyBase::UpdateFollowPath()
 
 	float distance = targetDir.Length();
 
-	float moveSpeed = m_moveSpeed;
+	float         moveSpeed = GetMoveSpeed();
 
 	if (distance < moveSpeed)
 	{

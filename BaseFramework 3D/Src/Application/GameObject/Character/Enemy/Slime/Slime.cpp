@@ -35,24 +35,18 @@ void Slime::Init()
 		{
 		case SlimeSize::Large:
 
-			m_maxHP = m_parameter.GetParam().m_maxHP;
 			SetScale(2.0f);
 
 			break;
 		case SlimeSize::Small:
 
-			// HPを半分にする
-			m_maxHP = m_parameter.GetParam().m_maxHP/2;
 			SetScale(1.0f);
 
 			break;
 		}
 
-		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
-		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
-		m_attackPower = m_parameter.GetParam().m_attackPower;
 		m_attackCooldownDuration = 60 * 0.5;
-		m_hp = m_maxHP;
+		m_hp = m_parameter.GetParam().m_maxHP;
 	}
 
 	EnemyBase::Init();

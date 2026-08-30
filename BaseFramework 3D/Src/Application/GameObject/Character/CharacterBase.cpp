@@ -61,15 +61,6 @@ DirectX::BoundingSphere CharacterBase::GetBumpSphere() const
 	return sphere;
 }
 
-void CharacterBase::UpdateCollision()
-{
-	//UpdateCharacterBumpCollision();
-	//UpdateWallCollision();
-	//UpdateGroundCollision();
-
-	//UpdateWallCollision();
-}
-
 // 解放
 void CharacterBase::Release()
 {
@@ -78,6 +69,7 @@ void CharacterBase::Release()
 
 void CharacterBase::UpdateFacingDirection()
 {
+
 
 	Math::Vector3 nowDir = m_mWorld.Backward();
 	nowDir.y = 0.0f;
@@ -105,10 +97,12 @@ void CharacterBase::UpdateFacingDirection()
 	// 少しでも回転する必要があったら
 	if (angle >= 0.1f)
 	{
+
+		float turnSpeed = GetTurnSpeed();
 		// 回転角度の上限を設定
-		if (angle > m_turnSpeed)
+		if (angle >turnSpeed )
 		{
-			angle = m_turnSpeed;
+			angle = turnSpeed;
 		}
 
 		// 外積を求める

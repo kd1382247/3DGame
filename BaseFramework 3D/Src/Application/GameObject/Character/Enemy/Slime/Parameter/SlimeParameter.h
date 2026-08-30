@@ -13,7 +13,7 @@ public:
 		float m_turnSpeed = 12.0f;
 	};
 
-	const Parameter& GetParam() { return m_param; }
+	Parameter GetParam()const { return m_param; }
 
 	void Init();
 

@@ -65,15 +65,16 @@ public:
 		m_knockBack += dir * power;
 	}
 
-	float GetCurrentHP() { return m_hp; }
-	float GetMaxHP() { return m_maxHP; }
+	int  GetCurrentHP()const { return m_hp; }
+	virtual int GetMaxHP()const = 0;
+
+	virtual float GetTurnSpeed()const = 0;
+
+
 
 	bool IsInOutro()const { return m_outroFlg; }
 
 private:
-
-	// 当たり判定更新
-	void UpdateCollision();
 
 	// 解放処理
 	void Release();
@@ -98,21 +99,6 @@ protected:
 	float         m_bumpPushRate = 1.0f;
 	// 押し戻し量をためる
 	Math::Vector3 m_totalPush = {};
-
-
-	////////////////////////////////////
-	// パラメータ系
-	////////////////////////////////////
-
-	// 攻撃力
-	float         m_attackPower = {};
-	// キャラクターの回転スピード
-	float         m_turnSpeed = {};
-	// 移動スピード
-	float         m_moveSpeed = {};
-	// 最大HP
-	float         m_maxHP = {};
-
 
 
 	float         m_hp = {};

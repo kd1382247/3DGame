@@ -11,6 +11,9 @@ void PlayerJumpLandState::Enter(Player& player)
 
 void PlayerJumpLandState::Update(Player & player)
 {
+
+	player.UpdateMove();
+
 	if (player.IsAnimationFinished())
 	{
 		player.ChangeState<PlayerNormalState>();

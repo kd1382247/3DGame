@@ -13,6 +13,8 @@ void PlayerJumpStartState::Enter(Player& player)
 
 void PlayerJumpStartState::Update(Player & player)
 {
+	player.UpdateMove();
+
 	if (player.IsAnimationFinished())
 	{
 		player.ChangeState<PlayerJumpAirState>();

@@ -29,6 +29,12 @@ public:
 
 	void DrawDebug()override;
 
+	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
+
+	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
+
+	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
+
 	void SetSlimeSize(const SlimeSize size) { m_slimeSize = size; };
 	SlimeSize GetSlimeSize()const { return m_slimeSize; }
 

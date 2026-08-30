@@ -17,6 +17,7 @@ class Player : public CharacterBase
 {
 public:
 
+
 	Player() {}
 	~Player()			override {}
 
@@ -33,6 +34,10 @@ public:
 
 	void OnHit(const AttackInfo attackInfo)override;
 
+	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
+
+	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
+
 	template<class T>
 	void ChangeState()
 	{
@@ -43,7 +48,7 @@ public:
 	bool IsAttackButton()const      {return m_attackButton;}
 	bool IsJumpButton()const        {return m_jumpButton;}
 	bool IsGuardTrigger()const      { return m_guardTrigger; }
-	bool IsSpecialButton()const     { return m_specialButton;}
+	bool IsSpeciaMovelButton()const     { return m_specialMoveButton;}
 
 
 	// 移動フラグ
@@ -56,16 +61,44 @@ public:
 	// 攻撃
 	void StartAttack();
 	void EntAttack();
+	// コンボ状態でアニメーションタイプを返す
+	PlayerAnimationType GetAttackAnimation()const;
 
 	// ジャンプ
 	void StartJump();
 
+	// 必殺技
+	void StartSpecialMove();
+	void EndSpecialMove();
+
+	// ガード
+	bool IsGuardCancel()const { return m_guardState == GuardState::GuardCancel; }
+	bool IsGuardHitOrParyy()const { return m_guardState == GuardState::GuardHit || m_guardState == GuardState::Parry; }
+	void ResetGuardState() { m_guardState = GuardState::Guard; }
+	// ガード状態でアニメーションタイプを返す
+	PlayerAnimationType GetGuardAnimation()const;
+
+	// ガード中のパリィ入力
+	void UpdateParryInput();
+
 	// アニメーション
 	void PlayAnimation(PlayerAnimationType type);
 
-	// コンボ状態
-	PlayerAnimationType GetAttackAnimation()const;
+	// 通常の移動
+	void UpdateMove();
+	// 通常攻撃の移動
+	void UpdateAttackMove();
+	// 必殺技の移動
+	void UpdateSpecialMove();
 
+	enum class AttackType
+	{
+		None,
+		NormalAttack,
+		SpecialMove
+	};
+
+	void UpdateAttackCollision(const AttackType type);
 
 private:
 
@@ -90,32 +123,21 @@ private:
 	void UpdateJumpInput();
 	void UpdateAttackInput();
 	void UpdateGuardInput();
-	void UpdateParryInput();
+
 	void UpdateSpecialMoveInput();
 
 	void UpdateComboInput();
 
-	void UpdateMove();
-
+	
 	void UpdateGravity();
 
-	void UpdateSpecialMove();
-
 	// 攻撃時のキャラの向き
-	void AttackFacingDirection();
+	void FacingDirectionToCamera();
 
 	// 状態を更新
-	void UpdateActionState();
-	void UpdateMoveState();
 	void UpdateComboState();
-	void UpdateGroundState();
 
 	void ResetCombo();
-
-	// 状態を変更
-	void ChangeActionState(PlayerActionState _nextState);
-	void ExitState(PlayerActionState _state);
-	void EnterState(PlayerActionState _state);
 
 	void UpdateAnimation();
 
@@ -128,7 +150,6 @@ private:
 
 	void ClearHitTargets();
 
-	void UpdateAttackCollision();
 	bool IsAlreadyHit(const std::shared_ptr<EnemyBase>&enemy)const;
 
 	void CreateSpecialMoveDir();
@@ -158,11 +179,11 @@ private:
 	PlayerActionState   m_actionState = PlayerActionState::Normal;
 	PlayerMoveState     m_moveState   = PlayerMoveState::Idle;
 
+
 	// キャラが向いている方向
 	UINT            m_dirType = 0;
 
 	bool            m_moveFlg=false;
-	const float     m_attackMoveSpeed = 0.08f;
 
 	// 攻撃キー
 	bool            m_attackButton = false;
@@ -171,19 +192,13 @@ private:
 
 	// 攻撃コンボ
 	AttackCombo     m_currentAttackCombo = AttackCombo::Attack1;
-
 	AttackCombo     m_preAttackCombo = AttackCombo::Attack1;
-
-	// 攻撃時のキャラの回転速度
-	const float     m_attackTurnSpeed = 30.0f;
 
 	int             m_comboInputCnt = 0;
 	bool            m_canCombo = false;
 	
 	// 必殺技キー
-	bool            m_specialButton=false;
-
-	const float     m_specialSpeed = 0.3f;
+	bool            m_specialMoveButton=false;
 
 	// ガードキー
 	bool            m_guardButton = false;
@@ -201,7 +216,6 @@ private:
 
 	// 一定時間で当たった敵のリストをクリア
 	float          m_hitCooldownTimer = 0.0f;
-	const float    m_HitCooldownDuration = 5.0f;
 
 	Math::Vector3  m_specialMoveDir = {};
 };

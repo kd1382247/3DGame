@@ -48,12 +48,16 @@ void PlayerAnimation::Play(PlayerAnimationType _animType)
 		m_animSpeed = 1.4f;
 		break;
 	case PlayerAnimationType::Die:
+
 		break;
 	case PlayerAnimationType::DieStay:
+
 		break;
 	case PlayerAnimationType::Dizzy:
 		break;
 	case PlayerAnimationType::GetHit:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false);
+		m_animSpeed = 1.4f;
 		break;
 	case PlayerAnimationType::GetUp:
 		break;

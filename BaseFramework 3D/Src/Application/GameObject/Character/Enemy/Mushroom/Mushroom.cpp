@@ -17,12 +17,8 @@ void Mushroom::Init()
 
 		// パラメータクラス初期化
 		m_parameter.Init();
-		m_turnSpeed = m_parameter.GetParam().m_turnSpeed;
-		m_moveSpeed = m_parameter.GetParam().m_moveSpeed;
-		m_attackPower = m_parameter.GetParam().m_attackPower;
 
-		m_maxHP = m_parameter.GetParam().m_maxHP;
-		m_hp = m_maxHP;
+		m_hp = m_parameter.GetParam().m_maxHP;
 
 		m_attackCooldownDuration = 60 * 1;
 
