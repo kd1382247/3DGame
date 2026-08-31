@@ -53,9 +53,6 @@ public:
 	Math::Vector3 GetKnockBack()const { return m_knockBack; }
 	void SetKnockBack(const Math::Vector3& knockBack) { m_knockBack = knockBack; }
 
-
-	virtual void OnHit(const AttackInfo) {}
-
 	void AddKnockBack(const Math::Vector3& dir, const float power)
 	{
 		if (m_knockBack.Length() >= 0.6)

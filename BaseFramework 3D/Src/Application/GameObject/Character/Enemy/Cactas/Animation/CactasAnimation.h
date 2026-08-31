@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include"../State/CactasState.h"
+#include"../Animation/CactasAnimationType.h"
 #include"../../../Animation/AnimationBase.h"
 
 class CactasAnimation :public AnimationBase

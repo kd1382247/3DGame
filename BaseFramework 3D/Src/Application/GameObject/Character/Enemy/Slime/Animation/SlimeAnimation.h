@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include"../State/SlimeState.h"
+#include"../Animation/SlimeAnimationType.h"
 #include"../../../Animation/AnimationBase.h"
 
 class SlimeAnimation :public AnimationBase

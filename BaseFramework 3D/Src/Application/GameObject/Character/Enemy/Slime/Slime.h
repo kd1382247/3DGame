@@ -2,14 +2,16 @@
 
 #include"../EnemyBase.h"
 
+#include"Animation/SlimeAnimationType.h"
 #include"Animation/SlimeAnimation.h"
 #include"State/SlimeState.h"
 #include"Parameter/SlimeParameter.h"
+#include"State/SlimeStateMachine.h"
+
 
 class Slime :public EnemyBase
 {
 public:
-
 
 	enum class SlimeSize
 	{
@@ -29,41 +31,54 @@ public:
 
 	void DrawDebug()override;
 
+
+	template<class T>
+	void ChangeState()
+	{
+		m_stateMachine.ChangeState(*this, std::make_unique<T>());
+	}
+
+	bool IsAttack()const { return m_attackFlg; }
+	bool IsLaunch()const { return m_launchFlg; }
+
+	// パラメータのゲッター
 	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
-
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
-
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
+
+
+	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
+
+
+	void PlayAnimation(SlimeAnimationType type);
+	
+
+	void StartAttack();
+	void EndAttack();
 
 	void SetSlimeSize(const SlimeSize size) { m_slimeSize = size; };
 	SlimeSize GetSlimeSize()const { return m_slimeSize; }
 
-private:
 
-	// スライムを分裂
-	void Split();
+	void UpdateMove();
 
 	void UpdateLaunch();
 
-	void UpdateMove();
-	void UpdateAttack();
-
-	void UpdateActionState();
-
-	void UpdateAnimation();
-
-	void ChangeActionState(SlimeActionState  nextState);
-	void ExitState(SlimeActionState _state);
-	void EnterState(SlimeActionState _state);
-
-
-
-	void SetAttackTiming();
-
+	// スライムを分裂
+	void Split();
 	// 攻撃判定
 	void UpdateAttackCollision();
 
-	
+	void OnHit(const AttackInfo attackInfo)override;
+
+private:
+
+	void UpdateAttack();
+
+	void UpdateAnimation();
+
+	void SetAttackTiming();
+
 private:
 
 	SlimeActionState m_actionState = SlimeActionState::Normal;
@@ -76,6 +91,9 @@ private:
 
 	// パラメータクラス
 	SlimeParameter   m_parameter;
+
+	// ステートマシン
+	SlimeStateMachine m_stateMachine;
 
 
 	static const int spawnNum = 4;

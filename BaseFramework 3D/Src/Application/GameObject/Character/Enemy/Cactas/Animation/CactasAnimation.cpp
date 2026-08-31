@@ -9,22 +9,18 @@ void CactasAnimation::Init(std::shared_ptr<KdModelWork>& _model)
 
 void CactasAnimation::Play(CactasAnimationType _animType)
 {
-	if (m_currentAnimation == _animType)
-	{
-		return;
-	}
+
 
 	switch (_animType)
 	{
 	case CactasAnimationType::None:
 		break;
-
 	case CactasAnimationType::Attack:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack"), false);
 		m_animSpeed = 1.0f;
 		break;
 	case CactasAnimationType::GetHit:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"),false);
 		m_animSpeed = 1.0f;
 		break;
 	case CactasAnimationType::Idle:

@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 class Player;
-class PlayerStateBase;
 
 #include"PlayerStateBase.h"
 
@@ -17,6 +16,6 @@ public:
 
 private:
 
-	std::unique_ptr<PlayerStateBase>m_currentState;
+	std::unique_ptr<PlayerStateBase>m_currentState=nullptr;
 
 };

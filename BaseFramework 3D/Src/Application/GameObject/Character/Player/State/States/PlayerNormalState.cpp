@@ -10,11 +10,12 @@
 
 void PlayerNormalState::Enter(Player& player)
 {
+
+
 }
 
 void PlayerNormalState::Update(Player & player)
 {
-
 	player.UpdateMove();
 
 	// 移動アニメーション
@@ -33,7 +34,6 @@ void PlayerNormalState::Update(Player & player)
 		player.ChangeState<PlayerGuardState>();
 		return;
 	}
-
 
 	if (player.IsJumpButton())
 	{

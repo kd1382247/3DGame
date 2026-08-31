@@ -4,8 +4,14 @@
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
+#include"../../../FlyText/FlyTextManager.h"
 
 #include"../../Player/Player.h"
+
+#include"State/SlimeStateMachine.h"
+#include"State/States/SlimeNormalState.h"
+#include"State/States/SlimeDamageState.h"
+
 
 void Slime::Init()
 {
@@ -27,6 +33,8 @@ void Slime::Init()
 		// オブジェクト名セット
 		SetObjectName("Slime");
 
+
+		m_stateMachine.ChangeState(*this, std::make_unique<SlimeNormalState>());
 
 		// パラメータクラス初期化
 		m_parameter.Init();
@@ -60,30 +68,15 @@ void Slime::Update()
 
 	UpdateGravity();
 
-	if (IsInOutro())
-	{
-		ChangeActionState(SlimeActionState::Death);
-		return;
-	}
-
-	if (m_launchFlg)
-	{
-		UpdateLaunch();
-		return;
-	}
-
-	UpdateMove();
+	m_stateMachine.Update(*this);
+	
 	UpdateAttack();
-
-	UpdateAttackCollision();
 }
 
 void Slime::PostUpdate()
 {
 	
-	UpdateActionState();
 	UpdateAnimation();
-
 
 	EnemyBase::PostUpdate();
 }
@@ -113,6 +106,23 @@ void Slime::DrawDebug()
 
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
 	m_pDebugWire->Draw();
+}
+
+void Slime::PlayAnimation(SlimeAnimationType type)
+{
+	m_animation.Play(type);
+}
+
+void Slime::StartAttack()
+{
+	m_hitTarget = false;
+	SetAttackTiming();
+}
+
+void Slime::EndAttack()
+{
+	m_attackFlg = false;
+	m_attackCooldown = m_attackCooldownDuration;
 }
 
 void Slime::Split()
@@ -154,13 +164,6 @@ void Slime::UpdateLaunch()
 
 void Slime::UpdateMove()
 {
-	
-	// 攻撃中は移動をしない
-	if (m_actionState == SlimeActionState::Attack)
-	{
-		return;
-	}
-
 	if (m_knockBack != Math::Vector3::Zero)
 	{
 		// キャラの向き
@@ -179,13 +182,12 @@ void Slime::UpdateMove()
 
 	if (CanDirectChase())
 	{
-		m_moveState = SlimeMoveState::Walk;
+		PlayAnimation(SlimeAnimationType::Walk);
 	}
 	else
 	{
-		m_moveState = SlimeMoveState::Idle;
+		PlayAnimation(SlimeAnimationType::Idle);
 	}
-
 
 	ChangeMoveState(m_nextMoveState);
 
@@ -228,129 +230,9 @@ void Slime::UpdateAttack()
 	}
 }
 
-void Slime::UpdateActionState()
-{
-	if (m_actionState == SlimeActionState::Death)
-	{
-		if (m_animation.IsFinished())
-		{
-			Split();
-			Destroy();
-		}
-
-		return;
-	}
-
-	if (m_actionState == SlimeActionState::Damage)
-	{
-		if (m_animation.IsFinished())
-		{
-			ChangeActionState(SlimeActionState::Normal);
-		}
-		return;
-	}
-
-	if (m_actionState == SlimeActionState::Attack)
-	{
-		if (m_animation.IsFinished())
-		{
-			ChangeActionState(SlimeActionState::Normal);
-		}
-		return;
-	}
-
-	if (m_attackFlg)
-	{
-		ChangeActionState(SlimeActionState::Attack);
-		return;
-	}
-}
-
 void Slime::UpdateAnimation()
 {
-	SlimeAnimationType nextAnimation = SlimeAnimationType::Idle;
-
-	if (m_actionState == SlimeActionState::Death)
-	{
-		nextAnimation = SlimeAnimationType::Die;
-	}	
-	else if (m_actionState == SlimeActionState::Damage)
-	{
-		nextAnimation = SlimeAnimationType::GetHit;
-	}
-	else if (m_actionState == SlimeActionState::Attack)
-	{
-		nextAnimation = SlimeAnimationType::Attack;
-	}
-	else if (m_moveState == SlimeMoveState::Walk)
-	{
-		nextAnimation = SlimeAnimationType::Walk;
-	}
-	else
-	{
-		nextAnimation = SlimeAnimationType::Idle;
-	}
-
-	m_animation.Play(nextAnimation);
 	m_animation.Update();
-
-}
-
-void Slime::ChangeActionState(SlimeActionState nextState)
-{
-	if (m_actionState == nextState)
-	{
-		return;
-	}
-
-	ExitState(m_actionState);
-	m_actionState = nextState;
-	EnterState(m_actionState);
-}
-
-void Slime::ExitState(SlimeActionState _state)
-{
-	switch (_state)
-	{
-	case SlimeActionState::Normal:
-
-		break;
-	case SlimeActionState::Attack:
-		m_attackFlg = false;
-		m_attackCooldown = m_attackCooldownDuration;
-		break;
-	case SlimeActionState::Damage:
-
-
-		break;
-	case SlimeActionState::Death:
-
-
-		break;
-	}
-}
-
-void Slime::EnterState(SlimeActionState _state)
-{
-	switch (_state)
-	{
-	case SlimeActionState::Normal:
-
-		break;
-	case SlimeActionState::Attack:
-
-		m_hitTarget = false;
-		SetAttackTiming();
-
-		break;
-	case SlimeActionState::Damage:
-
-		break;
-	case SlimeActionState::Death:
-
-
-		break;
-	}
 }
 
 void Slime::SetAttackTiming()
@@ -366,11 +248,6 @@ void Slime::UpdateAttackCollision()
 {
 	auto spPlayer = m_wpPlayer.lock();
 	if (!spPlayer)
-	{
-		return;
-	}
-
-	if (m_actionState != SlimeActionState::Attack)
 	{
 		return;
 	}
@@ -433,4 +310,21 @@ void Slime::UpdateAttackCollision()
 
 
 	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
+}
+
+void Slime::OnHit(const AttackInfo attackInfo)
+{
+	m_hp -= attackInfo.damage;
+
+	PlayAnimation(SlimeAnimationType::GetHit);
+
+	if (m_hp <= 0)
+	{
+		m_hp = 0;
+		m_outroFlg = true;
+	}
+
+	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
+
+	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }

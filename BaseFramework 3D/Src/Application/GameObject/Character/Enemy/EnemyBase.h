@@ -28,7 +28,7 @@ public:
 
 	void SetUpReference()override;
 
-	void OnHit(const AttackInfo attackInfo)override;
+	virtual void OnHit(const AttackInfo attackInfo) {}
 
 	// 飛び出す
 	void Launch(const Math::Vector3& dir, float power);
@@ -37,7 +37,6 @@ public:
 	Math::Vector3 CreateSpawnDirection();
 
 	virtual float GetMoveSpeed()const = 0;
-
 
 protected:
 
@@ -84,6 +83,8 @@ protected:
 	bool m_attackFlg = false;
 
 	bool m_hitTarget = false;
+
+	bool m_isDamaged = false;
 
 	// 飛び出す方向と勢い
 	Math::Vector3 m_launchVec;

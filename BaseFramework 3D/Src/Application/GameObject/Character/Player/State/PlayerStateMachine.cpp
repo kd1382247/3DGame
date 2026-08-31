@@ -1,5 +1,6 @@
 ﻿#include "PlayerStateMachine.h"
-#include"../State/PlayerStateBase.h"
+
+#include"../Player.h"
 
 void PlayerStateMachine::Update(Player& player)
 {

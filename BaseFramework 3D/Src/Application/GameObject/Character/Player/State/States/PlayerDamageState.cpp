@@ -3,6 +3,8 @@
 #include"../../Player.h"
 
 #include"PlayerNormalState.h"
+#include"PlayerAttackState.h"
+#include"PlayerSpecialMoveState.h"
 
 void PlayerDamageState::Enter(Player& player)
 {
@@ -12,11 +14,25 @@ void PlayerDamageState::Enter(Player& player)
 void PlayerDamageState::Update(Player & player)
 {
 
+
+	if (player.IsSpeciaMovelButton())
+	{
+		player.ChangeState<PlayerSpecialMoveState>();
+		return;
+	}
+
+	if (player.IsAttackButton())
+	{
+		player.ChangeState<PlayerAttackState>();
+		return;
+	}
+
 	player.UpdateMove();
 
 	if (player.IsAnimationFinished())
 	{
 		player.ChangeState<PlayerNormalState>();
+		return;
 	}
 }
 

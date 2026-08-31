@@ -2,9 +2,12 @@
 
 #include"../EnemyBase.h"
 
+#include"Animation/CactasAnimationType.h"
 #include"Animation/CactasAnimation.h"
 #include"State/CactasState.h"
 #include"Parameter/CactasParameter.h"
+
+#include"State/CactasStateMachine.h"
 
 class Cactas :public EnemyBase
 {
@@ -23,34 +26,47 @@ public:
 
 	void DrawDebug()override;
 
+	template<class T>
+	void ChangeState()
+	{
+		m_stateMachine.ChangeState(*this, std::make_unique<T>());
+	}
+
+	void UpdateMove();
+
+	bool IsAttack()const { return m_attackFlg; }
+	bool IsLaunch()const { return m_launchFlg; }
+
+	// パラメータのゲッター
 	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
-
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
-
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 
-private:
+	void PlayAnimation(CactasAnimationType type);
+
+	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
+
+	void StartAttack();
+	void EndAttack();
 
 	void UpdateLaunch();
 
+	// 攻撃判定
+	void UpdateAttackCollision();
+
+	void OnHit(const AttackInfo attackInfo) override;
+
+private:
+
+	
 	void OutroUpdate();
 
-	void UpdateMove();
 	void UpdateAttack();
 
 	void UpdateAnimation();
 
-	void ChangeActionState(CactasActionState  nextState);
-	void ExitState(CactasActionState _state);
-	void EnterState(CactasActionState _state);
-
-	void UpdateActionState();
-
 	void SetAttackTiming();
 
-
-	// 攻撃判定
-	void UpdateAttackCollision();
 
 
 private:
@@ -64,7 +80,6 @@ private:
 	// パラメータクラス
 	CactasParameter   m_parameter;
 
-
-
-
+	// ステートマシン
+	CactasStateMachine m_stateMachine;
 };

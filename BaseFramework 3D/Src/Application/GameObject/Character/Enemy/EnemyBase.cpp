@@ -3,8 +3,6 @@
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 
 #include"../../../System/CollisionManager/CollisionManager.h"
-#include"../../FlyText/FlyTextManager.h"
-
 
 #include"../../../System/WayPointManager/WayPointManager.h"
 #include"../../../GameObject/WayPoint/WayPoint.h"
@@ -39,21 +37,6 @@ void EnemyBase::DrawInspector()
 void EnemyBase::SetUpReference()
 {
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
-}
-
-void EnemyBase::OnHit(const AttackInfo attackInfo)
-{
-	m_hp -= attackInfo.damage;
-
-	if (m_hp <= 0)
-	{
-		m_hp = 0;
-		m_outroFlg = true;
-	}
-
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
-
-	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }
 
 void EnemyBase::Launch(const Math::Vector3& dir, float power)

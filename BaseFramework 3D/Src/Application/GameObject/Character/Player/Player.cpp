@@ -12,7 +12,6 @@
 
 #include"../../HPBar/PlayerHPBar/PlayerHPBar.h"
 
-
 #include"State/States/PlayerNormalState.h"
 #include"State/States/PlayerDamageState.h"
 #include"State/States/PlayerDieState.h"

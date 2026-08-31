@@ -9,7 +9,6 @@
 
 #include"State/PlayerStateMachine.h"
 
-
 class CameraBase;
 class EnemyBase;
 
@@ -32,7 +31,7 @@ public:
 
 	void DrawInspector()override;
 
-	void OnHit(const AttackInfo attackInfo)override;
+	void OnHit(const AttackInfo attackInfo);
 
 	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
 

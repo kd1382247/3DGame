@@ -4,9 +4,13 @@
 #include"../../../../System/WayPointManager/WayPointManager.h"
 #include"../../../../GameObject/WayPoint/WayPoint.h"
 
+#include"../../../FlyText/FlyTextManager.h"
+
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 
 #include"../../Player/Player.h"
+
+#include"State/States/CactasNormalState.h"
 
 void Cactas::Init()
 {
@@ -35,6 +39,8 @@ void Cactas::Init()
 		// オブジェクト名セット
 		SetObjectName("Cactas");
 
+		m_stateMachine.ChangeState(*this, std::make_unique< CactasNormalState>());
+
 	}
 
 	EnemyBase::Init();
@@ -49,28 +55,13 @@ void Cactas::Update()
 
 	UpdateGravity();
 
-	if (IsInOutro())
-	{
-		ChangeActionState(CactasActionState::Death);
-		return;
-	}
-
-	if (m_launchFlg)
-	{
-		UpdateLaunch();
-		return;
-	}
-
-	UpdateMove();
+	m_stateMachine.Update(*this);
 
 	UpdateAttack();
-	
-	UpdateAttackCollision();
 }
 
 void Cactas::PostUpdate()
 {
-	UpdateActionState();
 	UpdateAnimation();
 
 	EnemyBase::PostUpdate();
@@ -100,6 +91,23 @@ void Cactas::DrawDebug()
 	m_pDebugWire->Draw();
 }
 
+void Cactas::PlayAnimation(CactasAnimationType type)
+{
+	m_animation.Play(type);
+}
+
+void Cactas::StartAttack()
+{
+	m_hitTarget = false;
+	SetAttackTiming();
+}
+
+void Cactas::EndAttack()
+{
+	m_attackFlg = false;
+	m_attackCooldown = m_attackCooldownDuration;
+}
+
 void Cactas::UpdateLaunch()
 {
 	if (IsGrounded())
@@ -121,13 +129,6 @@ void Cactas::OutroUpdate()
 
 void Cactas::UpdateMove()
 {
-
-	// 攻撃中は移動をしない
-	if (m_actionState == CactasActionState::Attack)
-	{
-		return;
-	}
-
 	if (m_knockBack != Math::Vector3::Zero)
 	{
 		// キャラの向き
@@ -145,11 +146,11 @@ void Cactas::UpdateMove()
 
 	if (CanDirectChase())
 	{
-		m_moveState = CactasMoveState::Walk;
+		PlayAnimation(CactasAnimationType::Walk);
 	}
 	else
 	{
-		m_moveState = CactasMoveState::Idle;
+		PlayAnimation(CactasAnimationType::Idle);
 	}
 
 	ChangeMoveState(m_nextMoveState);
@@ -163,7 +164,6 @@ void Cactas::UpdateMove()
 		UpdateFollowPath();
 		break;
 	}
-
 
 	UpdateFacingDirection();
 
@@ -195,127 +195,7 @@ void Cactas::UpdateAttack()
 
 void Cactas::UpdateAnimation()
 {
-	CactasAnimationType nextAnimation = CactasAnimationType::Idle;
-
-	if (m_actionState == CactasActionState::Death)
-	{
-		nextAnimation = CactasAnimationType::Die;
-	}
-	else if (m_actionState == CactasActionState::Damage)
-	{
-		nextAnimation = CactasAnimationType::GetHit;
-	}
-	else if (m_actionState == CactasActionState::Attack)
-	{
-		nextAnimation = CactasAnimationType::Attack;
-	}
-	else if (m_moveState == CactasMoveState::Walk)
-	{
-		nextAnimation = CactasAnimationType::Walk;
-	}
-	else
-	{
-		nextAnimation = CactasAnimationType::Idle;
-	}
-
-	m_animation.Play(nextAnimation);
 	m_animation.Update();
-
-}
-
-void Cactas::ChangeActionState(CactasActionState nextState)
-{
-	if (m_actionState == nextState)
-	{
-		return;
-	}
-
-	ExitState(m_actionState);
-	m_actionState = nextState;
-	EnterState(m_actionState);
-	
-}
-
-void Cactas::ExitState(CactasActionState _state)
-{
-	switch (_state)
-	{
-	case CactasActionState::Normal:
-
-		break;
-	case CactasActionState::Attack:
-		m_attackFlg = false;
-		m_attackCooldown = m_attackCooldownDuration;
-		break;
-	case CactasActionState::Damage:
-
-		break;
-	case CactasActionState::Death:
-
-
-		break;
-	}
-}
-
-void Cactas::EnterState(CactasActionState _state)
-{
-	switch (_state)
-	{
-	case CactasActionState::Normal:
-
-		break;
-	case CactasActionState::Attack:
-
-		m_hitTarget = false;
-
-		SetAttackTiming();
-
-		break;
-	case CactasActionState::Damage:
-
-
-		break;
-	case CactasActionState::Death:
-
-		break;
-	}
-}
-
-void Cactas::UpdateActionState()
-{
-	if (m_actionState == CactasActionState::Death)
-	{
-		if (m_animation.IsFinished())
-		{
-			Destroy();
-		}
-		return;
-	}
-
-	if (m_actionState == CactasActionState::Damage)
-	{
-		if (m_animation.IsFinished())
-		{
-			ChangeActionState(CactasActionState::Normal);
-		}
-		return;
-	}
-
-	if (m_actionState == CactasActionState::Attack)
-	{
-		if (m_animation.IsFinished())
-		{
-			ChangeActionState(CactasActionState::Normal);
-		}
-		return;
-	}
-
-	if (m_attackFlg)
-	{
-		ChangeActionState(CactasActionState::Attack);
-		return;
-	}
-
 }
 
 void Cactas::SetAttackTiming()
@@ -331,11 +211,6 @@ void Cactas::UpdateAttackCollision()
 {
 	auto spPlayer = m_wpPlayer.lock();
 	if (!spPlayer)
-	{
-		return;
-	}
-
-	if (m_actionState != CactasActionState::Attack)
 	{
 		return;
 	}
@@ -398,4 +273,22 @@ void Cactas::UpdateAttackCollision()
 
 	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
 
+}
+
+void Cactas::OnHit(const AttackInfo attackInfo)
+{
+
+	m_hp -= attackInfo.damage;
+
+	SetDamaged(true);
+
+	if (m_hp <= 0)
+	{
+		m_hp = 0;
+		m_outroFlg = true;
+	}
+
+	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
+
+	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }

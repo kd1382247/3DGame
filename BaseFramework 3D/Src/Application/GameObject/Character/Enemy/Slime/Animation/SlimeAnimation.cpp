@@ -9,10 +9,6 @@ void SlimeAnimation::Init(std::shared_ptr<KdModelWork>& _model)
 
 void SlimeAnimation::Play(SlimeAnimationType _animType)
 {
-	if (m_currentAnimation == _animType)
-	{
-		return;
-	}
 
 	switch (_animType)
 	{
@@ -24,7 +20,7 @@ void SlimeAnimation::Play(SlimeAnimationType _animType)
 		m_animSpeed = 1.0f;
 		break;
 	case SlimeAnimationType::GetHit:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false);
 		m_animSpeed = 1.0f;
 		break;
 	case SlimeAnimationType::Idle:
