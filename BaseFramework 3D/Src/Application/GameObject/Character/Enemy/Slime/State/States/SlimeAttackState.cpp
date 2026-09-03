@@ -2,9 +2,7 @@
 
 #include"../../Slime.h"
 
-#include"SlimeDamageState.h"
 #include"SlimeNormalState.h"
-#include"SlimeDieState.h"
 
 void SlimeAttackState::Enter(Slime& slime)
 {
@@ -15,18 +13,6 @@ void SlimeAttackState::Enter(Slime& slime)
 void SlimeAttackState::Update(Slime & slime)
 {
 
-	if (slime.IsInOutro())
-	{
-		slime.ChangeState<SlimeDieState>();
-		return;
-	}
-
-	if (slime.IsDamaged())
-	{
-		slime.ChangeState<SlimeDamageState>();
-		return;
-	}
-	
 	slime.UpdateAttackCollision();
 
 	if (slime.IsAnimationFinished())

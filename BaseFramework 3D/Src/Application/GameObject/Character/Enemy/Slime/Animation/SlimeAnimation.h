@@ -10,11 +10,14 @@ public:
 	SlimeAnimation() {}
 	~SlimeAnimation() {}
 
-	void Init(std::shared_ptr<KdModelWork>& _model);
+	void Init(std::shared_ptr<KdModelWork>& model);
 
-	void Play(SlimeAnimationType _animType);
+	void Play(SlimeAnimationType type);
+	void RePlay(SlimeAnimationType type);
 
 private:
+
+	void Animations(SlimeAnimationType type);
 
 	SlimeAnimationType m_currentAnimation = SlimeAnimationType::None;
 

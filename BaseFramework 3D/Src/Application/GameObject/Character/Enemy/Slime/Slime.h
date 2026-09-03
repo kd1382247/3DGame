@@ -4,7 +4,6 @@
 
 #include"Animation/SlimeAnimationType.h"
 #include"Animation/SlimeAnimation.h"
-#include"State/SlimeState.h"
 #include"Parameter/SlimeParameter.h"
 #include"State/SlimeStateMachine.h"
 
@@ -51,7 +50,7 @@ public:
 
 
 	void PlayAnimation(SlimeAnimationType type);
-	
+	void RePlayAnimation(SlimeAnimationType type);
 
 	void StartAttack();
 	void EndAttack();
@@ -80,9 +79,6 @@ private:
 	void SetAttackTiming();
 
 private:
-
-	SlimeActionState m_actionState = SlimeActionState::Normal;
-	SlimeMoveState   m_moveState = SlimeMoveState::Idle;
 
 	SlimeSize        m_slimeSize = SlimeSize::Large;
 

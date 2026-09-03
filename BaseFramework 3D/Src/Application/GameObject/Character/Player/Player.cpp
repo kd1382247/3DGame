@@ -1,5 +1,7 @@
 ﻿#include "Player.h"
 
+#include"../../../System/TimeManager/TimeManager.h"
+
 #include"../../Camera/CameraBase.h"
 #include"../Enemy/EnemyBase.h"
 
@@ -58,6 +60,7 @@ void Player::Init()
 
 void Player::Update()
 {
+
 	// 操作入力
 	UpdateInput();
 
@@ -72,6 +75,7 @@ void Player::PostUpdate()
 {
 	// アニメーション更新
 	UpdateAnimation();
+	
 	
 	CharacterBase::PostUpdate();
 }
@@ -96,6 +100,8 @@ void Player::DrawLit()
 
 void Player::DrawDebug()
 {
+	CollisionManager::Instance().DrawDebug();
+
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.5, kRedColor);
 	m_pDebugWire->Draw();
 }
@@ -232,28 +238,23 @@ void Player::UpdateInput()
 void Player::UpdateMoveInput()
 {
 	Math::Vector3 moveDir = Math::Vector3::Zero;
-	m_dirType = 0;
 	m_moveFlg = false;
 
 	if (GetAsyncKeyState('W') & 0x8000)
 	{
 		moveDir.z += 1.0f;
-		m_dirType |= Up;
 	}
 	if (GetAsyncKeyState('S') & 0x8000)
 	{
 		moveDir.z -= 1.0f;
-		m_dirType |= Down;
 	}
 	if (GetAsyncKeyState('A') & 0x8000)
 	{
 		moveDir.x -= 1.0f;
-		m_dirType |= Left;
 	}
 	if (GetAsyncKeyState('D') & 0x8000)
 	{
 		moveDir.x += 1.0f;
-		m_dirType |= Right;
 	}
 
 	if (moveDir != Math::Vector3::Zero)
@@ -268,7 +269,7 @@ void Player::UpdateJumpInput()
 {
 	const bool currentJumpButton = (GetAsyncKeyState(VK_SPACE) & 0x8000) != 0;
 
-	m_jumpButton = currentJumpButton && m_gravity <= 0;
+	m_jumpButton = currentJumpButton && IsGrounded();
 }
 
 void Player::UpdateAttackInput()
@@ -369,8 +370,12 @@ void Player::UpdateMove()
 
 	const auto& param = m_parameter.GetParam();
 
-	nowPos += dir *param.m_moveSpeed;
-	SetPos(nowPos);
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	Math::Vector3 move=dir *(param.m_moveSpeed*60.0f)*deltaTime;
+
+	// 移動量をセット
+	AddPendingMove(move);
 
 }
 
@@ -396,16 +401,34 @@ void Player::UpdateAttackMove()
 
 	const auto& param = m_parameter.GetParam();
 
-	nowPos += dir * param.m_attackMoveSpeed;
-	SetPos(nowPos);
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	//nowPos += dir * (param.m_attackMoveSpeed*60.0f)*deltaTime;
+	Math::Vector3 move= dir * (param.m_attackMoveSpeed*60.0f)*deltaTime;
+	AddPendingMove(move);
 }
 
 void Player::UpdateGravity()
 {
 	Math::Vector3 nowPos = GetPos();
-	m_gravity += 0.02f;
-	nowPos.y -= m_gravity;
-	SetPos(nowPos);
+
+	constexpr float gravityAcceleration = 72.0f;
+	constexpr float maxFallSpeed = 10.0f;
+
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	m_gravity += gravityAcceleration*deltaTime;
+
+
+	Math::Vector3 gravityMove = { 0.0f,-m_gravity * deltaTime ,0.0f };
+
+	AddPendingMove(gravityMove);
+
+	//m_pDebugWire->AddDebugLine(GetPos(),Math::Vector3::Down,m_gravity*deltaTime,kBlackColor);
+
+
+	KdDebugGUI::Instance().ClearLog();
+	KdDebugGUI::Instance().AddLog("%f", m_gravity*deltaTime);
 }
 
 void Player::UpdateSpecialMove()
@@ -416,7 +439,15 @@ void Player::UpdateSpecialMove()
 		return;
 	}
 
-	UpdateGroundCollision();
+	const auto& param = m_parameter.GetParam();
+
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	Math::Vector3 move = m_specialMoveDir * (0.3 * 60.0f) * deltaTime;
+
+	AddPendingMove(move);
+
+	//UpdateGroundCollision();
 	ClearHitTargets();
 }
 
@@ -561,9 +592,7 @@ void Player::CreateSpecialMoveDir()
 	toDir.y = 0;
 	toDir.Normalize();
 
-	const auto& param = m_parameter.GetParam();
-
-	m_specialMoveDir=toDir*param.m_specialMoveSpeed;
+	m_specialMoveDir = toDir;
 }
 
 void Player::UpdateGroundCollision()
@@ -653,7 +682,10 @@ void Player::OnHit(const AttackInfo attackInfo)
 	}
 	else
 	{
-		ChangeState<PlayerDamageState>();
+		if(!IsAttackButton() && !IsSpeciaMovelButton())
+		{
+			ChangeState<PlayerDamageState>();
+		}
 	}
 
 	
@@ -681,7 +713,9 @@ void Player::StartJump()
 
 	const auto& param = m_parameter.GetParam();
 
-	m_gravity -= param.m_jumpPow;
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	m_gravity -= (param.m_jumpPow*60.0f);
 }
 
 void Player::StartSpecialMove()

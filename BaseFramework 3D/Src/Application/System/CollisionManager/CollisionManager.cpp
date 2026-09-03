@@ -1,5 +1,7 @@
 ﻿#include "CollisionManager.h"
 
+#include"../TimeManager/TimeManager.h"
+
 #include"../../../Framework/GameObject/KdGameObject.h"
 #include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 #include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
@@ -15,9 +17,14 @@ namespace
 	}
 }
 
+void CollisionManager::DrawDebug()
+{
+	m_pDebugWire->Draw();
+}
+
 void CollisionManager::Init()
 {
-	m_pDebagWire = std::make_unique<KdDebugWireFrame>();
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
 
 bool CollisionManager::SphereVsAABB(
@@ -123,28 +130,28 @@ bool CollisionManager::SphereVsAABB(
 	{
 		minDistance = distanceBottom;
 
-		outPush = Math::Vector3(-(distanceBottom + sphere.Radius), 0.0f, 0.0f);
+		outPush = Math::Vector3(0.0f, -(distanceBottom + sphere.Radius), 0.0f);
 	}
 
 	if (distanceTop < minDistance)
 	{
 		minDistance = distanceTop;
 
-		outPush = Math::Vector3(distanceTop + sphere.Radius, 0.0f, 0.0f);
+		outPush = Math::Vector3(0.0f, distanceTop + sphere.Radius, 0.0f);
 	}
 
 	if (distanceBack < minDistance)
 	{
 		minDistance = distanceBack;
 
-		outPush = Math::Vector3(-(distanceBack + sphere.Radius), 0.0f, 0.0f);
+		outPush = Math::Vector3(0.0f, 0.0f, -(distanceBack + sphere.Radius));
 	}
 
 	if (distanceFront < minDistance)
 	{
 		minDistance = distanceFront;
 
-		outPush = Math::Vector3(distanceFront + sphere.Radius, 0.0f, 0.0f);
+		outPush = Math::Vector3(0.0f, 0.0f, distanceFront + sphere.Radius);
 	}
 
 	return true;
@@ -215,23 +222,32 @@ void CollisionManager::Clear()
 void CollisionManager::Resolve()
 {
 
+
+	
+	ResolveCharacterMovement();
+
+	TestGroundSweep();
+
+	ResolveGroundSnap();
+	
+
 	// Character同士からPushを計算
-	ResolveCharacterCollision();
+	//ResolveCharacterCollision();
 
 	// ノックバックをSubStepで適用
 	for (auto& character : GetCharacters())
 	{
-		ApplyKnockBack(character);
+		//ApplyKnockBack(character);
 	}
 
 	// 最後に全員まとめて壁とのめり込みを再確認
-	ResolveWallCollision();
+	//ResolveWallCollision();
 
 	// 地面・坂との着地判定
-	ResolveGroundCollision();
+	//ResolveGroundCollision();
 
 	// Groundによる位置変更後の保険
-	ResolveWallCollision();
+	//ResolveWallCollision();
 }
 
 
@@ -289,8 +305,15 @@ void CollisionManager::ResolveGroundCollisionForCharacter(const std::shared_ptr<
 	// レイの発射方向を設定
 	rayInfo.m_dir = Math::Vector3::Down;
 
-	rayInfo.m_range =
-		character->GetGravity() + enableStepHigh + groundSnapDistance;
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+	float fallDistance = 0.0f;
+
+	if (character->GetGravity() > 0)
+	{
+		fallDistance = character->GetGravity() * deltaTime;
+	}
+
+	rayInfo.m_range =fallDistance+ enableStepHigh + groundSnapDistance;
 
 	rayInfo.m_type = KdCollider::TypeGround;
 
@@ -322,6 +345,7 @@ void CollisionManager::ResolveGroundCollisionForCharacter(const std::shared_ptr<
 		}
 		if (hit)
 		{
+
 			// 地面に当たっている
 			character->SetPos(hitPos);
 		}
@@ -447,6 +471,451 @@ std::vector<std::shared_ptr<CharacterBase>> CollisionManager::GetCharacters()
 	}
 
 	return characters;
+}
+
+void CollisionManager::TestGroundSweep()
+{
+	auto characters = GetCharacters();
+
+	const auto& grounds = GetObjects(CollisionLayer::Ground);
+
+	for (const auto& character : characters)
+	{
+		if (!character)
+		{
+			continue;
+		}
+
+		Math::Vector3 start = character->GetPrevPos();
+
+		Math::Vector3 move = character->GetPos()-character->GetPrevPos();
+
+		// Wall Sweepでは処理していないY移動を追加
+		move.y = character->GetPendingMove().y;
+
+		float moveLength = move.Length();
+		if (moveLength <= 0.000001f)
+		{
+			continue;
+		}
+
+		Math::Vector3 moveDir = move;
+		moveDir.Normalize();
+
+		KdCollider::RayInfo rayInfo(KdCollider::TypeGround, start, moveDir, moveLength);
+
+		// -------------------------
+		// Groundとの衝突を調べる
+		// -------------------------
+
+		float maxOverlap = 0.0f;
+		bool  hit=false;
+		Math::Vector3 hitPos = {};
+		Math::Vector3 hitNormal = {};
+
+		for (const auto& weakObj : grounds)
+		{
+			auto ground = weakObj.lock();
+			if (!ground)
+			{
+				continue;
+			}
+
+			std::list<KdCollider::CollisionResult>result;
+
+			ground->Intersects(rayInfo, &result);
+
+			for (const auto& ret : result)
+			{
+				if (maxOverlap < ret.m_overlapDistance)
+				{
+					maxOverlap = ret.m_overlapDistance;
+					hit = true;
+					hitPos = ret.m_hitPos;
+					hitNormal = ret.m_hitNDir;
+				}
+			}
+		}
+		
+		if (hit)
+		{
+
+			Math::Vector3 groundNormal = hitNormal;
+			groundNormal.Normalize();
+
+			// 45°まで登れる
+			constexpr float walkableGroundDot = 0.707;
+
+			float groundDot = groundNormal.Dot(Math::Vector3::Up);
+
+			bool isWalkable = groundDot >= walkableGroundDot;
+			float into =
+				move.Dot(groundNormal);
+
+			if (isWalkable && into < 0.0f)
+			{
+				float hitDistance =
+					moveLength - maxOverlap;
+
+				float toi =
+					hitDistance / moveLength;
+
+				Math::Vector3 moveToHit =
+					move * toi;
+
+				Math::Vector3 leftover =
+					move * (1.0f - toi);
+
+				Math::Vector3 groundMove =
+					leftover -
+					groundNormal * leftover.Dot(groundNormal);
+
+				Math::Vector3 finalPos =
+					start + moveToHit + groundMove;
+
+				character->SetPos(finalPos);
+			}
+			else
+			{
+				character->SetPos(start + move);
+			}
+		}
+		else
+		{
+			character->SetPos(start + move);
+		}
+
+	}
+}
+
+void CollisionManager::ResolveGroundSnap()
+{
+	auto characters = GetCharacters();
+
+	const auto& grounds = GetObjects(CollisionLayer::Ground);
+
+	for(const auto&character:characters)
+	{
+
+		if (!character)
+		{
+			continue;
+		}
+
+
+		character->SetIsGrounded(false);
+		if (character->GetPendingMove().y > 0.0f)
+		{
+			continue;
+		}
+
+		constexpr float enableStepHigh = 0.2f;
+		constexpr float groundSnapDistance = 0.2f;
+
+		KdCollider::RayInfo rayInfo;
+
+		rayInfo.m_pos = character->GetPos();
+		rayInfo.m_pos.y += enableStepHigh;
+
+		rayInfo.m_dir = Math::Vector3::Down;
+
+		rayInfo.m_range =
+			enableStepHigh + groundSnapDistance;
+
+		rayInfo.m_type =
+			KdCollider::TypeGround;
+
+		bool hit = false;
+		float maxOverlap = 0.0f;
+		Math::Vector3 hitPos = {};
+		Math::Vector3 hitNormal = {};
+
+		for (const auto& weakObj : grounds)
+		{
+			auto ground = weakObj.lock();
+
+			if (!ground)
+			{
+				continue;
+			}
+
+			std::list < KdCollider::CollisionResult >result;
+
+			ground->Intersects(rayInfo, &result);
+
+			for (const auto& ret : result)
+			{
+				if (maxOverlap < ret.m_overlapDistance)
+				{
+					maxOverlap = ret.m_overlapDistance;
+					hitPos = ret.m_hitPos;
+					hitNormal = ret.m_hitNDir;
+					hit = true;
+
+					m_pDebugWire->AddDebugLine(
+						ret.m_hitPos,
+						ret.m_hitNDir,
+						1.0f,
+						kBlackColor);
+				}
+			}
+
+
+		}
+
+		if (hit)
+		{
+			Math::Vector3 groundNormal = hitNormal;
+			groundNormal.Normalize();
+
+			constexpr float walkableGroundDot = 0.707f;
+
+			float groundDot =
+				groundNormal.Dot(Math::Vector3::Up);
+
+			bool isWalkable =
+				groundDot >= walkableGroundDot;
+
+			if (isWalkable)
+			{
+				// 地面に当たっている
+				character->SetPos(hitPos);
+				character->SetGravity(0.0f);
+				character->SetIsGrounded(true);
+			}
+		}
+	}
+
+}
+
+void CollisionManager::ResolveCharacterMovement()
+{
+	std::vector<std::shared_ptr<CharacterBase>>characters = GetCharacters();
+
+	auto& walls = WallCollisionManager::Instance().GetWallCollisionList();
+
+	for (const auto& character : characters)
+	{
+		Math::Vector3 currentPos = character->GetPrevPos();
+		Math::Vector3 remainingMove = character->GetPendingMove();
+
+		remainingMove.y = 0.0f;
+
+		for(int i=0;i<2;i++)
+		{
+			bool foundHit = false;
+			float closestTOI = 1.0f;
+			Math::Vector3 closestNormal = Math::Vector3::Zero;
+
+			for (const auto& wall : walls)
+			{
+				if (!wall)
+				{
+					continue;
+				}
+
+				float toi = 0.0f;
+				Math::Vector3 normal = Math::Vector3::Zero;
+
+				// 
+				Math::Vector3 center = wall->GetBox().Center;
+				Math::Vector3 extents = wall->GetBox().Extents;
+
+				Math::Vector3 boxMax = center + extents;
+				Math::Vector3 boxMin = center - extents;
+
+				Math::Vector3 sphereOffset =
+					character->GetBumpSphere().Center - character->GetPos();
+
+				Math::Vector3 sweepStart =
+					currentPos + sphereOffset;
+
+
+				bool Hit = SphereSweepVsAABB(
+					sweepStart,
+					character->GetBumpSphere().Radius,
+					remainingMove,
+					boxMin,
+					boxMax,
+					toi,
+					normal);
+
+				if (Hit)
+				{
+					if (toi < closestTOI)
+					{
+						closestTOI = toi;
+						closestNormal = normal;
+						foundHit = true;
+					}
+				}
+			}
+
+			if (foundHit)
+			{
+
+				Math::Vector3 move = remainingMove * closestTOI;
+				currentPos += move;
+
+
+				constexpr float skin = 0.001f;
+
+				currentPos += closestNormal * skin;
+
+				// 残りのベクトルを計算
+				Math::Vector3 leftover = remainingMove * (1 - closestTOI);
+
+				// 壁方向の成分を消す
+				Math::Vector3 slideMove =
+					leftover - closestNormal * leftover.Dot(closestNormal);
+
+				remainingMove =slideMove;
+			}
+			else
+			{
+				currentPos += remainingMove;
+				break;
+			}
+		}
+		character->SetPos(currentPos);
+
+	}
+}
+
+bool CollisionManager::SphereSweepVsAABB(const Math::Vector3& start, float radius, const Math::Vector3& move, const Math::Vector3& boxMin, const Math::Vector3& boxMax, float& outTOI, Math::Vector3& outNormal)
+{
+
+	Math::Vector3 radiusVec(radius, radius, radius);
+
+	// スフィアの半径分、ボックスの範囲を広げる
+	Math::Vector3 expandedMin = boxMin - radiusVec;
+	Math::Vector3 expandedMax = boxMax + radiusVec;
+
+	return SegmentVsAABB(start, move, expandedMin, expandedMax, outTOI, outNormal);
+}
+
+bool CollisionManager::SegmentVsAABB(const Math::Vector3& start, const Math::Vector3& move, const Math::Vector3& boxMin, const Math::Vector3& boxMax, float& outTOI, Math::Vector3& outNormal)
+{
+	
+	constexpr float epsilon = 0.000001f;
+
+	// 衝突位置
+	float tEnter = 0.0f;
+	float tExit = 1.0f;
+
+	// 当たった面の法線ベクトル
+	Math::Vector3 hitNormal = Math::Vector3::Zero;
+
+	// X軸
+	if (std::abs(move.x) < epsilon)
+	{
+		// 動いていない場合、ボックスの範囲内にいるか
+		if (start.x<boxMin.x || start.x>boxMax.x)
+		{
+			return false;
+		}
+	}
+	else
+	{
+		float t1 = (boxMin.x - start.x) / move.x;
+		float t2 = (boxMax.x - start.x) / move.x;
+
+		float axisEnter = std::min(t1, t2);
+		float axisExit = std::max(t1, t2);
+
+		if (axisEnter > tEnter)
+		{
+			tEnter = axisEnter;
+
+			// 法線ベクトルを更新
+			hitNormal = move.x > 0 ?
+				Math::Vector3::Left :
+				Math::Vector3::Right;
+		}
+
+		tExit = std::min(tExit, axisExit);
+
+		if (tEnter > tExit)
+		{
+			return false;
+		}
+	}
+
+	// Y軸
+	if (std::abs(move.y) < epsilon)
+	{
+		// 動いていない場合、ボックスの範囲内にいるか
+		if (start.y<boxMin.y || start.y>boxMax.y)
+		{
+			return false;
+		}
+	}
+	else
+	{
+		float t1 = (boxMin.y - start.y) / move.y;
+		float t2 = (boxMax.y - start.y) / move.y;
+
+		float axisEnter = std::min(t1, t2);
+		float axisExit = std::max(t1, t2);
+
+		if (axisEnter > tEnter)
+		{
+			tEnter = axisEnter;
+
+			// 法線ベクトルを更新
+			hitNormal = move.y > 0 ?
+				Math::Vector3::Down :
+				Math::Vector3::Up;
+		}
+
+		tExit = std::min(tExit, axisExit);
+
+		if (tEnter > tExit)
+		{
+			return false;
+		}
+	}
+
+	// Z軸
+	if (std::abs(move.z) < epsilon)
+	{
+		// 動いていない場合、ボックスの範囲内にいるか
+		if (start.z<boxMin.z || start.z>boxMax.z)
+		{
+			return false;
+		}
+	}
+	else
+	{
+		float t1 = (boxMin.z - start.z) / move.z;
+		float t2 = (boxMax.z - start.z) / move.z;
+
+		float axisEnter = std::min(t1, t2);
+		float axisExit = std::max(t1, t2);
+
+		if (axisEnter > tEnter)
+		{
+			tEnter = axisEnter;
+
+			// 法線ベクトルを更新
+			hitNormal = move.z > 0 ?
+				Math::Vector3::Forward :
+				Math::Vector3::Backward;
+		}
+
+		tExit = std::min(tExit, axisExit);
+
+		if (tEnter > tExit)
+		{
+			return false;
+		}
+	}
+
+	outTOI = tEnter;
+	outNormal = hitNormal;
+
+	return true;
+
 }
 
 void CollisionManager::ResolveCharacterCollision()
@@ -576,8 +1045,15 @@ void CollisionManager::ResolveGroundCollision()
 		// レイの発射方向を設定
 		rayInfo.m_dir = Math::Vector3::Down;
 
-		rayInfo.m_range =
-			character->GetGravity() + enableStepHigh + groundSnapDistance;
+		float deltaTime = TimeManager::Instance().GetDeltaTime();
+		float fallDistance = 0.0f;
+
+		if(character->GetGravity()>0)
+		{
+			fallDistance = character->GetGravity() * deltaTime;
+		}
+
+		rayInfo.m_range = fallDistance + enableStepHigh + groundSnapDistance;
 
 		rayInfo.m_type = KdCollider::TypeGround;
 

@@ -62,7 +62,7 @@ void KdDebugGUI::GuiProcess()
 
 
 
-	if(EditorManager::Instance().IsEditMode())
+	//if(EditorManager::Instance().IsEditMode())
 	{
 		// ログウィンドウ
 		m_uqLog->Draw("Log Window");

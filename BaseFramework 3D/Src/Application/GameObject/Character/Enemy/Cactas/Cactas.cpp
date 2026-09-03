@@ -11,6 +11,8 @@
 #include"../../Player/Player.h"
 
 #include"State/States/CactasNormalState.h"
+#include"State/States/CactasDamageState.h"
+#include"State//States/CactasDieState.h"
 
 void Cactas::Init()
 {
@@ -55,7 +57,7 @@ void Cactas::Update()
 
 	UpdateGravity();
 
-	m_stateMachine.Update(*this);
+	//m_stateMachine.Update(*this);
 
 	UpdateAttack();
 }
@@ -88,12 +90,17 @@ void Cactas::SetUpReference()
 void Cactas::DrawDebug()
 {
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
-	m_pDebugWire->Draw();
+	//m_pDebugWire->Draw();
 }
 
 void Cactas::PlayAnimation(CactasAnimationType type)
 {
 	m_animation.Play(type);
+}
+
+void Cactas::RePlayAnimation(CactasAnimationType type)
+{
+	m_animation.RePlay(type);
 }
 
 void Cactas::StartAttack()
@@ -120,11 +127,6 @@ void Cactas::UpdateLaunch()
 	pos += m_launchVec;
 
 	SetPos(pos);
-}
-
-void Cactas::OutroUpdate()
-{
-	m_outroFlg = true;
 }
 
 void Cactas::UpdateMove()
@@ -280,12 +282,16 @@ void Cactas::OnHit(const AttackInfo attackInfo)
 
 	m_hp -= attackInfo.damage;
 
-	SetDamaged(true);
-
 	if (m_hp <= 0)
 	{
 		m_hp = 0;
 		m_outroFlg = true;
+		ChangeState<CactasDieState>();
+	}
+	else
+	{
+		ChangeState<CactasDamageState>();
+		RePlayAnimation(CactasAnimationType::GetHit);
 	}
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());

@@ -4,8 +4,6 @@ class Cactas;
 
 #include"../CactasStateBase.h"
 
-
-
 class CactasAttackState :public CactasStateBase
 {
 public:

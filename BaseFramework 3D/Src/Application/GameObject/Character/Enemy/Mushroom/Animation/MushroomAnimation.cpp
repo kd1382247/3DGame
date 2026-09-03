@@ -7,14 +7,27 @@ void MushroomAnimation::Init(std::shared_ptr<KdModelWork>& _model)
 
 }
 
-void MushroomAnimation::Play(MushroomAnimationType _animType)
+void MushroomAnimation::Play(MushroomAnimationType type)
 {
-	if (m_currentAnimation == _animType)
+	if (m_currentAnimation == type)
 	{
 		return;
 	}
 
-	switch (_animType)
+	Animations(type);
+	m_currentAnimation = type;
+}
+
+void MushroomAnimation::RePlay(MushroomAnimationType type)
+{
+
+	Animations(type);
+	m_currentAnimation = type;
+}
+
+void MushroomAnimation::Animations(MushroomAnimationType type)
+{
+	switch (type)
 	{
 	case MushroomAnimationType::None:
 		break;
@@ -24,7 +37,7 @@ void MushroomAnimation::Play(MushroomAnimationType _animType)
 		m_animSpeed = 1.0f;
 		break;
 	case MushroomAnimationType::GetHit:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false);
 		m_animSpeed = 1.0f;
 		break;
 	case MushroomAnimationType::Idle:
@@ -42,5 +55,4 @@ void MushroomAnimation::Play(MushroomAnimationType _animType)
 		break;
 	}
 
-	m_currentAnimation = _animType;
 }

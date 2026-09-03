@@ -11,6 +11,7 @@
 #include"State/SlimeStateMachine.h"
 #include"State/States/SlimeNormalState.h"
 #include"State/States/SlimeDamageState.h"
+#include"State/States//SlimeDieState.h"
 
 
 void Slime::Init()
@@ -68,7 +69,7 @@ void Slime::Update()
 
 	UpdateGravity();
 
-	m_stateMachine.Update(*this);
+	//m_stateMachine.Update(*this);
 	
 	UpdateAttack();
 }
@@ -105,12 +106,17 @@ void Slime::DrawDebug()
 {
 
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
-	m_pDebugWire->Draw();
+	//m_pDebugWire->Draw();
 }
 
 void Slime::PlayAnimation(SlimeAnimationType type)
 {
 	m_animation.Play(type);
+}
+
+void Slime::RePlayAnimation(SlimeAnimationType type)
+{
+	m_animation.RePlay(type);
 }
 
 void Slime::StartAttack()
@@ -316,12 +322,16 @@ void Slime::OnHit(const AttackInfo attackInfo)
 {
 	m_hp -= attackInfo.damage;
 
-	PlayAnimation(SlimeAnimationType::GetHit);
-
 	if (m_hp <= 0)
 	{
 		m_hp = 0;
 		m_outroFlg = true;
+		ChangeState<SlimeDieState>();
+	}
+	else
+	{
+		ChangeState<SlimeDamageState>();
+		RePlayAnimation(SlimeAnimationType::GetHit);
 	}
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());

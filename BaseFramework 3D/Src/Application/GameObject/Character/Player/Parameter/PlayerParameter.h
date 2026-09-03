@@ -9,7 +9,7 @@ public:
 		int  m_maxHP = 100;
 
 		// Move
-		float m_moveSpeed = 0.15f;
+		float m_moveSpeed = 9.0f;
 		float m_jumpPow = 0.4f;
 		float m_turnSpeed = 12.0f;
 

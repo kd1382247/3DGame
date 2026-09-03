@@ -4,8 +4,6 @@
 
 #include"CactasAttackState.h"
 #include"CactasLaunchState.h"
-#include"CactasDamageState.h"
-#include"CactasDieState.h"
 
 void CactasNormalState::Enter(Cactas& cactas)
 {
@@ -16,18 +14,6 @@ void CactasNormalState::Update(Cactas & cactas)
 {
 
 	cactas.UpdateMove();
-
-	if (cactas.IsInOutro())
-	{
-		cactas.ChangeState<CactasDieState>();
-		return;
-	}
-
-	if (cactas.IsDamaged())
-	{
-		cactas.ChangeState<CactasDamageState>();
-		return;
-	}
 
 	if (cactas.IsLaunch())
 	{
@@ -40,7 +26,6 @@ void CactasNormalState::Update(Cactas & cactas)
 		cactas.ChangeState<CactasAttackState>();
 		return;
 	}
-
 }
 
 void CactasNormalState::Exit(Cactas & cactas)

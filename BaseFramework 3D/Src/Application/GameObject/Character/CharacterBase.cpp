@@ -16,6 +16,14 @@ CharacterBase::~CharacterBase()
 void CharacterBase::Init()
 {}
 
+void CharacterBase::PreUpdate()
+{
+	// 移動開始前の位置をセット
+	SetPrevPos(GetPos());
+	// 前フレームの移動量をクリア
+	ClearPendingMove(Math::Vector3::Zero);
+}
+
 // 更新
 void CharacterBase::Update()
 {}

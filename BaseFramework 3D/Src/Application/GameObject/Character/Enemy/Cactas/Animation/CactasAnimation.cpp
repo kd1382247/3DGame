@@ -1,17 +1,33 @@
 ﻿#include "CactasAnimation.h"
 
-void CactasAnimation::Init(std::shared_ptr<KdModelWork>& _model)
+void CactasAnimation::Init(std::shared_ptr<KdModelWork>& model)
 {
-	m_spModel = _model;
+	m_spModel = model;
 	m_spAnimator = std::make_shared<KdAnimator>();
 
 }
 
-void CactasAnimation::Play(CactasAnimationType _animType)
+void CactasAnimation::Play(CactasAnimationType type)
 {
+	if (m_currentAnimation == type)
+	{
+		return;
+	}
 
+	Animations(type);
+	m_currentAnimation = type;
+}
 
-	switch (_animType)
+void CactasAnimation::RePlay(CactasAnimationType type)
+{
+	// 同じアニメーションでも強制的に0から再生
+	Animations(type);
+	m_currentAnimation = type;
+}
+
+void CactasAnimation::Animations(CactasAnimationType type)
+{
+	switch (type)
 	{
 	case CactasAnimationType::None:
 		break;
@@ -20,7 +36,7 @@ void CactasAnimation::Play(CactasAnimationType _animType)
 		m_animSpeed = 1.0f;
 		break;
 	case CactasAnimationType::GetHit:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"),false);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false);
 		m_animSpeed = 1.0f;
 		break;
 	case CactasAnimationType::Idle:
@@ -38,5 +54,4 @@ void CactasAnimation::Play(CactasAnimationType _animType)
 		break;
 	}
 
-	m_currentAnimation = _animType;
 }

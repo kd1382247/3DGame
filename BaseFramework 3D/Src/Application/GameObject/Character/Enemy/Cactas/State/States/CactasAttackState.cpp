@@ -1,8 +1,6 @@
 ﻿#include "CactasAttackState.h"
 
 #include"CactasNormalState.h"
-#include"CactasDieState.h"
-#include"CactasDamageState.h"
 
 #include"../../Cactas.h"
 
@@ -14,18 +12,6 @@ void CactasAttackState::Enter(Cactas& cactas)
 
 void CactasAttackState::Update(Cactas & cactas)
 {
-
-	if (cactas.IsInOutro())
-	{
-		cactas.ChangeState<CactasDieState>();
-		return;
-	}
-
-	if (cactas.IsDamaged())
-	{
-		cactas.ChangeState<CactasDamageState>();
-		return;
-	}
 
 	cactas.UpdateAttackCollision();
 

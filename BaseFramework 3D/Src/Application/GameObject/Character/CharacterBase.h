@@ -16,6 +16,7 @@ public:
 	~CharacterBase()	override;
 
 	void Init()			override;
+	void PreUpdate()    override;
 	void Update()		override;
 	void PostUpdate()	override;
 
@@ -67,6 +68,15 @@ public:
 
 	virtual float GetTurnSpeed()const = 0;
 
+	// キャラの移動量をセット
+	void ClearPendingMove(const Math::Vector3& move) { m_pendingMove = move; }
+	Math::Vector3 GetPendingMove()const { return m_pendingMove; }
+
+	void AddPendingMove(const Math::Vector3& move) { m_pendingMove += move; }
+
+	// 移動前の位置をセット
+	void  SetPrevPos(const Math::Vector3& pos) { m_prevPos = pos; }
+	Math::Vector3 GetPrevPos()const { return m_prevPos; }
 
 
 	bool IsInOutro()const { return m_outroFlg; }
@@ -111,6 +121,12 @@ protected:
 	
 	// ノックバック
 	Math::Vector3 m_knockBack = {};
+
+	// キャラの移動量
+	Math::Vector3 m_pendingMove = {};
+
+	// 移動前の位置を保存
+	Math::Vector3 m_prevPos = {};
 
 	// キャラが死亡したときに行う処理
 	bool m_outroFlg = false;

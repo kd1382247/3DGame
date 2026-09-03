@@ -1,4 +1,4 @@
 {
-    "SpawnCount": 3,
-    "SpawnInterval": 15.0
+    "SpawnCount": 10,
+    "SpawnInterval": 2.0
 }

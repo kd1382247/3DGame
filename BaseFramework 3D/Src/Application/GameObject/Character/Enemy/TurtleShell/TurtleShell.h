@@ -2,10 +2,10 @@
 
 #include"../EnemyBase.h"
 
+#include"Animation/TurtleShellAnimationType.h"
 #include"Animation/TurtleShellAnimation.h"
-#include"State/TurtleShellState.h"
 #include"Parameter/TurtleShellParameter.h"
-
+#include"State/TurtleShellStateMachine.h"
 
 class TurtleShell :public EnemyBase
 {
@@ -25,41 +25,60 @@ public:
 	void SetUpReference()override;
 
 
+	template<class T>
+	void ChangeState()
+	{
+		m_stateMachine.ChangeState(*this, std::make_unique<T>());
+	}
+
+	bool IsAttack()const { return m_attackFlg; }
+	bool IsLaunch()const { return m_launchFlg; }
+
+	// パラメータのゲッター
 	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
-
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 
-private:
+
+	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
+
+
+	void PlayAnimation(TurtleShellAnimationType type);
+	void RePlayAnimation(TurtleShellAnimationType type);
+
+	// 攻撃
+
+	void UpdateSpinAttackMove();
+	bool SpinAttackRemaining();
+	void StartSpinAttack();
+	void EndSpinAttack();
+
+	// スタン
+	bool DizyyRemaining();
+	void StartDizzy();
+	void EndDizzy();
+
 
 	void UpdateLaunch();
 
-
 	void UpdateMove();
-	void UpdateAttack();
-	void UpdateSpinAttackMove();
-
-	bool SpinAttackRemaining();
-	bool DizyyRemaining();
-	void HitCoolDownRemaining();
-
-
-	void UpdateAnimation();
-
-	void ChangeActionState(TurtleShellActionState  nextState);
-	void ExitState(TurtleShellActionState _state);
-	void EnterState(TurtleShellActionState _state);
-
-
-	void UpdateActionState();
 
 	// 攻撃判定
 	void UpdateAttackCollision();
 
+	void OnHit(const AttackInfo attackInfo)override;
+
 private:
 
-	TurtleShellActionState m_actionState = TurtleShellActionState::Normal;
-	TurtleShellMoveState   m_moveState = TurtleShellMoveState::Idle;
+
+	void UpdateAttack();
+
+	void HitCoolDownRemaining();
+
+	void UpdateAnimation();
+
+
+private:
 
 
 	float m_spinAttackDuration = 0;
@@ -75,6 +94,9 @@ private:
 
 	// パラメータクラス
 	TurtleShellParameter   m_parameter;
+
+	// ステートマシン
+	TurtleShellStateMachine m_stateMachine;
 
 
 	float m_hitCooldownDuration = 0.0f;

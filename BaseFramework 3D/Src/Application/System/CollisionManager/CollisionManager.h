@@ -10,6 +10,8 @@ class CollisionManager
 {
 public:
 
+	void DrawDebug();
+
 	void Init();
 
 	bool SphereVsAABB(const DirectX::BoundingSphere& sphere, const DirectX::BoundingBox& box, Math::Vector3& outPush, Math::Vector3& outNormal);
@@ -36,6 +38,9 @@ public:
 	void ResolveGroundCollisionForCharacter(const std::shared_ptr<CharacterBase>& character);
 
 
+	void ResolveCharacterCollision();
+	void ResolveWallCollision();
+	void ResolveGroundCollision();
 
 private:
 
@@ -47,9 +52,30 @@ private:
 	std::vector<std::shared_ptr<CharacterBase>>GetCharacters();
 
 
-	void ResolveCharacterCollision();
-	void ResolveWallCollision();
-	void ResolveGroundCollision();
+	void TestGroundSweep();
+
+	void ResolveGroundSnap();
+
+	void ResolveCharacterMovement();
+
+	bool SphereSweepVsAABB(
+		const Math::Vector3& sphereCenter,
+		float radius,
+		const Math::Vector3& move,
+		const Math::Vector3& boxMin,
+		const Math::Vector3& boxMax,
+		float& outTOI,
+		Math::Vector3& outNormal);
+
+	bool SegmentVsAABB(
+		const Math::Vector3& start,
+		const Math::Vector3& move,
+		const Math::Vector3& boxMin,
+		const Math::Vector3& boxMax,
+		float& outTOI,
+		Math::Vector3 &outNormal
+	);
+
 
 
 	// レイヤーのサイズを取得
@@ -59,7 +85,7 @@ private:
 	std::array<objectList, LayerCount>m_objectLists;
 
 
-	std::unique_ptr<KdDebugWireFrame>m_pDebagWire=nullptr;
+	std::unique_ptr<KdDebugWireFrame>m_pDebugWire=nullptr;
 
 private: // シングルトンパターン
 

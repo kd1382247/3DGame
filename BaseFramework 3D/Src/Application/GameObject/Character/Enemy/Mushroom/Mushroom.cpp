@@ -2,8 +2,13 @@
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
+#include"../../../FlyText/FlyTextManager.h"
 
 #include"../../Player/Player.h"
+
+#include"State/States/MushroomNormalState.h"
+#include"State/States/MushroomDamageState.h"
+#include"State/States/MushroomDieState.h"
 
 void Mushroom::Init()
 {
@@ -33,6 +38,8 @@ void Mushroom::Init()
 		// オブジェクト名セット
 		SetObjectName("Mushroom");
 
+		m_stateMachine.ChangeState(*this, std::make_unique<MushroomNormalState>());
+
 	}
 
 	EnemyBase::Init();
@@ -48,35 +55,18 @@ void Mushroom::Update()
 
 	UpdateGravity();
 
-	if (IsInOutro())
-	{
-		ChangeActionState(MushroomActionState::Death);
-		return;
-	}
+	//m_stateMachine.Update(*this);
 
-	if (m_launchFlg)
-	{
-		UpdateLaunch();
-		return;
-	}
-
-	UpdateMove();
 	UpdateAttack();
-
-	UpdateAttackCollision();
 
 }
 
 void Mushroom::PostUpdate()
 {
 	
-	UpdateActionState();
-
 	UpdateAnimation();
 
-	
 	EnemyBase::PostUpdate();
-
 }
 
 void Mushroom::DrawInspector()
@@ -89,7 +79,7 @@ void Mushroom::DrawInspector()
 void Mushroom::DrawDebug()
 {
 	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
-	m_pDebugWire->Draw();
+	//m_pDebugWire->Draw();
 }
 
 void Mushroom::SetUpReference()
@@ -99,6 +89,49 @@ void Mushroom::SetUpReference()
 	// HPBarを生成
 	EnemyHPBarManager::Instance().CreateHPBar(
 		std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
+}
+
+void Mushroom::OnHit(const AttackInfo attackInfo)
+{
+	m_hp -= attackInfo.damage;
+
+	if (m_hp <= 0)
+	{
+		m_hp = 0;
+		m_outroFlg = true;
+		ChangeState<MushroomDieState>();
+	}
+	else
+	{
+		ChangeState<MushroomDamageState>();
+		RePlayAnimation(MushroomAnimationType::GetHit);
+	}
+
+	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
+
+	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
+}
+
+void Mushroom::PlayAnimation(MushroomAnimationType type)
+{
+	m_animation.Play(type);
+}
+
+void Mushroom::RePlayAnimation(MushroomAnimationType type)
+{
+	m_animation.RePlay(type);
+}
+
+void Mushroom::StartAttack()
+{
+	m_hitTarget = false;
+	SetAttackTiming();
+}
+
+void Mushroom::EndAttack()
+{
+	m_attackFlg = false;
+	m_attackCooldown = m_attackCooldownDuration;
 }
 
 void Mushroom::UpdateLaunch()
@@ -117,12 +150,6 @@ void Mushroom::UpdateLaunch()
 
 void Mushroom::UpdateMove()
 {
-	// 攻撃中は移動をしない
-	if (m_actionState == MushroomActionState::Attack)
-	{
-		return;
-	}
-
 	
 	if (m_knockBack != Math::Vector3::Zero)
 	{
@@ -143,11 +170,11 @@ void Mushroom::UpdateMove()
 
 	if (CanDirectChase())
 	{
-		m_moveState = MushroomMoveState::Walk;
+		PlayAnimation(MushroomAnimationType::Walk);
 	}
 	else
 	{
-		m_moveState = MushroomMoveState::Idle;
+		PlayAnimation(MushroomAnimationType::Idle);
 	}
 
 	ChangeMoveState(m_nextMoveState);
@@ -193,69 +220,7 @@ void Mushroom::UpdateAttack()
 
 void Mushroom::UpdateAnimation()
 {
-	MushroomAnimationType nextAnimation = MushroomAnimationType::Idle;
-
-	if (m_actionState == MushroomActionState::Death)
-	{
-		nextAnimation = MushroomAnimationType::Die;
-	}
-	else if (m_actionState == MushroomActionState::Damage)
-	{
-		nextAnimation = MushroomAnimationType::GetHit;
-	}
-	else if (m_actionState == MushroomActionState::Attack)
-	{
-		nextAnimation = MushroomAnimationType::Attack;
-	}
-	else if (m_moveState == MushroomMoveState::Walk)
-	{
-		nextAnimation = MushroomAnimationType::Walk;
-	}
-	else
-	{
-		nextAnimation = MushroomAnimationType::Idle;
-	}
-
-	m_animation.Play(nextAnimation);
 	m_animation.Update();
-
-}
-
-void Mushroom::UpdateActionState()
-{
-	if (m_actionState == MushroomActionState::Death)
-	{
-		if (m_animation.IsFinished())
-		{
-			Destroy();
-		}
-
-		return;
-	}
-
-	if (m_actionState == MushroomActionState::Damage)
-	{
-		if (m_animation.IsFinished())
-		{
-			ChangeActionState(MushroomActionState::Normal);
-		}
-		return;
-	}
-
-	if (m_actionState == MushroomActionState::Attack)
-	{
-		if (m_animation.IsFinished())
-		{
-			ChangeActionState(MushroomActionState::Normal);
-		}
-		return;
-	}
-
-	if (m_attackFlg)
-	{
-		ChangeActionState(MushroomActionState::Attack);
-		return;
-	}
 }
 
 void Mushroom::SetAttackTiming()
@@ -271,11 +236,6 @@ void Mushroom::UpdateAttackCollision()
 {
 	auto spPlayer = m_wpPlayer.lock();
 	if (!spPlayer)
-	{
-		return;
-	}
-
-	if (m_actionState != MushroomActionState::Attack)
 	{
 		return;
 	}
@@ -340,66 +300,3 @@ void Mushroom::UpdateAttackCollision()
 
 	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
 }
-
-void Mushroom::ChangeActionState(MushroomActionState nextState)
-{
-	if (m_actionState == nextState)
-	{
-		return;
-	}
-
-	ExitState(m_actionState);
-	m_actionState = nextState;
-	EnterState(m_actionState);
-}
-
-void Mushroom::ExitState(MushroomActionState _state)
-{
-
-	switch (_state)
-	{
-	case MushroomActionState::Normal:
-
-		break;
-	case MushroomActionState::Attack:
-		m_attackFlg = false;
-		m_attackCooldown = m_attackCooldownDuration;
-		break;
-	case MushroomActionState::Damage:
-
-		break;
-	case MushroomActionState::Death:
-
-
-		break;
-	}
-}
-
-void Mushroom::EnterState(MushroomActionState _state)
-{
-
-
-	switch (_state)
-	{
-	case MushroomActionState::Normal:
-
-		break;
-	case MushroomActionState::Attack:
-
-		m_hitTarget = false;
-		SetAttackTiming();
-
-
-		break;
-	case MushroomActionState::Damage:
-
-
-		break;
-	case MushroomActionState::Death:
-
-
-		break;
-	}
-}
-
-

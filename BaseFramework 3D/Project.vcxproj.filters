@@ -343,6 +343,15 @@
     <Filter Include="Src\Application\GameObject\Character\Enemy\Slime\State\States">
       <UniqueIdentifier>{726b7ef6-a853-4273-80ee-e01e0f13dd1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States">
+      <UniqueIdentifier>{85f548b8-9541-433c-9473-46b04d727ab8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States">
+      <UniqueIdentifier>{9edb81c2-83f7-413f-9f49-4c3880230643}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\TimeManager">
+      <UniqueIdentifier>{98b2b7c4-08ac-4720-8008-c05070b2050d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -549,9 +558,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.h">
       <Filter>Src\Application\GameObject\Character\Player\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerState.h">
-      <Filter>Src\Application\GameObject\Character\Player\State</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionManager.h">
       <Filter>Src\Application\System\CollisionManager</Filter>
     </ClInclude>
@@ -621,14 +627,8 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\Animation\MushroomAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\MushroomState.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\Animation\CactasAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Cactas\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\CactasState.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Cactas\State</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mage\Animation\MageAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Mage\Animation</Filter>
@@ -645,9 +645,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\Animation\SlimeAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Slime\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\State\SlimeState.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Slime\State</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\StarFish\Animation\StarFishAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\StarFish\Animation</Filter>
     </ClInclude>
@@ -656,9 +653,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Animation\TurtleShellAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellState.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterState.h">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State</Filter>
@@ -854,6 +848,63 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\State\States\SlimeDieState.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Slime\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\Animation\MushroomAnimationType.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\MushroomStateBase.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\MushroomStateMachine.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomAttackState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomDamageState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomDieState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomLaunchState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomNormalState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Animation\TurtleShellAnimationType.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellStateBase.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellStateMachine.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellSpinAttackRepeatState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellDamageState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellDieState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellLaunchState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellNormalState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellSpinAttackStartState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellDizzyState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\TimeManager\TimeManager.h">
+      <Filter>Src\Application\System\TimeManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1274,6 +1325,51 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\State\States\SlimeDieState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Slime\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\MushroomStateMachine.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomAttackState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomDamageState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomDieState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomLaunchState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomNormalState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellStateMachine.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellSpinAttackRepeatState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellDamageState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellDieState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellLaunchState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellNormalState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellSpinAttackStartState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellDizzyState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\TimeManager\TimeManager.cpp">
+      <Filter>Src\Application\System\TimeManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

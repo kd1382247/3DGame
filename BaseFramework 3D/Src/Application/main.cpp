@@ -1,6 +1,7 @@
 ﻿#include "main.h"
 
 #include "Scene/SceneManager.h"
+#include"../Application/System/TimeManager/TimeManager.h"
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // エントリーポイント
@@ -325,6 +326,7 @@ void Application::Execute()
 		//=========================================
 
 		m_fpsController.Update();
+		TimeManager::Instance().Update();
 
 		std::string titleBar = "Game FPS:" + std::to_string(m_fpsController.m_nowfps);
 		SetWindowTextA(m_window.GetWndHandle(), titleBar.c_str());

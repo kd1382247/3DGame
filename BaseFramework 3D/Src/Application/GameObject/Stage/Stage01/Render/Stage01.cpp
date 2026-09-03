@@ -12,7 +12,7 @@ void Stage01::Init()
 		m_spModel->SetModelData("Asset/Models/Stage/Stage01/Stage01.gltf");
 
 		m_model = std::make_shared<KdModelWork>();
-		m_model->SetModelData("Asset/Models/Stage/Stage01/BackGround.gltf");
+		m_model->SetModelData("Asset/Models/Stage/Stage01/BackGround1.gltf");
 
 		SetObjectName("Stage01");
 

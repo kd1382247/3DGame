@@ -1,20 +1,33 @@
 ﻿#include "TurtleShellAnimation.h"
 
-void TurtleShellAnimation::Init(std::shared_ptr<KdModelWork>& _model)
+void TurtleShellAnimation::Init(std::shared_ptr<KdModelWork>& model)
 {
-	m_spModel = _model;
+	m_spModel = model;
 	m_spAnimator = std::make_shared<KdAnimator>();
 
 }
 
-void TurtleShellAnimation::Play(TurtleShellAnimationType _animType)
+void TurtleShellAnimation::Play(TurtleShellAnimationType type)
 {
-	if (m_currentAnimation == _animType)
+	if (m_currentAnimation == type)
 	{
 		return;
 	}
 
-	switch (_animType)
+	Animations(type);
+	m_currentAnimation = type;
+}
+
+void TurtleShellAnimation::RePlay(TurtleShellAnimationType type)
+{
+
+	Animations(type);
+	m_currentAnimation = type;
+}
+
+void TurtleShellAnimation::Animations(TurtleShellAnimationType type)
+{
+	switch (type)
 	{
 	case TurtleShellAnimationType::None:
 		break;
@@ -32,7 +45,7 @@ void TurtleShellAnimation::Play(TurtleShellAnimationType _animType)
 		m_animSpeed = 1.4f;
 		break;
 	case TurtleShellAnimationType::GetHit:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false);
 		m_animSpeed = 1.0f;
 		break;
 	case TurtleShellAnimationType::Idle:
@@ -50,5 +63,4 @@ void TurtleShellAnimation::Play(TurtleShellAnimationType _animType)
 		break;
 	}
 
-	m_currentAnimation = _animType;
 }

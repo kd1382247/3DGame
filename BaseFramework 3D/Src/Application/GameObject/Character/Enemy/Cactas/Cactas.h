@@ -4,7 +4,6 @@
 
 #include"Animation/CactasAnimationType.h"
 #include"Animation/CactasAnimation.h"
-#include"State/CactasState.h"
 #include"Parameter/CactasParameter.h"
 
 #include"State/CactasStateMachine.h"
@@ -43,6 +42,8 @@ public:
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 
 	void PlayAnimation(CactasAnimationType type);
+	void RePlayAnimation(CactasAnimationType type);
+
 
 	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
 
@@ -58,21 +59,13 @@ public:
 
 private:
 
-	
-	void OutroUpdate();
-
 	void UpdateAttack();
 
 	void UpdateAnimation();
 
 	void SetAttackTiming();
 
-
-
 private:
-
-	CactasActionState m_actionState = CactasActionState::Normal;
-	CactasMoveState   m_moveState = CactasMoveState::Idle;
 
 	// アニメーションクラス
 	CactasAnimation   m_animation;

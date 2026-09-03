@@ -10,14 +10,15 @@ public:
 	CactasAnimation() {}
 	~CactasAnimation() {}
 
-	void Init(std::shared_ptr<KdModelWork>& _model);
+	void Init(std::shared_ptr<KdModelWork>& model);
 
-	void Play(CactasAnimationType _animType);
+	void Play(CactasAnimationType type);
+	void RePlay(CactasAnimationType type);
 
 private:
 
+	void Animations(CactasAnimationType type);
+
 	CactasAnimationType m_currentAnimation = CactasAnimationType::None;
-
-
 
 };

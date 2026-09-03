@@ -2,7 +2,6 @@
 // 親クラス
 #include "../CharacterBase.h"
 // プレイヤー情報
-#include"State/PlayerState.h"
 #include"Animation/PlayerAnimationType.h"
 #include"Animation/PlayerAnimation.h"
 #include"Parameter/PlayerParameter.h"
@@ -173,14 +172,6 @@ private:
 	// ステートマシン
 	PlayerStateMachine  m_stateMachine;
 
-
-	// プレイヤーの状態
-	PlayerActionState   m_actionState = PlayerActionState::Normal;
-	PlayerMoveState     m_moveState   = PlayerMoveState::Idle;
-
-
-	// キャラが向いている方向
-	UINT            m_dirType = 0;
 
 	bool            m_moveFlg=false;
 

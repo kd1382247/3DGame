@@ -84,8 +84,6 @@ protected:
 
 	bool m_hitTarget = false;
 
-	bool m_isDamaged = false;
-
 	// 飛び出す方向と勢い
 	Math::Vector3 m_launchVec;
 

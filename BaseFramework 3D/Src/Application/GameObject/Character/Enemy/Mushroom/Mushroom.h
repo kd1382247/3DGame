@@ -2,9 +2,10 @@
 
 #include"../EnemyBase.h"
 
+#include"Animation/MushroomAnimationType.h"
 #include"Animation/MushroomAnimation.h"
-#include"State/MushroomState.h"
 #include"Parameter/MushroomParameter.h"
+#include"State/MushroomStateMachine.h"
 
 
 class Mushroom :public EnemyBase
@@ -24,43 +25,56 @@ public:
 
 	void SetUpReference()override;
 	
+	template<class T>
+	void ChangeState()
+	{
+		m_stateMachine.ChangeState(*this, std::make_unique<T>());
+	}
+
+	void UpdateMove();
+
+	bool IsAttack()const { return m_attackFlg; }
+	bool IsLaunch()const { return m_launchFlg; }
+	
+
+	// パラメータのゲッター
 	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
-
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
-
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 
-private:
+	void PlayAnimation(MushroomAnimationType type);
+	void RePlayAnimation(MushroomAnimationType type);
+
+	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
+
+
+	void StartAttack();
+	void EndAttack();
 
 	void UpdateLaunch();
 
-
-	void UpdateMove();
-	void UpdateAttack();
-
-	void UpdateAnimation();
-
-	void ChangeActionState(MushroomActionState  nextState);
-	void ExitState(MushroomActionState _state);
-	void EnterState(MushroomActionState _state);
-
-
-	void UpdateActionState();
-
-	void SetAttackTiming();
+	void OnHit(const AttackInfo attackInfo)override;
 
 	// 攻撃判定
 	void UpdateAttackCollision();
 
-
 private:
 
-	MushroomActionState m_actionState = MushroomActionState::Normal;
-	MushroomMoveState   m_moveState = MushroomMoveState::Idle;
+	void UpdateAttack();
+
+	void UpdateAnimation();
+
+	void SetAttackTiming();
+
+private:
 
 	// アニメーションクラス
 	MushroomAnimation   m_animation;
 
 	// パラメータクラス
 	MushroomParameter   m_parameter;
+
+	// ステートマシン
+	MushroomStateMachine m_stateMachine;
+
 };
