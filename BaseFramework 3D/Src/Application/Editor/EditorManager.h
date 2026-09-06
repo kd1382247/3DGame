@@ -95,6 +95,9 @@ private:
 	// AABBを選択
 	void SelectBoxByMouse();
 
+	// OBBを選択
+	void SelectOBBByMouse();
+
 
 private:
 

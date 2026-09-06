@@ -352,6 +352,9 @@
     <Filter Include="Src\Application\System\TimeManager">
       <UniqueIdentifier>{98b2b7c4-08ac-4720-8008-c05070b2050d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision">
+      <UniqueIdentifier>{91fec0a9-4908-43a7-a847-a4fa54631ab1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -906,6 +909,12 @@
     <ClInclude Include="Src\Application\System\TimeManager\TimeManager.h">
       <Filter>Src\Application\System\TimeManager</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollision.h">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollisionManager.h">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1370,6 +1379,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\System\TimeManager\TimeManager.cpp">
       <Filter>Src\Application\System\TimeManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollision.cpp">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollisionManager.cpp">
+      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

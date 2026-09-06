@@ -27,6 +27,7 @@
 
 // 当たり判定(壁)
 #include"../../Application/GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
+#include"../../Application/GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollision.h"
 
 // ギミック
 #include"../../Application/GameObject/Gimmick/EnemySpawner/EnemySpawner.h"
@@ -88,6 +89,9 @@ void KdGameObjectFactory::Init()
 
 	// 壁
 	Register<WallCollision>("WallCollision", KdGameObject::ObjectCategory::None);
+
+	// OBB
+	Register<OBBCollision>("OBBCollision", KdGameObject::ObjectCategory::None);
 
 	//===================================================================
 	// ウェイポイント

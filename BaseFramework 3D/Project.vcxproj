@@ -385,6 +385,8 @@
     <ClInclude Include="Src\Application\GameObject\HPBar\PlayerHPBar\PlayerHPBar.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision\GroundCollision.h" />
+    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollision.h" />
+    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollisionManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollision.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollisionManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Render\Stage01.h" />
@@ -546,6 +548,8 @@
     <ClCompile Include="Src\Application\GameObject\HPBar\PlayerHPBar\PlayerHPBar.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision\GroundCollision.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollision.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollisionManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollision.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollisionManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Render\Stage01.cpp" />

@@ -8,6 +8,11 @@
 #include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
 #include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 
+#include"../../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollision.h"
+#include"../../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollisionManager.h"
+
+
+
 
 void Hierarchy::Draw()
 {
@@ -49,6 +54,9 @@ void Hierarchy::DrawCategoryButtons()
 
 	CategoryButton("CollisionBox", HierarchyCategory::CollisionBox);
 
+	ImGui::SameLine();
+
+	CategoryButton("OBB", HierarchyCategory::OBB);
 }
 
 void Hierarchy::CategoryButton(const char* label, HierarchyCategory category)
@@ -89,6 +97,9 @@ void Hierarchy::DrawAddButtons()
 		break;
 	case Hierarchy::HierarchyCategory::CollisionBox:
 		AddCollisionBox();
+		break;
+	case HierarchyCategory::OBB:
+		AddOBB();
 		break;
 	}
 }
@@ -194,6 +205,32 @@ void Hierarchy::AddCollisionBox()
 
 }
 
+void Hierarchy::AddOBB()
+{
+	if (ImGui::Button("Add OBB"))
+	{
+		auto obb = OBBCollisionManager::Instance().CreateOBBCollision();
+
+		if (obb)
+		{
+			// CreateWayPoint()内でManagerへの登録まで完了している
+			EditorManager::Instance().SetSelectedObject(obb);
+
+			EditorManager::Instance().MarkDirty();
+		}
+	}
+
+	ImGui::SameLine();
+
+	bool isDebug = OBBCollisionManager::Instance().IsDebug();
+
+	if (ImGui::Checkbox("Debug", &isDebug))
+	{
+		isDebug ? OBBCollisionManager::Instance().SetDebugFlg(true) :
+			OBBCollisionManager::Instance().SetDebugFlg(false);
+	}
+}
+
 void Hierarchy::DrawGameObjects()
 {
 	DrawObjectList(KdGameObject::ObjectCategory::Character);
@@ -232,6 +269,19 @@ void Hierarchy::DrawCollisionBox()
 		}
 
 		SelectObject(wallBox);
+	}
+}
+
+void Hierarchy::DrawOBB()
+{
+	for (const auto& obb : OBBCollisionManager::Instance().GetOBBCollisionList())
+	{
+		if (!obb)
+		{
+			continue;
+		}
+
+		SelectObject(obb);
 	}
 }
 
@@ -283,6 +333,10 @@ void Hierarchy::DrawScrollableList()
 
 		case HierarchyCategory::CollisionBox:
 			DrawCollisionBox();
+			break;
+
+		case HierarchyCategory::OBB:
+			DrawOBB();
 			break;
 		}
 	}

@@ -3,6 +3,8 @@
 #include "../../Scene/SceneManager.h"
 #include "../../System/WayPointManager/WayPointManager.h"
 #include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
+#include"../../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollisionManager.h"
+
 
 bool StageDataManager::Save(const std::string& stageName)
 {
@@ -82,6 +84,12 @@ bool StageDataManager::SaveToFolder(const std::filesystem::path& folder)
 		return false;
 	}
 
+	// OBBを保存
+	if (!OBBCollisionManager::Instance().Save((stageFolder / "OBBCollisionData.json").string()))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -99,6 +107,8 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 	// 壁の当たり判定データ
 	const std::filesystem::path wallCollisionDataPath = stageFolder / "WallCollisionData.json";
 
+	// OBBのデータ
+	const std::filesystem::path obbCollisionDataPath = stageFolder / "OBBCollisionData.json";
 
 	// 読込失敗で現在の編集内容を消さないよう、先に必要ファイルを確認する
 	if (!std::filesystem::exists(stageDataPath) ||
@@ -196,6 +206,12 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 
 	// 壁の当たり判定を生成
 	if (!WallCollisionManager::Instance().Load(wallCollisionDataPath.string()))
+	{
+		return false;
+	}
+
+	// OBBを生成
+	if (!OBBCollisionManager::Instance().Load(obbCollisionDataPath.string()))
 	{
 		return false;
 	}

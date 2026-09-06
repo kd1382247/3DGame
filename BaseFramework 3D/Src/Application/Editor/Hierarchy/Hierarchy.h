@@ -9,7 +9,8 @@ public:
 		GameObject,
 		WayPoint,
 		Stage,
-		CollisionBox
+		CollisionBox,
+		OBB
 	};
 
 
@@ -31,7 +32,7 @@ private:
 	void AddWayPoint();
 	void AddStage();
 	void AddCollisionBox();
-
+	void AddOBB();
 	
 	void DrawScrollableList();
 
@@ -39,6 +40,8 @@ private:
 	void DrawWayPoints();
 	void DrawStage();
 	void DrawCollisionBox();
+	void DrawOBB();
+
 
 	// 指定のカテゴリに登録されている生成候補を表示する
 	void DrawAddObjectList(KdGameObject::ObjectCategory objectCategory);

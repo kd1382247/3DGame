@@ -8,6 +8,9 @@
 #include"../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 #include"../GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
 
+#include"../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollision.h"
+
 #include"../Scene/EditorScene/EditorScene.h"
 
 #include"../System/ReferenceManager/ReferenceManager.h"
@@ -107,6 +110,8 @@ void EditorManager::StartPlayMode()
 	editorScene->BackupObjectList();
 	WayPointManager::Instance().ClearWayPoints();
 	WallCollisionManager::Instance().ClearWallCollisionList();
+	OBBCollisionManager::Instance().ClearOBBCollisionList();
+
 
 	// Edit開始前の状態を復元
 	if (!StageDataManager::Instance().LoadTemporary())
@@ -115,6 +120,7 @@ void EditorManager::StartPlayMode()
 		editorScene->RestoreObjectList();
 		WayPointManager::Instance().RestoreWayPoints();
 		WallCollisionManager::Instance().RestoreWallCollisionList();
+		OBBCollisionManager::Instance().RestoreOBBCollisionList();
 
 		return;
 	}
@@ -123,6 +129,7 @@ void EditorManager::StartPlayMode()
 	editorScene->ClearBackupList();
 	WayPointManager::Instance().ClearBackup();
 	WallCollisionManager::Instance().ClearBackup();
+	OBBCollisionManager::Instance().ClearBackup();
 
 	// モードを切り替える
 	SetEditorMode(EditorMode::Play);
@@ -380,6 +387,9 @@ void EditorManager::UpdateMouseSelection()
 	case Hierarchy::HierarchyCategory::CollisionBox:
 		SelectBoxByMouse();
 		break;
+	case Hierarchy::HierarchyCategory::OBB:
+		SelectOBBByMouse();
+		break;
 
 	}
 }
@@ -542,6 +552,43 @@ void EditorManager::SelectBoxByMouse()
 	SetSelectedObject(obj);
 
 
+}
+
+void EditorManager::SelectOBBByMouse()
+{
+
+	KdCollider::RayInfo rayInfo = CreateRayInfo(KdCollider::TypeBump);
+
+	float maxOverlap = 0;
+
+	std::shared_ptr<KdGameObject>obj;
+
+	for (const auto& selectObj : OBBCollisionManager::Instance().GetOBBCollisionList())
+	{
+		if (!selectObj)
+		{
+			return;
+		}
+
+		std::list<KdCollider::CollisionResult>result;
+
+		if (!selectObj->Intersects(rayInfo, &result))
+		{
+			continue;
+		}
+
+
+		for (const auto& ret : result)
+		{
+			if (maxOverlap < ret.m_overlapDistance)
+			{
+				maxOverlap = ret.m_overlapDistance;
+				obj = selectObj;
+			}
+		}
+	}
+
+	SetSelectedObject(obj);
 }
 
 void EditorManager::CreateGameObject(const std::string& className)

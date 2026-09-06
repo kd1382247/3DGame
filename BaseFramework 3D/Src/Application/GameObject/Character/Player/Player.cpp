@@ -410,10 +410,10 @@ void Player::UpdateAttackMove()
 
 void Player::UpdateGravity()
 {
+
 	Math::Vector3 nowPos = GetPos();
 
 	constexpr float gravityAcceleration = 72.0f;
-	constexpr float maxFallSpeed = 10.0f;
 
 	float deltaTime = TimeManager::Instance().GetDeltaTime();
 
@@ -426,9 +426,6 @@ void Player::UpdateGravity()
 
 	//m_pDebugWire->AddDebugLine(GetPos(),Math::Vector3::Down,m_gravity*deltaTime,kBlackColor);
 
-
-	KdDebugGUI::Instance().ClearLog();
-	KdDebugGUI::Instance().AddLog("%f", m_gravity*deltaTime);
 }
 
 void Player::UpdateSpecialMove()
@@ -598,36 +595,7 @@ void Player::CreateSpecialMoveDir()
 void Player::UpdateGroundCollision()
 {
 
-	auto character = std::dynamic_pointer_cast<CharacterBase>(shared_from_this());
-
-	Math::Vector3 push = m_specialMoveDir;
-
-	constexpr float MaxStep = 0.05f;
-
-	float length = push.Length();
-
-	if (length <= 0.000001f)
-	{
-		return;
-	}
-
-	int stepCount = static_cast<int>(std::ceil(length / MaxStep));
-
-	Math::Vector3 delta = push / static_cast<float>(stepCount);
-
-	for (int i = 0; i < stepCount; ++i)
-	{
-		// すでに進める方向が残っていない
-		if (delta.LengthSquared() <= 0.000001f)
-		{
-			break;
-		}
-
-		SetPos(GetPos() + delta);
-
-		CollisionManager::Instance().ResolveWallCollisionForCharacter(character);
-		CollisionManager::Instance().ResolveGroundCollisionForCharacter(character);
-	}
+	
 	
 }
 

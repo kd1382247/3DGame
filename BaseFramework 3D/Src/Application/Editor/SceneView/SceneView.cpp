@@ -76,7 +76,6 @@ void SceneView::BeginRender()
 	// SceneView用RenderTargetへ変更
 	if (!m_renderTargetChanger.ChangeRenderTarget(m_renderTarget))
 	{
-		
 		return;
 	}
 
