@@ -253,128 +253,20 @@ void CollisionManager::Resolve()
 		character->SetIsGrounded(false);
 	}
 
-
-	
 	ResolveCharacterMovement();
-	//ResolveGroundSnap();
-	
-	//ResolveBoxGroundSnap();
-
-	
 
 	// Character同士からPushを計算
-	//ResolveCharacterCollision();
+	ResolveCharacterCollision();
 
-
-	// 最後に全員まとめて壁とのめり込みを再確認
-	//ResolveWallCollision();
-
-	// 地面・坂との着地判定
-	//ResolveGroundCollision();
-
-	// Groundによる位置変更後の保険
-	//ResolveWallCollision();
-}
-
-
-Math::Vector3 CollisionManager::ResolveWallCollisionForCharacter(const std::shared_ptr<CharacterBase>& character)
-{
-	if (!character)
+	// ノックバック
+	for (const auto& character : GetCharacters())
 	{
-		return Math::Vector3::Zero;
-	}
-
-	Math::Vector3 totalWallPush = Math::Vector3::Zero;
-
-	const auto& walls =WallCollisionManager::Instance().GetWallCollisionList();
-
-	for (const auto& wall : walls)
-	{
-		if (!wall)
+		if (!character)
 		{
 			continue;
 		}
 
-		Math::Vector3 push;
-		Math::Vector3 normal;
-
-		if (SphereVsAABB(character->GetBumpSphere(),wall->GetBox(),push,normal))
-		{
-			character->SetPos(character->GetPos() + push);
-
-			totalWallPush += push;
-		}
-	}
-
-	return totalWallPush;
-}
-
-void CollisionManager::ResolveGroundCollisionForCharacter(const std::shared_ptr<CharacterBase>& character)
-{
-
-	if (!character)
-	{
-		return;
-	}
-
-	const auto& grounds = GetObjects(CollisionLayer::Ground);
-
-	KdCollider::RayInfo rayInfo;
-	rayInfo.m_pos = character->GetPos();
-	
-
-	constexpr float enableStepHigh = 0.2f;
-	constexpr float groundSnapDistance = 0.2f;
-
-	rayInfo.m_pos.y += enableStepHigh;
-
-	// レイの発射方向を設定
-	rayInfo.m_dir = Math::Vector3::Down;
-
-	float deltaTime = TimeManager::Instance().GetDeltaTime();
-	float fallDistance = 0.0f;
-
-	if (character->GetGravity() > 0)
-	{
-		fallDistance = character->GetGravity() * deltaTime;
-	}
-
-	rayInfo.m_range =fallDistance+ enableStepHigh + groundSnapDistance;
-
-	rayInfo.m_type = KdCollider::TypeGround;
-
-	for (const auto& weakGround : grounds)
-	{
-		auto ground = weakGround.lock();
-		if (!ground)
-		{
-			continue;
-		}
-		std::list<KdCollider::CollisionResult> retRayList;
-		ground->Intersects(rayInfo, &retRayList);
-
-		// ③ 結果を使って座標を補完する
-		// レイに当たったリストから一番近いオブジェクトを検出
-		float maxOverLap = 0;
-		Math::Vector3 hitPos = {};
-		bool hit = false;
-		for (auto& ret : retRayList)
-		{
-			// レイを遮断しオーバーした長さが
-			// 一番長いものを探す
-			if (maxOverLap < ret.m_overlapDistance)
-			{
-				maxOverLap = ret.m_overlapDistance;
-				hitPos = ret.m_hitPos;
-				hit = true;
-			}
-		}
-		if (hit)
-		{
-
-			// 地面に当たっている
-			character->SetPos(hitPos);
-		}
+		ApplyKnockBack(character);
 	}
 
 }
@@ -389,47 +281,16 @@ void CollisionManager::ApplyCharacterPush(const std::shared_ptr<CharacterBase>& 
 
 	Math::Vector3 push =character->GetTotalPush();
 
-	constexpr float MaxStep = 0.05f;
-
-	float length = push.Length();
-
-	if (length <= 0.000001f)
+	if (push.LengthSquared() <= 0.000001f)
 	{
+		character->ClearPush();
 		return;
 	}
 
-	int stepCount =static_cast<int>(std::ceil(length / MaxStep));
+	Math::Vector3 finalePos =
+		ResolveCharacterDisplacement(character, character->GetPos(), push, false);
 
-	Math::Vector3 delta =push /static_cast<float>(stepCount);
-
-	for (int i = 0; i < stepCount; ++i)
-	{
-		// すでに進める方向が残っていない
-		if (delta.LengthSquared() <= 0.000001f)
-		{
-			break;
-		}
-
-		character->SetPos(character->GetPos() + delta);
-
-		Math::Vector3 wallPush= 
-			ResolveWallCollisionForCharacter(character);
-
-		if (wallPush.LengthSquared() > 0.000001f)
-		{
-			Math::Vector3 normal = wallPush;
-			normal.Normalize();
-
-			float dot = delta.Dot(normal);
-
-			if (dot < 0.0f)
-			{
-				delta -= normal * dot;
-			}
-		}
-
-		ResolveGroundCollisionForCharacter(character);
-	}
+	character->SetPos(finalePos);
 
 	character->ClearPush();
 
@@ -438,35 +299,16 @@ void CollisionManager::ApplyCharacterPush(const std::shared_ptr<CharacterBase>& 
 void CollisionManager::ApplyKnockBack(const std::shared_ptr<CharacterBase>& character)
 {
 
-	if (!character)
-	{
-		return;
-	}
-
 	Math::Vector3 knockBack = character->GetKnockBack();
 
-	float length = knockBack.Length();
-
-	if (length <= 0.000001f)
+	if (knockBack.LengthSquared() <= 0.000001f)
 	{
 		return;
 	}
 
-	constexpr float maxStap = 0.05f;
+	Math::Vector3 finalPos =
+		ResolveCharacterDisplacement(character, character->GetPos(), knockBack, false);
 
-	int stepCount = static_cast<int>(std::ceil(length / maxStap));
-
-	Math::Vector3 delta = knockBack / static_cast<float>(stepCount);
-
-
-	for (int i = 0; i < stepCount; ++i)
-	{
-		character->SetPos(character->GetPos() + delta);
-
-		ResolveGroundCollisionForCharacter(character);
-
-		ResolveWallCollisionForCharacter(character);
-	}
 
 	// 徐々に減衰
 	knockBack *= 0.88f;
@@ -487,14 +329,6 @@ void CollisionManager::UpdateClosestHit(SweepHitResult& closestHit, float toi, c
 	{
 		return;
 	}
-
-	constexpr float walkableGroundDot = 0.707f;
-
-	float upDot =
-		normal.Dot(Math::Vector3::Up);
-
-	bool isWalkable =
-		upDot >= walkableGroundDot;
 
 	closestHit.m_hit = true;
 	closestHit.m_toi = toi;
@@ -548,22 +382,25 @@ void CollisionManager::ResolveAABBStartOverlap(const std::shared_ptr<CharacterBa
 			continue;
 		}
 
-		constexpr float penetrationSlop = 0.001f;
+		constexpr float penetrationThreshold = 0.001f;
 
 		float pushLength = push.Length();
 
-		if (pushLength > penetrationSlop)
+		if (pushLength <= penetrationThreshold)
 		{
-			currentPos +=
-				normal * (pushLength - penetrationSlop);
+			continue;
 		}
+
+		constexpr float overlapSkin = 0.0001f;
+
+		currentPos += normal * (pushLength + overlapSkin);
+		
 
 		if (normal.LengthSquared() > 0.000001f)
 		{
 			normal.Normalize();
 
-			float into =
-				remainingMove.Dot(normal);
+			float into =remainingMove.Dot(normal);
 
 			if (into < 0.0f)
 			{
@@ -575,8 +412,17 @@ void CollisionManager::ResolveAABBStartOverlap(const std::shared_ptr<CharacterBa
 
 void CollisionManager::ResolveOBBStartOverlap(const std::shared_ptr<CharacterBase>& character, Math::Vector3& currentPos, Math::Vector3& remainingMove)
 {
-
 	const auto& obbs = OBBCollisionManager::Instance().GetOBBCollisionList();
+
+
+
+	Math::Vector3 sphereOffset = character->GetBumpSphere().Center - character->GetPos();
+
+	Math::Vector3 sphereCenter = currentPos + sphereOffset;
+
+	DirectX::BoundingSphere sphere;
+	sphere.Center = sphereCenter;
+	sphere.Radius = character->GetBumpSphere().Radius;
 
 	for (const auto& obbCollision : obbs)
 	{
@@ -585,59 +431,61 @@ void CollisionManager::ResolveOBBStartOverlap(const std::shared_ptr<CharacterBas
 			continue;
 		}
 
-		Math::Vector3 sphereOffset = character->GetBumpSphere().Center -character->GetPos();
-
-		Math::Vector3 sphereCenter = currentPos + sphereOffset;
-
-		DirectX::BoundingSphere sphere;
-		sphere.Center = sphereCenter;
-		sphere.Radius = character->GetBumpSphere().Radius;
-
 		Math::Vector3 push = Math::Vector3::Zero;
 		Math::Vector3 normal = Math::Vector3::Zero;
 
-		if (!SphereVsOBB(sphere,obbCollision->GetBox(),push,normal))
+
+		if (!SphereVsOBB(sphere, obbCollision->GetBox(), push, normal))
 		{
 			continue;
 		}
-
-		constexpr float penetrationSlop = 0.001f;
 
 		float pushLength = push.Length();
 
-		if (pushLength <= penetrationSlop)
+		constexpr float overlapSkin = 0.0001f;
+
+		if (pushLength <= overlapSkin)
 		{
 			continue;
 		}
 
-		// めり込んでいる分だけ外へ戻す
-		currentPos +=normal * (pushLength - penetrationSlop);
+		currentPos += normal * (pushLength + overlapSkin);
 
 		// OBB内部へ進もうとしている移動成分も除去
-		float into =remainingMove.Dot(normal);
+		float into = remainingMove.Dot(normal);
+
 
 		if (into < 0.0f)
 		{
-			remainingMove -=normal * into;
+			remainingMove -= normal * into;
 		}
+
 	}
 
 }
 
-bool CollisionManager::IsWalkableSurface(const SweepHitResult& closestHit) const
+bool CollisionManager::IsWalkableSurface(const SweepHitResult& closestHit, const std::shared_ptr<CharacterBase>& character) const
 {
-	// 歩ける面の角度(45°)
-	constexpr float walkableGroundDot = 0.707f;
+	if(!character)
+	{
+		return false;
+	}
+
+	const float maxSlopeAngle =character->GetMaxWalkableSlopeAngle();
+
+	const float maxSlopeRadian =DirectX::XMConvertToRadians(maxSlopeAngle);
+
+	const float walkableGroundDot =std::cos(maxSlopeRadian);
 
 	return GetUpDot(closestHit) >= walkableGroundDot;
 }
 
-void CollisionManager::ResolveSweepHit(const std::shared_ptr<CharacterBase>& character, const SweepHitResult& closestHit, Math::Vector3& currentPos, Math::Vector3& remainingMove)
+void CollisionManager::ResolveSweepHit(const std::shared_ptr<CharacterBase>& character, const SweepHitResult& closestHit, Math::Vector3& currentPos, Math::Vector3& remainingMove, const Math::Vector3& sourceMove,bool updateGroundState)
 {
 
 	const float upDot = GetUpDot(closestHit);
 
-	const bool isWalkable = IsWalkableSurface(closestHit);
+	const bool isWalkable = IsWalkableSurface(closestHit,character);
 
     // 衝突位置まで移動
 	Math::Vector3 move = remainingMove * closestHit.m_toi;
@@ -658,17 +506,15 @@ void CollisionManager::ResolveSweepHit(const std::shared_ptr<CharacterBase>& cha
 		currentPos += closestHit.m_normal * skin;
 	}
 
-
     // 衝突後に残っている移動量
 	Math::Vector3 leftover = remainingMove * (1.0f - closestHit.m_toi);
 
 
     // 接地中の下方向移動を除去
-	if (isWalkable && character->GetPendingMove().y < 0.0f)
+	if (updateGroundState&&isWalkable&&sourceMove.y<0.0f)
 	{
 		leftover.y = 0.0f;
 	}
-	
 
     // 面の内部へ進む成分を除去
 	float into =leftover.Dot(closestHit.m_normal);
@@ -682,108 +528,17 @@ void CollisionManager::ResolveSweepHit(const std::shared_ptr<CharacterBase>& cha
 
 	
 	// 歩行可能な床
-	if (isWalkable &&character->GetPendingMove().y <= 0.0f)
+	if (updateGroundState&&isWalkable&&sourceMove.y<=0.0f)
 	{
 		character->SetGravity(0.0f);
 		character->SetIsGrounded(true);
 	}
 
-
 	// 天井側の面
-	if (upDot < 0.0f &&character->GetPendingMove().y > 0.0f)
+	if (updateGroundState&&upDot < 0.0f&&sourceMove.y>0.0f)
 	{
 		// 上昇を止める
 		character->SetGravity(0.0f);
-	}
-
-}
-
-void CollisionManager::ResolveGroundSnap()
-{
-	auto characters = GetCharacters();
-
-	const auto& grounds = GetObjects(CollisionLayer::Ground);
-
-	for(const auto&character:characters)
-	{
-
-		if (!character)
-		{
-			continue;
-		}
-
-		if (character->GetPendingMove().y > 0.0f)
-		{
-			continue;
-		}
-
-		constexpr float enableStepHigh = 0.2f;
-		constexpr float groundSnapDistance = 0.2f;
-
-		KdCollider::RayInfo rayInfo;
-
-		rayInfo.m_pos = character->GetPos();
-		rayInfo.m_pos.y += enableStepHigh;
-
-		rayInfo.m_dir = Math::Vector3::Down;
-
-		rayInfo.m_range =
-			enableStepHigh + groundSnapDistance;
-
-		rayInfo.m_type =
-			KdCollider::TypeGround;
-
-		bool hit = false;
-		float maxOverlap = 0.0f;
-		Math::Vector3 hitPos = {};
-		Math::Vector3 hitNormal = {};
-
-		for (const auto& weakObj : grounds)
-		{
-			auto ground = weakObj.lock();
-
-			if (!ground)
-			{
-				continue;
-			}
-
-			std::list < KdCollider::CollisionResult >result;
-
-			ground->Intersects(rayInfo, &result);
-
-			for (const auto& ret : result)
-			{
-				if (maxOverlap < ret.m_overlapDistance)
-				{
-					maxOverlap = ret.m_overlapDistance;
-					hitPos = ret.m_hitPos;
-					hitNormal = ret.m_hitNDir;
-					hit = true;
-				}
-			}
-		}
-
-		if (hit)
-		{
-			Math::Vector3 groundNormal = hitNormal;
-			groundNormal.Normalize();
-
-			constexpr float walkableGroundDot = 0.707f;
-
-			float groundDot =
-				groundNormal.Dot(Math::Vector3::Up);
-
-			bool isWalkable =
-				groundDot >= walkableGroundDot;
-
-			if (isWalkable)
-			{
-				// 地面に当たっている
-				character->SetPos(hitPos);
-				character->SetGravity(0.0f);
-				character->SetIsGrounded(true);
-			}
-		}
 	}
 
 }
@@ -792,47 +547,68 @@ void CollisionManager::ResolveCharacterMovement()
 {
 	std::vector<std::shared_ptr<CharacterBase>>characters = GetCharacters();
 
+	
 	for (const auto& character : characters)
 	{
-
-		Math::Vector3 currentPos = character->GetPrevPos();
-		Math::Vector3 remainingMove = character->GetPendingMove();
-
-
-		KdDebugGUI::Instance().ClearLog();
-
-		for (int i = 0; i < 3; i++)
+		if (!character)
 		{
-
-			ResolveAABBStartOverlap(character, currentPos, remainingMove);
-
-			ResolveOBBStartOverlap(character, currentPos, remainingMove);
-			
-
-			//	始めにAABBを調べる
-			SweepHitResult closestHit= FindClosestAABBHit(character, currentPos, remainingMove);
-
-			
-			// OBBを調べる
-			SweepHitResult obbHit = FindClosestOBBHit(character, currentPos, remainingMove);
-
-			if (obbHit.m_hit &&obbHit.m_toi < closestHit.m_toi)
-			{
-				closestHit = obbHit;
-			}
-
-			if (!closestHit.m_hit)
-			{
-				currentPos += remainingMove;
-				break;
-			}
-
-			ResolveSweepHit(character,closestHit,currentPos,remainingMove);
-
+			continue;
 		}
 
-		character->SetPos(currentPos);
+		Math::Vector3 finalPos =
+			ResolveCharacterDisplacement(character, character->GetPrevPos(), character->GetPendingMove(),true);
+		
+
+		character->SetPos(finalPos);
 	}
+}
+
+Math::Vector3 CollisionManager::ResolveCharacterDisplacement(const std::shared_ptr<CharacterBase>& character, const Math::Vector3& startPos, const Math::Vector3& move, bool updateGroundState)
+{
+
+	constexpr int MaxSweepInteration = 4;
+	constexpr float moveEpsilon = 0.000001f;
+
+
+	Math::Vector3 currentPos = startPos;
+	Math::Vector3 remainingMove = move;
+
+	for (int i = 0; i < MaxSweepInteration; i++)
+	{
+
+		if (move.LengthSquared() <= moveEpsilon)
+		{
+			break;
+		}
+
+		ResolveAABBStartOverlap(character, currentPos, remainingMove);
+
+		ResolveOBBStartOverlap(character, currentPos, remainingMove);
+
+
+		//	始めにAABBを調べる
+		SweepHitResult closestHit = FindClosestAABBHit(character, currentPos, remainingMove);
+
+		// OBBを調べる
+		SweepHitResult obbHit = FindClosestOBBHit(character, currentPos, remainingMove);
+
+		if (obbHit.m_hit && obbHit.m_toi < closestHit.m_toi)
+		{
+			closestHit = obbHit;
+		}
+
+		if (!closestHit.m_hit)
+		{
+			currentPos += remainingMove;
+			break;
+		}
+
+
+		ResolveSweepHit(character, closestHit, currentPos, remainingMove,move,updateGroundState);
+
+	}
+
+	return currentPos;
 }
 
 CollisionManager::SweepHitResult CollisionManager::FindClosestOBBHit(const std::shared_ptr<CharacterBase>& character, const Math::Vector3& currentPos, const Math::Vector3& remainingMove)
@@ -926,120 +702,13 @@ CollisionManager::SweepHitResult CollisionManager::FindClosestOBBHit(const std::
 
  }
 
-void CollisionManager::ResolveBoxGroundSnap()
-{
-	auto characters = GetCharacters();
-
-	const auto& obbs =
-		OBBCollisionManager::Instance().GetOBBCollisionList();
-
-	constexpr float snapDistance = 0.2f;
-	constexpr float walkableGroundDot = 0.707f;
-
-	for (const auto& character : characters)
-	{
-		if (!character)
-		{
-			continue;
-		}
-
-		// 上昇中はGroundSnapしない
-		if (character->GetPendingMove().y > 0.0f)
-		{
-			continue;
-		}
-
-		// ---------------------------------
-		// キャラクターの足元からRayを飛ばす
-		// ---------------------------------
-		Math::Vector3 rayStart = character->GetPos();
-
-		bool foundGround = false;
-		float closestDistance = snapDistance;
-
-		Math::Vector3 groundPos = {};
-		Math::Vector3 groundNormal = {};
-
-		for (const auto& obbCollision : obbs)
-		{
-			if (!obbCollision)
-			{
-				continue;
-			}
-
-			const auto& obb =
-				obbCollision->GetBox();
-
-			float distance = 0.0f;
-
-			// 足元から真下
-			if (!obb.Intersects(
-				rayStart,
-				Math::Vector3::Down,
-				distance))
-			{
-				continue;
-			}
-
-			// Snap可能距離より遠い
-			if (distance > snapDistance)
-			{
-				continue;
-			}
-
-			// ---------------------------------
-			// OBB上面の法線
-			// ---------------------------------
-			Math::Vector3 normal =
-				DirectX::XMVector3Rotate(
-					Math::Vector3::Up,
-					Math::Vector4(obb.Orientation));
-
-			normal.Normalize();
-
-			float groundDot =
-				normal.Dot(Math::Vector3::Up);
-
-			if (groundDot < walkableGroundDot)
-			{
-				continue;
-			}
-
-			// 一番近いものだけ採用
-			if (!foundGround ||
-				distance < closestDistance)
-			{
-				foundGround = true;
-				closestDistance = distance;
-
-				groundPos =
-					rayStart +
-					Math::Vector3::Down * distance;
-
-				groundNormal = normal;
-			}
-		}
-
-		if (!foundGround)
-		{
-			continue;
-		}
-
-		character->SetPos(groundPos);
-		character->SetGravity(0.0f);
-		character->SetIsGrounded(true);
-	}
-}
-
 bool CollisionManager::SphereVsOBB(const DirectX::BoundingSphere& sphere, const DirectX::BoundingOrientedBox& obb, Math::Vector3& outPush, Math::Vector3& outNormal)
 {
 	Math::Vector4 orientation = obb.Orientation;
 
 	// Sphere中心をOBBローカル空間へ
 	Math::Vector3 localCenter =
-		XMVector3InverseRotate(
-			Math::Vector3(sphere.Center) - Math::Vector3(obb.Center),
-			orientation);
+		XMVector3InverseRotate(Math::Vector3(sphere.Center) - Math::Vector3(obb.Center),orientation);
 
 	DirectX::BoundingSphere localSphere;
 	localSphere.Center = localCenter;
@@ -1053,25 +722,15 @@ bool CollisionManager::SphereVsOBB(const DirectX::BoundingSphere& sphere, const 
 	Math::Vector3 localPush = Math::Vector3::Zero;
 	Math::Vector3 localNormal = Math::Vector3::Zero;
 
-	if (!SphereVsAABB(
-		localSphere,
-		localBox,
-		localPush,
-		localNormal))
+	if (!SphereVsAABB(localSphere,localBox,localPush,localNormal))
 	{
 		return false;
 	}
 
 	// ローカル → ワールド
-	outPush =
-		XMVector3Rotate(
-			localPush,
-			orientation);
+	outPush =XMVector3Rotate(localPush,orientation);
 
-	outNormal =
-		XMVector3Rotate(
-			localNormal,
-			orientation);
+	outNormal =XMVector3Rotate(localNormal,orientation);
 
 	if (outNormal.LengthSquared() > 0.000001f)
 	{
@@ -1093,14 +752,10 @@ bool CollisionManager::SphereSweepVsOBB(const Math::Vector3& start, const Math::
     // -------------------------------
 
 	Math::Vector3 localStart =
-		XMVector3InverseRotate(
-			start - Math::Vector3(obb.Center),
-			orientation);
+		XMVector3InverseRotate(start - Math::Vector3(obb.Center),orientation);
 
 	Math::Vector3 localMove =
-		XMVector3InverseRotate(
-			move,
-			orientation);
+		XMVector3InverseRotate(move,orientation);
 
 	// ============================
 	// OBBローカルではAABBになる
@@ -1133,10 +788,7 @@ bool CollisionManager::SphereSweepVsOBB(const Math::Vector3& start, const Math::
 	// Local Normal → World Normal
 	// ============================
 
-	outNormal =
-		XMVector3Rotate(
-			localNormal,
-			orientation);
+	outNormal =XMVector3Rotate(localNormal,orientation);
 
 	outNormal.Normalize();
 
@@ -1303,7 +955,7 @@ void CollisionManager::ResolveCharacterCollision()
 		{
 			character->ClearPush();
 		}
-
+		
 		// 全ペアと判定
 		for (size_t i = 0; i < characters.size(); i++)
 		{
@@ -1329,31 +981,30 @@ void CollisionManager::ResolveCharacterCollision()
 
 				for (auto& ret : results)
 				{
-
+					// 相手から離れる方向
 					Math::Vector3 dir = ret.m_hitDir;
+
+					// character同士は水平方向だけ押し合う
 					dir.y = 0;
 
-
+					// 押し出す方向を求められない
 					if (dir.LengthSquared() < 0.000001f)
 					{
 						continue;
 					}
 
-
+	
 					dir.Normalize();
 
-					constexpr float PenetrationSlop = 0.02f;
-					constexpr float CorrectionRate = 0.8f;
-
-					float overlap =
-						ret.m_overlapDistance - PenetrationSlop;
+			
+					float overlap = ret.m_overlapDistance;
 
 					if (overlap <= 0.0f)
 					{
 						continue;
 					}
 
-					Math::Vector3 push = dir * overlap * CorrectionRate;
+					Math::Vector3 push = dir * overlap;
 
 					float rateA = charaA->GetBumpPushRate();
 					float rateB = charaB->GetBumpPushRate();
@@ -1377,89 +1028,9 @@ void CollisionManager::ResolveCharacterCollision()
 			}
 		}
 
-		// 補正済みPushをSubStepで適用
 		for (auto& character : characters)
 		{
 			ApplyCharacterPush(character);
 		}
 	}
-}
-
-void CollisionManager::ResolveWallCollision()
-{
-	auto characters = GetCharacters();
-
-	for (auto& character : characters)
-	{
-		ResolveWallCollisionForCharacter(character);
-	}
-}
-
-void CollisionManager::ResolveGroundCollision()
-{
-	std::vector<std::shared_ptr<CharacterBase>>characters = GetCharacters();
-
-	const auto& grounds = GetObjects(CollisionLayer::Ground);
-
-	for(auto&character:characters)
-	{
-		KdCollider::RayInfo rayInfo;
-
-		rayInfo.m_pos =character->GetPos();
-
-		constexpr float enableStepHigh = 0.2f;
-		constexpr float groundSnapDistance = 0.2f;
-
-		rayInfo.m_pos.y += enableStepHigh;
-
-		// レイの発射方向を設定
-		rayInfo.m_dir = Math::Vector3::Down;
-
-		float deltaTime = TimeManager::Instance().GetDeltaTime();
-		float fallDistance = 0.0f;
-
-		if(character->GetGravity()>0)
-		{
-			fallDistance = character->GetGravity() * deltaTime;
-		}
-
-		rayInfo.m_range = fallDistance + enableStepHigh + groundSnapDistance;
-
-		rayInfo.m_type = KdCollider::TypeGround;
-
-		for (const auto& weakGround : grounds)
-		{
-			auto ground = weakGround.lock();
-			if (!ground)
-			{
-				continue;
-			}
-			std::list<KdCollider::CollisionResult> retRayList;
-			ground->Intersects(rayInfo, &retRayList);
-
-			// レイに当たったリストから一番近いオブジェクトを検出
-			float maxOverLap = 0;
-			Math::Vector3 hitPos = {};
-			bool hit = false;
-			for (auto& ret : retRayList)
-			{
-				// レイを遮断しオーバーした長さが
-				// 一番長いものを探す
-				if (maxOverLap < ret.m_overlapDistance)
-				{
-					maxOverLap = ret.m_overlapDistance;
-					hitPos = ret.m_hitPos;
-					hit = true;
-				}
-			}
-			if (hit)
-			{
-				// 地面に当たっている
-				character->SetPos(hitPos);
-				character->SetGravity(0.0f);
-				character->SetIsGrounded(true);
-			}
-		}
-	}
-
 }

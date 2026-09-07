@@ -64,13 +64,15 @@ Math::Vector3 EnemyBase::CreateSpawnDirection()
 	return launchVec;
 }
 
-
 void EnemyBase::UpdateGravity()
 {
-	Math::Vector3 nowPos = GetPos();
 	m_gravity += 0.02f;
-	nowPos.y -= m_gravity;
-	SetPos(nowPos);
+
+	Math::Vector3 gravityMove = Math::Vector3::Zero;
+
+	gravityMove.y = -m_gravity;
+	
+	AddPendingMove(gravityMove);
 
 }
 
@@ -113,9 +115,9 @@ void EnemyBase::UpdateDirectChase()
 
 	targetDir.Normalize();
 
-	pos += targetDir * moveSpeed;
+	Math::Vector3 move = targetDir * moveSpeed;
 
-	SetPos(pos);
+	AddPendingMove(move);
 }
 
 void EnemyBase::UpdateFollowPath()
@@ -178,10 +180,9 @@ void EnemyBase::UpdateFollowPath()
 	targetDir.Normalize();
 
 
-	Math::Vector3 pos = GetPos();
-	pos += targetDir * moveSpeed;
+	Math::Vector3 move= targetDir * moveSpeed;
 
-	SetPos(pos);
+	AddPendingMove(move);
 }
 
 bool EnemyBase::CanDirectChase()

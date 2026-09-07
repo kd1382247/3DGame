@@ -53,24 +53,41 @@ private:
 	std::vector<std::shared_ptr<CharacterBase>>GetCharacters();
 
 
-	
-
 	// Character Movement
 	void ResolveCharacterMovement();
 
+	Math::Vector3 ResolveCharacterDisplacement(
+		const std::shared_ptr<CharacterBase>& character,
+		const Math::Vector3& startPos,
+		const Math::Vector3& move,
+		bool updateGroundState);
+
 	// ボックスのめり込みを解決する
-	void ResolveAABBStartOverlap(const std::shared_ptr<CharacterBase>& character, Math::Vector3& currentPos, Math::Vector3& remainingMove);
-	void ResolveOBBStartOverlap(const std::shared_ptr<CharacterBase>& character, Math::Vector3& currentPos, Math::Vector3& remainingMove);
+	void ResolveAABBStartOverlap(
+		const std::shared_ptr<CharacterBase>& character,
+		Math::Vector3& currentPos,
+		Math::Vector3& remainingMove);
+	// ボックスのめり込みを解決する
+	void ResolveOBBStartOverlap(
+		const std::shared_ptr<CharacterBase>& character,
+		Math::Vector3& currentPos,
+		Math::Vector3& remainingMove);
 
 
-	float GetUpDot(const SweepHitResult& closestHit)const { return closestHit.m_normal.Dot(Math::Vector3::Up); }
+	float GetUpDot(const SweepHitResult& closestHit)const{ return closestHit.m_normal.Dot(Math::Vector3::Up); }
 
-	bool IsWalkableSurface(const SweepHitResult& closestHit)const;
+	bool IsWalkableSurface(
+		const SweepHitResult& closestHit,
+		const std::shared_ptr<CharacterBase>&character)const;
+
 
 	// 近いボックスとスウィープ判定
-	void ResolveSweepHit(const std::shared_ptr<CharacterBase>& character, const SweepHitResult& hit, Math::Vector3& currentPos, Math::Vector3& remainingMove);
-
-
+	void ResolveSweepHit(
+		const std::shared_ptr<CharacterBase>& character,
+		const SweepHitResult& hit, Math::Vector3& currentPos,
+		Math::Vector3& remainingMove,
+		const Math::Vector3&sourceMove,
+		bool updateGroundState);
 
 
 	// Collision Test
@@ -89,22 +106,7 @@ private:
 	bool SegmentVsAABB(const Math::Vector3& start,const Math::Vector3& move,const Math::Vector3& boxMin,const Math::Vector3& boxMax,float& outTOI,Math::Vector3 &outNormal);
 
 
-	// Legacy / 保留中
-
-	void ResolveGroundSnap();
-	void ResolveBoxGroundSnap();
-
-
-	// 押し戻し量を細かく分けて壁との当たり判定を行う
-	Math::Vector3 ResolveWallCollisionForCharacter(const std::shared_ptr<CharacterBase>& character);
-
-	// 押し戻し量を細かく分けて地面との当たり判定を行う
-	void ResolveGroundCollisionForCharacter(const std::shared_ptr<CharacterBase>& character);
-
-
 	void ResolveCharacterCollision();
-	void ResolveWallCollision();
-	void ResolveGroundCollision();
 
 	void ApplyCharacterPush(const std::shared_ptr<CharacterBase>& character);
 

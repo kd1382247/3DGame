@@ -28,6 +28,8 @@ public:
 	// スフィア情報
 	DirectX::BoundingSphere GetBumpSphere()const;
 
+	float GetMaxWalkableSlopeAngle()const { return m_maxWalkableSlopeAngle; }
+
 	// 現在の押し戻しの影響を受ける割合
 	float GetBumpPushRate()const { return m_bumpPushRate; }
 	// 押し戻しの量を加算
@@ -54,14 +56,7 @@ public:
 	Math::Vector3 GetKnockBack()const { return m_knockBack; }
 	void SetKnockBack(const Math::Vector3& knockBack) { m_knockBack = knockBack; }
 
-	void AddKnockBack(const Math::Vector3& dir, const float power)
-	{
-		if (m_knockBack.Length() >= 0.6)
-		{
-			return;
-		}
-		m_knockBack += dir * power;
-	}
+	void AddKnockBack(const Math::Vector3& dir, const float power);
 
 	int  GetCurrentHP()const { return m_hp; }
 	virtual int GetMaxHP()const = 0;
@@ -130,5 +125,8 @@ protected:
 
 	// キャラが死亡したときに行う処理
 	bool m_outroFlg = false;
+
+	// キャラが登れる坂の角度
+	float m_maxWalkableSlopeAngle=45;
 
 };

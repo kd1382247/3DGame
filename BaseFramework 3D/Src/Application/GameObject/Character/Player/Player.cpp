@@ -51,6 +51,7 @@ void Player::Init()
 
 		m_stateMachine.ChangeState(*this, std::make_unique<PlayerNormalState>());
 
+		m_maxWalkableSlopeAngle = 45.0f;
 	}
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
@@ -418,7 +419,6 @@ void Player::UpdateGravity()
 	float deltaTime = TimeManager::Instance().GetDeltaTime();
 
 	m_gravity += gravityAcceleration*deltaTime;
-
 
 	Math::Vector3 gravityMove = { 0.0f,-m_gravity * deltaTime ,0.0f };
 

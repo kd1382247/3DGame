@@ -158,3 +158,12 @@ int CharacterBase::GetCurrentAreaID(const Math::Vector3& pos)
 
 	return 0;
 }
+
+void CharacterBase::AddKnockBack(const Math::Vector3& dir, const float power)
+{
+	if (m_knockBack.Length() >= 0.6)
+	{
+		return;
+	}
+	m_knockBack += dir * power;
+}
