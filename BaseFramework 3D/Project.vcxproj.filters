@@ -355,6 +355,12 @@
     <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision">
       <UniqueIdentifier>{91fec0a9-4908-43a7-a847-a4fa54631ab1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\System\CollisionManager\CollisionMath">
+      <UniqueIdentifier>{5c658fc9-dde8-4aa4-8b0a-a9319fdacb0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\CollisionManager\CollisionRegistry">
+      <UniqueIdentifier>{32294945-5446-4516-bfc8-6be76158bab3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -915,6 +921,12 @@
     <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollisionManager.h">
       <Filter>Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\System\CollisionManager\CollisionMath\CollisionMath.h">
+      <Filter>Src\Application\System\CollisionManager\CollisionMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\CollisionManager\CollisionRegistry\CollisionRegistry.h">
+      <Filter>Src\Application\System\CollisionManager\CollisionRegistry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1385,6 +1397,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollisionManager.cpp">
       <Filter>Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\CollisionManager\CollisionMath\CollisionMath.cpp">
+      <Filter>Src\Application\System\CollisionManager\CollisionMath</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\CollisionManager\CollisionRegistry\CollisionRegistry.cpp">
+      <Filter>Src\Application\System\CollisionManager\CollisionRegistry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

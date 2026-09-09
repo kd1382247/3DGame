@@ -1,6 +1,7 @@
 ﻿#include "TurtleShell.h"
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
+#include"../../../../System/CollisionManager/CollisionMath/CollisionMath.h"
 #include"../../../Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 #include"../../../Stage/Stage01/Collision/WallCollision/WallCollision.h"
 
@@ -88,6 +89,7 @@ void TurtleShell::DrawDebug()
 void TurtleShell::SetUpReference()
 {
 	EnemyBase::SetUpReference();
+
 
 	// HPBarを生成
 	EnemyHPBarManager::Instance().CreateHPBar(
@@ -309,8 +311,7 @@ void TurtleShell::UpdateSpinAttackMove()
 		Math::Vector3 push;
 		Math::Vector3 normal;
 
-		if (CollisionManager::Instance().SphereVsAABB(
-			GetBumpSphere(), wall->GetBox(),push,normal))
+		if (CollisionMath::SphereVsAABB(GetBumpSphere(), wall->GetBox(),push,normal))
 		{
 			// ボックスとぶつかったら反転
 			// 反射ベクトルを求める

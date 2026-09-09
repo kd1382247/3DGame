@@ -266,7 +266,6 @@ void Cactas::UpdateAttackCollision()
 
 		attackInfo.knockBackDir = knockBackDir;
 		attackInfo.knockBackPower = 0.08f;
-		attackInfo.knockBackPower = 3.0f;
 		attackInfo.damage = 10;
 
 		spPlayer->OnHit(attackInfo);

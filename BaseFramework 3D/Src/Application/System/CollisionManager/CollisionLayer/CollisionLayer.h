@@ -6,7 +6,7 @@ enum class CollisionLayer
 	Player,
 	Enemy,
 	PlayerAttack,
-	EnemyAttac,
+	EnemyAttack,
 	CharacterBump,
 	Gimmick,
 	Wall,

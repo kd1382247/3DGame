@@ -30,6 +30,8 @@ public:
 
 	float GetMaxWalkableSlopeAngle()const { return m_maxWalkableSlopeAngle; }
 
+	float GetMaxStepHeight()const { return m_maxStepHeight; }
+
 	// 現在の押し戻しの影響を受ける割合
 	float GetBumpPushRate()const { return m_bumpPushRate; }
 	// 押し戻しの量を加算
@@ -128,5 +130,8 @@ protected:
 
 	// キャラが登れる坂の角度
 	float m_maxWalkableSlopeAngle=45;
+
+	// キャラが登れる段差
+	float m_maxStepHeight = 0.1f;
 
 };

@@ -7,6 +7,11 @@ class OBBCollision :public StageBase
 
 public:
 
+	enum class OBBCollisionType
+	{
+		Solid,
+		Walkable
+	};
 
 	OBBCollision() {}
 	~OBBCollision()override {}
@@ -17,6 +22,9 @@ public:
 	void DrawDebug()override;
 
 	void SetMatrix(const Math::Matrix& mat) { m_mWorld = mat; }
+
+	void SetCollisionType(OBBCollisionType type) { m_collisionType = type; }
+	OBBCollisionType GetCollisionType()const     { return m_collisionType; }
 
 
 	DirectX::BoundingOrientedBox GetBox()const;
@@ -30,7 +38,10 @@ public:
 	void Destroy()override;
 
 
+
 private:
 
 	int m_id = -1;
+
+	OBBCollisionType m_collisionType = OBBCollisionType::Walkable;
 };

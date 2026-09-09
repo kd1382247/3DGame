@@ -1,10 +1,10 @@
 ﻿#pragma once
 
 #include"CollisionLayer/CollisionLayer.h"
+#include"CollisionRegistry/CollisionRegistry.h"
 
 class KdGameObject;
 class CharacterBase;
-
 
 class CollisionManager
 {
@@ -12,48 +12,103 @@ public:
 
 	void DrawDebug();
 
-	
 	using objectList = std::vector<std::weak_ptr<KdGameObject>>;
 
-	void RegisterObject(CollisionLayer layer, const std::shared_ptr<KdGameObject>& object);
+	// 当たり判定リストに追加
+	void RegisterObject(CollisionLayer layer, const std::shared_ptr<KdGameObject>& object)
+	{
+		m_registry.RegisterObject(layer, object);
+	}
 
-	void UnregisterObject(CollisionLayer layer, const std::shared_ptr<KdGameObject>& object);
+	// 当たり判定リストから削除
+	void UnregisterObject(CollisionLayer layer, const std::shared_ptr<KdGameObject>& object)
+	{
+		m_registry.UnregisterObject(layer, object);
+	}
 
+	// 指定のリストを取得
+	const objectList& GetObjects(CollisionLayer layer)const
+	{
+		return m_registry.GetObjects(layer);
+	}
 
-	const objectList& GetObjects(CollisionLayer layer)const;
+	
+	void RemoveExpiredObjects()
+	{
+		m_registry.RemoveExpiredObjects();
+	}
 
-	void RemoveExpiredObjects();
-
-	void Clear();
+	void Clear()
+	{
+		m_registry.Clear();
+	}
 
 	void Resolve();
 
-	bool SphereVsAABB(
-		const DirectX::BoundingSphere& sphere,
-		const DirectX::BoundingBox& box,
-		Math::Vector3& outPush,
-		Math::Vector3& outNormal);
-
 private:
-
 
 	void Init();
 
-
-	struct SweepHitResult
+	struct SweepResult
 	{
-		bool  m_hit = false;
+		bool m_hit = false;
 		float m_toi = 1.0f;
-		Math::Vector3 m_normal = Math::Vector3::Zero;
+
+		std::vector<Math::Vector3>m_normals;
 	};
+	
 
-	void UpdateClosestHit(SweepHitResult& closestHit, float toi, const Math::Vector3& normal);
+	void ResolveSweepContacts(
+		const std::shared_ptr<CharacterBase>& character,
+		const SweepResult& sweepResult,
+		Math::Vector3& currentPos,
+		Math::Vector3& remainingMove,
+		const Math::Vector3& sourceMove,
+		bool updateGroundState);
 
-	// Character取得
-	std::vector<std::shared_ptr<CharacterBase>>GetCharacters();
+	SweepResult FindSweepContacts(
+		const std::shared_ptr<CharacterBase>& character,
+		const Math::Vector3& currentPos,
+		const Math::Vector3& remainingMove);
+
+	void AddSweepContact(
+		SweepResult& result,
+		float toi,
+		const Math::Vector3& normal,
+		float moveLength);
+
+	void ResolveStartOverlapContact(
+		const Math::Vector3& push,
+		const Math::Vector3& normal,
+		Math::Vector3& currentPos,
+		Math::Vector3& remainingMove);
 
 
-	// Character Movement
+	void ResolveMultipleSurfaceHit(
+		const std::shared_ptr<CharacterBase>& character,
+		const SweepResult& sweepResult,
+		Math::Vector3& currentPos,
+		Math::Vector3& remainingMove,
+		const Math::Vector3& sourceMove,
+		bool updateGroundState);
+
+
+	void UpdateCharacterSurfaceState(
+		const std::shared_ptr<CharacterBase>& character,
+		const Math::Vector3& normal,
+		const Math::Vector3& sourceMove,
+		bool updateGroundState);
+
+	//==============================
+	// キャラリストを取得
+	//==============================
+	std::vector<std::shared_ptr<CharacterBase>> GetCharacters();
+
+
+	//==============================
+	// キャラの移動
+	//==============================
+
 	void ResolveCharacterMovement();
 
 	Math::Vector3 ResolveCharacterDisplacement(
@@ -62,63 +117,47 @@ private:
 		const Math::Vector3& move,
 		bool updateGroundState);
 
-	// ボックスのめり込みを解決する
+	//==============================
+	// めり込みを解決
+	//==============================
+
 	void ResolveAABBStartOverlap(
 		const std::shared_ptr<CharacterBase>& character,
 		Math::Vector3& currentPos,
 		Math::Vector3& remainingMove);
-	// ボックスのめり込みを解決する
+
 	void ResolveOBBStartOverlap(
 		const std::shared_ptr<CharacterBase>& character,
 		Math::Vector3& currentPos,
 		Math::Vector3& remainingMove);
 
-
-	float GetUpDot(const SweepHitResult& closestHit)const{ return closestHit.m_normal.Dot(Math::Vector3::Up); }
-
-	bool IsWalkableSurface(
-		const SweepHitResult& closestHit,
-		const std::shared_ptr<CharacterBase>&character)const;
-
-
-	// 近いボックスとスウィープ判定
+	//==============================
+	// スウィープ判定
+	//==============================
 	void ResolveSweepHit(
 		const std::shared_ptr<CharacterBase>& character,
-		const SweepHitResult& hit, Math::Vector3& currentPos,
+		float toi,
+		const Math::Vector3 &normal,
+		Math::Vector3& currentPos,
 		Math::Vector3& remainingMove,
 		const Math::Vector3&sourceMove,
 		bool updateGroundState);
 
 
-	// Collision Test
-	
-	SweepHitResult FindClosestOBBHit(const std::shared_ptr<CharacterBase>& character,const Math::Vector3& currentPos,const Math::Vector3& remainingMove);
+	bool IsWalkableSurface(
+		const Math::Vector3 &normal,
+		const std::shared_ptr<CharacterBase>& character)const;
 
-	SweepHitResult FindClosestAABBHit(const std::shared_ptr<CharacterBase>& character,const Math::Vector3& currentPos,const Math::Vector3& remainingMove);
-
-	bool SphereVsOBB(const DirectX::BoundingSphere& sphere,const DirectX::BoundingOrientedBox& obb,Math::Vector3& outPush,Math::Vector3& outNormal);
-
-	bool SphereSweepVsOBB(const Math::Vector3& start,const Math::Vector3& move,float radius,const DirectX::BoundingOrientedBox& obb,float& outTOI,Math::Vector3& outNormal);
-
-
-	bool SphereSweepVsAABB(const Math::Vector3& sphereCenter,float radius,const Math::Vector3& move,const Math::Vector3& boxMin,const Math::Vector3& boxMax,float& outTOI,Math::Vector3& outNormal);
-
-	bool SegmentVsAABB(const Math::Vector3& start,const Math::Vector3& move,const Math::Vector3& boxMin,const Math::Vector3& boxMax,float& outTOI,Math::Vector3 &outNormal);
-
-
+	//==============================
+	// キャラ同士の判定
+	//==============================
 	void ResolveCharacterCollision();
 
 	void ApplyCharacterPush(const std::shared_ptr<CharacterBase>& character);
-
 	void ApplyKnockBack(const std::shared_ptr<CharacterBase>& character);
 
 
-	// レイヤーのサイズを取得
-	static constexpr size_t LayerCount =
-		static_cast<size_t>(CollisionLayer::Max);
-
-	std::array<objectList, LayerCount>m_objectLists;
-
+	CollisionRegistry m_registry;
 
 	std::unique_ptr<KdDebugWireFrame>m_pDebugWire=nullptr;
 
