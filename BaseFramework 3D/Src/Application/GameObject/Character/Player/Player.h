@@ -26,6 +26,8 @@ public:
 
 	void DrawLit()override;
 
+	void AnimaFrame();
+
 	void DrawDebug()override;
 
 	void DrawInspector()override;
@@ -145,14 +147,11 @@ private:
 	// 必殺技の当たり判定のタイミングをセット
 	void SetSpecialMoveTiming();
 
-
 	void ClearHitTargets();
 
 	bool IsAlreadyHit(const std::shared_ptr<EnemyBase>&enemy)const;
 
 	void CreateSpecialMoveDir();
-
-	void UpdateGroundCollision();
 
 	// 攻撃判定のスフィアを作る
 	DirectX::BoundingSphere CreateAttackSphere()const;
@@ -161,6 +160,9 @@ private:
 	DirectX::BoundingSphere CreateSpecialMoveSphere()const;
 
 private:
+
+
+	float m_animFrameCount = 0.0f;
 
 	// カメラ
 	std::weak_ptr<CameraBase>m_wpCamera;

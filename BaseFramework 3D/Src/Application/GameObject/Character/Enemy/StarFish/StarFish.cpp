@@ -80,6 +80,6 @@ void StarFish::UpdateAnimation()
 	}
 
 	m_animation.Play(nextAnimation);
-	m_animation.Update();
+	m_animation.Update(m_deltaTime);
 
 }

@@ -29,10 +29,10 @@ void TurtleShell::Init()
 		
 		m_hp = m_parameter.GetParam().m_maxHP;
 
-		m_attackCooldownDuration = 60 * 1.0f;
-		m_dizzyDuration = 60 * 3.0f;
-		m_spinAttackDuration = 60 * 5.0f;
-		m_hitCooldownDuration = 60 * 0.5f;
+		m_attackCooldownDuration = 1.0f;
+		m_dizzyDuration = 3.0f;
+		m_spinAttackDuration = 5.0f;
+		m_hitCooldownDuration =  0.5f;
 
 
 		m_pCollider = std::make_unique<KdCollider>();
@@ -59,7 +59,7 @@ void TurtleShell::Update()
 {
 	UpdateGravity();
 
-	//m_stateMachine.Update(*this);
+	m_stateMachine.Update(*this);
 
 	UpdateAttack();
 
@@ -141,11 +141,8 @@ void TurtleShell::UpdateLaunch()
 		m_launchFlg = false;
 	}
 
-	Math::Vector3 pos = GetPos();
-
-	pos += m_launchVec;
-
-	SetPos(pos);
+	Math::Vector3 move = m_launchVec * 60.0f * m_deltaTime;
+	AddPendingMove(move);
 }
 
 void TurtleShell::UpdateMove()
@@ -274,7 +271,7 @@ void TurtleShell::UpdateAttack()
 		m_attackFlg = true;
 	}
 
-	m_attackCooldown--;
+	m_attackCooldown -= m_deltaTime;
 	if (m_attackCooldown <= 0)
 	{
 		m_attackCooldown = 0;
@@ -293,13 +290,26 @@ void TurtleShell::UpdateAttack()
 void TurtleShell::UpdateSpinAttackMove()
 {
 
-	if (m_wpPlayer.lock())
+	auto spPlayer = m_wpPlayer.lock();
+	if (spPlayer)
 	{
-		m_targetPos = m_wpPlayer.lock()->GetPos();
+		m_targetPos = spPlayer->GetPos();
 	}
 
+
 	Math::Vector3 moveDir = GetMoveDir();
+
+	if (moveDir.LengthSquared() <= 0.000001f)
+	{
+		return;
+	}
+
 	moveDir.Normalize();
+
+
+	const auto& param = m_parameter.GetParam().m_moveSpeed;
+	Math::Vector3 move = moveDir * (param + 0.07f) * 60.0f * m_deltaTime;
+
 
 	for (auto wall : WallCollisionManager::Instance().GetWallCollisionList())
 	{
@@ -308,39 +318,56 @@ void TurtleShell::UpdateSpinAttackMove()
 			continue;
 		}
 
-		Math::Vector3 push;
-		Math::Vector3 normal;
+		const auto& box = wall->GetBox();
 
-		if (CollisionMath::SphereVsAABB(GetBumpSphere(), wall->GetBox(),push,normal))
+		Math::Vector3 boxCenter = box.Center;
+		Math::Vector3 boxExtents = box.Extents;
+
+		Math::Vector3 boxMin = boxCenter - boxExtents;
+		Math::Vector3 boxMax = boxCenter + boxExtents;
+
+		float toi = 0.0f;
+		Math::Vector3 normal = Math::Vector3::Zero;
+
+		bool hit = CollisionMath::SphereSweepVsAABB(
+			GetBumpSphere().Center,
+			GetBumpSphere().Radius,
+			move,
+			boxMin,
+			boxMax,
+			toi,
+			normal);
+
+		if (!hit)
 		{
-			// ボックスとぶつかったら反転
-			// 反射ベクトルを求める
-			float dot = moveDir.Dot(normal);
+			continue;
+		}
 
-			if(dot<0.0f)
+		float dot = moveDir.Dot(normal);
+
+		if (dot < 0.0f)
+		{
+			Math::Vector3 reflectDir = moveDir - 2.0f * dot * normal;
+
+			if (reflectDir.LengthSquared() > 0.000001f)
 			{
-				Math::Vector3 R = moveDir - 2 * dot * normal;
-				R.Normalize();
-				moveDir = R;
-
+				reflectDir.Normalize();
+				moveDir = reflectDir;
 				SetMoveDir(moveDir);
 			}
 		}
+
+		break;
 	}
-
-
-	Math::Vector3 pos = GetPos();
-
-	const auto& param = m_parameter.GetParam().m_moveSpeed;
-
-	pos += moveDir * (param+0.07f);
-	SetPos(pos);
+	
+	move = moveDir * (param + 0.07f) * 60.0f * m_deltaTime;
+	AddPendingMove(move);
 }
 
 bool TurtleShell::SpinAttackRemaining()
 {
 	
-	m_spinAttackRemaining--;
+	m_spinAttackRemaining -= m_deltaTime;
 
 	if (m_spinAttackRemaining <= 0)
 	{
@@ -352,7 +379,7 @@ bool TurtleShell::SpinAttackRemaining()
 
 bool TurtleShell::DizyyRemaining()
 {
-	m_dizzyRemaining--;
+	m_dizzyRemaining -= m_deltaTime;
 
 	if (m_dizzyRemaining <= 0)
 	{
@@ -364,7 +391,7 @@ bool TurtleShell::DizyyRemaining()
 
 void TurtleShell::HitCoolDownRemaining()
 {
-	m_hitCooldownRemaining--;
+	m_hitCooldownRemaining -= m_deltaTime;
 
 	if (m_hitCooldownRemaining<= 0)
 	{
@@ -375,5 +402,5 @@ void TurtleShell::HitCoolDownRemaining()
 
 void TurtleShell::UpdateAnimation()
 {
-	m_animation.Update();
+	m_animation.Update(m_deltaTime);
 }

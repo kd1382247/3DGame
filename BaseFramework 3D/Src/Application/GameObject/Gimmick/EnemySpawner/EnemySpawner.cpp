@@ -1,6 +1,7 @@
 ﻿#include "Pch.h"
 #include "EnemySpawner.h"
 
+#include"../../../System/TimeManager/TimeManager.h"
 #include"../../../Scene/SceneManager.h"
 
 #include"../../Character/Enemy/EnemyBase.h"
@@ -38,12 +39,14 @@ void EnemySpawner::Init()
 
 void EnemySpawner::Update()
 {
-	m_spawnCountDown--;
+
+
+	m_spawnCountDown -= TimeManager::Instance().GetDeltaTime();
 
 	if (m_spawnCountDown <= 0)
 	{
 		SpawnEnemy();
-		m_spawnCountDown=60.0f*m_spawnInterval;
+		m_spawnCountDown = m_spawnInterval;
 	}
 }
 

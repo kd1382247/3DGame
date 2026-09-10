@@ -1,8 +1,8 @@
 ﻿#include "Cactas.h"
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
-#include"../../../../System/WayPointManager/WayPointManager.h"
-#include"../../../../GameObject/WayPoint/WayPoint.h"
+
+#include"../../../../System/TimeManager/TimeManager.h"
 
 #include"../../../FlyText/FlyTextManager.h"
 
@@ -29,7 +29,7 @@ void Cactas::Init()
 
 		m_hp = m_parameter.GetParam().m_maxHP;
 
-		m_attackCooldownDuration = 60*0.5f;
+		m_attackCooldownDuration = 0.5f;
 
 		m_pCollider = std::make_unique<KdCollider>();
 		m_pCollider->RegisterCollisionShape
@@ -122,11 +122,8 @@ void Cactas::UpdateLaunch()
 		m_launchFlg = false;
 	}
 
-	Math::Vector3 pos = GetPos();
-
-	pos += m_launchVec;
-
-	SetPos(pos);
+	Math::Vector3 move = m_launchVec * 60.0f * m_deltaTime;
+	AddPendingMove(move);
 }
 
 void Cactas::UpdateMove()
@@ -179,7 +176,7 @@ void Cactas::UpdateAttack()
 		m_attackFlg = true;
 	}
 
-	m_attackCooldown--;
+	m_attackCooldown -= m_deltaTime;
 	if (m_attackCooldown <= 0)
 	{
 		m_attackCooldown = 0;
@@ -197,7 +194,8 @@ void Cactas::UpdateAttack()
 
 void Cactas::UpdateAnimation()
 {
-	m_animation.Update();
+
+	m_animation.Update(m_deltaTime);
 }
 
 void Cactas::SetAttackTiming()
@@ -223,7 +221,7 @@ void Cactas::UpdateAttackCollision()
 		return;
 	}
 
-	m_animFrame++;
+	m_animFrame += 60.0f * m_deltaTime;
 
 	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
 	{
@@ -293,6 +291,8 @@ void Cactas::OnHit(const AttackInfo attackInfo)
 		ChangeState<CactasDamageState>();
 		RePlayAnimation(CactasAnimationType::GetHit);
 	}
+
+	TimeManager::Instance().StartHitStop(0.1);
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
 

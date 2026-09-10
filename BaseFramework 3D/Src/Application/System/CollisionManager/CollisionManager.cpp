@@ -26,6 +26,11 @@ void CollisionManager::Init()
 void CollisionManager::Resolve()
 {
 
+	if (TimeManager::Instance().IsHitStop())
+	{
+		return;
+	}
+
 	// まず全キャラクターを非接地状態にする
 	for (const auto& character : GetCharacters())
 	{
@@ -616,7 +621,6 @@ void CollisionManager::ResolveCharacterMovement()
 	
 	for (const auto& character : characters)
 	{
-		KdDebugGUI::Instance().ClearLog();
 
 		if (!character)
 		{

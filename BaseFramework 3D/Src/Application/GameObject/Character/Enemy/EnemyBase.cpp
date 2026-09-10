@@ -10,7 +10,6 @@
 
 #include"../Player/Player.h"
 
-
 void EnemyBase::Init()
 {
 	// カテゴリーをセット
@@ -45,7 +44,7 @@ void EnemyBase::Launch(const Math::Vector3& dir, float power)
 	m_launchFlg = true;
 	
 	// 重力を反転
-	m_gravity -= power;
+	m_gravity -= power*60.0f;
 }
 
 Math::Vector3 EnemyBase::CreateSpawnDirection()
@@ -66,12 +65,13 @@ Math::Vector3 EnemyBase::CreateSpawnDirection()
 
 void EnemyBase::UpdateGravity()
 {
-	m_gravity += 0.02f;
 
-	Math::Vector3 gravityMove = Math::Vector3::Zero;
+	constexpr float gravityAcceleration = 72.0f;
 
-	gravityMove.y = -m_gravity;
-	
+	m_gravity += gravityAcceleration * m_deltaTime;
+
+	Math::Vector3 gravityMove = { 0.0f,-m_gravity * m_deltaTime ,0.0f };
+
 	AddPendingMove(gravityMove);
 
 }
@@ -99,9 +99,6 @@ void EnemyBase::UpdateDirectChase()
 
 	SetMoveDir(targetDir);
 
-	// 目的地までの距離より移動スピードが大きくなったら
-	// 残りの距離を移動量にする
-	//if (targetDir.Length() < moveSpeed)moveSpeed = targetDir.Length();
 
 	if (targetDir.Length()<=1.5f)
 	{
@@ -115,7 +112,7 @@ void EnemyBase::UpdateDirectChase()
 
 	targetDir.Normalize();
 
-	Math::Vector3 move = targetDir * moveSpeed;
+	Math::Vector3 move = targetDir * (moveSpeed*60.0f)*m_deltaTime;
 
 	AddPendingMove(move);
 }
@@ -123,8 +120,6 @@ void EnemyBase::UpdateDirectChase()
 void EnemyBase::UpdateFollowPath()
 {
 	
-	//UpdatePath();
-
 	// 経路が空
 	if (m_path.empty())
 	{
@@ -180,7 +175,7 @@ void EnemyBase::UpdateFollowPath()
 	targetDir.Normalize();
 
 
-	Math::Vector3 move= targetDir * moveSpeed;
+	Math::Vector3 move = targetDir * (moveSpeed * 60.0f) * m_deltaTime;
 
 	AddPendingMove(move);
 }
@@ -218,22 +213,9 @@ bool EnemyBase::CanDirectChase()
 	// 正規化
 	direction.Normalize();
 
-
-	////////////////////////////////////////
-	//  レイ判定を行う
-	////////////////////////////////////////
-	
 	// レイ情報
-	KdCollider::RayInfo rayInfo;
-	// 方向
-	rayInfo.m_dir = direction;
-	// 始点
-	rayInfo.m_pos = startPos;
-	// 長さ
-	rayInfo.m_range = rayLength;
-	// 判定対象
-	rayInfo.m_type = KdCollider::Type::TypeSight;
-
+	KdCollider::RayInfo rayInfo(KdCollider::Type::TypeSight,startPos,direction,rayLength);
+	
 	bool hit = false;
 
 	for (auto& wpGameObj :CollisionManager::Instance().GetObjects(CollisionLayer::AIBlock))

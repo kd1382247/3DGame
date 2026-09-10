@@ -30,7 +30,6 @@ public:
 
 	float GetMaxWalkableSlopeAngle()const { return m_maxWalkableSlopeAngle; }
 
-	float GetMaxStepHeight()const { return m_maxStepHeight; }
 
 	// 現在の押し戻しの影響を受ける割合
 	float GetBumpPushRate()const { return m_bumpPushRate; }
@@ -51,22 +50,23 @@ public:
 	float GetGravity()const { return m_gravity; }
 	void SetGravity(float gravity) { m_gravity = gravity; }
 
+	// 地面に着いているか
 	void SetIsGrounded(const bool flg) { m_isGrounded = flg; }
 	bool IsGrounded()const { return m_isGrounded; }
 
-
+	// ノックバック
 	Math::Vector3 GetKnockBack()const { return m_knockBack; }
 	void SetKnockBack(const Math::Vector3& knockBack) { m_knockBack = knockBack; }
 
 	void AddKnockBack(const Math::Vector3& dir, const float power);
 
-	int  GetCurrentHP()const { return m_hp; }
+	int         GetCurrentHP()const { return m_hp; }
 	virtual int GetMaxHP()const = 0;
 
 	virtual float GetTurnSpeed()const = 0;
 
 	// キャラの移動量をセット
-	void ClearPendingMove(const Math::Vector3& move) { m_pendingMove = move; }
+	void          ClearPendingMove(const Math::Vector3& move) { m_pendingMove = move; }
 	Math::Vector3 GetPendingMove()const { return m_pendingMove; }
 
 	void AddPendingMove(const Math::Vector3& move) { m_pendingMove += move; }
@@ -77,6 +77,10 @@ public:
 
 
 	bool IsInOutro()const { return m_outroFlg; }
+
+	// デルタタイム
+	void SetDeltaTime(const float deltaTime) { m_deltaTime = deltaTime; }
+	float GetDeltaTime()       const         { return m_deltaTime; }
 
 private:
 
@@ -131,7 +135,7 @@ protected:
 	// キャラが登れる坂の角度
 	float m_maxWalkableSlopeAngle=45;
 
-	// キャラが登れる段差
-	float m_maxStepHeight = 0.1f;
+	// デルタタイム
+	float m_deltaTime = 0.0f;
 
 };

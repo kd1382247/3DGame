@@ -1,6 +1,8 @@
 ﻿#include "CharacterBase.h"
 
 #include"../../System/CollisionManager/CollisionManager.h"
+#include"../../System/TimeManager/TimeManager.h"
+
 
 CharacterBase::CharacterBase()
 {
@@ -22,6 +24,10 @@ void CharacterBase::PreUpdate()
 	SetPrevPos(GetPos());
 	// 前フレームの移動量をクリア
 	ClearPendingMove(Math::Vector3::Zero);
+
+	// デルタタイムをセット
+	SetDeltaTime(TimeManager::Instance().GetDeltaTime());
+
 }
 
 // 更新

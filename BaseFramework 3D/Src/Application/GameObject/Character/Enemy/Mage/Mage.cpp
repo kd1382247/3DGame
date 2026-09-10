@@ -19,9 +19,6 @@ void Mage::Init()
 		("Mage", Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, KdCollider::TypeBump);
 
 
-		m_animation.Play(MageAnimationType::Idle);
-		m_animation.Update();
-
 		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
 
@@ -88,6 +85,6 @@ void Mage::UpdateAnimation()
 	}
 
 	m_animation.Play(nextAnimation);
-	m_animation.Update();
+	m_animation.Update(m_deltaTime);
 
 }

@@ -54,7 +54,7 @@ void Slime::Init()
 			break;
 		}
 
-		m_attackCooldownDuration = 60 * 0.5;
+		m_attackCooldownDuration = 0.5f;
 		m_hp = m_parameter.GetParam().m_maxHP;
 	}
 
@@ -69,7 +69,7 @@ void Slime::Update()
 
 	UpdateGravity();
 
-	//m_stateMachine.Update(*this);
+	m_stateMachine.Update(*this);
 	
 	UpdateAttack();
 }
@@ -161,11 +161,9 @@ void Slime::UpdateLaunch()
 		m_launchFlg = false;
 	}
 
-	Math::Vector3 pos = GetPos();
+	Math::Vector3 move = m_launchVec * 60.0f * m_deltaTime;
 
-	pos += m_launchVec;
-
-	SetPos(pos);
+	AddPendingMove(move);
 }
 
 void Slime::UpdateMove()
@@ -220,7 +218,7 @@ void Slime::UpdateAttack()
 		m_attackFlg = true;
 	}
 
-	m_attackCooldown--;
+	m_attackCooldown -= m_deltaTime;
 	if (m_attackCooldown <= 0)
 	{
 		m_attackCooldown = 0;
@@ -238,7 +236,7 @@ void Slime::UpdateAttack()
 
 void Slime::UpdateAnimation()
 {
-	m_animation.Update();
+	m_animation.Update(m_deltaTime);
 }
 
 void Slime::SetAttackTiming()
@@ -264,7 +262,7 @@ void Slime::UpdateAttackCollision()
 		return;
 	}
 
-	m_animFrame++;
+	m_animFrame+= 60.0f * m_deltaTime;
 
 	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
 	{

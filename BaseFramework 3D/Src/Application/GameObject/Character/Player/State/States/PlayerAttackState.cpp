@@ -15,6 +15,7 @@ void PlayerAttackState::Enter(Player& player)
 void PlayerAttackState::Update(Player & player)
 {
 
+	player.AnimaFrame();
 	player.UpdateAttackMove();
 	// 当たり判定
 	player.UpdateAttackCollision(Player::AttackType::NormalAttack);

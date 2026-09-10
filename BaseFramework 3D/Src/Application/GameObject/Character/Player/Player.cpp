@@ -1,11 +1,10 @@
 ﻿#include "Player.h"
 
-#include"../../../System/TimeManager/TimeManager.h"
-
 #include"../../Camera/CameraBase.h"
 #include"../Enemy/EnemyBase.h"
 
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
+#include"../../../System/TimeManager/TimeManager.h"
 #include"../../../System/CollisionManager/CollisionManager.h"
 
 #include"../../../Scene/SceneManager.h"
@@ -62,6 +61,9 @@ void Player::Init()
 void Player::Update()
 {
 
+	KdDebugGUI::Instance().ClearLog();
+	KdDebugGUI::Instance().AddLog("AnimFrame%f", m_animFrameCount);
+
 	// 操作入力
 	UpdateInput();
 
@@ -69,6 +71,8 @@ void Player::Update()
 	m_stateMachine.Update(*this);
 
 	UpdateGravity();
+
+	
 
 }
 
@@ -99,6 +103,11 @@ void Player::DrawLit()
 	CharacterBase::DrawLit();
 }
 
+void Player::AnimaFrame()
+{
+	m_animFrameCount += 60 * m_deltaTime;
+}
+
 void Player::DrawDebug()
 {
 	CollisionManager::Instance().DrawDebug();
@@ -124,7 +133,7 @@ void Player::SetSpecialMoveTiming()
 
 void Player::ClearHitTargets()
 {
-	m_hitCooldownTimer--;
+	m_hitCooldownTimer -= 60.0f * m_deltaTime;
 
 	if (m_hitCooldownTimer <= 0)
 	{
@@ -137,7 +146,7 @@ void Player::ClearHitTargets()
 void Player::UpdateAttackCollision(const AttackType type)
 {
 
-	m_animFrame++;
+	m_animFrame += 60.0f * m_deltaTime;
 
 	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
 	{
@@ -329,7 +338,7 @@ void Player::UpdateComboInput()
 	// コンボ受付
 	if (m_canCombo)
 	{	
-		++m_comboInputCnt;
+		m_comboInputCnt += 60.0f * m_deltaTime;
 
 		if (m_attackButton)
 		{
@@ -371,9 +380,8 @@ void Player::UpdateMove()
 
 	const auto& param = m_parameter.GetParam();
 
-	float deltaTime = TimeManager::Instance().GetDeltaTime();
-
-	Math::Vector3 move=dir *(param.m_moveSpeed*60.0f)*deltaTime;
+	
+	Math::Vector3 move=dir *(param.m_moveSpeed*60.0f)*m_deltaTime;
 
 	// 移動量をセット
 	AddPendingMove(move);
@@ -402,10 +410,7 @@ void Player::UpdateAttackMove()
 
 	const auto& param = m_parameter.GetParam();
 
-	float deltaTime = TimeManager::Instance().GetDeltaTime();
-
-	//nowPos += dir * (param.m_attackMoveSpeed*60.0f)*deltaTime;
-	Math::Vector3 move= dir * (param.m_attackMoveSpeed*60.0f)*deltaTime;
+	Math::Vector3 move= dir * (param.m_attackMoveSpeed*60.0f)* m_deltaTime;
 	AddPendingMove(move);
 }
 
@@ -416,11 +421,10 @@ void Player::UpdateGravity()
 
 	constexpr float gravityAcceleration = 72.0f;
 
-	float deltaTime = TimeManager::Instance().GetDeltaTime();
+	
+	m_gravity += gravityAcceleration * m_deltaTime;
 
-	m_gravity += gravityAcceleration*deltaTime;
-
-	Math::Vector3 gravityMove = { 0.0f,-m_gravity * deltaTime ,0.0f };
+	Math::Vector3 gravityMove = { 0.0f,-m_gravity * m_deltaTime ,0.0f };
 
 	AddPendingMove(gravityMove);
 
@@ -438,13 +442,10 @@ void Player::UpdateSpecialMove()
 
 	const auto& param = m_parameter.GetParam();
 
-	float deltaTime = TimeManager::Instance().GetDeltaTime();
-
-	Math::Vector3 move = m_specialMoveDir * (0.3 * 60.0f) * deltaTime;
+	Math::Vector3 move = m_specialMoveDir * (0.3 * 60.0f) * m_deltaTime;
 
 	AddPendingMove(move);
 
-	//UpdateGroundCollision();
 	ClearHitTargets();
 }
 
@@ -483,7 +484,7 @@ void Player::FacingDirectionToCamera()
 
 	// 内積を求める
 	float dot = nowDir.Dot(toDir);
-	dot = std::clamp(dot, -1.0f, 1.0f);
+	dot = std::clamp(dot, -1.0f,1.0f);
 	// 角度に変換
 	float angle = DirectX::XMConvertToDegrees(acos(dot));
 
@@ -525,25 +526,27 @@ void Player::UpdateComboState()
 
 void Player::UpdateAnimation()
 {
-	m_animation.Update();
+	m_animation.Update(m_deltaTime);
 }
 
 void Player::SetAttackTiming()
 {
+	m_animFrameCount = 0.0f;
+
 	if (m_currentAttackCombo == AttackCombo::Attack1)
 	{
-		m_attackTiming.hitStart=1;
-		m_attackTiming.hitEnd=7;
+		m_attackTiming.hitStart=8;
+		m_attackTiming.hitEnd=13;
 	}
 	if (m_currentAttackCombo == AttackCombo::Attack2)
 	{
-		m_attackTiming.hitStart=1;
-		m_attackTiming.hitEnd=7;
+		m_attackTiming.hitStart=8;
+		m_attackTiming.hitEnd=13;
 	}
 	if (m_currentAttackCombo == AttackCombo::Attack3)
 	{
-		m_attackTiming.hitStart=3;
-		m_attackTiming.hitEnd=9;
+		m_attackTiming.hitStart=8;
+		m_attackTiming.hitEnd=13;
 	}
 	// フレームを0に
 	m_animFrame = 0.0f;
@@ -590,13 +593,6 @@ void Player::CreateSpecialMoveDir()
 	toDir.Normalize();
 
 	m_specialMoveDir = toDir;
-}
-
-void Player::UpdateGroundCollision()
-{
-
-	
-	
 }
 
 DirectX::BoundingSphere Player::CreateAttackSphere() const
@@ -657,6 +653,7 @@ void Player::OnHit(const AttackInfo attackInfo)
 	}
 
 	
+
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage,GetPos());
 
 	AddKnockBack(attackInfo.knockBackDir,attackInfo.knockBackPower);
@@ -680,8 +677,6 @@ void Player::StartJump()
 	m_isGrounded = false;
 
 	const auto& param = m_parameter.GetParam();
-
-	float deltaTime = TimeManager::Instance().GetDeltaTime();
 
 	m_gravity -= (param.m_jumpPow*60.0f);
 }

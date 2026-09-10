@@ -25,7 +25,7 @@ void Mushroom::Init()
 
 		m_hp = m_parameter.GetParam().m_maxHP;
 
-		m_attackCooldownDuration = 60 * 1;
+		m_attackCooldownDuration = 1.0f;
 
 
 		m_pCollider = std::make_unique<KdCollider>();
@@ -55,7 +55,7 @@ void Mushroom::Update()
 
 	UpdateGravity();
 
-	//m_stateMachine.Update(*this);
+	m_stateMachine.Update(*this);
 
 	UpdateAttack();
 
@@ -141,11 +141,9 @@ void Mushroom::UpdateLaunch()
 		m_launchFlg = false;
 	}
 
-	Math::Vector3 pos = GetPos();
+	Math::Vector3 move = m_launchVec * 60.0f * m_deltaTime;
 
-	pos += m_launchVec;
-
-	SetPos(pos);
+	AddPendingMove(move);
 }
 
 void Mushroom::UpdateMove()
@@ -202,7 +200,7 @@ void Mushroom::UpdateAttack()
 		m_attackFlg = true;
 	}
 
-	m_attackCooldown--;
+	m_attackCooldown -= m_deltaTime;
 	if (m_attackCooldown <= 0)
 	{
 		m_attackCooldown = 0;
@@ -220,7 +218,7 @@ void Mushroom::UpdateAttack()
 
 void Mushroom::UpdateAnimation()
 {
-	m_animation.Update();
+	m_animation.Update(m_deltaTime);
 }
 
 void Mushroom::SetAttackTiming()
@@ -246,7 +244,7 @@ void Mushroom::UpdateAttackCollision()
 		return;
 	}
 
-	m_animFrame++;
+	m_animFrame+= 60.0f * m_deltaTime;
 
 	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
 	{

@@ -8,7 +8,7 @@ public:
 	~AnimationBase(){}
 
 	void Init();
-	void Update();
+	void Update(const float deltaTime);
 	bool IsFinished() const;
 
 
