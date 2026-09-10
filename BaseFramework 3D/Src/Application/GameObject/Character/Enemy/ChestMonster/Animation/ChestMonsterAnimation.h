@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include"../State/ChestMonsterState.h"
+#include"../Animation/ChestMonsterAnimationType.h"
 #include"../../../Animation/AnimationBase.h"
 
 class ChestMonsterAnimation :public AnimationBase

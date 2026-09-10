@@ -2,8 +2,8 @@
 
 #include"../EnemyBase.h"
 
+#include"Animation/ChestMonsterAnimationType.h"
 #include"Animation/ChestMonsterAnimation.h"
-#include"State/ChestMonsterState.h"
 #include"Parameter/ChestMonsterParameter.h"
 
 
@@ -20,21 +20,36 @@ public:
 
 	void DrawInspector()override;
 
+	template<class T>
+	void ChangeState()
+	{
+		m_stateMachine.ChangeState(*this, std::make_unique<T>());
+	}
+
+
 	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
-
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
-
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
+
+
+	void PlayAnimation(ChestMonsterAnimationType type);
+	void RePlayAnimation(ChestMonsterAnimationType type);
+
+
+	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
+
+	void OnHit(const AttackInfo attackInfo) override;
 
 private:
 
 
 	void UpdateAnimation();
 
+
+
 private:
 
-	ChestMonsterActionState m_actionState = ChestMonsterActionState::Normal;
-	ChestMonsterMoveState   m_moveState = ChestMonsterMoveState::Idle;
+
 
 	// アニメーションクラス
 	ChestMonsterAnimation   m_animation;

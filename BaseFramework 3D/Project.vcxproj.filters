@@ -361,6 +361,9 @@
     <Filter Include="Src\Application\System\CollisionManager\CollisionRegistry">
       <UniqueIdentifier>{32294945-5446-4516-bfc8-6be76158bab3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States">
+      <UniqueIdentifier>{326da54f-635d-4bbd-a54a-4cd80ae730c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -663,9 +666,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Animation\TurtleShellAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterState.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.h">
       <Filter>Src\Application\GameObject\Character\Player\Parameter</Filter>
     </ClInclude>
@@ -926,6 +926,27 @@
     </ClInclude>
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionRegistry\CollisionRegistry.h">
       <Filter>Src\Application\System\CollisionManager\CollisionRegistry</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterNormalState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Animation\ChestMonsterAnimationType.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterStateBase.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterStateMachine.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterSpawnEnemyState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterDamageState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterDieState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1405,6 +1426,21 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.cpp">
       <Filter>Src\Application\GameObject\Gimmick\EnemySpawner</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterNormalState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterMachine.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterSpawnEnemyState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterDamageState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterDieState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

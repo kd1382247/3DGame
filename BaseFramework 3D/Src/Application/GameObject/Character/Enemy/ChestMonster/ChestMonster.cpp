@@ -2,6 +2,8 @@
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
+#include"State/ChestMonsterStateMachine.h"
+
 void ChestMonster::Init()
 {
 	if (!m_spModel)
@@ -57,32 +59,24 @@ void ChestMonster::DrawInspector()
 	m_parameter.DrawInspecter();
 }
 
+void ChestMonster::PlayAnimation(ChestMonsterAnimationType type)
+{
+
+}
+
+void ChestMonster::RePlayAnimation(ChestMonsterAnimationType type)
+{
+
+}
+
+void ChestMonster::OnHit(const AttackInfo attackInfo)
+{
+
+}
+
 void ChestMonster::UpdateAnimation()
 {
-	ChestMonsterAnimationType nextAnimation = ChestMonsterAnimationType::Idle;
 
-	if (m_actionState == ChestMonsterActionState::Damage)
-	{
-		nextAnimation = ChestMonsterAnimationType::GetHit;
-	}
-	else if (m_actionState == ChestMonsterActionState::GenerateMinion)
-	{
-		nextAnimation = ChestMonsterAnimationType::GenerateMinion;
-	}
-	else if (m_actionState == ChestMonsterActionState::Attack)
-	{
-		nextAnimation = ChestMonsterAnimationType::Attack;
-	}
-	else if (m_moveState == ChestMonsterMoveState::Walk)
-	{
-		nextAnimation = ChestMonsterAnimationType::Walk;
-	}
-	else
-	{
-		nextAnimation = ChestMonsterAnimationType::Idle;
-	}
-
-	m_animation.Play(nextAnimation);
 	m_animation.Update(m_deltaTime);
 
 }
