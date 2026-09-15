@@ -2,18 +2,18 @@
 
 #include"../ChestMonster.h"
 
-void ChestMonsterStateMachine::Update(ChestMonster& cactas)
+void ChestMonsterStateMachine::Update(ChestMonster& chestMonster)
 {
 	if (!m_currentState)
 	{
 		return;
 	}
 
-	m_currentState->Update(cactas);
+	m_currentState->Update(chestMonster);
 
 }
 
-void ChestMonsterStateMachine::ChangeState(ChestMonster & cactas, std::unique_ptr<ChestMonsterStateBase> nextState)
+void ChestMonsterStateMachine::ChangeState(ChestMonster & chestMonster, std::unique_ptr<ChestMonsterStateBase> nextState)
 {
 	if (m_currentState == nextState)
 	{
@@ -22,14 +22,14 @@ void ChestMonsterStateMachine::ChangeState(ChestMonster & cactas, std::unique_pt
 
 	if (m_currentState)
 	{
-		m_currentState->Exit(cactas);
+		m_currentState->Exit(chestMonster);
 	}
 
 	m_currentState = std::move(nextState);
 
 	if (m_currentState)
 	{
-		m_currentState->Enter(cactas);
+		m_currentState->Enter(chestMonster);
 	}
 
 }

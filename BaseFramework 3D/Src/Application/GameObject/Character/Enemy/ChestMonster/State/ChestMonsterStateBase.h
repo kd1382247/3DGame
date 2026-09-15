@@ -9,8 +9,8 @@ public:
 	ChestMonsterStateBase(){}
 	virtual ~ChestMonsterStateBase(){}
 
-	virtual void Enter(ChestMonster&cactas){}
-	virtual void Update(ChestMonster& cactas) = 0;
-	virtual void Exit(ChestMonster&cactas){}
+	virtual void Enter(ChestMonster&chestMonster){}
+	virtual void Update(ChestMonster& chestMonster) = 0;
+	virtual void Exit(ChestMonster&chestMonster){}
 
 };

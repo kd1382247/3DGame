@@ -17,7 +17,6 @@ void PlayerSpecialMoveState::Update(Player & player)
 	// 当たり判定
 	player.UpdateAttackCollision(Player::AttackType::SpecialMove);
 
-
 	if (player.IsAnimationFinished())
 	{
 		player.ChangeState<PlayerNormalState>();

@@ -2,6 +2,8 @@
 
 #include"../../ChestMonster.h"
 
+#include"ChestMonsterSpawnEnemyState.h"
+
 
 void ChestMonsterNormalState::Enter(ChestMonster& chestMonster)
 {
@@ -11,8 +13,10 @@ void ChestMonsterNormalState::Enter(ChestMonster& chestMonster)
 void ChestMonsterNormalState::Update(ChestMonster& chestMonster)
 {
 
-
-
+	if (chestMonster.IsSpawnEnemy())
+	{
+		chestMonster.ChangeState<ChestMonsterSpawnEnemyState>();
+	}
 
 }
 

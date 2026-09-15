@@ -10,11 +10,14 @@ public:
 	ChestMonsterAnimation() {}
 	~ChestMonsterAnimation() {}
 
-	void Init(std::shared_ptr<KdModelWork>& _model);
+	void Init(std::shared_ptr<KdModelWork>& model);
 
-	void Play(ChestMonsterAnimationType _animType);
+	void Play(ChestMonsterAnimationType type);
+	void RePlay(ChestMonsterAnimationType type);
 
 private:
+
+	void Animations(ChestMonsterAnimationType type);
 
 	ChestMonsterAnimationType m_currentAnimation = ChestMonsterAnimationType::None;
 

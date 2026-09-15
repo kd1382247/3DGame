@@ -8,9 +8,9 @@ class ChestMonsterStateMachine
 {
 public:
 
-	void Update(ChestMonster& cactas);
+	void Update(ChestMonster& chestMonster);
 
-	void ChangeState(ChestMonster& cactas, std::unique_ptr<ChestMonsterStateBase>nextState);
+	void ChangeState(ChestMonster& chestMonster, std::unique_ptr<ChestMonsterStateBase>nextState);
 
 private:
 

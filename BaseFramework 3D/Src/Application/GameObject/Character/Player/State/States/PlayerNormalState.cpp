@@ -19,7 +19,7 @@ void PlayerNormalState::Update(Player & player)
 	player.UpdateMove();
 
 	// 移動アニメーション
-	if (player.IsMoving())
+	if (player.IsMovePressed())
 	{
 		player.PlayAnimation(PlayerAnimationType::MoveFWD);
 	}
@@ -35,19 +35,19 @@ void PlayerNormalState::Update(Player & player)
 		return;
 	}
 
-	if (player.IsJumpButton())
+	if (player.IsJumpPressed())
 	{
 		player.ChangeState<PlayerJumpStartState>();
 		return;
 	}
 
-	if (player.IsAttackButton())
+	if (player.IsAttackPressed())
 	{
 		player.ChangeState<PlayerAttackState>();
 		return;
 	}
 
-	if (player.IsSpeciaMovelButton())
+	if (player.IsSpecialMovePressed())
 	{
 		player.ChangeState<PlayerSpecialMoveState>();
 		return;

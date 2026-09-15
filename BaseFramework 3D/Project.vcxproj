@@ -303,6 +303,7 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasAttackState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasDamageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasDieState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasHitShakeState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasLaunchState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasNormalState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Animation\ChestMonsterAnimationType.h" />
@@ -369,8 +370,13 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\TurtleShell.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimationType.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Attack\PlayerAttack.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Guard\PlayerGuard.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Jump\PlayerJump.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Move\PlayerMove.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Player.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateBase.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateMachine.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.h" />
@@ -382,6 +388,10 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpStartState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerNormalState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpecialMoveState.h" />
+    <ClInclude Include="Src\Application\GameObject\Effect\EffectBase.h" />
+    <ClInclude Include="Src\Application\GameObject\Effect\EffectManager.h" />
+    <ClInclude Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.h" />
+    <ClInclude Include="Src\Application\GameObject\Effect\Stun\StunEffect.h" />
     <ClInclude Include="Src\Application\GameObject\FlyText\FlyText.h" />
     <ClInclude Include="Src\Application\GameObject\FlyText\FlyTextManager.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.h" />
@@ -487,6 +497,7 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasAttackState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasDamageState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasDieState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasHitShakeState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasLaunchState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasNormalState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Animation\ChestMonsterAnimation.cpp" />
@@ -540,8 +551,13 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellStateMachine.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\TurtleShell.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Player\Attack\PlayerAttack.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Player\Guard\PlayerGuard.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Player\Jump\PlayerJump.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Player\Move\PlayerMove.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Player.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\PlayerStateMachine.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.cpp" />
@@ -552,6 +568,10 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpStartState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerNormalState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpecialMoveState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Effect\EffectBase.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Effect\EffectManager.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Effect\Stun\StunEffect.cpp" />
     <ClCompile Include="Src\Application\GameObject\FlyText\FlyText.cpp" />
     <ClCompile Include="Src\Application\GameObject\FlyText\FlyTextManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.cpp" />

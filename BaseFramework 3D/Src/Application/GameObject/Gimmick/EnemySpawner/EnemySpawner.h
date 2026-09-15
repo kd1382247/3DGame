@@ -55,7 +55,6 @@ private:
 
 	size_t      m_LayerNum = {};
 
-
 	// 敵の種類数
 	static constexpr size_t enemyLayerCount =
 		static_cast<size_t>(Enemes::Max);

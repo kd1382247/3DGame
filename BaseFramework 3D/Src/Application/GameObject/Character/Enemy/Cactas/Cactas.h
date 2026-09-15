@@ -50,6 +50,10 @@ public:
 	void StartAttack();
 	void EndAttack();
 
+	// ヒット時のShake
+	void StartHitShake();
+	void EndHitShake();
+
 	void UpdateLaunch();
 
 	// 攻撃判定

@@ -44,7 +44,7 @@ void Slime::Init()
 		{
 		case SlimeSize::Large:
 
-			SetScale(2.0f);
+			SetScale(1.5f);
 
 			break;
 		case SlimeSize::Small:

@@ -5,6 +5,7 @@
 #include"Animation/ChestMonsterAnimationType.h"
 #include"Animation/ChestMonsterAnimation.h"
 #include"Parameter/ChestMonsterParameter.h"
+#include"State/ChestMonsterStateMachine.h"
 
 
 class ChestMonster :public EnemyBase
@@ -18,6 +19,9 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
+
+	void SetUpReference()override;
+
 	void DrawInspector()override;
 
 	template<class T>
@@ -27,10 +31,20 @@ public:
 	}
 
 
+	bool IsSpawnEnemy() const { return m_isSpawnEnemy; }
+
+	void SetIsSpawnEnemy(const bool flg) { m_isSpawnEnemy = flg; }
+
+	void UpdateSpawnEnemy();
+
+	void StartSpawnEnemy();
+	void EndSpawnEnemy();
+
 	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 
+	void AnimFrame();
 
 	void PlayAnimation(ChestMonsterAnimationType type);
 	void RePlayAnimation(ChestMonsterAnimationType type);
@@ -42,19 +56,56 @@ public:
 
 private:
 
+	enum class Enemes
+	{
+		Cactas,
+		Mushroom,
+		TurtleShell,
+		Max
+	};
+
+	struct SpawnTiming
+	{
+		float spawnStart=0.0f;
+		float spawnEnd = 0.0f;
+	};
+
+	void CreateEnemy(const std::string&enemyName);
 
 	void UpdateAnimation();
 
+	void SetSpawnTiming();
+
+	float m_animFrameCount = 0.0f;
 
 
-private:
-
-
+	// ステートマシン
+	ChestMonsterStateMachine m_stateMachine;
 
 	// アニメーションクラス
 	ChestMonsterAnimation   m_animation;
 
 	// パラメータクラス
 	ChestMonsterParameter   m_parameter;
+
+	Enemes m_enemes;
+
+	bool  m_isSpawnEnemy = false;
+
+	// スポーンの間隔
+	float m_spawnCountDown = 0;
+	float m_spawnInterval = 60*2;
+
+	float m_spawnWait = 0.0f;
+
+	bool m_spawnFlg = false;
+
+	SpawnTiming m_spawnTiming;
+
+	size_t      m_LayerNum = {};
+
+	// 敵の種類数
+	static constexpr size_t enemyLayerCount =
+		static_cast<size_t>(Enemes::Max);
 
 };

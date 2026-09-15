@@ -1,5 +1,4 @@
-﻿#include "Pch.h"
-#include "EnemySpawner.h"
+﻿#include "EnemySpawner.h"
 
 #include"../../../System/TimeManager/TimeManager.h"
 #include"../../../Scene/SceneManager.h"
@@ -39,7 +38,6 @@ void EnemySpawner::Init()
 
 void EnemySpawner::Update()
 {
-
 
 	m_spawnCountDown -= TimeManager::Instance().GetDeltaTime();
 
@@ -116,6 +114,7 @@ void EnemySpawner::CreateEnemy(const std::string&enemyName)
 
 	enemy->Init();
 	enemy->SetPos(GetPos());
+	enemy->SetPrevPos(GetPos());
 
 	float power = KdRandom::GetFloat(0.3f,0.5f);
 	Math::Vector3 launchDir = CreateLaunchDir();

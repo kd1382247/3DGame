@@ -364,6 +364,30 @@
     <Filter Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States">
       <UniqueIdentifier>{326da54f-635d-4bbd-a54a-4cd80ae730c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\Attack">
+      <UniqueIdentifier>{28f491f5-4008-4c93-9c0f-0c5a45db63b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\Jump">
+      <UniqueIdentifier>{b89f9534-89da-49d3-a276-413b16fff52a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\Move">
+      <UniqueIdentifier>{2af5e56c-1595-435d-86ed-9205e4749f5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\Guard">
+      <UniqueIdentifier>{ae66ad89-0cf3-4d45-83fd-c11ac32f5073}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\SpecialMove">
+      <UniqueIdentifier>{2c1729d9-9204-474b-b360-21032ca96e20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Effect">
+      <UniqueIdentifier>{aac8abf1-4800-4bde-851c-d76ce1ddd669}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Effect\Stun">
+      <UniqueIdentifier>{0aabc58d-459f-45a1-83c3-738a0b4c9810}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Effect\HitEffect">
+      <UniqueIdentifier>{1abbad69-0810-4909-9389-b72d3a2ff439}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -948,6 +972,36 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterDieState.h">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasHitShakeState.h">
+      <Filter>Src\Application\GameObject\Character\Enemy\Cactas\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Attack\PlayerAttack.h">
+      <Filter>Src\Application\GameObject\Character\Player\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Guard\PlayerGuard.h">
+      <Filter>Src\Application\GameObject\Character\Player\Guard</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Move\PlayerMove.h">
+      <Filter>Src\Application\GameObject\Character\Player\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Jump\PlayerJump.h">
+      <Filter>Src\Application\GameObject\Character\Player\Jump</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.h">
+      <Filter>Src\Application\GameObject\Character\Player\SpecialMove</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Effect\EffectBase.h">
+      <Filter>Src\Application\GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Effect\EffectManager.h">
+      <Filter>Src\Application\GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Effect\Stun\StunEffect.h">
+      <Filter>Src\Application\GameObject\Effect\Stun</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.h">
+      <Filter>Src\Application\GameObject\Effect\HitEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1441,6 +1495,36 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterDieState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasHitShakeState.cpp">
+      <Filter>Src\Application\GameObject\Character\Enemy\Cactas\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\Attack\PlayerAttack.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\Guard\PlayerGuard.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\Guard</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\Move\PlayerMove.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\Jump\PlayerJump.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\Jump</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\SpecialMove</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Effect\EffectManager.cpp">
+      <Filter>Src\Application\GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Effect\Stun\StunEffect.cpp">
+      <Filter>Src\Application\GameObject\Effect\Stun</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Effect\EffectBase.cpp">
+      <Filter>Src\Application\GameObject\Effect\Stun</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.cpp">
+      <Filter>Src\Application\GameObject\Effect\HitEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,8 @@
 #include"../../../Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 #include"../../../Stage/Stage01/Collision/WallCollision/WallCollision.h"
 
+#include"../../../Effect/EffectManager.h"
+
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 #include"../../../FlyText/FlyTextManager.h"
 
@@ -126,6 +128,8 @@ void TurtleShell::EndSpinAttack()
 void TurtleShell::StartDizzy()
 {
 	m_dizzyRemaining = m_dizzyDuration;
+
+	EffectManager::Instance().CreateEffect("Stun", shared_from_this(),Math::Vector3(0,1.2,0));
 }
 
 void TurtleShell::EndDizzy()

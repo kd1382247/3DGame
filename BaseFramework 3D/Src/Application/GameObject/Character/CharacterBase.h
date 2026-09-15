@@ -82,18 +82,30 @@ public:
 	void SetDeltaTime(const float deltaTime) { m_deltaTime = deltaTime; }
 	float GetDeltaTime()       const         { return m_deltaTime; }
 
+	// 
+	void UpdateHitShake();
+
+	// 
+	bool GetIsHitShake() const { return m_isHitShake; }
+	void SetIsHitShake(const bool isHitShake) { m_isHitShake = isHitShake; }
+
+	// 移動方向
+	void SetMoveDir(const Math::Vector3& moveDir) { m_moveDir = moveDir; }
+	Math::Vector3 GetMoveDir() { return m_moveDir; }
+
+
+
+	void  UpdateFacingDirection();
+	void  UpdateMatrix();
+
 private:
 
 	// 解放処理
 	void Release();
 
+
 protected:
 
-	void  UpdateFacingDirection();
-	void  UpdateMatrix();
-
-	void SetMoveDir(const Math::Vector3& moveDir) { m_moveDir = moveDir; }
-	Math::Vector3 GetMoveDir() { return m_moveDir; }
 
 	Math::Vector3                 m_moveDir = Math::Vector3::Zero;
 
@@ -123,6 +135,9 @@ protected:
 	// ノックバック
 	Math::Vector3 m_knockBack = {};
 
+	// ノックバック量
+	AttackInfo m_attackInfo;
+
 	// キャラの移動量
 	Math::Vector3 m_pendingMove = {};
 
@@ -137,5 +152,19 @@ protected:
 
 	// デルタタイム
 	float m_deltaTime = 0.0f;
+
+	// ヒットストップ
+	bool m_isHitShake = false;
+
+	float m_hitShakeTime = 0.0f;
+	float m_hitShakeDuration = 0.0f;
+	float m_hitShakePower = 0.0f;
+
+	Math::Vector3 m_visualOffset = {};
+
+
+	float m_hitShakeInterval = 0.03f;
+	float m_hitShakeIntervalTimer = 0.0f;
+
 
 };

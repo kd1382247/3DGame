@@ -15,13 +15,13 @@ void PlayerDamageState::Update(Player & player)
 {
 
 
-	if (player.IsSpeciaMovelButton())
+	if (player.IsSpecialMovePressed())
 	{
 		player.ChangeState<PlayerSpecialMoveState>();
 		return;
 	}
 
-	if (player.IsAttackButton())
+	if (player.IsAttackPressed())
 	{
 		player.ChangeState<PlayerAttackState>();
 		return;

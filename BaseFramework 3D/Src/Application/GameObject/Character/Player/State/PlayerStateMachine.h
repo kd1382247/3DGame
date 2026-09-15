@@ -12,8 +12,6 @@ public:
 
 	void ChangeState(Player& player, std::unique_ptr<PlayerStateBase>nextState);
 
-
-
 private:
 
 	std::unique_ptr<PlayerStateBase>m_currentState=nullptr;

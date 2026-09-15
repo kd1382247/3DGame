@@ -1,5 +1,7 @@
 ﻿#include "Cactas.h"
 
+#include"../../../Effect/EffectManager.h"
+
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
 #include"../../../../System/TimeManager/TimeManager.h"
@@ -11,7 +13,7 @@
 #include"../../Player/Player.h"
 
 #include"State/States/CactasNormalState.h"
-#include"State/States/CactasDamageState.h"
+#include"State/States/CactasHitShakeState.h"
 #include"State//States/CactasDieState.h"
 
 void Cactas::Init()
@@ -113,6 +115,30 @@ void Cactas::EndAttack()
 {
 	m_attackFlg = false;
 	m_attackCooldown = m_attackCooldownDuration;
+}
+
+void Cactas::StartHitShake()
+{
+	float damageRate = std::clamp(m_attackInfo.damage / 50.0f, 0.0f, 1.0f);
+
+	m_hitShakeDuration = std::lerp(0.06f, 0.12f, damageRate);
+
+	m_hitShakePower = std::lerp(0.1f, 0.3f, damageRate);
+
+	m_hitShakeTime = m_hitShakeDuration;
+
+	float hitStopDuration = std::lerp(0.04f, 0.09f, damageRate);
+
+	TimeManager::Instance().StartHitStop(hitStopDuration);
+
+
+	SetIsHitShake(true);
+}
+
+void Cactas::EndHitShake()
+{
+
+	AddKnockBack(m_attackInfo.knockBackDir, m_attackInfo.knockBackPower);
 }
 
 void Cactas::UpdateLaunch()
@@ -288,13 +314,12 @@ void Cactas::OnHit(const AttackInfo attackInfo)
 	}
 	else
 	{
-		ChangeState<CactasDamageState>();
-		RePlayAnimation(CactasAnimationType::GetHit);
+		m_attackInfo = attackInfo;
+		ChangeState<CactasHitShakeState>();
 	}
 
-	TimeManager::Instance().StartHitStop(0.1);
+	EffectManager::Instance().CreateEffect("HitEffect", shared_from_this(),Math::Vector3(0,0.8,-1.0f));
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
 
-	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }

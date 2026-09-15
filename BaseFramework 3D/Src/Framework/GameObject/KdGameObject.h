@@ -24,7 +24,8 @@ public:
 		Character,
 		Camera,
 		Stage,
-		Gimmick
+		Gimmick,
+		Effect
 	};
 
 	KdGameObject() {}

@@ -33,6 +33,12 @@
 #include"../../Application/GameObject/Gimmick/EnemySpawner/EnemySpawner.h"
 
 
+// エフェクト
+
+#include"../../Application/GameObject/Effect/Stun/StunEffect.h"
+#include"../../Application/GameObject/Effect/HitEffect/HitEffect.h"
+
+
 void KdGameObjectFactory::Init()
 {
 	//===================================================================
@@ -82,7 +88,6 @@ void KdGameObjectFactory::Init()
 	// Stage01
 	Register<Stage01>("Stage01", KdGameObject::ObjectCategory::Stage);
 
-
 	//===================================================================
 	// 当たり判定
 	//===================================================================
@@ -98,12 +103,18 @@ void KdGameObjectFactory::Init()
 	//===================================================================
 	Register<WayPoint>("WayPoint", KdGameObject::ObjectCategory::None);
 
-
-
 	//===================================================================
 	// ギミック
 	//===================================================================
 	Register<EnemySpawner>("EnemySpawner", KdGameObject::ObjectCategory::Gimmick);
+
+
+
+	//===================================================================
+	// エフェクト
+	//===================================================================
+	Register<StunEffect>("Stun", KdGameObject::ObjectCategory::Effect);
+	Register<HitEffect>("HitEffect", KdGameObject::ObjectCategory::Effect);
 
 
 }

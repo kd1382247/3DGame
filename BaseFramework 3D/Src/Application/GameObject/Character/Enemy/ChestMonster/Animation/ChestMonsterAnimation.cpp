@@ -1,20 +1,34 @@
 ﻿#include "ChestMonsterAnimation.h"
 
-void ChestMonsterAnimation::Init(std::shared_ptr<KdModelWork>& _model)
+void ChestMonsterAnimation::Init(std::shared_ptr<KdModelWork>& model)
 {
-	m_spModel = _model;
+	m_spModel = model;
 	m_spAnimator = std::make_shared<KdAnimator>();
 
 }
 
-void ChestMonsterAnimation::Play(ChestMonsterAnimationType _animType)
+void ChestMonsterAnimation::Play(ChestMonsterAnimationType type)
 {
-	if (m_currentAnimation == _animType)
+	if (m_currentAnimation == type)
 	{
 		return;
 	}
 
-	switch (_animType)
+	Animations(type);
+	m_currentAnimation = type;
+}
+
+void ChestMonsterAnimation::RePlay(ChestMonsterAnimationType type)
+{
+	// 同じアニメーションでも再生
+	Animations(type);
+	m_currentAnimation = type;
+}
+
+void ChestMonsterAnimation::Animations(ChestMonsterAnimationType type)
+{
+
+	switch (type)
 	{
 	case ChestMonsterAnimationType::None:
 		break;
@@ -30,7 +44,7 @@ void ChestMonsterAnimation::Play(ChestMonsterAnimationType _animType)
 
 	case ChestMonsterAnimationType::GenerateMinion:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GenerateMinion"), false);
-		m_animSpeed = 1.0f;
+		m_animSpeed = 0.8f;
 		break;
 	case ChestMonsterAnimationType::Idle:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Idle"), true);
@@ -47,5 +61,4 @@ void ChestMonsterAnimation::Play(ChestMonsterAnimationType _animType)
 		break;
 	}
 
-	m_currentAnimation = _animType;
 }

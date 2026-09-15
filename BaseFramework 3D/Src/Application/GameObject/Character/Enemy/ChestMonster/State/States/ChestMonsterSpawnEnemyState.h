@@ -1,1 +1,16 @@
-#pragma once
+﻿#pragma once
+
+class ChestMonster;
+
+#include"../ChestMonsterStateBase.h"
+
+class ChestMonsterSpawnEnemyState :public ChestMonsterStateBase
+{
+public:
+
+	void Enter(ChestMonster& chestMonster)override;
+	void Update(ChestMonster& chestMonster)override;
+	void Exit(ChestMonster& chestMonster)override;
+
+};
+

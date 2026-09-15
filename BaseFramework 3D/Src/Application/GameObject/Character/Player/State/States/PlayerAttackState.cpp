@@ -6,13 +6,10 @@
 
 void PlayerAttackState::Enter(Player& player)
 {
-	player.StartAttack();
-
-	player.PlayAnimation(player.GetAttackAnimation());
-
+	player.StartCurrentAttack();
 }
 
-void PlayerAttackState::Update(Player & player)
+void PlayerAttackState::Update(Player& player)
 {
 
 	player.AnimaFrame();
@@ -20,14 +17,36 @@ void PlayerAttackState::Update(Player & player)
 	// 当たり判定
 	player.UpdateAttackCollision(Player::AttackType::NormalAttack);
 
+	player.UpdateComboReception();
+
 	if (player.IsAnimationFinished())
 	{
-		player.ChangeState<PlayerNormalState>();
+		if (player.HasNextCombo())
+		{
+			player.NextCombo();
+			player.StartCurrentAttack();
+		}
+		else
+		{
+			if (player.IsLastCombo())
+			{
+				player.ResetCombo();
+			}
+			else
+			{
+				player.StartComboGrace();
+
+			}
+
+			player.ChangeState<PlayerNormalState>();
+		}
+
 		return;
 	}
+	
 }
 
 void PlayerAttackState::Exit(Player & player)
 {
-	player.EntAttack();
+	
 }

@@ -94,13 +94,11 @@ void FlyText::DrawDigit(int digit, float xOffset)
 		billboardMat.Translation(Math::Vector3::Zero);
 	}
 
-
-
 	m_spPolygon->SetUVRect(digit);
 
 	Math::Matrix offsetMat =Math::Matrix::CreateTranslation(xOffset,0.0f,0.0f);
 
-	Math::Matrix drawMat =offsetMat * billboardMat * m_mWorld;
+	Math::Matrix drawMat =offsetMat * billboardMat*m_mWorld;
 
 	Math::Color color = { 1.0f,1.0f,1.0f,m_alpha };
 

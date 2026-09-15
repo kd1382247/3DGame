@@ -44,8 +44,13 @@ void CharacterBase::DrawLit()
 {
 	if (m_spModel)
 	{
-		KdShaderManager::Instance().
-			m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+		Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos() + m_visualOffset);
+		Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_charaAngle));
+		Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
+
+		Math::Matrix localMat = scaleMat * rotYMat * transMat;
+
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, localMat);
 	}
 }
 
@@ -73,6 +78,38 @@ DirectX::BoundingSphere CharacterBase::GetBumpSphere() const
 	sphere.Radius = 0.5;
 
 	return sphere;
+}
+
+void CharacterBase::UpdateHitShake()
+{
+
+	float UnscaledDeltaTime = TimeManager::Instance().GetUnscaleeDeltaTime();
+
+	m_hitShakeTime -= UnscaledDeltaTime;
+
+	if (m_hitShakeTime <= 0)
+	{
+		m_hitShakeTime = 0;
+		m_visualOffset = Math::Vector3::Zero;
+		SetIsHitShake(false);
+		return;
+	}
+
+	float progress = 1.0f - (m_hitShakeTime / m_hitShakeDuration);
+
+	float currentPower = std::lerp(m_hitShakePower, 0.0f, progress);
+
+	// 揺れ位置を変更するまでの時間を進める
+	m_hitShakeIntervalTimer += UnscaledDeltaTime;
+
+	if(m_hitShakeIntervalTimer>=m_hitShakeInterval)
+	{
+		m_hitShakeIntervalTimer = 0.0f;
+
+		m_visualOffset.x = KdRandom::GetFloat(-currentPower, currentPower);
+		m_visualOffset.y = KdRandom::GetFloat(-currentPower, currentPower);
+	}
+
 }
 
 // 解放
