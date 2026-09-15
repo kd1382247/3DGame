@@ -1,6 +1,7 @@
 ﻿#include "CameraBase.h"
 
 #include"../../GameObject/Character/Player/Player.h"
+#include"../../../Framework/Effekseer/KdEffekseerManager.h"
 #include"../../System/GameObjectFinder/GameObjectFinder.h"
 
 void CameraBase::Init()
@@ -9,6 +10,8 @@ void CameraBase::Init()
 	{
 		m_spCamera = std::make_shared<KdCamera>();
 	}
+
+	KdEffekseerManager::GetInstance().SetCamera(m_spCamera);
 	// ↓画面中央座標
 	m_FixMousePos.x = 640;
 	m_FixMousePos.y = 360;

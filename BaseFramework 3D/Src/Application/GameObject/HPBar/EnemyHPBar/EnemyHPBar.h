@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-class EnemyBase;
-
 class CameraBase;
 
 class EnemyHPBar:public KdGameObject
@@ -15,7 +13,9 @@ public:
 	void Update()override;
 	void DrawEffect()override;
 
-	void SetTarget(const std::shared_ptr<EnemyBase>enemy) { m_wpTarget = enemy; }
+	void SetTarget(const std::shared_ptr<KdGameObject>enemy) { m_wpTarget = enemy; }
+
+	void SetOffsetPos(const Math::Vector3& offsetPos) { m_offsetPos = offsetPos; }
 
 	void SetUpReference()override;
 
@@ -30,8 +30,8 @@ private:
 	Math::Matrix CreateBaseMatrix()const;
 
 	std::weak_ptr<CameraBase>m_wpCamera;
-	std::weak_ptr<EnemyBase>m_wpTarget;
-
+	std::weak_ptr<KdGameObject>m_wpTarget;
+	std::weak_ptr<KdGameObject>m_wpPlayer;
 
 	std::shared_ptr<KdSquarePolygon>m_spBackground = nullptr;
 	std::shared_ptr<KdSquarePolygon>m_spDamageBar = nullptr;
@@ -44,7 +44,9 @@ private:
 	float m_barHeight = 0.2f;
 
 	// Barの位置
-	Math::Vector3 m_barOffset = { -0.7f,1.5f,0.0f };
+	Math::Vector3 m_offsetPos = Math::Vector3::Zero;
+
+	bool          m_isHPBarVisible=false;
 
 	static constexpr float DamageBarDepth = -0.0001f;
 	static constexpr float HPBarDepth = -0.0002f;

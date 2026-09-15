@@ -1,6 +1,7 @@
 ﻿#include "EnemyHPBar.h"
 
 #include"../../Character/Enemy/EnemyBase.h"
+#include"../../Character/Player/Player.h"
 
 #include"../../Camera/CameraBase.h"
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
@@ -42,12 +43,14 @@ void EnemyHPBar::Init()
 		m_spHPBar->SetUVRect(0);
 	}
 
+	SetUpReference();
 }
 
 void EnemyHPBar::Update()
 {
-	auto spEnemy = m_wpTarget.lock();
-	if (!spEnemy)
+	auto spEnemy = std::dynamic_pointer_cast<EnemyBase>(m_wpTarget.lock());
+	auto spPlayer = m_wpPlayer.lock();
+	if (!spEnemy||!spPlayer)
 	{
 		return;
 	}
@@ -73,11 +76,21 @@ void EnemyHPBar::Update()
 		{
 			m_damageRate = m_hpRate;
 		}
-
 	}
 
-	SetUpReference();
+	Math::Vector3 displayDistance = spEnemy->GetPos() - spPlayer->GetPos();
 
+
+	// HPバーを表示するかを判定
+	if (currentHP < maxHP&&
+		displayDistance.Length()<10.0f)
+	{
+		m_isHPBarVisible = true;
+	}
+	else
+	{
+		m_isHPBarVisible = false;
+	}
 }
 
 void EnemyHPBar::DrawEffect()
@@ -85,6 +98,11 @@ void EnemyHPBar::DrawEffect()
 	auto spEnemy = m_wpTarget.lock();
 	auto spCamera = m_wpCamera.lock();
 	if (!spEnemy||!spCamera)
+	{
+		return;
+	}
+
+	if (!m_isHPBarVisible)
 	{
 		return;
 	}
@@ -105,6 +123,11 @@ void EnemyHPBar::SetUpReference()
 	if (!m_wpCamera.lock())
 	{
 		m_wpCamera = GameObjectFinder::Instance().FindObject<CameraBase>();
+	}
+
+	if (!m_wpPlayer.lock())
+	{
+		m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
 	}
 }
 
@@ -149,7 +172,7 @@ Math::Matrix EnemyHPBar::CreateBaseMatrix() const
 	Math::Matrix billboardMat = spCamera->GetRotationMatrix();
 	billboardMat.Translation(Math::Vector3::Zero);
 
-	Math::Matrix offsetMat = Math::Matrix::CreateTranslation(m_barOffset);
+	Math::Matrix offsetMat = Math::Matrix::CreateTranslation(m_offsetPos);
 
 	Math::Matrix targetMat = Math::Matrix::CreateTranslation(spEnemy->GetPos());
 

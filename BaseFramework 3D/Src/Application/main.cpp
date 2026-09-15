@@ -1,6 +1,7 @@
 ﻿#include "main.h"
 
 #include "Scene/SceneManager.h"
+#include"../Framework/Effekseer/KdEffekseerManager.h"
 #include"../Application/System/TimeManager/TimeManager.h"
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -69,6 +70,8 @@ void Application::PreUpdate()
 void Application::Update()
 {
 	SceneManager::Instance().Update();
+
+	KdEffekseerManager::GetInstance().Update();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -118,6 +121,8 @@ void Application::PreDraw()
 void Application::Draw()
 {
 	SceneManager::Instance().Draw();
+
+	KdEffekseerManager::GetInstance().Draw();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -213,6 +218,11 @@ bool Application::Init(int w, int h)
 	//===================================================================
 	KdFontManager::Instance().Init(GetWindowHandle());
 	
+	//===================================================================
+	// Effekseer初期化
+	//===================================================================
+	KdEffekseerManager::GetInstance().Create(w, h);
+
 	//===================================================================
 	// ゲーム固有の初期化
 	//===================================================================
@@ -348,6 +358,8 @@ void Application::Release()
 	KdAudioManager::Instance().Release();
 
 	KdDirect3D::Instance().Release();
+
+	KdEffekseerManager::GetInstance().Release();
 
 	// ウィンドウ削除
 	m_window.Release();

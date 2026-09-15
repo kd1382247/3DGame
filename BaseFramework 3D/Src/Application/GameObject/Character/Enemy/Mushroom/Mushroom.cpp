@@ -87,8 +87,8 @@ void Mushroom::SetUpReference()
 	EnemyBase::SetUpReference();
 
 	// HPBarを生成
-	EnemyHPBarManager::Instance().CreateHPBar(
-		std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
+	EnemyHPBarManager::Instance().
+		CreateHPBar(shared_from_this(), Math::Vector3(-0.7f, 1.5f, 0.0f));
 }
 
 void Mushroom::OnHit(const AttackInfo attackInfo)

@@ -7,7 +7,7 @@ class EnemyHPBarManager
 public:
 
 
-	bool CreateHPBar(const std::shared_ptr<EnemyBase>&enemy);
+	bool CreateHPBar(const std::shared_ptr<KdGameObject>&enemy,const Math::Vector3& offsetPos);
 
 private:
 

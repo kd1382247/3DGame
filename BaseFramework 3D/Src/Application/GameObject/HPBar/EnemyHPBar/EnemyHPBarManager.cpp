@@ -6,7 +6,7 @@
 
 #include"../../../Scene/SceneManager.h"
 
-bool EnemyHPBarManager::CreateHPBar(const std::shared_ptr<EnemyBase>& enemy)
+bool EnemyHPBarManager::CreateHPBar(const std::shared_ptr<KdGameObject>& enemy, const Math::Vector3& offsetPos)
 {
 	if (!enemy)
 	{
@@ -17,6 +17,7 @@ bool EnemyHPBarManager::CreateHPBar(const std::shared_ptr<EnemyBase>& enemy)
 	
 	hpBar->Init();
 	hpBar->SetTarget(enemy);
+	hpBar->SetOffsetPos(offsetPos);
 
 	SceneManager::Instance().AddObject(hpBar);
 	

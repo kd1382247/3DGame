@@ -4,6 +4,8 @@
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
+#include"../../../../../Framework/Effekseer/KdEffekseerManager.h"
+
 #include"../../../../System/TimeManager/TimeManager.h"
 
 #include"../../../FlyText/FlyTextManager.h"
@@ -85,8 +87,8 @@ void Cactas::SetUpReference()
 	EnemyBase::SetUpReference();
 
 	// HPBarを生成
-	EnemyHPBarManager::Instance().CreateHPBar(
-		std::dynamic_pointer_cast<EnemyBase>(shared_from_this()));
+	EnemyHPBarManager::Instance().
+		CreateHPBar(shared_from_this(),Math::Vector3(-0.7f,1.5f,0.0f));
 }
 
 void Cactas::DrawDebug()
@@ -318,7 +320,10 @@ void Cactas::OnHit(const AttackInfo attackInfo)
 		ChangeState<CactasHitShakeState>();
 	}
 
-	EffectManager::Instance().CreateEffect("HitEffect", shared_from_this(),Math::Vector3(0,0.8,-1.0f));
+	//EffectManager::Instance().CreateEffect("HitEffect", shared_from_this(),Math::Vector3(0,0.8,-1.0f));
+
+	KdEffekseerManager::GetInstance().
+		Play("Hit/Hit.efkefc", GetPos()+Math::Vector3(0.0f,0.5f,0.0f), 0.5f, 1.0f, false);
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
 
