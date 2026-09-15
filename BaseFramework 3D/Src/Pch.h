@@ -83,9 +83,11 @@
 #ifdef _DEBUG
 #pragma comment(lib, "Effekseerd.lib")
 #pragma comment(lib, "EffekseerRendererDX11d.lib")
+#pragma comment(lib, "EffekseerRendererCommond.lib")
 #else
 #pragma comment(lib, "Effekseer.lib")
 #pragma comment(lib, "EffekseerRendererDX11.lib")
+#pragma comment(lib, "EffekseerRendererCommon.lib")
 #endif
 
 #include <Effekseer.h>

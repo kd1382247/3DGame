@@ -2,6 +2,7 @@
 
 #include"../../../../Scene/SceneManager.h"
 #include"../../../../System/CollisionManager/CollisionManager.h"
+#include"../../../../../Framework/Effekseer/KdEffekseerManager.h"
 
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 #include"../../../FlyText/FlyTextManager.h"
@@ -330,6 +331,9 @@ void Slime::OnHit(const AttackInfo attackInfo)
 	}
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
+
+	KdEffekseerManager::GetInstance().
+		Play("Hit/Hit.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, 1.0f, false);
 
 	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }

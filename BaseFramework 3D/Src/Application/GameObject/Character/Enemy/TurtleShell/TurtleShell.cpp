@@ -2,6 +2,7 @@
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
 #include"../../../../System/CollisionManager/CollisionMath/CollisionMath.h"
+#include"../../../../../Framework/Effekseer/KdEffekseerManager.h"
 #include"../../../Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 #include"../../../Stage/Stage01/Collision/WallCollision/WallCollision.h"
 
@@ -261,6 +262,9 @@ void TurtleShell::OnHit(const AttackInfo attackInfo)
 	}
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
+
+	KdEffekseerManager::GetInstance().
+		Play("Hit/Hit.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, 1.0f, false);
 
 	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }

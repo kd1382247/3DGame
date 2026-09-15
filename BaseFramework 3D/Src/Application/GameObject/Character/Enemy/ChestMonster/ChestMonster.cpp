@@ -4,10 +4,10 @@
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
 #include"../../../../System/TimeManager/TimeManager.h"
+#include"../../../../../Framework/Effekseer/KdEffekseerManager.h"
 
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 
-#include"../../../../System/TimeManager/TimeManager.h"
 #include"../../../FlyText/FlyTextManager.h"
 
 #include"State/States/ChestMonsterNormalState.h"
@@ -203,6 +203,9 @@ void ChestMonster::OnHit(const AttackInfo attackInfo)
 	}
 
 	TimeManager::Instance().StartHitStop(0.1);
+
+	KdEffekseerManager::GetInstance().
+		Play("Hit/Hit.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, 1.0f, false);
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
 
