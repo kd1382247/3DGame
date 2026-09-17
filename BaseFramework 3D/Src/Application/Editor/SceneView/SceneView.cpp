@@ -10,12 +10,6 @@ void SceneView::Init()
 
 void SceneView::Draw()
 {
-
-	static int count = 0;
-
-	OutputDebugStringA("SceneView::Draw\n");
-
-
 	ImGuiWindowFlags flags =
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoScrollbar |

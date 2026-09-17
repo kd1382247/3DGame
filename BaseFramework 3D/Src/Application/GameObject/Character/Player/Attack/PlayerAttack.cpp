@@ -2,51 +2,26 @@
 
 #include"../Player.h"
 
-#include"../../../Camera/CameraBase.h"
-
 #include"../../../../System/TimeManager/TimeManager.h"
 
 void PlayerAttack::UpdateAttackInput()
 {
 	bool currentAttackButton = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
 
-	m_isAttackPressed = currentAttackButton;
+	m_isAttackTrigger = currentAttackButton&&!m_preAttackPressed;
 
+	m_preAttackPressed = currentAttackButton;
+	UpdateChargeAttackInput();
 }
 
 void PlayerAttack::UpdateAttackMove(Player& player)
 {
-	
-
-	Math::Matrix camRotYMat = Math::Matrix::Identity;
-
-	auto spCamera = player.GetCamera().lock();
-	if (!spCamera)
-	{
-		return;
-	}
-
-	camRotYMat = spCamera->GetRotationYMatrix();
-	player.SetMoveDir(Math::Vector3::TransformNormal(player.GetMoveDir(), camRotYMat));
+	player.ApplyCameraRelativeMove(player.GetAttackMoveSpeed());
 
 	player.FacingDirectionToCamera();
-
-	Math::Vector3 dir = player.GetMoveDir();
-	
-	if (dir.LengthSquared() > 0.0f)
-	{
-		dir.Normalize();
-	}
-
-	float moveSpeed= player.GetAttackMoveSpeed();
-
-	float deltaTime = TimeManager::Instance().GetDeltaTime();
-
-	Math::Vector3 move = dir * (moveSpeed * 60.0f) * deltaTime;
-	player.AddPendingMove(move);
 }
 
-void PlayerAttack::SetAttackTiming(float &hitStart,float &hitEnd)const
+void PlayerAttack::SetAttackTiming(float &hitStart,float &hitEnd)
 {	
 	if (m_currentAttackCombo == AttackCombo::Attack1)
 	{
@@ -67,6 +42,8 @@ void PlayerAttack::SetAttackTiming(float &hitStart,float &hitEnd)const
 
 void PlayerAttack::StartAttack()
 {
+	m_comboGraceActive = false;
+	m_comboGraceTime = 0.0f;
 	m_nextAttack = false;
 	m_canCombo = false;
 }
@@ -102,7 +79,7 @@ void PlayerAttack::UpdateComboReception(const float animFrameCount)
 		return;
 	}
 
-	if (m_isAttackPressed)
+	if (m_isAttackTrigger)
 	{
 		m_nextAttack = true;
 		m_canCombo = false;
@@ -121,7 +98,7 @@ void PlayerAttack::UpdateComboGrace()
 
 	m_comboGraceTime += deltaTime;
 
-	if (m_isAttackPressed)
+	if (m_isAttackTrigger)
 	{
 		UpdateComboState();
 		m_comboGraceActive = false;
@@ -151,11 +128,15 @@ void PlayerAttack::ComboInputStartFrame()
 void PlayerAttack::ResetCombo()
 {
 	m_currentAttackCombo = AttackCombo::Attack1;
+	m_nextAttack = false;
+	m_canCombo = false;
+	m_comboGraceActive = false;
+	m_comboGraceTime = 0.0f;
+	m_comboInputStartFrame = 0.0f;
 }
 
 void PlayerAttack::UpdateComboState()
 {
-
 	switch (m_currentAttackCombo)
 	{
 	case AttackCombo::Attack1:
@@ -168,7 +149,6 @@ void PlayerAttack::UpdateComboState()
 		ResetCombo();
 		break;
 	}
-
 }
 
 PlayerAnimationType PlayerAttack::GetAttackAnimation() const
@@ -187,4 +167,71 @@ PlayerAnimationType PlayerAttack::GetAttackAnimation() const
 	default:
 		return PlayerAnimationType::Attack1;
 	}
+}
+
+void PlayerAttack::UpdateChargeAttackInput()
+{
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	if (m_preAttackPressed)
+	{
+		m_attackHeldSeconds+=deltaTime;
+
+		if (m_attackHeldSeconds >= m_longPressSeconds)
+		{
+			m_isAttackLongPressed = true;
+		}
+	}
+	else
+	{
+		m_isAttackLongPressed = false;
+		m_attackHeldSeconds = 0.0f;
+	}
+
+}
+
+void PlayerAttack::StartCharge()
+{
+	m_chargeSeconds = 0.0f;
+	m_isChargeComplete = false;
+}
+
+void PlayerAttack::UpdateChargeTime()
+{
+
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+	m_chargeSeconds += deltaTime;
+
+	if (m_chargeSeconds >= m_maxChargeSeconds)
+	{
+		m_chargeSeconds = m_maxChargeSeconds;
+		m_isChargeComplete = true;
+	}
+}
+
+void PlayerAttack::EndCharge()
+{
+	m_chargeSeconds = 0.0f;
+	m_isChargeComplete = false;
+}
+
+
+PlayerAnimationType PlayerAttack::GetChargeMoveAnimation(const Player& player)const
+{
+	switch (player.GetMoveType())
+	{
+	case Player::MoveType::IDLE:
+		return PlayerAnimationType::ChargeAttackIDLE;
+	case Player::MoveType::BWD:
+		return PlayerAnimationType::ChargeAttackBWD;
+	case Player::MoveType::FWD:
+		return PlayerAnimationType::ChargeAttackFWD;
+	case Player::MoveType::LFT:
+		return PlayerAnimationType::ChargeAttackLFT;
+	case Player::MoveType::RGT:
+		return PlayerAnimationType::ChargeAttackRGT;
+	default:
+		return PlayerAnimationType::ChargeAttackIDLE;
+	}
+
 }

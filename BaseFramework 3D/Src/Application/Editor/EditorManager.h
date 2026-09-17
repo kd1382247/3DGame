@@ -83,6 +83,14 @@ private:
 	// マウスクリックでオブジェクトを選択
 	void UpdateMouseSelection();
 
+	// マウスのレイと交差し、最も重なりが大きいオブジェクトを選択する
+	// (SelectGameObjectByMouse等、5つの選択処理で共通していたロジックをまとめたもの)
+	// objects  : 選択候補のリスト(要素はKdGameObjectを継承したshared_ptr)
+	// rayType  : 判定に使うレイの種類
+	// predicate: 候補を絞り込む条件(falseを返した要素は候補から除外する)
+	template<typename Container, typename Predicate>
+	std::shared_ptr<KdGameObject> SelectClosestByMouse(const Container& objects, KdCollider::Type rayType, Predicate predicate);
+
 	// キャラクターを選択
 	void SelectGameObjectByMouse();
 

@@ -18,12 +18,11 @@ void ChestMonster::Init()
 {
 	if (!m_spModel)
 	{
-		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Enemy/ChestMonster/ChestMonster.gltf");
+		InitEnemyModel("Asset/Models/Enemy/ChestMonster/ChestMonster.gltf", "ChestMonster",
+			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "ChestMonster");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
-		// パラメータクラス初期化
 		// パラメータクラス初期化
 		m_parameter.Init();
 
@@ -33,17 +32,7 @@ void ChestMonster::Init()
 		// ノーマルステートで初期化
 		m_stateMachine.ChangeState(*this, std::make_unique<ChestMonsterNormalState>());
 
-		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape
-		("ChestMonster", Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, KdCollider::TypeBump);
-
-		
-		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
-
 		m_spawnCountDown = m_spawnInterval;
-		
-		// オブジェクト名セット
-		SetObjectName("ChestMonster");
 	}
 	
 	EnemyBase::Init();
@@ -58,16 +47,6 @@ void ChestMonster::Init()
 
 void ChestMonster::Update()
 {
-
-
-	KdDebugGUI::Instance().ClearLog();
-	KdDebugGUI::Instance().AddLog("%fx", GetPos().x);
-	KdDebugGUI::Instance().AddLog("%fy", GetPos().y);
-	KdDebugGUI::Instance().AddLog("%fz", GetPos().z);
-
-
-	KdDebugGUI::Instance().ClearLog();
-	KdDebugGUI::Instance().AddLog("\nAnimFrame%f", m_animFrameCount);
 
 	m_stateMachine.Update(*this);
 
@@ -89,7 +68,7 @@ void ChestMonster::PostUpdate()
 
 	UpdateAnimation();
 
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
+	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
 
 }
 
@@ -102,10 +81,8 @@ void ChestMonster::SetUpReference()
 		CreateHPBar(shared_from_this(), Math::Vector3(-0.7f, 3.0f, 0.0f));
 }
 
-void ChestMonster::DrawInspector()
+void ChestMonster::DrawParameterInspector()
 {
-	EnemyBase::DrawInspector();
-
 	m_parameter.DrawInspecter();
 }
 
@@ -140,7 +117,7 @@ void ChestMonster::UpdateSpawnEnemy()
 		CreateEnemy("Cactas");
 		break;
 	case Enemes::Mushroom:
-		CreateEnemy("Slime");
+		CreateEnemy("Mushroom");
 		break;
 	case Enemes::TurtleShell:
 		CreateEnemy("TurtleShell");

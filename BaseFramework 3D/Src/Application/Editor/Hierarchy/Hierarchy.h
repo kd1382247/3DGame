@@ -16,7 +16,7 @@ public:
 
 	void Draw();
 
-	HierarchyCategory GetHierarchyCategory(){return m_category; }
+	HierarchyCategory GetHierarchyCategory() const { return m_category; }
 
 private:
 

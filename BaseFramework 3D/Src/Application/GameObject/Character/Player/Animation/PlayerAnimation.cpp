@@ -35,6 +35,26 @@ void PlayerAnimation::Play(PlayerAnimationType _animType)
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("AttackSpin"), false);
 		m_animSpeed = 0.7f;
 		break;
+	case PlayerAnimationType::ChargeAttackIDLE:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("ChargeAttackIDLE"), true);
+		m_animSpeed = 1.0f;
+		break;
+	case PlayerAnimationType::ChargeAttackBWD:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("ChargeAttackBWD"), true);
+		m_animSpeed = 1.0f;
+		break;
+	case PlayerAnimationType::ChargeAttackFWD:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("ChargeAttackFWD"), true);
+		m_animSpeed = 1.0f;
+		break;
+	case PlayerAnimationType::ChargeAttackLFT:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("ChargeAttackLFT"), true);
+		m_animSpeed = 1.0f;
+		break;
+	case PlayerAnimationType::ChargeAttackRGT:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("ChargeAttackRGT"), true);
+		m_animSpeed = 1.0f;
+		break;
 	case PlayerAnimationType::Defend:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Defend"), true);
 		m_animSpeed = 1.4f;
@@ -54,6 +74,7 @@ void PlayerAnimation::Play(PlayerAnimationType _animType)
 
 		break;
 	case PlayerAnimationType::Dizzy:
+
 		break;
 	case PlayerAnimationType::GetHit:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false);

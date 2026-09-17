@@ -135,7 +135,6 @@ protected:
 	// ノックバック
 	Math::Vector3 m_knockBack = {};
 
-	// ノックバック量
 	AttackInfo m_attackInfo;
 
 	// キャラの移動量
@@ -149,6 +148,8 @@ protected:
 
 	// キャラが登れる坂の角度
 	float m_maxWalkableSlopeAngle=45;
+
+	Math::Vector3 m_groundNormal = Math::Vector3::Zero;
 
 	// デルタタイム
 	float m_deltaTime = 0.0f;

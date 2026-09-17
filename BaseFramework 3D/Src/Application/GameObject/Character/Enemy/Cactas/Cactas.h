@@ -19,8 +19,6 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-	void DrawInspector()override;
-
 	void SetUpReference()override;
 
 	void DrawDebug()override;
@@ -30,8 +28,6 @@ public:
 	{
 		m_stateMachine.ChangeState(*this, std::make_unique<T>());
 	}
-
-	void UpdateMove();
 
 	bool IsAttack()const { return m_attackFlg; }
 	bool IsLaunch()const { return m_launchFlg; }
@@ -63,9 +59,12 @@ public:
 
 private:
 
-	void UpdateAttack();
-
 	void UpdateAnimation();
+
+	void PlayWalkAnimation() override;
+	void PlayIdleAnimation() override;
+
+	void DrawParameterInspector() override;
 
 	void SetAttackTiming();
 

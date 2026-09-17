@@ -8,6 +8,8 @@
 
 void PlayerDamageState::Enter(Player& player)
 {
+
+	player.SetStateType(PlayerStateType::DamageState);
 	player.PlayAnimation(PlayerAnimationType::GetHit);
 }
 

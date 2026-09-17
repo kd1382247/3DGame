@@ -18,8 +18,6 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-	void DrawInspector()override;
-
 	void DrawDebug()override;
 
 	void SetUpReference()override;
@@ -61,8 +59,6 @@ public:
 
 	void UpdateLaunch();
 
-	void UpdateMove();
-
 	// 攻撃判定
 	void UpdateAttackCollision();
 
@@ -71,11 +67,14 @@ public:
 private:
 
 
-	void UpdateAttack();
-
 	void HitCoolDownRemaining();
 
 	void UpdateAnimation();
+
+	void PlayWalkAnimation() override;
+	void PlayIdleAnimation() override;
+
+	void DrawParameterInspector() override;
 
 
 private:

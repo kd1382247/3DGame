@@ -1,0 +1,204 @@
+■ Playerリファクタリング内容
+============================================================
+
+【概要】
+GameObject/Character/Player 以下のファイルを確認し、重複コードの統合・
+未使用コードの削除・命名の統一・パラメータ化を行いました。
+(こちらは前の作業で実施済みの内容ですが、ご依頼のあった解説をまとめます)
+
+
+【変更したファイル】
+  - Player.h / Player.cpp
+  - Move/PlayerMove.cpp
+  - Attack/PlayerAttack.h / Attack/PlayerAttack.cpp
+  - SpecialMove/PlayerSpecialMove.h / SpecialMove/PlayerSpecialMove.cpp
+  - State/States/PlayerNormalState.cpp
+  - Parameter/PlayerParameter.h / Parameter/PlayerParameter.cpp
+
+
+------------------------------------------------------------
+1. Player::ApplyCameraRelativeMove()の抽出(重複コードの統合)
+------------------------------------------------------------
+[問題]
+  PlayerMove::UpdateMove()とPlayerAttack::UpdateAttackMove()の中に、
+
+    ・カメラのY軸回転を取得
+    ・MoveDirをカメラ基準の向きに変換
+    ・向きを正規化
+    ・スピード×60fps×deltaTimeで移動量を計算
+    ・AddPendingMoveで移動を予約
+
+  という、ほぼ同じ「カメラ基準で移動する」処理が2箇所に
+  コピペされていました。
+
+[変更後]
+  Playerクラスに以下のメソッドを1つ追加し、共通化しました。
+
+    void Player::ApplyCameraRelativeMove(float speed)
+    {
+        auto spCamera = m_wpCamera.lock();
+        if (!spCamera) { return; }
+
+        Math::Matrix camRotYMat = spCamera->GetRotationYMatrix();
+        SetMoveDir(Math::Vector3::TransformNormal(GetMoveDir(), camRotYMat));
+
+        Math::Vector3 dir = GetMoveDir();
+        if (dir.LengthSquared() > 0.0f) { dir.Normalize(); }
+
+        Math::Vector3 move = dir * (speed * 60.0f) * m_deltaTime;
+        AddPendingMove(move);
+    }
+
+  呼び出し側は速度を渡すだけになりました。
+
+    // PlayerMove::UpdateMove
+    player.ApplyCameraRelativeMove(player.GetMoveSpeed());
+    player.UpdateFacingDirection();
+
+    // PlayerAttack::UpdateAttackMove
+    player.ApplyCameraRelativeMove(player.GetAttackMoveSpeed());
+    player.FacingDirectionToCamera();
+
+  [なぜこうしたか]
+  ・移動処理のロジックが2箇所にあると、片方だけ直して片方を直し忘れる、
+    という事故が起きやすくなります。実際「速度だけ違う全く同じ処理」
+    だったため、共通化の効果が大きい箇所でした。
+  ・PlayerMove.cppからCameraBase.h、TimeManager.hのincludeが不要になった
+    ため削除しています(PlayerAttack.cppはTimeManager.hを他の処理で
+    使っているため残しています)。
+
+
+------------------------------------------------------------
+2. PlayerParameterへのパラメータ追加(調整可能な値をJSON/ImGuiに集約)
+------------------------------------------------------------
+[問題]
+  以下の3つの値がコード内にハードコードされており、ImGuiの
+  インスペクターからも、JSONの保存/読み込みからも調整できませんでした。
+
+    ・特殊技の攻撃力
+    ・特殊技の移動速度
+    ・重力加速度(72.0f固定)
+
+[変更後]
+  PlayerParameterに以下を追加しました。
+
+    Parameter構造体:
+      float m_gravityAcceleration = 72.0f;   // 既存のm_specialAttackPower/
+                                              // m_specialMoveSpeedと合わせて管理
+
+    DrawInspecter() (ImGui):
+      "SpecialAttackPow" / "SpecialMoveSpeed" / "GravityAccel" の
+      DragFloatを追加
+
+    SaveToJson() / LoadFromJson():
+      "SpecialAttackPower" / "SpecialMoveSpeed" / "GravityAcceleration"
+      をJSONキーとして保存/読み込み。
+      LoadFromJson側は既存の保存データに新しいキーが無い場合でも
+      落ちないよう、.contains()チェックを入れています。
+
+        if (paramJson.contains("GravityAcceleration"))
+        {
+            m_param.m_gravityAcceleration = paramJson["GravityAcceleration"].get<float>();
+        }
+
+  Player.cpp側では、UpdateGravity()内の
+
+    constexpr float gravityAcceleration = 72.0f;
+
+  を
+
+    const float gravityAcceleration = m_parameter.GetParam().m_gravityAcceleration;
+
+  に変更しました。
+
+  [なぜこうしたか]
+  ・調整値がコードに直接書かれていると、バランス調整のたびに
+    ビルドし直す必要があり非効率です。ImGuiのインスペクターと
+    JSON保存の対象に含めることで、実行中にその場で調整・保存できます。
+  ・.contains()チェックを入れたのは、既存のセーブ済みJSONファイル
+    (今回のキーを持っていない古いデータ)を読み込んでも
+    エラーにならないようにするためです。
+
+
+------------------------------------------------------------
+3. 必殺技のダメージを専用パラメータに変更(バランス変更)
+------------------------------------------------------------
+[問題]
+  UpdateAttackCollision()内で、通常攻撃と必殺技のどちらでも
+  常にm_attackPower(通常攻撃力)がダメージとして使われていました。
+  PlayerParameterにはm_specialAttackPower(必殺技用の攻撃力)が
+  既に存在していましたが、参照されていませんでした。
+
+[変更後]
+    if (type == AttackType::NormalAttack)
+    {
+        sphere  = CreateAttackSphere();
+        damage  = m_parameter.GetParam().m_attackPower;
+    }
+    else if (type == AttackType::SpecialMove)
+    {
+        sphere  = CreateSpecialMoveSphere();
+        damage  = m_parameter.GetParam().m_specialAttackPower;
+    }
+
+  ※ これはゲームバランスに影響する変更です
+    (現在のパラメータ値では必殺技ダメージが10→20相当に変わります)。
+    ユーザー様に確認の上、適用した項目です。
+
+
+------------------------------------------------------------
+4. 未使用の重複API削除(タイポ含む)
+------------------------------------------------------------
+[問題]
+  PlayerSpecialMove.hに以下の2つが定義されていましたが、
+  Playerフォルダ内のどこからも呼び出されていませんでした
+  (grepで呼び出し元ゼロを確認済み)。名前にもタイポがあります。
+
+    bool IsSpecialMovelPressed() ...   // "Movel" のタイポ
+    void UpdateSpcecialMove(Player&)   // "Spcecial" のタイポ、
+                                        // 本来使うべきUpdateSpecialMove
+                                        // (タイポ無し)とは別に存在していた
+
+[変更後]
+  両方削除しました。実際に使われているUpdateSpecialMove()/
+  IsSpecialMovePressed()(タイポ無し)には影響ありません。
+
+
+------------------------------------------------------------
+5. IsAttackHeld() / IsAttackLongPressed() の統合
+------------------------------------------------------------
+[問題]
+  Player.h/PlayerAttack.hに
+
+    bool IsAttackHeld() const { return m_playerAttack.IsAttackHeld(); }
+    bool IsAttackLongPressed() const { ... }
+
+  という、名前は違うが実質同じ「攻撃ボタン長押し判定」を指す
+  2つのAPIが存在していました。呼び出し側(PlayerNormalState.cpp)は
+  IsAttackHeld()を使っていました。
+
+[変更後]
+  ・IsAttackHeld()を削除し、呼び出し側をIsAttackLongPressed()に統一。
+  ・PlayerNormalState.cpp:
+
+      if (player.IsAttackLongPressed())
+      {
+          player.ChangeState<PlayerChargeAttackState>();
+      }
+
+  [なぜこうしたか]
+  ・同じ意味のAPIが2つあると、どちらを使うべきか分かりにくくなり、
+    将来新しい呼び出しを書く人がどちらを使うか迷う原因になります。
+    より意味が明確な名前(IsAttackLongPressed)の方だけを残しました。
+
+
+------------------------------------------------------------
+【動作確認のお願い】
+------------------------------------------------------------
+  ・通常移動、攻撃移動、必殺技移動がこれまでと同じ感覚で動くこと
+    (ApplyCameraRelativeMoveへの統合部分)
+  ・必殺技のダメージが変わったこと(10→20相当)を踏まえたバランス確認
+  ・インスペクターにSpecialAttackPow / SpecialMoveSpeed / GravityAccel
+    のスライダーが表示され、値を変更・保存できること
+  ・既存のPlayerParameter.json(今回のキーを含まない古いファイル)を
+    読み込んでもエラーにならないこと

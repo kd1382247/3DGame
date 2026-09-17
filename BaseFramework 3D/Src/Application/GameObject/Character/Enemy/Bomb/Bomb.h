@@ -18,8 +18,6 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-	void DrawInspector()override;
-
 	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
 
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
@@ -30,6 +28,8 @@ private:
 
 
 	void UpdateAnimation();
+
+	void DrawParameterInspector() override;
 
 private:
 

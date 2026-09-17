@@ -6,12 +6,15 @@
 
 void PlayerSpecialMoveState::Enter(Player& player)
 {
+
+	player.SetStateType(PlayerStateType::SpecialMoveState);
 	player.StartSpecialMove();
 	player.PlayAnimation(PlayerAnimationType::AttackSpin);
 }
 
 void PlayerSpecialMoveState::Update(Player & player)
 {
+	player.UpdateAttackFrame();
 	player.UpdateSpecialMove();
 
 	// 当たり判定

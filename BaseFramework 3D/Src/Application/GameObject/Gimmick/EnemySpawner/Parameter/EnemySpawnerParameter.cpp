@@ -11,13 +11,13 @@ void EnemySpawnerParameter::DrawInspector()
 	{
 		auto& parameter = m_parameter;
 
-		if (ImGui::DragFloat("SpawnInterval", &m_parameter.m_spawnInterval), 1.0f)
+		if (ImGui::DragFloat("SpawnInterval", &m_parameter.m_spawnInterval, 1.0f))
 		{
 			m_parameter.m_spawnInterval
 				=std::clamp(m_parameter.m_spawnInterval, 1.0f, 60.0f);
 		}
 
-		if (ImGui::DragInt("SpawnCount", &m_parameter.m_spawnCount), 1)
+		if (ImGui::DragInt("SpawnCount", &m_parameter.m_spawnCount, 1))
 		{
 			m_parameter.m_spawnCount
 				= std::clamp(m_parameter.m_spawnCount, 1, 10);

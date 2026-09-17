@@ -379,7 +379,9 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateBase.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateMachine.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateType.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerDieState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerGuardState.h" />
@@ -560,6 +562,7 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\PlayerStateMachine.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDieState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerGuardState.cpp" />

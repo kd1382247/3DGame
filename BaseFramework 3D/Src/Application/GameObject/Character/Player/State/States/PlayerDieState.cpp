@@ -4,6 +4,7 @@
 
 void PlayerDieState::Enter(Player& player)
 {
+	player.SetStateType(PlayerStateType::DieState);
 	player.PlayAnimation(PlayerAnimationType::Die);
 }
 

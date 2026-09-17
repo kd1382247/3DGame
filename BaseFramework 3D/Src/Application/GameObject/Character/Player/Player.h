@@ -7,6 +7,7 @@
 #include"Parameter/PlayerParameter.h"
 
 #include"State/PlayerStateMachine.h"
+#include"State/PlayerStateType.h"
 
 #include"Move/PlayerMove.h"
 #include"Attack/PlayerAttack.h"
@@ -33,7 +34,7 @@ public:
 
 	void DrawLit()			override;
 
-	void AnimaFrame();
+	void UpdateAttackFrame();
 
 	void DrawDebug()		override;
 
@@ -50,12 +51,14 @@ public:
 	float GetMoveSpeed()        const          { return m_parameter.GetParam().m_moveSpeed; }
 	float GetAttackMoveSpeed()  const          { return m_parameter.GetParam().m_attackMoveSpeed; }
 	float GetJumpPower()        const          { return m_parameter.GetParam().m_jumpPow; }
+	float GetSpecialMoveSpeed() const          { return m_parameter.GetParam().m_specialMoveSpeed; }
+	float GetSpecialAttackPower()const         { return m_parameter.GetParam().m_specialAttackPower; }
 
 	//================================
 	// 各アクションの入力
 	//================================
 
-	bool IsAttackPressed()		  const      {return m_playerAttack.IsAttackPressed();}
+	bool IsAttackPressed()		  const      {return m_playerAttack.IsAttackTrigger();}
 	bool IsJumpPressed()          const      { return m_playerJump.IsJumpPressed(); }
 	bool IsSpecialMovePressed()    const      { return m_playerSpecialMove.IsSpecialMovePressed();}
 	bool IsMovePressed()          const      { return  m_playerMove.IsMovePressed(); }
@@ -77,11 +80,25 @@ public:
 	// コンボの受付開始
 	void StartComboGrace();
 
-	bool HasNextCombo()           const      { return m_playerAttack.HasNextCombo(); }
+	bool HasNextCombo()const      { return m_playerAttack.HasNextCombo(); }
 	void NextCombo();
 	void ResetCombo();
 	void UpdateComboReception();
 	void UpdateComboGrace();
+
+	//================================
+	// チャージ攻撃
+	//================================
+
+
+	bool IsAttackLongPressed() const { return m_playerAttack.IsAttackLongPressed(); }
+	bool IsAttackDown() const { return m_playerAttack.IsAttackDown(); }
+	void StartCharge() { m_playerAttack.StartCharge(); }
+	void EndCharge() { m_playerAttack.EndCharge(); }
+	bool IsChargeComplete() const { return m_playerAttack.IsChargeComplete(); }
+	void UpdateChargeTime() { m_playerAttack.UpdateChargeTime(); }
+	PlayerAnimationType GetChargeMoveAnimation()const;
+
 
 
 	//================================
@@ -118,6 +135,19 @@ public:
 	//================================
 	// 通常移動
 	//================================
+
+	enum class MoveType
+	{
+		IDLE,
+		BWD,
+		FWD,
+		LFT,
+		RGT
+	};
+
+	void SetMoveType(const MoveType type) { m_moveType=type; }
+	MoveType GetMoveType() const { return m_moveType; }
+
 	void UpdateMove();
 
 
@@ -134,13 +164,17 @@ public:
 		m_stateMachine.ChangeState(*this, std::make_unique<T>());
 	}
 
-
+	void SetStateType(PlayerStateType type);
+	PlayerStateType GetStateType() const { return m_playerStateType; }
 
 	void UpdateAttackCollision(const AttackType type);
 
 	// 攻撃時のキャラの向き
 	void FacingDirectionToCamera();
 
+	// カメラ基準の方向へ、指定した速度で水平移動を加える
+	// (PlayerMove/PlayerAttackの移動処理で共通して使う)
+	void ApplyCameraRelativeMove(float speed);
 
 	std::weak_ptr<CameraBase>GetCamera()const { return m_wpCamera; }
 
@@ -181,7 +215,9 @@ private:
 	PlayerJump        m_playerJump;
 	PlayerGuard       m_playerGuard;
 
-	float             m_animFrameCount = 0.0f;
+
+
+	MoveType        m_moveType = MoveType::IDLE;
 
 	// カメラ
 	std::weak_ptr<CameraBase> m_wpCamera;
@@ -194,6 +230,8 @@ private:
 
 	// ステートマシン
 	PlayerStateMachine        m_stateMachine;
+
+	PlayerStateType           m_playerStateType = PlayerStateType::NormalState;
 
 	// 攻撃が当たった敵リスト
 	std::vector<std::weak_ptr<EnemyBase>>m_hitTargets = {};

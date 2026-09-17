@@ -34,7 +34,7 @@ void Inspector::Draw()
 	ImGui::End();
 }
 
-void Inspector::DrawDeleteButton(const std::shared_ptr<KdGameObject> obj)
+void Inspector::DrawDeleteButton(const std::shared_ptr<KdGameObject>& obj)
 {
 	if (!ImGui::Button("Delete"))
 	{

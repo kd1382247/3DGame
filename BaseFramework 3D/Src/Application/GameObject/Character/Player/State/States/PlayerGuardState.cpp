@@ -6,6 +6,8 @@
 
 void PlayerGuardState::Enter(Player& player)
 {
+
+	player.SetStateType(PlayerStateType::GuradState);
 	player.ResetGuardState();
 	player.PlayAnimation(player.GetGuardAnimation());
 }

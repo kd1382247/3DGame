@@ -1002,6 +1002,12 @@
     <ClInclude Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.h">
       <Filter>Src\Application\GameObject\Effect\HitEffect</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.h">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateType.h">
+      <Filter>Src\Application\GameObject\Character\Player\State</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1525,6 +1531,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.cpp">
       <Filter>Src\Application\GameObject\Effect\HitEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

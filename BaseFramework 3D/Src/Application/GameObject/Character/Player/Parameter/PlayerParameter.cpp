@@ -27,14 +27,32 @@ void PlayerParameter::DrawInspecter()
 			EditorManager::Instance().MarkDirty();
 		}
 
+		// 必殺技の攻撃力
+		if (ImGui::DragFloat("SpecialAttackPow", &m_param.m_specialAttackPower, 1.0f, 0.0f))
+		{
+			EditorManager::Instance().MarkDirty();
+		}
+
 		// 移動スピード
 		if (ImGui::DragFloat("MoveSpeed", &m_param.m_moveSpeed, 0.01f, 0.0f))
 		{
 			EditorManager::Instance().MarkDirty();
 		}
 
+		// 必殺技の移動スピード
+		if (ImGui::DragFloat("SpecialMoveSpeed", &m_param.m_specialMoveSpeed, 0.01f, 0.0f))
+		{
+			EditorManager::Instance().MarkDirty();
+		}
+
 		//ジャンプパワー
 		if (ImGui::DragFloat("JumpPow", &m_param.m_jumpPow, 0.01f, 0.0f))
+		{
+			EditorManager::Instance().MarkDirty();
+		}
+
+		// 重力加速度
+		if (ImGui::DragFloat("GravityAccel", &m_param.m_gravityAcceleration, 0.1f, 0.0f))
 		{
 			EditorManager::Instance().MarkDirty();
 		}
@@ -59,8 +77,11 @@ void PlayerParameter::SaveToJson()
 
 	paramJson["MaxHP"] = m_param.m_maxHP;
 	paramJson["AttackPower"] = m_param.m_attackPower;
+	paramJson["SpecialAttackPower"] = m_param.m_specialAttackPower;
 	paramJson["MoveSpeed"] = m_param.m_moveSpeed;
+	paramJson["SpecialMoveSpeed"] = m_param.m_specialMoveSpeed;
 	paramJson["JumpPower"] = m_param.m_jumpPow;
+	paramJson["GravityAcceleration"] = m_param.m_gravityAcceleration;
 	paramJson["TurnSpeed"] = m_param.m_turnSpeed;
 
 	std::ofstream file("Asset/Data/Player/Parameter/PlayerParameter.json");
@@ -100,6 +121,23 @@ void PlayerParameter::LoadFromJson()
 		m_param.m_moveSpeed = paramJson["MoveSpeed"].get<float>();
 		m_param.m_jumpPow = paramJson["JumpPower"].get<float>();
 		m_param.m_turnSpeed = paramJson["TurnSpeed"].get<float>();
+
+		// 新しく追加した項目は、古いセーブデータには無い場合があるため
+		// contains()で確認してから読み込む(無ければデフォルト値のまま)
+		if (paramJson.contains("SpecialAttackPower"))
+		{
+			m_param.m_specialAttackPower = paramJson["SpecialAttackPower"].get<float>();
+		}
+
+		if (paramJson.contains("SpecialMoveSpeed"))
+		{
+			m_param.m_specialMoveSpeed = paramJson["SpecialMoveSpeed"].get<float>();
+		}
+
+		if (paramJson.contains("GravityAcceleration"))
+		{
+			m_param.m_gravityAcceleration = paramJson["GravityAcceleration"].get<float>();
+		}
 	}
 	catch (const nlohmann::json::exception& e)
 	{

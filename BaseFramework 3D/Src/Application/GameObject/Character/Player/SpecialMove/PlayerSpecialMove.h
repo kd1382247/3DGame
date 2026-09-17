@@ -8,9 +8,7 @@ public:
 
 	void UpdateSpecialMoveInput();
 
-	bool IsSpecialMovelPressed()      const { return m_isSpecialMovePressed; }
-
-	void UpdateSpcecialMove(Player& player);
+	void UpdateSpecialMove(Player& player);
 
 	bool IsSpecialMovePressed() const { return m_isSpecialMovePressed; }
 

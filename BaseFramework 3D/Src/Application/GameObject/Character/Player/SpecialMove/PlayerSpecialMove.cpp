@@ -10,9 +10,11 @@ void PlayerSpecialMove::UpdateSpecialMoveInput()
 	m_isSpecialMovePressed = currentSpecialButton;
 }
 
-void PlayerSpecialMove::UpdateSpcecialMove(Player& player)
+void PlayerSpecialMove::UpdateSpecialMove(Player& player)
 {
-	Math::Vector3 move = m_specialMoveDir * (0.3 * 60.0f) * player.GetDeltaTime();
+	float moveSpeed = player.GetSpecialMoveSpeed();
+
+	Math::Vector3 move = m_specialMoveDir * (moveSpeed * 60.0f) * player.GetDeltaTime();
 	player.AddPendingMove(move);
 }
 
@@ -24,6 +26,8 @@ void PlayerSpecialMove::SetSpecialMoveTiming(float& hitStart, float& hitEnd)
 
 void PlayerSpecialMove::CreateSpecialMoveDir(Player& player)
 {
+	// Do not reuse the previous attack direction when the camera is unavailable.
+	m_specialMoveDir = {};
 
 	Math::Matrix camRotYMat = Math::Matrix::Identity;
 
@@ -39,6 +43,10 @@ void PlayerSpecialMove::CreateSpecialMoveDir(Player& player)
 	Math::Vector3 toDir = Math::Vector3::TransformNormal(Math::Vector3::Backward, camRotYMat);
 
 	toDir.y = 0;
+	if (toDir.LengthSquared() <= 0.000001f)
+	{
+		return;
+	}
 	toDir.Normalize();
 
 	m_specialMoveDir = toDir;

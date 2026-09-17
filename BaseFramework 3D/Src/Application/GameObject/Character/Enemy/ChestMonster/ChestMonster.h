@@ -22,8 +22,6 @@ public:
 
 	void SetUpReference()override;
 
-	void DrawInspector()override;
-
 	template<class T>
 	void ChangeState()
 	{
@@ -73,6 +71,8 @@ private:
 	void CreateEnemy(const std::string&enemyName);
 
 	void UpdateAnimation();
+
+	void DrawParameterInspector() override;
 
 	void SetSpawnTiming();
 

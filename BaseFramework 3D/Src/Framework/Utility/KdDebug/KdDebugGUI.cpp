@@ -3,6 +3,8 @@
 #include "KdDebugGUI.h"
 
 #include"../../../Application/Editor/EditorManager.h"
+#include"../../Effekseer/KdEffekseerManager.h"
+
 
 KdDebugGUI::KdDebugGUI()
 {}

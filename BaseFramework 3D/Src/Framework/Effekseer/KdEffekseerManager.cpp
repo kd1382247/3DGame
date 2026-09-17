@@ -1,4 +1,6 @@
-﻿
+﻿#include"../../Application/System/TimeManager/TimeManager.h"
+
+
 void KdEffekseerManager::Create(int w, int h)
 {
 	// エフェクトのレンダラーの作成
@@ -17,11 +19,20 @@ void KdEffekseerManager::Create(int w, int h)
 	m_efkManager->SetTrackRenderer(m_efkRenderer->CreateTrackRenderer());
 	m_efkManager->SetModelRenderer(m_efkRenderer->CreateModelRenderer());
 
+	// GPUパーティクル用のデータ生成機能を登録
+	m_efkManager->SetGpuParticleFactory(m_efkRenderer->CreateGpuParticleFactory());
+
+	// GPUパーティクルの計算・描画を管理する機能を登録
+	m_efkManager->SetGpuParticleSystem(m_efkRenderer->CreateGpuParticleSystem());
+
+
 	// 描画用インスタンスからテクスチャの読み込み機能を設定
 	m_efkManager->SetTextureLoader(m_efkRenderer->CreateTextureLoader());
 	m_efkManager->SetModelLoader(m_efkRenderer->CreateModelLoader());
 	m_efkManager->SetMaterialLoader(m_efkRenderer->CreateMaterialLoader());
 	m_efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
+
+
 
 	// 投影行列を設定
 	m_efkRenderer->SetProjectionMatrix(
@@ -31,27 +42,34 @@ void KdEffekseerManager::Create(int w, int h)
 
 void KdEffekseerManager::Update()
 {
+	
 	if (m_efkManager == nullptr) { return; }
 
 	UpdateEffekseerEffect();
 
 	UpdateEkfCameraMatrix();
+
 }
 
 void KdEffekseerManager::Draw()
 {
+
 	if (m_efkManager == nullptr ||
 		m_efkRenderer == nullptr) {
 		return;
 	}
 
+	// GPUパーティクルの更新計算を指示
+	m_efkManager->Compute();
+
 	m_efkRenderer->BeginRendering();
 	m_efkManager->Draw();
 	m_efkRenderer->EndRendering();
+
 }
 
 std::weak_ptr<KdEffekseerObject> KdEffekseerManager::Play(
-	const std::string& effName, const DirectX::SimpleMath::Vector3& pos, const float size, const float speed, bool isLoop)
+	const std::string& effName, const DirectX::SimpleMath::Vector3& pos, const float size, const float speed, bool isLoop, const int startFrame,const int endFrame)
 {
 	PlayEfkInfo info;
 
@@ -60,7 +78,8 @@ std::weak_ptr<KdEffekseerObject> KdEffekseerManager::Play(
 	info.Size		= Math::Vector3(size);
 	info.Speed		= speed;
 	info.IsLoop		= isLoop;
-
+	info.StartFrame = startFrame;
+	info.EndFrame   = endFrame;
 	return Play(info);
 }
 
@@ -191,7 +210,7 @@ std::weak_ptr<KdEffekseerObject> KdEffekseerManager::Play(const PlayEfkInfo& inf
 	// 既に生成されたことがある
 	if (efkFoundItr != m_effectMap.end())
 	{
-		handle = m_efkManager->Play(efkFoundItr->second->GetEffect(), efkPos);
+		handle = m_efkManager->Play(efkFoundItr->second->GetEffect(), efkPos,info.StartFrame);
 		spEfkObject->SetEffect(efkFoundItr->second->WorkEffect());
 	}
 	// エフェクト新規生成
@@ -211,7 +230,7 @@ std::weak_ptr<KdEffekseerObject> KdEffekseerManager::Play(const PlayEfkInfo& inf
 			return std::weak_ptr<KdEffekseerObject>();
 		}
 
-		handle = m_efkManager->Play(effect, efkPos);
+		handle = m_efkManager->Play(effect, efkPos,info.StartFrame);
 		spEfkObject->SetEffect(effect);
 		m_effectMap[info.FileName] = spEfkObject;
 	}
@@ -227,8 +246,7 @@ std::weak_ptr<KdEffekseerObject> KdEffekseerManager::Play(const PlayEfkInfo& inf
 	return spEfkObject;
 }
 
-std::weak_ptr<KdEffekseerObject> KdEffekseerManager::Play(
-	const std::shared_ptr<KdEffekseerObject>& spObject)
+std::weak_ptr<KdEffekseerObject> KdEffekseerManager::Play(const std::shared_ptr<KdEffekseerObject>& spObject)
 {
 	return Play(spObject->GetPlayEfkInfo());
 }
@@ -237,54 +255,69 @@ void KdEffekseerManager::UpdateEffekseerEffect()
 {
 	if (m_isPause) { return; }
 
-	m_efkManager->Update();
+	const float deltaTime =
+		TimeManager::Instance().GetDeltaTime();
 
-	m_efkManager->BeginUpdate();
+	const float deltaFrames = deltaTime * 60.0f;
 
-	// ループ再生監視
+	m_efkManager->Update(deltaFrames);
+
+	std::vector<PlayEfkInfo> replayList;
+
+	auto it = m_nowEffectPlayList.begin();
+
+	while (it != m_nowEffectPlayList.end())
 	{
-		// エフェクト再再生対象エフェクトリスト
-		std::vector<PlayEfkInfo> replayList{};
+		const auto& effect = *it;
 
-		auto efkFoundItr = m_nowEffectPlayList.begin();
-		while (efkFoundItr != m_nowEffectPlayList.end())
+		if (!effect)
 		{
-			KdEffekseerObject* effObj = efkFoundItr->get();
-			if (effObj)
+			it = m_nowEffectPlayList.erase(it);
+			continue;
+		}
+
+		const auto handle = effect->GetHandle();
+
+		const bool finished =
+			m_efkManager->GetInstanceCount(handle) == 0;
+
+		// 一時停止中は、区間の時計も止める
+		if (!finished && !m_efkManager->GetPaused(handle))
+		{
+			effect->AdvanceFrames(
+				deltaFrames * m_efkManager->GetSpeed(handle)
+			);
+		}
+
+		const bool reachedEnd = effect->HasReachedEndFrame();
+
+		if (finished || reachedEnd)
+		{
+			if (!finished)
 			{
-				int handle = effObj->GetHandle();
-				// 再生が終了している
-				if (m_efkManager->GetInstanceCount(handle) == 0)
-				{
-					bool isLoop = effObj->IsLoop();
-
-					// ループ対象なら再再生リストに追加して後程全て再生させる
-					if (isLoop)
-					{
-						const PlayEfkInfo& info = effObj->GetPlayEfkInfo();
-						replayList.push_back(info);
-					}
-
-					// ハンドル値が変わるので今の再生リストから除外する
-					efkFoundItr = m_nowEffectPlayList.erase(efkFoundItr);
-					continue;
-				}
+				// 今回の再生だけを停止する
+				m_efkManager->StopEffect(handle);
 			}
 
-			++efkFoundItr;
+			if (effect->IsLoop())
+			{
+				replayList.push_back(effect->GetPlayEfkInfo());
+			}
+
+			it = m_nowEffectPlayList.erase(it);
+
+			continue;
 		}
 
-		// リプレイ対象エフェクトを全て再生させる
-		for (auto&& efkInfo : replayList)
-		{
-			Play(efkInfo);
-		}
-		replayList.clear();
+		++it;
 	}
 
-	m_efkManager->EndUpdate();
+	// リストの走査が終わってから再生し直す
+	for (const auto& info : replayList)
+	{
+		Play(info);
+	}
 }
-
 void KdEffekseerManager::UpdateEkfCameraMatrix()
 {
 	std::shared_ptr<KdCamera> spCamera = m_wpCamera.lock();

@@ -26,8 +26,6 @@ public:
 	void PostUpdate()override;
 	void SetUpReference()override;
 
-	void DrawInspector()override;
-
 	void DrawDebug()override;
 
 
@@ -58,9 +56,6 @@ public:
 	void SetSlimeSize(const SlimeSize size) { m_slimeSize = size; };
 	SlimeSize GetSlimeSize()const { return m_slimeSize; }
 
-
-	void UpdateMove();
-
 	void UpdateLaunch();
 
 	// スライムを分裂
@@ -72,9 +67,12 @@ public:
 
 private:
 
-	void UpdateAttack();
-
 	void UpdateAnimation();
+
+	void PlayWalkAnimation() override;
+	void PlayIdleAnimation() override;
+
+	void DrawParameterInspector() override;
 
 	void SetAttackTiming();
 

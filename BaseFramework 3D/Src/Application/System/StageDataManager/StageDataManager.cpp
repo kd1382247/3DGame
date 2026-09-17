@@ -113,7 +113,8 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 	// 読込失敗で現在の編集内容を消さないよう、先に必要ファイルを確認する
 	if (!std::filesystem::exists(stageDataPath) ||
 		!std::filesystem::exists(wayPointDataPath)||
-		!std::filesystem::exists(wallCollisionDataPath))
+		!std::filesystem::exists(wallCollisionDataPath)||
+		!std::filesystem::exists(obbCollisionDataPath))
 	{
 		return false;
 	}

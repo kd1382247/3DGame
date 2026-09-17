@@ -38,6 +38,10 @@ public:
 
 	virtual float GetMoveSpeed()const = 0;
 
+	// 追跡/経路移動の共通処理(元は複数のEnemyが同じ内容で個別に持っていたもの)
+	// ターゲットに到達するまで追跡し、到達後はノックバック方向を向く
+	void UpdateMove();
+
 protected:
 
 	std::weak_ptr<Player>m_wpPlayer;
@@ -59,6 +63,30 @@ protected:
 	// 新しくワイポイント情報を更新
 	void UpdatePath();
 	void SetPath(const std::vector<int>& path,const int goalID);
+
+	// 攻撃のクールダウン更新(ターゲットに到達したら攻撃フラグを立て、クールタイムを減らす)
+	// 元は複数のEnemyが同じ内容で個別に持っていたもの
+	void UpdateAttack();
+
+	// 近接攻撃の当たり判定。m_attackTimingの範囲内でキャラ前方に球を出し、当たったらノックバック・ダメージを与える
+	// 戻り値: プレイヤーに命中したかどうか
+	// (元はCactas/Mushroom/Slimeが同じ内容で個別に持っていたもの。TurtleShellは判定方式が異なるため対象外)
+	bool UpdateMeleeAttackCollision(float knockBackPower, float damage = 10.0f, float sphereRadius = 0.6f, float forwardOffset = 0.8f);
+
+	// 敵の初期化で共通する処理をまとめる
+	// (モデル生成・当たり判定コライダー登録・デバッグワイヤー生成・オブジェクト名設定)
+	void InitEnemyModel(const std::string& modelPath, const std::string& colliderName,
+		const Math::Vector3& colliderOffset, float colliderRadius, const std::string& objectName);
+
+	// デバッグ用の当たり判定球を描画する
+	void DrawBumpDebugSphere(const Math::Vector3& offset, float radius);
+
+	// UpdateMoveから呼ばれる。歩き/待機モーションの再生は各Enemyが実装する
+	virtual void PlayWalkAnimation() {}
+	virtual void PlayIdleAnimation() {}
+
+	// パラメータクラスのインスペクター描画。各Enemyが実装する
+	virtual void DrawParameterInspector() = 0;
 
 	// 移動状態
 	MoveState m_currentMoveState = MoveState::DirectChase;

@@ -7,6 +7,8 @@
 
 void PlayerJumpStartState::Enter(Player& player)
 {
+
+	player.SetStateType(PlayerStateType::JumpState);
 	player.StartJump();
 	player.PlayAnimation(PlayerAnimationType::JumpStart);
 }

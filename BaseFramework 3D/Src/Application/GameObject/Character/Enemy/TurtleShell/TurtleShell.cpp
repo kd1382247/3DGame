@@ -2,7 +2,6 @@
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
 #include"../../../../System/CollisionManager/CollisionMath/CollisionMath.h"
-#include"../../../../../Framework/Effekseer/KdEffekseerManager.h"
 #include"../../../Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
 #include"../../../Stage/Stage01/Collision/WallCollision/WallCollision.h"
 
@@ -21,32 +20,21 @@ void TurtleShell::Init()
 {
 	if (!m_spModel)
 	{
-		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Enemy/TurtleShell/TurtleShell.gltf");
+		InitEnemyModel("Asset/Models/Enemy/TurtleShell/TurtleShell.gltf", "TurtleShell",
+			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "TurtleShell");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 
 		// パラメータクラス初期化
 		m_parameter.Init();
-		
+
 		m_hp = m_parameter.GetParam().m_maxHP;
 
 		m_attackCooldownDuration = 1.0f;
 		m_dizzyDuration = 3.0f;
 		m_spinAttackDuration = 5.0f;
 		m_hitCooldownDuration =  0.5f;
-
-
-		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape
-		("TurtleShell", Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, KdCollider::TypeBump);
-
-		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
-
-		// オブジェクト名セット
-		SetObjectName("TurtleShell");
-
 
 		m_stateMachine.ChangeState (*this, std::make_unique<TurtleShellNormalState>());
 	}
@@ -76,17 +64,15 @@ void TurtleShell::PostUpdate()
 	EnemyBase::PostUpdate();
 }
 
-void TurtleShell::DrawInspector()
-{
-	EnemyBase::DrawInspector();
-
-	m_parameter.DrawInspecter();
-}
-
 void TurtleShell::DrawDebug()
 {
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
+	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
 	//m_pDebugWire->Draw();
+}
+
+void TurtleShell::DrawParameterInspector()
+{
+	m_parameter.DrawInspecter();
 }
 
 void TurtleShell::SetUpReference()
@@ -147,50 +133,6 @@ void TurtleShell::UpdateLaunch()
 
 	Math::Vector3 move = m_launchVec * 60.0f * m_deltaTime;
 	AddPendingMove(move);
-}
-
-void TurtleShell::UpdateMove()
-{
-
-	if (m_knockBack != Math::Vector3::Zero)
-	{
-		// キャラの向き
-		auto spPlayer = m_wpPlayer.lock();
-		if (!spPlayer)
-		{
-			return;
-		}
-
-		Math::Vector3 toDir = spPlayer->GetPos() - GetPos();
-		SetMoveDir(toDir);
-		UpdateFacingDirection();
-
-		return;
-	}
-
-	if (CanDirectChase())
-	{
-		PlayAnimation(TurtleShellAnimationType::Walk);
-	}
-	else
-	{
-		PlayAnimation(TurtleShellAnimationType::Idle);
-	}
-
-	ChangeMoveState(m_nextMoveState);
-
-	switch (m_currentMoveState)
-	{
-	case EnemyBase::MoveState::DirectChase:
-		UpdateDirectChase();
-		break;
-	case EnemyBase::MoveState::FollowPath:
-		UpdateFollowPath();
-		break;
-	}
-
-	UpdateFacingDirection();
-
 }
 
 void TurtleShell::UpdateAttackCollision()
@@ -269,30 +211,6 @@ void TurtleShell::OnHit(const AttackInfo attackInfo)
 	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }
 
-
-void TurtleShell::UpdateAttack()
-{
-	// ターゲットに到達したら攻撃する
-	if (m_hasReachedTarget)
-	{
-		m_attackFlg = true;
-	}
-
-	m_attackCooldown -= m_deltaTime;
-	if (m_attackCooldown <= 0)
-	{
-		m_attackCooldown = 0;
-	}
-
-	// クールタイムがある場合は攻撃しない
-	if (m_attackFlg)
-	{
-		if (m_attackCooldown != 0)
-		{
-			m_attackFlg = false;
-		}
-	}
-}
 
 void TurtleShell::UpdateSpinAttackMove()
 {
@@ -410,4 +328,14 @@ void TurtleShell::HitCoolDownRemaining()
 void TurtleShell::UpdateAnimation()
 {
 	m_animation.Update(m_deltaTime);
+}
+
+void TurtleShell::PlayWalkAnimation()
+{
+	PlayAnimation(TurtleShellAnimationType::Walk);
+}
+
+void TurtleShell::PlayIdleAnimation()
+{
+	PlayAnimation(TurtleShellAnimationType::Idle);
 }

@@ -31,8 +31,11 @@ void CollisionManager::Resolve()
 		return;
 	}
 
+	// このフレームで使うキャラリストは1回だけ取得して使い回す
+	const std::vector<std::shared_ptr<CharacterBase>> characters = GetCharacters();
+
 	// まず全キャラクターを非接地状態にする
-	for (const auto& character : GetCharacters())
+	for (const auto& character : characters)
 	{
 		if (!character)
 		{
@@ -42,10 +45,10 @@ void CollisionManager::Resolve()
 		character->SetIsGrounded(false);
 	}
 
-	ResolveCharacterMovement();
+	ResolveCharacterMovement(characters);
 
 	// ノックバック
-	for (const auto& character : GetCharacters())
+	for (const auto& character : characters)
 	{
 		if (!character)
 		{
@@ -56,7 +59,7 @@ void CollisionManager::Resolve()
 	}
 
 	// 最後にキャラ同士の判定をする
-	ResolveCharacterCollision();
+	ResolveCharacterCollision(characters);
 
 }
 
@@ -166,14 +169,9 @@ CollisionManager::SweepResult CollisionManager::FindSweepContacts(const std::sha
 		return result;
 	}
 
-	constexpr float contactDistanceEpsilon = 0.002f;
-
 	const float moveLength = remainingMove.Length();
 
-	Math::Vector3 sphereOffset =
-		character->GetBumpSphere().Center - character->GetPos();
-
-	Math::Vector3 sweepStart = currentPos + sphereOffset;
+	Math::Vector3 sweepStart = GetBumpSphereCenterAt(character, currentPos);
 
 	const auto& walls =WallCollisionManager::Instance().GetWallCollisionList();
 
@@ -242,13 +240,12 @@ CollisionManager::SweepResult CollisionManager::FindSweepContacts(const std::sha
 		}
 
 		// 坂用OBBは歩行可能面だけ
-		if (obbCollision->GetCollisionType() == OBBCollision::OBBCollisionType::Walkable)
-		{
+		bool isWalkableContact = false;
+		const bool isObbTypeWalkable = (obbCollision->GetCollisionType() == OBBCollision::OBBCollisionType::Walkable);
 
-			if (!IsWalkableSurface(normal,character))
-			{
-				continue;
-			}
+		if (ShouldSkipWalkableObbContact(isObbTypeWalkable, normal, character, isWalkableContact))
+		{
+			continue;
 		}
 
 		AddSweepContact(result, toi, normal, moveLength);
@@ -312,7 +309,7 @@ void CollisionManager::AddSweepContact(SweepResult& result, float toi, const Mat
 
 }
 
-void CollisionManager::ResolveStartOverlapContact(const Math::Vector3& push, const Math::Vector3& normal, Math::Vector3& currentPos, Math::Vector3& remainingMove)
+void CollisionManager::ResolveStartOverlapContact(const Math::Vector3& push, const Math::Vector3& normal, Math::Vector3& currentPos, Math::Vector3& remainingMove, bool isWalkable)
 {
 	constexpr float overlapSkin = 0.0001f;
 
@@ -334,12 +331,54 @@ void CollisionManager::ResolveStartOverlapContact(const Math::Vector3& push, con
 
 	currentPos += contactNormal * (pushLength + overlapSkin);
 
+	// 投影前の移動量を保持しておく(歩行可能面での速度補正に使う)
+	const Math::Vector3 preProjectMove = remainingMove;
+
 	const float into = remainingMove.Dot(contactNormal);
 
 	if (into < 0.0f)
 	{
-		remainingMove -= contactNormal * into;
+		if (isWalkable)
+		{
+			// 坂に乗っている間は毎フレームここでめり込みが発生するが、
+			// 歩行可能面では水平方向(X,Z)の移動量はそのまま保ち、
+			// 坂の傾きに合わせて必要な高さだけを再計算する
+			PreserveHorizontalSpeedOnSlope(preProjectMove, contactNormal, remainingMove);
+		}
+		else
+		{
+			remainingMove -= contactNormal * into;
+		}
 	}
+}
+
+void CollisionManager::PreserveHorizontalSpeedOnSlope(const Math::Vector3& preProjectMove, const Math::Vector3& normal, Math::Vector3& move) const
+{
+	// 法線のY成分が無いと平面の方程式が解けないため補正しない
+	// (歩行可能面はIsWalkableSurfaceで角度チェック済みのため通常は発生しない)
+	if (std::abs(normal.y) <= 0.000001f)
+	{
+		return;
+	}
+
+	const float dx = preProjectMove.x;
+	const float dz = preProjectMove.z;
+
+	// 元々水平方向の移動が無かった(重力のみ等)場合は補正しない
+	if (dx * dx + dz * dz <= 0.000001f)
+	{
+		return;
+	}
+
+	// 坂の平面上の移動ベクトルは法線と直交する
+	// (normal.x*dx + normal.y*dy + normal.z*dz = 0)ので、
+	// 元の水平移動量(dx, dz)をそのまま保ったまま
+	// 坂の平面に乗るために必要な高さdyを直接求める
+	const float slopeY = -(normal.x * dx + normal.z * dz) / normal.y;
+
+	move.x = dx;
+	move.y = slopeY;
+	move.z = dz;
 }
 
 void CollisionManager::ResolveMultipleSurfaceHit(
@@ -401,6 +440,51 @@ void CollisionManager::ResolveMultipleSurfaceHit(
 		{
 			break;
 		}
+	}
+
+	// =====================================
+	// 3.5 坂+壁の角など、歩行可能面を含む複数面接触の場合、
+	// 他の面へめり込まない範囲でだけ水平速度を保つ補正を試みる
+	// =====================================
+
+	for (size_t i = 0; i < sweepResult.m_normals.size(); i++)
+	{
+		const Math::Vector3& normal = sweepResult.m_normals[i];
+
+		if (!IsWalkableSurface(normal, character))
+		{
+			continue;
+		}
+
+		Math::Vector3 candidate = remainingMove;
+		PreserveHorizontalSpeedOnSlope(remainingMove, normal, candidate);
+
+		constexpr float penetrationEpsilon = 0.0001f;
+
+		bool violatesOtherSurface = false;
+
+		for (size_t j = 0; j < sweepResult.m_normals.size(); j++)
+		{
+			if (j == i)
+			{
+				continue;
+			}
+
+			if (candidate.Dot(sweepResult.m_normals[j]) < -penetrationEpsilon)
+			{
+				violatesOtherSurface = true;
+				break;
+			}
+		}
+
+		// 他の面(壁など)へめり込む場合は補正前の結果を優先する
+		if (!violatesOtherSurface)
+		{
+			remainingMove = candidate;
+		}
+
+		// 歩行可能面は基本1つのはずなので、最初に見つかったものだけ処理する
+		break;
 	}
 
 	// =====================================
@@ -477,12 +561,8 @@ void CollisionManager::ResolveAABBStartOverlap(const std::shared_ptr<CharacterBa
 			continue;
 		}
 
-		Math::Vector3 sphereOffset =character->GetBumpSphere().Center -character->GetPos();
-
-		Math::Vector3 sphereCenter =currentPos + sphereOffset;
-
 		DirectX::BoundingSphere sphere;
-		sphere.Center = sphereCenter;
+		sphere.Center = GetBumpSphereCenterAt(character, currentPos);
 		sphere.Radius = character->GetBumpSphere().Radius;
 
 		Math::Vector3 push = Math::Vector3::Zero;
@@ -493,7 +573,8 @@ void CollisionManager::ResolveAABBStartOverlap(const std::shared_ptr<CharacterBa
 			continue;
 		}
 
-		ResolveStartOverlapContact(push,normal,currentPos,remainingMove);
+		// 壁(AABB)は歩行可能面としては扱わない
+		ResolveStartOverlapContact(push,normal,currentPos,remainingMove,false);
 
 	}
 }
@@ -510,12 +591,8 @@ void CollisionManager::ResolveOBBStartOverlap(const std::shared_ptr<CharacterBas
 			continue;
 		}
 
-		Math::Vector3 sphereOffset = character->GetBumpSphere().Center - character->GetPos();
-
-		Math::Vector3 sphereCenter = currentPos + sphereOffset;
-
 		DirectX::BoundingSphere sphere;
-		sphere.Center = sphereCenter;
+		sphere.Center = GetBumpSphereCenterAt(character, currentPos);
 		sphere.Radius = character->GetBumpSphere().Radius;
 
 		Math::Vector3 push = Math::Vector3::Zero;
@@ -530,15 +607,15 @@ void CollisionManager::ResolveOBBStartOverlap(const std::shared_ptr<CharacterBas
 		// =====================================
 		// 坂用OBBは歩行可能面だけを処理
 		// =====================================
-		if (obbCollision->GetCollisionType() ==OBBCollision::OBBCollisionType::Walkable)
+		bool isWalkableContact = false;
+		const bool isObbTypeWalkable = (obbCollision->GetCollisionType() == OBBCollision::OBBCollisionType::Walkable);
+
+		if (ShouldSkipWalkableObbContact(isObbTypeWalkable, normal, character, isWalkableContact))
 		{
-			if (!IsWalkableSurface(normal, character))
-			{
-				continue;
-			}
+			continue;
 		}
 
-		ResolveStartOverlapContact(push, normal, currentPos, remainingMove);
+		ResolveStartOverlapContact(push, normal, currentPos, remainingMove, isWalkableContact);
 
 	}
 }
@@ -559,6 +636,35 @@ bool CollisionManager::IsWalkableSurface(const Math::Vector3& normal, const std:
 	return normal.Dot(Math::Vector3::Up) >= walkableGroundDot;
 }
 
+Math::Vector3 CollisionManager::GetBumpSphereCenterAt(const std::shared_ptr<CharacterBase>& character, const Math::Vector3& pos) const
+{
+	// バンプスフィアはキャラの原点からオフセットした位置にあるため、
+	// 「pos にキャラがいたとしたら」のスフィア中心を求める
+	const Math::Vector3 sphereOffset = character->GetBumpSphere().Center - character->GetPos();
+
+	return pos + sphereOffset;
+}
+
+bool CollisionManager::ShouldSkipWalkableObbContact(bool isObbTypeWalkable, const Math::Vector3& normal, const std::shared_ptr<CharacterBase>& character, bool& outIsWalkable) const
+{
+	outIsWalkable = false;
+
+	// 坂用(Walkable)でないOBBは通常の障害物として常に対象にする
+	if (!isObbTypeWalkable)
+	{
+		return false;
+	}
+
+	// 坂用OBBは、登れる角度の面(歩行可能面)だけを対象にする
+	if (!IsWalkableSurface(normal, character))
+	{
+		return true;
+	}
+
+	outIsWalkable = true;
+	return false;
+}
+
 void CollisionManager::ResolveSweepHit(
 	const std::shared_ptr<CharacterBase>& character,
 	float toi,
@@ -568,8 +674,6 @@ void CollisionManager::ResolveSweepHit(
 	const Math::Vector3& sourceMove,
 	bool updateGroundState)
 {
-
-	const float upDot = normal.Dot(Math::Vector3::Up);
 
 	const bool isWalkable = IsWalkableSurface(normal,character);
 
@@ -601,12 +705,24 @@ void CollisionManager::ResolveSweepHit(
 		leftover.y = 0.0f;
 	}
 
+	// 投影前の移動量を保持しておく(歩行可能面での速度補正に使う)
+	const Math::Vector3 preProjectMove = leftover;
+
     // 面の内部へ進む成分を除去
 	float into =leftover.Dot(normal);
 
 	if (into < 0.0f)
 	{
-		leftover -= normal * into;
+		if (isWalkable)
+		{
+			// 歩行可能面では水平方向(X,Z)の移動量はそのまま保ち、
+			// 坂の傾きに合わせて必要な高さだけを再計算する
+			PreserveHorizontalSpeedOnSlope(preProjectMove, normal, leftover);
+		}
+		else
+		{
+			leftover -= normal * into;
+		}
 	}
 
 	remainingMove = leftover;
@@ -615,10 +731,8 @@ void CollisionManager::ResolveSweepHit(
 
 }
 
-void CollisionManager::ResolveCharacterMovement()
+void CollisionManager::ResolveCharacterMovement(const std::vector<std::shared_ptr<CharacterBase>>& characters)
 {
-	std::vector<std::shared_ptr<CharacterBase>>characters = GetCharacters();
-	
 	for (const auto& character : characters)
 	{
 
@@ -683,15 +797,41 @@ Math::Vector3 CollisionManager::ResolveCharacterDisplacement(const std::shared_p
 		
 	}
 
+	// デバッグ用ログ：ノックバック/プッシュ解決(updateGroundState==false)では
+	// 毎キャラ分呼ばれて上書きされてしまい意味をなさないため、
+	// 本来の移動解決(ResolveCharacterMovementから呼ばれる時)だけ表示する
+	if (updateGroundState)
+	{
+		// 実際に移動した量
+		Math::Vector3 actualMove = currentPos - startPos;
+
+		// 入力された移動量の水平成分
+		Math::Vector3 inputHorizontal = move;
+		inputHorizontal.y = 0.0f;
+
+		// 実際の移動量の水平成分
+		Math::Vector3 actualHorizontal = actualMove;
+		actualHorizontal.y = 0.0f;
+
+		KdDebugGUI::Instance().ClearLog();
+
+		KdDebugGUI::Instance().AddLog("Input  X: %.4f  Z: %.4f",
+			inputHorizontal.x,
+			inputHorizontal.z);
+		KdDebugGUI::Instance().AddLog("\nActual X: %.4f  Z: %.4f",
+			actualHorizontal.x,
+			actualHorizontal.z);
+
+		KdDebugGUI::Instance().AddLog(
+			"\nActual Y: %.4f",
+			actualMove.y);
+	}
 
 	return currentPos;
 }
 
-void CollisionManager::ResolveCharacterCollision()
+void CollisionManager::ResolveCharacterCollision(const std::vector<std::shared_ptr<CharacterBase>>& characters)
 {
-
-	std::vector<std::shared_ptr<CharacterBase>>characters = GetCharacters();
-
 	constexpr int Iteration = 4;
 
 	for(int iter=0;iter<Iteration;iter++)

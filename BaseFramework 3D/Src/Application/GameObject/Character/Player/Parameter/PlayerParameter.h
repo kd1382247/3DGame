@@ -12,6 +12,7 @@ public:
 		float m_moveSpeed = 9.0f;
 		float m_jumpPow = 0.4f;
 		float m_turnSpeed = 12.0f;
+		float m_gravityAcceleration = 72.0f;
 
 		// Attack
 		float m_attackPower = 10.0f;

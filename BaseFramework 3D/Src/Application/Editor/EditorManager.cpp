@@ -1,6 +1,6 @@
 ﻿#include "EditorManager.h"
 
-#include"../main.h"
+#include"../../Framework/Effekseer/KdEffekseerManager.h"
 #include"../GameObject/Camera/CameraBase.h"
 #include "../../Framework/GameObject/KdGameObjectFactory.h"
 #include"../System/WayPointManager/WayPointManager.h"
@@ -157,6 +157,7 @@ void EditorManager::StopPlayMode()
 	editorScene->BackupObjectList();
 	WayPointManager::Instance().ClearWayPoints();
 	WallCollisionManager::Instance().ClearWallCollisionList();
+	OBBCollisionManager::Instance().ClearOBBCollisionList();
 
 	// Edit開始前の状態を復元
 	if (!StageDataManager::Instance().LoadTemporary())
@@ -165,6 +166,7 @@ void EditorManager::StopPlayMode()
 		editorScene->RestoreObjectList();
 		WayPointManager::Instance().RestoreWayPoints();
 		WallCollisionManager::Instance().RestoreWallCollisionList();
+		OBBCollisionManager::Instance().RestoreOBBCollisionList();
 
 		return;
 	}
@@ -173,9 +175,13 @@ void EditorManager::StopPlayMode()
 	editorScene->ClearBackupList();
 	WayPointManager::Instance().ClearBackup();
 	WallCollisionManager::Instance().ClearBackup();
+	OBBCollisionManager::Instance().ClearBackup();
 
 	// モードを切り替える
 	SetEditorMode(EditorMode::Edit);
+
+	// エフェクトをストップ
+	KdEffekseerManager::GetInstance().StopAllEffect();
 
 	// マウスカーソル
 	ShowCursor(true);
@@ -394,18 +400,18 @@ void EditorManager::UpdateMouseSelection()
 	}
 }
 
-void EditorManager::SelectGameObjectByMouse()
+template<typename Container, typename Predicate>
+std::shared_ptr<KdGameObject> EditorManager::SelectClosestByMouse(const Container& objects, KdCollider::Type rayType, Predicate predicate)
 {
-	
-	KdCollider::RayInfo rayInfo=CreateRayInfo(KdCollider::TypeBump);
-	
-	float maxOverLap = 0;
+	KdCollider::RayInfo rayInfo = CreateRayInfo(rayType);
+
+	float maxOverlap = 0.0f;
 
 	std::shared_ptr<KdGameObject> selectedObj = nullptr;
 
-	for (const auto& obj : SceneManager::Instance().GetObjList())
+	for (const auto& obj : objects)
 	{
-		if (!obj || obj->GetObjectCategory() != KdGameObject::ObjectCategory::Character)
+		if (!obj || !predicate(obj))
 		{
 			continue;
 		}
@@ -417,178 +423,77 @@ void EditorManager::SelectGameObjectByMouse()
 			continue;
 		}
 
-	
 		for (const auto& ret : retRayList)
 		{
 			// レイを遮断しオーバーした長さが
 			// 一番長いものを探す
-			if (maxOverLap < ret.m_overlapDistance)
+			if (maxOverlap < ret.m_overlapDistance)
 			{
-				maxOverLap = ret.m_overlapDistance;
+				maxOverlap = ret.m_overlapDistance;
 
 				selectedObj = obj;
 			}
 		}
 	}
+
+	return selectedObj;
+}
+
+void EditorManager::SelectGameObjectByMouse()
+{
+	auto selectedObj = SelectClosestByMouse(
+		SceneManager::Instance().GetObjList(),
+		KdCollider::TypeBump,
+		[](const std::shared_ptr<KdGameObject>& obj)
+		{
+			return obj->GetObjectCategory() == KdGameObject::ObjectCategory::Character;
+		});
 
 	SetSelectedObject(selectedObj);
 }
 
 void EditorManager::SelectStageObjectByMouse()
 {
-	KdCollider::RayInfo rayInfo = CreateRayInfo(KdCollider::TypeEvent);
-
-	float maxOverLap = 0;
-
-
-	std::shared_ptr<KdGameObject> selectedObj = nullptr;
-
-	for (const auto& obj : SceneManager::Instance().GetObjList())
-	{
-		if (!obj)
+	auto selectedObj = SelectClosestByMouse(
+		SceneManager::Instance().GetObjList(),
+		KdCollider::TypeEvent,
+		[](const std::shared_ptr<KdGameObject>& obj)
 		{
-			continue;
-		}
-
-		if (obj->GetObjectCategory() != KdGameObject::ObjectCategory::Stage&&
-			obj->GetObjectCategory() != KdGameObject::ObjectCategory::Gimmick)
-		{
-			continue;
-		}
-
-		std::list<KdCollider::CollisionResult> retRayList;
-		if (!obj->Intersects(rayInfo, &retRayList))
-		{
-			continue;
-		}
-
-		for (auto& ret : retRayList)
-		{
-			// レイを遮断しオーバーした長さが
-			// 一番長いものを探す
-			if (maxOverLap < ret.m_overlapDistance)
-			{
-				maxOverLap = ret.m_overlapDistance;
-
-				selectedObj = obj;
-			}
-		}
-	}
+			return obj->GetObjectCategory() == KdGameObject::ObjectCategory::Stage ||
+				   obj->GetObjectCategory() == KdGameObject::ObjectCategory::Gimmick;
+		});
 
 	SetSelectedObject(selectedObj);
 }
 
 void EditorManager::SelectWayPointByMouse()
 {
-	KdCollider::RayInfo rayInfo = CreateRayInfo(KdCollider::TypeBump);
-
-	float maxOverlap = 0.0f;
-
-	std::shared_ptr<KdGameObject> selectedObj = nullptr;
-
-	for (const auto& wayPoint :WayPointManager::Instance().GetWayPoints())
-	{
-		if (!wayPoint)
-		{
-			continue;
-		}
-
-		std::list<KdCollider::CollisionResult> retRayList;
-
-		if (!wayPoint->Intersects(rayInfo, &retRayList))
-		{
-			continue;
-		}
-
-		for (const auto& ret : retRayList)
-		{
-			if (maxOverlap < ret.m_overlapDistance)
-			{
-				maxOverlap = ret.m_overlapDistance;
-
-				selectedObj = wayPoint;
-			}
-		}
-	}
+	auto selectedObj = SelectClosestByMouse(
+		WayPointManager::Instance().GetWayPoints(),
+		KdCollider::TypeBump,
+		[](const std::shared_ptr<KdGameObject>&) { return true; });
 
 	SetSelectedObject(selectedObj);
-	
 }
 
 void EditorManager::SelectBoxByMouse()
 {
+	auto selectedObj = SelectClosestByMouse(
+		WallCollisionManager::Instance().GetWallCollisionList(),
+		KdCollider::TypeBump,
+		[](const std::shared_ptr<KdGameObject>&) { return true; });
 
-	KdCollider::RayInfo rayInfo = CreateRayInfo(KdCollider::TypeBump);
-
-	float maxOverlap=0;
-	
-	std::shared_ptr<KdGameObject>obj;
-
-	for (const auto& selectObj : WallCollisionManager::Instance().GetWallCollisionList())
-	{
-		if (!selectObj)
-		{
-			return;
-		}
-
-		std::list<KdCollider::CollisionResult>result;
-
-		if (!selectObj->Intersects(rayInfo, &result))
-		{
-			continue;
-		}
-
-
-		for (const auto& ret : result)
-		{
-			if (maxOverlap < ret.m_overlapDistance)
-			{
-				maxOverlap = ret.m_overlapDistance;
-				obj = selectObj;
-			}
-		}
-	}
-
-	SetSelectedObject(obj);
-
-
+	SetSelectedObject(selectedObj);
 }
 
 void EditorManager::SelectOBBByMouse()
 {
+	auto selectedObj = SelectClosestByMouse(
+		OBBCollisionManager::Instance().GetOBBCollisionList(),
+		KdCollider::TypeBump,
+		[](const std::shared_ptr<KdGameObject>&) { return true; });
 
-	KdCollider::RayInfo rayInfo = CreateRayInfo(KdCollider::TypeBump);
-
-	float maxOverlap = 0;
-
-	std::shared_ptr<KdGameObject>obj;
-
-	for (const auto& selectObj : OBBCollisionManager::Instance().GetOBBCollisionList())
-	{
-		if (!selectObj)
-		{
-			return;
-		}
-
-		std::list<KdCollider::CollisionResult>result;
-
-		if (!selectObj->Intersects(rayInfo, &result))
-		{
-			continue;
-		}
-
-
-		for (const auto& ret : result)
-		{
-			if (maxOverlap < ret.m_overlapDistance)
-			{
-				maxOverlap = ret.m_overlapDistance;
-				obj = selectObj;
-			}
-		}
-	}
-
-	SetSelectedObject(obj);
+	SetSelectedObject(selectedObj);
 }
 
 void EditorManager::CreateGameObject(const std::string& className)

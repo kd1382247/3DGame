@@ -6,24 +6,13 @@ void Bomb::Init()
 {
 	if (!m_spModel)
 	{
-		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Enemy/Bomb/Bomb.gltf");
+		InitEnemyModel("Asset/Models/Enemy/Bomb/Bomb.gltf", "Bomb",
+			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "Bomb");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 		// パラメータ初期化
 		m_parameter.Init();
-
-		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape
-		("Bomb", Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, KdCollider::TypeBump);
-
-		
-		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
-
-
-		// オブジェクト名セット
-		SetObjectName("Bomb");
 	}
 
 	EnemyBase::Init();
@@ -45,14 +34,12 @@ void Bomb::PostUpdate()
 
 	UpdateAnimation();
 
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
+	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
 
 }
 
-void Bomb::DrawInspector()
+void Bomb::DrawParameterInspector()
 {
-	EnemyBase::DrawInspector();
-
 	m_parameter.DrawInspecter();
 }
 

@@ -1,0 +1,209 @@
+■ Editorリファクタリング内容
+============================================================
+
+【概要】
+Application/Editor 以下のファイル(EditorManager, Hierarchy, Inspector,
+SceneView)を確認し、重複コードの統合・デバッグ用コードの削除・見つかった
+不具合の修正を行いました。仕様(見た目や操作方法)は変えていません。
+
+対象外だったファイル:
+  - MessageWindow.h/.cpp … 問題なし。変更なし。
+  - StageEditor.h/.cpp   … 問題なし。変更なし。
+
+
+【変更したファイル】
+  - EditorManager.h / EditorManager.cpp
+  - Hierarchy/Hierarchy.h
+  - Inspector/Inspector.h / Inspector/Inspector.cpp
+  - SceneView/SceneView.cpp
+
+
+------------------------------------------------------------
+1. EditorManager: SelectXByMouse系5関数の統合
+------------------------------------------------------------
+[変更前]
+  SelectGameObjectByMouse() / SelectStageObjectByMouse() /
+  SelectWayPointByMouse() / SelectBoxByMouse() / SelectOBBByMouse()
+  の5つが、それぞれ
+
+    1. レイを生成
+    2. 対象リストをループ
+    3. Intersectsで当たり判定
+    4. m_overlapDistanceが一番大きいものを探す
+    5. SetSelectedObjectで選択
+
+  というほぼ同じ処理を、対象リストとレイの種類だけ変えて
+  35行前後×5回コピペしていました。
+  (これが「ごちゃごちゃ」と感じられていた一番大きな部分だと思います)
+
+[変更後]
+  共通処理を1つのテンプレート関数にまとめました。
+
+    template<typename Container, typename Predicate>
+    std::shared_ptr<KdGameObject> SelectClosestByMouse(
+        const Container& objects,
+        KdCollider::Type rayType,
+        Predicate predicate);
+
+  各Select関数は、対象リストと絞り込み条件(ラムダ式)を渡すだけの
+  数行に短縮されました。
+
+    void EditorManager::SelectGameObjectByMouse()
+    {
+        auto selectedObj = SelectClosestByMouse(
+            SceneManager::Instance().GetObjList(),
+            KdCollider::TypeBump,
+            [](const std::shared_ptr<KdGameObject>& obj)
+            {
+                return obj->GetObjectCategory() == KdGameObject::ObjectCategory::Character;
+            });
+
+        SetSelectedObject(selectedObj);
+    }
+
+  [なぜこうしたか]
+  ・5箇所に同じロジックがあると、将来「当たり判定の優先順位を変えたい」
+    等の修正が入った時に5箇所同時に直す必要があり、直し漏れの原因になります。
+  ・1つにまとめることで、以後はこの関数を直すだけで全カテゴリに反映されます。
+  ・テンプレート化したのは、対象リストの型(KdGameObject/WayPoint/
+    WallCollision/OBBCollision)がそれぞれ違うためです。継承元が同じ
+    KdGameObjectなので、選択結果は問題なくshared_ptr<KdGameObject>に
+    まとめられます。
+  ・キャラクター/ステージ選択のようにカテゴリで絞り込みが必要な場合は
+    predicate(ラムダ式)で、WayPoint/AABB/OBBのように絞り込みが不要な
+    場合は常にtrueを返すラムダを渡すことで、両方のケースに対応しています。
+
+
+------------------------------------------------------------
+2. EditorManager: StopPlayModeのOBB処理漏れを修正(バグ修正)
+------------------------------------------------------------
+[問題]
+  StartPlayMode()では
+    ・OBBCollisionManager::ClearOBBCollisionList()
+    ・(失敗時)OBBCollisionManager::RestoreOBBCollisionList()
+    ・OBBCollisionManager::ClearBackup()
+  の3つの処理が入っているのに対し、StopPlayMode()には
+  この3つが入っていませんでした(WayPointとWallは両方にありました)。
+
+  この状態だと、Playを開始してから停止した際にOBBの一覧が
+  正しくクリア/復元されず、以前のOBBが残ったままロードした
+  ステージのOBBと混在してしまう可能性があります。
+
+[修正]
+  StopPlayMode()にもStartPlayMode()と同じ3箇所の
+  OBBCollisionManager呼び出しを追加し、対称になるようにしました。
+
+  ※ ユーザー様に確認の上、修正対象として選んでいただいた項目です。
+  ※ 実機での動作確認をお願いします
+    (Play開始→停止を何度か繰り返し、OBBの当たり判定が
+     おかしくならないかご確認ください)。
+
+
+------------------------------------------------------------
+3. EditorManager: SelectBoxByMouse/SelectOBBByMouseのnullチェック修正(バグ修正)
+------------------------------------------------------------
+[問題]
+  修正前のSelectBoxByMouse/SelectOBBByMouseだけ、リスト内の要素が
+  nullだった場合に
+
+    if (!selectObj) { return; }
+
+  としていました。他の3つの選択関数は
+
+    if (!obj) { continue; }
+
+  なので、「その要素だけスキップして次のオブジェクトも見る」のが
+  正しい動作です。returnだと、リストの途中に1つでもnullが
+  混ざっていると、そこで選択処理全体が中断されてしまいます
+  (それ以降のオブジェクトが選択対象から漏れてしまう)。
+
+[修正]
+  今回の統合(1.)で全関数が同じSelectClosestByMouse内部の
+  continue処理を使うようになったため、自動的にこの不整合も
+  解消されています。
+
+  ※ ユーザー様に確認の上、修正対象として選んでいただいた項目です。
+
+
+------------------------------------------------------------
+4. SceneView: デバッグ用コードの削除
+------------------------------------------------------------
+[変更前]
+    void SceneView::Draw()
+    {
+        static int count = 0;
+        OutputDebugStringA("SceneView::Draw\n");
+        ...
+
+  count変数はどこでも使われておらず、OutputDebugStringAは
+  毎フレーム(Draw()が呼ばれる度)デバッグ出力を吐き続けるだけの
+  デバッグ用の書き残しでした。
+
+[変更後]
+  両方削除しました。動作への影響はありません。
+
+
+------------------------------------------------------------
+5. Inspector: 未使用メンバーの削除・引数の参照化
+------------------------------------------------------------
+[変更前]
+    class Inspector
+    {
+        ...
+        void DrawDeleteButton(const std::shared_ptr<KdGameObject> obj);
+
+        std::unordered_map<std::string, ImVec2>m_windowSizes;
+        std::string m_lastObjectType;
+    };
+
+  m_windowSizes、m_lastObjectTypeはInspector.cpp内のどこからも
+  読み書きされておらず、完全に使われていないメンバー変数でした。
+
+[変更後]
+  ・未使用の2つのメンバーを削除しました。
+  ・DrawDeleteButtonの引数をconst shared_ptr<KdGameObject>&
+    (参照)に変更しました。値渡しだとshared_ptrの参照カウント操作が
+    毎回発生するため、参照渡しの方が無駄がありません
+    (中でobj->Destroy()するだけで、所有権を持つ必要はないため)。
+
+
+------------------------------------------------------------
+6. Hierarchy: GetHierarchyCategory()をconstメンバ関数に
+------------------------------------------------------------
+[変更前]
+    HierarchyCategory GetHierarchyCategory(){return m_category; }
+
+[変更後]
+    HierarchyCategory GetHierarchyCategory() const { return m_category; }
+
+  内部を変更しない単純なgetterなのにconstが付いていませんでした。
+  constを付けることで「このメンバ関数はHierarchyの状態を変更しない」
+  ことが型として保証され、今後constなHierarchy参照からも呼び出せる
+  ようになります(呼び出し側の挙動は変わりません)。
+
+
+------------------------------------------------------------
+【検討したが今回は見送った項目】
+------------------------------------------------------------
+・Hierarchy::DrawWayPoints/DrawCollisionBox/DrawOBBの3つの小さな
+  ループ(3行程度)も似た形をしていますが、既に十分短く読みやすいため、
+  無理にテンプレート化するとコードが逆に読みにくくなると判断し、
+  そのままにしました。
+
+・EditorManager::MakeEllipsisText()は文字列を切り詰めるだけの
+  汎用的な処理で、本来はEditorManager以外の場所(文字列ユーティリティ)
+  にあってもおかしくない処理ですが、他で使われている形跡がなく、
+  移動すると呼び出し元の変更範囲が広がるため、今回は見送りました。
+
+
+------------------------------------------------------------
+【お願い】
+------------------------------------------------------------
+今回の変更はビルドを実際に通していません(このセッションには
+ビルド環境がないため)。特に以下の点をお手元でご確認ください。
+
+  ・通常ビルドが通ること
+  ・GameObject/Stage/WayPoint/CollisionBox/OBBの各タブで、
+    マウスクリックによる選択が今まで通り動くこと
+  ・Play開始→停止を数回繰り返して、OBBの当たり判定が
+    おかしくならないこと(2.の修正部分)

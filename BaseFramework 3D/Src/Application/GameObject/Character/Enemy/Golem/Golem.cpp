@@ -6,24 +6,13 @@ void Golem::Init()
 {
 	if (!m_spModel)
 	{
-		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Enemy/Golem/Golem.gltf");
+		InitEnemyModel("Asset/Models/Enemy/Golem/Golem.gltf", "Golem",
+			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "Golem");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 		// パラメータークラス初期化
 		m_parameter.Init();
-
-		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape
-		("Golem", Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, KdCollider::TypeBump);
-
-
-		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
-
-
-		// オブジェクト名セット
-		SetObjectName("Golem");
 	}
 	EnemyBase::Init();
 
@@ -43,14 +32,12 @@ void Golem::PostUpdate()
 
 	UpdateAnimation();
 
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
+	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
 
 }
 
-void Golem::DrawInspector()
+void Golem::DrawParameterInspector()
 {
-	EnemyBase::DrawInspector();
-
 	m_parameter.DrawInspecter();
 }
 

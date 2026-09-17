@@ -18,11 +18,13 @@ public:
 		Math::Vector3 Size = Math::Vector3::One;
 		Math::Vector3 Rotate = Math::Vector3::One;
 		float Speed = 1.0f;
+		int   StartFrame = 0;
+		int   EndFrame = -1; // -1なら終了フレームを指定しない
 		bool IsLoop = false;
 	};
 
 	// Effekseerエフェクト再生
-	std::weak_ptr<KdEffekseerObject> Play(const std::string& effName, const DirectX::SimpleMath::Vector3& pos, const float size = 1, const float speed = 1, const bool isLoop = false);
+	std::weak_ptr<KdEffekseerObject> Play(const std::string& effName, const DirectX::SimpleMath::Vector3& pos, const float size = 1, const float speed = 1, const bool isLoop = false,const int startFrame=0,const int endFrame=-1);
 
 	void StopAllEffect();
 	void StopEffect(const std::string& name);
@@ -168,6 +170,23 @@ public:
 	KdEffekseerManager::PlayEfkInfo& WorkPlayEfkInfo()				{ return m_info; }
 	const KdEffekseerManager::PlayEfkInfo& GetPlayEfkInfo() const	{ return m_info; }
 
+	void AdvanceFrames(float frames)
+	{
+		m_elapsedFrames += frames;
+	}
+
+	bool HasReachedEndFrame() const
+	{
+		// 終了指定なし、または不正な範囲なら区間終了を判定しない
+		if (m_info.EndFrame <= m_info.StartFrame)
+		{
+			return false;
+		}
+
+		return m_elapsedFrames >=
+			static_cast<float>(m_info.EndFrame - m_info.StartFrame);
+	}
+
 private:
 
 	Effekseer::ManagerRef				m_parentManager = nullptr;
@@ -175,6 +194,10 @@ private:
 	Effekseer::Handle					m_handle = -1;
 
 	KdEffekseerManager::PlayEfkInfo		m_info = {};
+
+	// 開始フレームから、追加で進んだフレーム数
+	float m_elapsedFrames = 0.0f;
+
 };
 
 #define EffekseerPath "Asset/Data/Effect/"

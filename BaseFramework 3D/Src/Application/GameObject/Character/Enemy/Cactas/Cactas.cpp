@@ -4,8 +4,6 @@
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
-#include"../../../../../Framework/Effekseer/KdEffekseerManager.h"
-
 #include"../../../../System/TimeManager/TimeManager.h"
 
 #include"../../../FlyText/FlyTextManager.h"
@@ -22,8 +20,8 @@ void Cactas::Init()
 {
 	if (!m_spModel)
 	{
-		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Enemy/Cactas/Cactas.gltf");
+		InitEnemyModel("Asset/Models/Enemy/Cactas/Cactas.gltf", "Cactas",
+			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "Cactas");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
@@ -34,16 +32,6 @@ void Cactas::Init()
 		m_hp = m_parameter.GetParam().m_maxHP;
 
 		m_attackCooldownDuration = 0.5f;
-
-		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape
-		("Cactas", Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, KdCollider::TypeBump);
-
-		
-		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
-
-		// オブジェクト名セット
-		SetObjectName("Cactas");
 
 		m_stateMachine.ChangeState(*this, std::make_unique< CactasNormalState>());
 
@@ -74,13 +62,6 @@ void Cactas::PostUpdate()
 
 }
 
-void Cactas::DrawInspector()
-{
-	EnemyBase::DrawInspector();
-
-	m_parameter.DrawInspecter();
-}
-
 void Cactas::SetUpReference()
 {
 
@@ -93,8 +74,13 @@ void Cactas::SetUpReference()
 
 void Cactas::DrawDebug()
 {
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, kRedColor);
+	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
 	//m_pDebugWire->Draw();
+}
+
+void Cactas::DrawParameterInspector()
+{
+	m_parameter.DrawInspecter();
 }
 
 void Cactas::PlayAnimation(CactasAnimationType type)
@@ -154,76 +140,20 @@ void Cactas::UpdateLaunch()
 	AddPendingMove(move);
 }
 
-void Cactas::UpdateMove()
-{
-	if (m_knockBack != Math::Vector3::Zero)
-	{
-		// キャラの向き
-		auto spPlayer = m_wpPlayer.lock();
-		if (!spPlayer)
-		{
-			return;
-		}
-
-		Math::Vector3 toDir = spPlayer->GetPos() - GetPos();
-		SetMoveDir(toDir);
-		UpdateFacingDirection();
-		return;
-	}
-
-	if (CanDirectChase())
-	{
-		PlayAnimation(CactasAnimationType::Walk);
-	}
-	else
-	{
-		PlayAnimation(CactasAnimationType::Idle);
-	}
-
-	ChangeMoveState(m_nextMoveState);
-
-	switch (m_currentMoveState)
-	{
-	case EnemyBase::MoveState::DirectChase:
-		UpdateDirectChase();
-		break;
-	case EnemyBase::MoveState::FollowPath:
-		UpdateFollowPath();
-		break;
-	}
-
-	UpdateFacingDirection();
-
-}
-
-void Cactas::UpdateAttack()
-{
-	// ターゲットに到達したら攻撃する
-	if (m_hasReachedTarget)
-	{
-		m_attackFlg = true;
-	}
-
-	m_attackCooldown -= m_deltaTime;
-	if (m_attackCooldown <= 0)
-	{
-		m_attackCooldown = 0;
-	}
-
-	// クールタイムがある場合は攻撃しない
-	if(m_attackFlg)
-	{
-		if (m_attackCooldown != 0)
-		{
-			m_attackFlg = false;
-		}
-	}
-}
-
 void Cactas::UpdateAnimation()
 {
 
 	m_animation.Update(m_deltaTime);
+}
+
+void Cactas::PlayWalkAnimation()
+{
+	PlayAnimation(CactasAnimationType::Walk);
+}
+
+void Cactas::PlayIdleAnimation()
+{
+	PlayAnimation(CactasAnimationType::Idle);
 }
 
 void Cactas::SetAttackTiming()
@@ -237,70 +167,7 @@ void Cactas::SetAttackTiming()
 
 void Cactas::UpdateAttackCollision()
 {
-	auto spPlayer = m_wpPlayer.lock();
-	if (!spPlayer)
-	{
-		return;
-	}
-
-	// 攻撃が当たっていたら
-	if (m_hitTarget)
-	{
-		return;
-	}
-
-	m_animFrame += 60.0f * m_deltaTime;
-
-	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
-	{
-		return;
-	}
-
-	// 攻撃する位置
-	Math::Vector3 attackPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
-
-	// 攻撃する方向
-	Math::Vector3 attackDir = m_mWorld.Backward();
-	attackDir.y = 0;
-
-	if (attackDir.LengthSquared() <= 0.000001f)
-	{
-		return;
-	}
-
-	// プレイヤーの少し前に出す
-	attackPos += attackDir * 0.8f;
-
-	DirectX::BoundingSphere sphere;
-
-	sphere.Center = attackPos;
-	sphere.Radius = 0.6f;
-
-	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
-
-	if (spPlayer->Intersects(sphereInfo, nullptr))
-	{
-		// ノックバックの方向を作る
-		Math::Vector3 knockBackDir = spPlayer->GetPos() - GetPos();
-		knockBackDir.y = 0;
-		if (knockBackDir.LengthSquared() > 0.000001f)
-		{
-			knockBackDir.Normalize();
-		}
-
-		AttackInfo attackInfo;
-
-		attackInfo.knockBackDir = knockBackDir;
-		attackInfo.knockBackPower = 0.08f;
-		attackInfo.damage = 10;
-
-		spPlayer->OnHit(attackInfo);
-
-		m_hitTarget = true;
-	}
-
-	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
-
+	UpdateMeleeAttackCollision(0.08f);
 }
 
 void Cactas::OnHit(const AttackInfo attackInfo)

@@ -31,6 +31,8 @@ void EnemyBase::PostUpdate()
 void EnemyBase::DrawInspector()
 {
 	CharacterBase::DrawInspector();
+
+	DrawParameterInspector();
 }
 
 void EnemyBase::SetUpReference()
@@ -322,6 +324,165 @@ void EnemyBase::SetPath(const std::vector<int>& path,const int goalID)
 	m_pathIndex = 0;
 
 	m_goalWayPointID = goalID;
+}
+
+void EnemyBase::UpdateMove()
+{
+	if (m_knockBack != Math::Vector3::Zero)
+	{
+		// キャラの向き
+		auto spPlayer = m_wpPlayer.lock();
+		if (!spPlayer)
+		{
+			return;
+		}
+
+		Math::Vector3 toDir = spPlayer->GetPos() - GetPos();
+		SetMoveDir(toDir);
+		UpdateFacingDirection();
+
+		return;
+	}
+
+	if (CanDirectChase())
+	{
+		PlayWalkAnimation();
+	}
+	else
+	{
+		PlayIdleAnimation();
+	}
+
+	ChangeMoveState(m_nextMoveState);
+
+	switch (m_currentMoveState)
+	{
+	case MoveState::DirectChase:
+		UpdateDirectChase();
+		break;
+	case MoveState::FollowPath:
+		UpdateFollowPath();
+		break;
+	}
+
+	// キャラの向き
+	UpdateFacingDirection();
+}
+
+void EnemyBase::UpdateAttack()
+{
+	// ターゲットに到達したら攻撃する
+	if (m_hasReachedTarget)
+	{
+		m_attackFlg = true;
+	}
+
+	m_attackCooldown -= m_deltaTime;
+	if (m_attackCooldown <= 0)
+	{
+		m_attackCooldown = 0;
+	}
+
+	// クールタイムがある場合は攻撃しない
+	if (m_attackFlg)
+	{
+		if (m_attackCooldown != 0)
+		{
+			m_attackFlg = false;
+		}
+	}
+}
+
+bool EnemyBase::UpdateMeleeAttackCollision(float knockBackPower, float damage, float sphereRadius, float forwardOffset)
+{
+	auto spPlayer = m_wpPlayer.lock();
+	if (!spPlayer)
+	{
+		return false;
+	}
+
+	// 攻撃が当たっていたら
+	if (m_hitTarget)
+	{
+		return false;
+	}
+
+	m_animFrame += 60.0f * m_deltaTime;
+
+	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
+	{
+		return false;
+	}
+
+	// 攻撃する位置
+	Math::Vector3 attackPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
+
+	// 攻撃する方向
+	Math::Vector3 attackDir = m_mWorld.Backward();
+	attackDir.y = 0;
+
+	if (attackDir.LengthSquared() <= 0.000001f)
+	{
+		return false;
+	}
+
+	// プレイヤーの少し前に出す
+	attackPos += attackDir * forwardOffset;
+
+	DirectX::BoundingSphere sphere;
+
+	sphere.Center = attackPos;
+	sphere.Radius = sphereRadius;
+
+	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
+
+	bool hit = false;
+
+	if (spPlayer->Intersects(sphereInfo, nullptr))
+	{
+		// ノックバックの方向を作る
+		Math::Vector3 knockBackDir = spPlayer->GetPos() - GetPos();
+		knockBackDir.y = 0;
+		if (knockBackDir.LengthSquared() > 0.000001f)
+		{
+			knockBackDir.Normalize();
+		}
+
+		AttackInfo attackInfo;
+
+		attackInfo.knockBackDir = knockBackDir;
+		attackInfo.knockBackPower = knockBackPower;
+		attackInfo.damage = damage;
+
+		spPlayer->OnHit(attackInfo);
+
+		m_hitTarget = true;
+		hit = true;
+	}
+
+	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
+
+	return hit;
+}
+
+void EnemyBase::InitEnemyModel(const std::string& modelPath, const std::string& colliderName,
+	const Math::Vector3& colliderOffset, float colliderRadius, const std::string& objectName)
+{
+	m_spModel = std::make_shared<KdModelWork>();
+	m_spModel->SetModelData(modelPath);
+
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape(colliderName, colliderOffset, colliderRadius, KdCollider::TypeBump);
+
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+	// オブジェクト名セット
+	SetObjectName(objectName);
+}
+
+void EnemyBase::DrawBumpDebugSphere(const Math::Vector3& offset, float radius)
+{
+	m_pDebugWire->AddDebugSphere(GetPos() + offset, radius, kRedColor);
 }
 
 

@@ -4,7 +4,6 @@
 #include"../Enemy/EnemyBase.h"
 
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
-#include"../../../System/TimeManager/TimeManager.h"
 #include"../../../System/CollisionManager/CollisionManager.h"
 
 #include"../../../Scene/SceneManager.h"
@@ -16,7 +15,6 @@
 #include"State/States/PlayerNormalState.h"
 #include"State/States/PlayerDamageState.h"
 #include"State/States/PlayerDieState.h"
-
 
 void Player::Init()
 {
@@ -61,8 +59,7 @@ void Player::Init()
 void Player::Update()
 {
 
-	KdDebugGUI::Instance().ClearLog();
-	KdDebugGUI::Instance().AddLog("AnimFrame%f", m_animFrameCount);
+
 
 	// 操作入力
 	UpdateInput();
@@ -78,6 +75,8 @@ void Player::Update()
 
 void Player::PostUpdate()
 {
+
+
 	// アニメーション更新
 	UpdateAnimation();
 	
@@ -103,9 +102,10 @@ void Player::DrawLit()
 	CharacterBase::DrawLit();
 }
 
-void Player::AnimaFrame()
+void Player::UpdateAttackFrame()
 {
-	m_animFrameCount += 60 * m_deltaTime;
+	// Attack timings use elapsed 60 Hz frames, not animation clip frames.
+	m_animFrame += 60.0f * m_deltaTime;
 }
 
 void Player::DrawDebug()
@@ -138,8 +138,10 @@ void Player::ClearHitTargets()
 
 void Player::UpdateAttackCollision(const AttackType type)
 {
-
-	m_animFrame += 60.0f * m_deltaTime;
+	if (type != AttackType::NormalAttack && type != AttackType::SpecialMove)
+	{
+		return;
+	}
 
 	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
 	{
@@ -148,14 +150,17 @@ void Player::UpdateAttackCollision(const AttackType type)
 
 	// スフィアを作る
 	DirectX::BoundingSphere sphere;
+	float damage = 0.0f;
 
 	if(type==AttackType::NormalAttack)
 	{
 		sphere = CreateAttackSphere();
+		damage = m_parameter.GetParam().m_attackPower;
 	}
-	if (type == AttackType::SpecialMove)
+	else if (type == AttackType::SpecialMove)
 	{
 		sphere = CreateSpecialMoveSphere();
+		damage = m_parameter.GetParam().m_specialAttackPower;
 	}
 
 	const auto& characters =
@@ -198,9 +203,7 @@ void Player::UpdateAttackCollision(const AttackType type)
 
 		std::list < KdCollider::CollisionResult>result;
 
-		if (enemy->Intersects(sphereInfo, &result))
-
-		if (!result.empty())
+		if (enemy->Intersects(sphereInfo, &result) && !result.empty())
 		{
 
 			// ノックバック方向を作る
@@ -213,7 +216,7 @@ void Player::UpdateAttackCollision(const AttackType type)
 			}
 
 			AttackInfo attackInfo;
-			attackInfo.damage = m_parameter.GetParam().m_attackPower;
+			attackInfo.damage = damage;
 			attackInfo.knockBackDir = knockBackDir;
 			attackInfo.knockBackPower = 0.1f;
 
@@ -254,12 +257,8 @@ void Player::UpdateAttackMove()
 
 void Player::UpdateGravity()
 {
+	const float gravityAcceleration = m_parameter.GetParam().m_gravityAcceleration;
 
-	Math::Vector3 nowPos = GetPos();
-
-	constexpr float gravityAcceleration = 72.0f;
-
-	
 	m_gravity += gravityAcceleration * m_deltaTime;
 
 	Math::Vector3 gravityMove = { 0.0f,-m_gravity * m_deltaTime ,0.0f };
@@ -278,7 +277,7 @@ void Player::UpdateSpecialMove()
 		return;
 	}
 
-	m_playerSpecialMove.UpdateSpcecialMove(*this);
+	m_playerSpecialMove.UpdateSpecialMove(*this);
 
 	ClearHitTargets();
 }
@@ -304,6 +303,7 @@ void Player::FacingDirectionToCamera()
 	{
 		return;
 	}
+	nowDir.Normalize();
 
     // カメラから見て前方向に向かせたい
 	Math::Vector3 toDir = Math::Vector3::TransformNormal(Math::Vector3::Backward, camRotYMat);
@@ -338,6 +338,32 @@ void Player::FacingDirectionToCamera()
 			m_charaAngle -= angle;
 		}
 	}
+}
+
+void Player::ApplyCameraRelativeMove(float speed)
+{
+	auto spCamera = m_wpCamera.lock();
+
+	if (!spCamera)
+	{
+		return;
+	}
+
+	Math::Matrix camRotYMat = spCamera->GetRotationYMatrix();
+
+	// 入力方向をカメラの向きに合わせて回転させる
+	SetMoveDir(Math::Vector3::TransformNormal(GetMoveDir(), camRotYMat));
+
+	Math::Vector3 dir = GetMoveDir();
+
+	if (dir.LengthSquared() > 0.0f)
+	{
+		dir.Normalize();
+	}
+
+	Math::Vector3 move = dir * (speed * 60.0f) * m_deltaTime;
+
+	AddPendingMove(move);
 }
 
 void Player::UpdateAnimation()
@@ -425,7 +451,7 @@ void Player::OnHit(const AttackInfo attackInfo)
 	}
 	else
 	{
-		if(!IsAttackPressed() && !IsSpecialMovePressed())
+		if (GetStateType() != PlayerStateType::AttackState)
 		{
 			ChangeState<PlayerDamageState>();
 		}
@@ -434,6 +460,11 @@ void Player::OnHit(const AttackInfo attackInfo)
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage,GetPos());
 
 	AddKnockBack(attackInfo.knockBackDir,attackInfo.knockBackPower);
+}
+
+PlayerAnimationType Player::GetChargeMoveAnimation() const
+{
+	return m_playerAttack.GetChargeMoveAnimation(*this);
 }
 
 void Player::StartJump()
@@ -457,7 +488,6 @@ void Player::StartSpecialMove()
 	m_playerSpecialMove.SetSpecialMoveTiming(m_attackTiming.hitStart,m_attackTiming.hitEnd);
 
 	m_animFrame = 0.0f;
-	m_animFrameCount = 0.0f;
 }
 
 void Player::EndSpecialMove()
@@ -483,7 +513,6 @@ void Player::StartCurrentAttack()
 
 	// フレームを0に
 	m_animFrame = 0.0f;
-	m_animFrameCount = 0.0f;
 }
 
 void Player::NextCombo()
@@ -493,13 +522,26 @@ void Player::NextCombo()
 
 void Player::UpdateComboReception()
 {
-	m_playerAttack.UpdateComboReception(m_animFrameCount);
+	m_playerAttack.UpdateComboReception(m_animFrame);
 }
 
 void Player::UpdateComboGrace()
 {
-	m_playerAttack.UpdateComboGrace();
+	if (GetStateType() == PlayerStateType::NormalState)
+	{
+		m_playerAttack.UpdateComboGrace();
+	}
 }
+
+void Player::SetStateType(PlayerStateType type)
+{
+	m_playerStateType = type;
+	if (type != PlayerStateType::NormalState && type != PlayerStateType::AttackState)
+	{
+		ResetCombo();
+	}
+}
+
 
 void Player::ResetCombo()
 {

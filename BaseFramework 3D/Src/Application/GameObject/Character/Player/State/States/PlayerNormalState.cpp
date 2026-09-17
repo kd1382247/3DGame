@@ -4,14 +4,14 @@
 #include"../../Player.h"
 
 #include"PlayerAttackState.h"
+#include"PlayerChargeAttackState.h"
 #include"PlayerJumpStartState.h"
 #include"PlayerGuardState.h"
-#include"PlayerSpecialMoveState.h"
+
 
 void PlayerNormalState::Enter(Player& player)
 {
-
-
+	player.SetStateType(PlayerStateType::NormalState);
 }
 
 void PlayerNormalState::Update(Player & player)
@@ -47,11 +47,14 @@ void PlayerNormalState::Update(Player & player)
 		return;
 	}
 
-	if (player.IsSpecialMovePressed())
+	if (player.GetStateType() != PlayerStateType::AttackState)
 	{
-		player.ChangeState<PlayerSpecialMoveState>();
-		return;
+		if (player.IsAttackLongPressed())
+		{
+			player.ChangeState<PlayerChargeAttackState>();
+		}
 	}
+
 }
 
 void PlayerNormalState::Exit(Player & player)
