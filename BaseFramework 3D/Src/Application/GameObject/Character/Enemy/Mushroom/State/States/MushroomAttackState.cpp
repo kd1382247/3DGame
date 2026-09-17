@@ -4,25 +4,25 @@
 
 #include"../../Mushroom.h"
 
-void MushroomAttackState::Enter(Mushroom& mushroom)
+void MushroomAttackState::OnStart(Mushroom* mushroom)
 {
-	mushroom.StartAttack();
-	mushroom.PlayAnimation(MushroomAnimationType::Attack);
+	mushroom->StartAttack();
+	mushroom->PlayAnimation(MushroomAnimationType::Attack);
 }
 
-void MushroomAttackState::Update(Mushroom & mushroom)
+void MushroomAttackState::OnUpdate(Mushroom * mushroom)
 {
 
-	mushroom.UpdateAttackCollision();
+	mushroom->UpdateAttackCollision();
 
-	if (mushroom.IsAnimationFinished())
+	if (mushroom->IsAnimationFinished())
 	{
-		mushroom.ChangeState<MushroomNormalState>();
+		m_pMachine->ChangeState<MushroomNormalState>();
 		return;
 	}
 }
 
-void MushroomAttackState::Exit(Mushroom & mushroom)
+void MushroomAttackState::OnExit(Mushroom * mushroom)
 {
-	mushroom.EndAttack();
+	mushroom->EndAttack();
 }

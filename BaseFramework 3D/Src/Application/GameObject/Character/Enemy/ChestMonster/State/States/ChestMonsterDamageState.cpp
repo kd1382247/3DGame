@@ -4,20 +4,20 @@
 
 #include"ChestMonsterNormalState.h"
 
-void ChestMonsterDamageState::Enter(ChestMonster& chestMonster)
+void ChestMonsterDamageState::OnStart(ChestMonster* chestMonster)
 {
-	chestMonster.PlayAnimation(ChestMonsterAnimationType::GetHit);
+	chestMonster->PlayAnimation(ChestMonsterAnimationType::GetHit);
 }
 
-void ChestMonsterDamageState::Update(ChestMonster& chestMonster)
+void ChestMonsterDamageState::OnUpdate(ChestMonster* chestMonster)
 {
-	if (chestMonster.IsAnimationFinished())
+	if (chestMonster->IsAnimationFinished())
 	{
-		chestMonster.ChangeState<ChestMonsterNormalState>();
+		m_pMachine->ChangeState<ChestMonsterNormalState>();
 	}
 }
 
-void ChestMonsterDamageState::Exit(ChestMonster& chestMonster)
+void ChestMonsterDamageState::OnExit(ChestMonster* chestMonster)
 {
-	
+
 }

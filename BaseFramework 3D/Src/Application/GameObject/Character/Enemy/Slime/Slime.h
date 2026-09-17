@@ -5,7 +5,7 @@
 #include"Animation/SlimeAnimationType.h"
 #include"Animation/SlimeAnimation.h"
 #include"Parameter/SlimeParameter.h"
-#include"State/SlimeStateMachine.h"
+#include"../../StateMachine/StateMachine.h"
 
 
 class Slime :public EnemyBase
@@ -28,12 +28,6 @@ public:
 
 	void DrawDebug()override;
 
-
-	template<class T>
-	void ChangeState()
-	{
-		m_stateMachine.ChangeState(*this, std::make_unique<T>());
-	}
 
 	bool IsAttack()const { return m_attackFlg; }
 	bool IsLaunch()const { return m_launchFlg; }
@@ -87,7 +81,7 @@ private:
 	SlimeParameter   m_parameter;
 
 	// ステートマシン
-	SlimeStateMachine m_stateMachine;
+	StateMachine<Slime> m_stateMachine;
 
 
 	static const int spawnNum = 4;

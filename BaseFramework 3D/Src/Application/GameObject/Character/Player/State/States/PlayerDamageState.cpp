@@ -4,41 +4,32 @@
 
 #include"PlayerNormalState.h"
 #include"PlayerAttackState.h"
-#include"PlayerSpecialMoveState.h"
 
-void PlayerDamageState::Enter(Player& player)
+void PlayerDamageState::OnStart(Player* owner)
 {
-
-	player.SetStateType(PlayerStateType::DamageState);
-	player.PlayAnimation(PlayerAnimationType::GetHit);
+	owner->SetStateType(PlayerStateType::DamageState);
+	owner->PlayAnimation(PlayerAnimationType::GetHit);
 }
 
-void PlayerDamageState::Update(Player & player)
+void PlayerDamageState::OnUpdate(Player * owner)
 {
 
-
-	if (player.IsSpecialMovePressed())
+	if (owner->IsAttackPressed())
 	{
-		player.ChangeState<PlayerSpecialMoveState>();
+		m_pMachine->ChangeState<PlayerAttackState>();
 		return;
 	}
 
-	if (player.IsAttackPressed())
-	{
-		player.ChangeState<PlayerAttackState>();
-		return;
-	}
+	owner->UpdateMove();
 
-	player.UpdateMove();
-
-	if (player.IsAnimationFinished())
+	if (owner->IsAnimationFinished())
 	{
-		player.ChangeState<PlayerNormalState>();
+		m_pMachine->ChangeState<PlayerNormalState>();
 		return;
 	}
 }
 
-void PlayerDamageState::Exit(Player & plaer)
+void PlayerDamageState::OnExit(Player * owner)
 {
 
 }

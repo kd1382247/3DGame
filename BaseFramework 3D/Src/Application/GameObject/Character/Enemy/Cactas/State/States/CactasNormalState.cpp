@@ -5,30 +5,30 @@
 #include"CactasAttackState.h"
 #include"CactasLaunchState.h"
 
-void CactasNormalState::Enter(Cactas& cactas)
+void CactasNormalState::OnStart(Cactas* cactas)
 {
-	cactas.PlayAnimation(CactasAnimationType::Idle);
+	cactas->PlayAnimation(CactasAnimationType::Idle);
 }
 
-void CactasNormalState::Update(Cactas & cactas)
+void CactasNormalState::OnUpdate(Cactas * cactas)
 {
 
-	cactas.UpdateMove();
+	cactas->UpdateMove();
 
-	if (cactas.IsLaunch())
+	if (cactas->IsLaunch())
 	{
-		cactas.ChangeState<CactasLaunchState>();
+		m_pMachine->ChangeState<CactasLaunchState>();
 		return;
 	}
 
-	if (cactas.IsAttack())
+	if (cactas->IsAttack())
 	{
-		cactas.ChangeState<CactasAttackState>();
+		m_pMachine->ChangeState<CactasAttackState>();
 		return;
 	}
 }
 
-void CactasNormalState::Exit(Cactas & cactas)
+void CactasNormalState::OnExit(Cactas * cactas)
 {
 
 }

@@ -7,53 +7,53 @@
 #include"PlayerSpecialMoveState.h"
 
 
-void PlayerChargeAttackState::Enter(Player& player)
+void PlayerChargeAttackState::OnStart(Player* owner)
 {
-	player.SetStateType(PlayerStateType::ChargeAttackState);
-	player.StartCharge();
-	player.PlayAnimation(player.GetChargeMoveAnimation());
-
+	owner->SetStateType(PlayerStateType::ChargeAttackState);
+	owner->StartCharge();
+	owner->PlayAnimation(owner->GetChargeMoveAnimation());
 }
 
-void PlayerChargeAttackState::Update(Player& player)
+void PlayerChargeAttackState::OnUpdate(Player * owner)
 {
-	player.UpdateAttackMove();
+	owner->UpdateAttackMove();
 
-	player.PlayAnimation(player.GetChargeMoveAnimation());
+	owner->PlayAnimation(owner->GetChargeMoveAnimation());
 
-	player.UpdateChargeTime();
+	owner->UpdateChargeTime();
 
-	if (player.IsChargeComplete())
+	if (owner->IsChargeComplete())
 	{
 
 		auto spEffekseerObj = m_wpEffekseerObj.lock();
 
-		if (!spEffekseerObj||!spEffekseerObj->IsPlaying())
+		if (!spEffekseerObj || !spEffekseerObj->IsPlaying())
 		{
 			m_wpEffekseerObj = KdEffekseerManager::GetInstance().
-				Play("Player/Charge.efkefc", player.GetPos() + Math::Vector3(0.0f, 0.0f, 0.0f), 0.8f, 2.5f, false, 30, 90);
+				Play("Player/Charge.efkefc", owner->GetPos() + Math::Vector3(0.0f, 0.0f, 0.0f), 0.8f, 2.5f, false, 30, 90);
 		}
 	}
 
-	EffectUpdate(player);
+	EffectUpdate(owner);
 
-	if (!player.IsAttackDown())
+	if (!owner->IsAttackDown())
 	{
-		if (player.IsChargeComplete())
+		if (owner->IsChargeComplete())
 		{
-			player.ChangeState<PlayerSpecialMoveState>();
+			m_pMachine->ChangeState<PlayerSpecialMoveState>();
 		}
 		else
 		{
-			player.ChangeState<PlayerNormalState>();
+			m_pMachine->ChangeState<PlayerNormalState>();
 		}
 	}
 }
 
-void PlayerChargeAttackState::Exit(Player& player)
+void PlayerChargeAttackState::OnExit(Player * owner)
 {
-	player.EndCharge();
-	player.ResetCombo();
+
+	owner->EndCharge();
+	owner->ResetCombo();
 
 	auto spEffekseerObj = m_wpEffekseerObj.lock();
 
@@ -66,7 +66,7 @@ void PlayerChargeAttackState::Exit(Player& player)
 	m_wpEffekseerObj.reset();
 }
 
-void PlayerChargeAttackState::EffectUpdate(Player& player)
+void PlayerChargeAttackState::EffectUpdate(Player* owner)
 {
 	auto spEffekseerObj = m_wpEffekseerObj.lock();
 
@@ -75,6 +75,6 @@ void PlayerChargeAttackState::EffectUpdate(Player& player)
 		return;
 	}
 
-	spEffekseerObj->SetPos(player.GetPos());
+	spEffekseerObj->SetPos(owner->GetPos());
 
 }

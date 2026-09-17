@@ -4,22 +4,22 @@
 
 #include"../../Player.h"
 
-void PlayerJumpAirState::Enter(Player& player)
+void PlayerJumpAirState::OnStart(Player* owner)
 {
-	player.PlayAnimation(PlayerAnimationType::JumpAir);
+	owner->PlayAnimation(PlayerAnimationType::JumpAir);
 }
 
-void PlayerJumpAirState::Update(Player & player)
+void PlayerJumpAirState::OnUpdate(Player * owner)
 {
-	player.UpdateMove();
+	owner->UpdateMove();
 
-	if (player.IsGrounded())
+	if (owner->IsGrounded())
 	{
-		player.ChangeState<PlayerJumpLandState>();
+		m_pMachine->ChangeState<PlayerJumpLandState>();
 	}
 }
 
-void PlayerJumpAirState::Exit(Player & player)
+void PlayerJumpAirState::OnExit(Player * owner)
 {
 
 }

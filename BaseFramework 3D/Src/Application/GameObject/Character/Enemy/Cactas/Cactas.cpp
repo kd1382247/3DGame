@@ -33,7 +33,8 @@ void Cactas::Init()
 
 		m_attackCooldownDuration = 0.5f;
 
-		m_stateMachine.ChangeState(*this, std::make_unique< CactasNormalState>());
+		m_stateMachine.Start(this);
+		m_stateMachine.ChangeState<CactasNormalState>();
 
 	}
 
@@ -49,7 +50,7 @@ void Cactas::Update()
 
 	UpdateGravity();
 
-	m_stateMachine.Update(*this);
+	m_stateMachine.Update();
 
 	UpdateAttack();
 }
@@ -179,12 +180,12 @@ void Cactas::OnHit(const AttackInfo attackInfo)
 	{
 		m_hp = 0;
 		m_outroFlg = true;
-		ChangeState<CactasDieState>();
+		m_stateMachine.ChangeState<CactasDieState>();
 	}
 	else
 	{
 		m_attackInfo = attackInfo;
-		ChangeState<CactasHitShakeState>();
+		m_stateMachine.ChangeState<CactasHitShakeState>();
 	}
 
 	//EffectManager::Instance().CreateEffect("HitEffect", shared_from_this(),Math::Vector3(0,0.8,-1.0f));

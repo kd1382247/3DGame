@@ -388,6 +388,9 @@
     <Filter Include="Src\Application\GameObject\Effect\HitEffect">
       <UniqueIdentifier>{1abbad69-0810-4909-9389-b72d3a2ff439}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Character\StateMachine">
+      <UniqueIdentifier>{ba4483d1-320e-45fe-8273-427f2d4cdea8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -798,12 +801,6 @@
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\Parameter\EnemySpawnerParameter.h">
       <Filter>Src\Application\GameObject\Gimmick\EnemySpawner\Parameter</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateMachine.h">
-      <Filter>Src\Application\GameObject\Character\Player\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateBase.h">
-      <Filter>Src\Application\GameObject\Character\Player\State</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerNormalState.h">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClInclude>
@@ -837,12 +834,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\Animation\CactasAnimationType.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Cactas\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\CactasStateBase.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Cactas\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\CactasStateMachine.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Cactas\State</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasAttackState.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Cactas\State\States</Filter>
     </ClInclude>
@@ -860,12 +851,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\Animation\SlimeAnimationType.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Slime\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\State\SlimeStateBase.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Slime\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\State\SlimeStateMachine.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Slime\State</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\State\States\SlimeNormalState.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Slime\State\States</Filter>
@@ -885,12 +870,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\Animation\MushroomAnimationType.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\MushroomStateBase.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\MushroomStateMachine.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomAttackState.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
     </ClInclude>
@@ -908,12 +887,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\Animation\TurtleShellAnimationType.h">
       <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellStateBase.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellStateMachine.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellSpinAttackRepeatState.h">
       <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
@@ -956,12 +929,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Animation\ChestMonsterAnimationType.h">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterStateBase.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterStateMachine.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterSpawnEnemyState.h">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
@@ -1007,6 +974,12 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateType.h">
       <Filter>Src\Application\GameObject\Character\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\StateMachine\StateMachine.h">
+      <Filter>Src\Application\GameObject\Character\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\StateMachine\StateBase.h">
+      <Filter>Src\Application\GameObject\Character\StateMachine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1361,9 +1334,6 @@
     <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\Parameter\EnemySpawnerParameter.cpp">
       <Filter>Src\Application\GameObject\Gimmick\EnemySpawner\Parameter</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Player\State\PlayerStateMachine.cpp">
-      <Filter>Src\Application\GameObject\Character\Player\State</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerNormalState.cpp">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClCompile>
@@ -1391,9 +1361,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDieState.cpp">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\CactasStateMachine.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Cactas\State</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasAttackState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Cactas\State\States</Filter>
     </ClCompile>
@@ -1408,9 +1375,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasDieState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Cactas\State\States</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\State\SlimeStateMachine.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Slime\State</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\State\States\SlimeNormalState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Slime\State\States</Filter>
@@ -1427,9 +1391,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\State\States\SlimeDieState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Slime\State\States</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\MushroomStateMachine.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomAttackState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
     </ClCompile>
@@ -1444,9 +1405,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomNormalState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\State\States</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellStateMachine.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellSpinAttackRepeatState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\TurtleShell\State\States</Filter>
@@ -1489,9 +1447,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterNormalState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterMachine.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterSpawnEnemyState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\State\States</Filter>

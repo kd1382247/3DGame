@@ -4,26 +4,25 @@
 
 #include"../../Player.h"
 
-
-void PlayerJumpStartState::Enter(Player& player)
+void PlayerJumpStartState::OnStart(Player* owner)
 {
 
-	player.SetStateType(PlayerStateType::JumpState);
-	player.StartJump();
-	player.PlayAnimation(PlayerAnimationType::JumpStart);
+	owner->SetStateType(PlayerStateType::JumpState);
+	owner->StartJump();
+	owner->PlayAnimation(PlayerAnimationType::JumpStart);
 }
 
-void PlayerJumpStartState::Update(Player & player)
+void PlayerJumpStartState::OnUpdate(Player * owner)
 {
-	player.UpdateMove();
+	owner->UpdateMove();
 
-	if (player.IsAnimationFinished())
+	if (owner->IsAnimationFinished())
 	{
-		player.ChangeState<PlayerJumpAirState>();
+		m_pMachine->ChangeState<PlayerJumpAirState>();
 	}
 }
 
-void PlayerJumpStartState::Exit(Player & player)
+void PlayerJumpStartState::OnExit(Player * owner)
 {
-	
+
 }

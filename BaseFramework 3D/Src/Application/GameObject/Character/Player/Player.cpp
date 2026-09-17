@@ -46,7 +46,9 @@ void Player::Init()
 		m_hp = param.m_maxHP;
 		m_bumpPushRate = 0.0f;
 
-		m_stateMachine.ChangeState(*this, std::make_unique<PlayerNormalState>());
+		// ステートマシンに持ち主をセット
+		m_stateMachine.Start(this);
+		m_stateMachine.ChangeState<PlayerNormalState>();
 
 		m_maxWalkableSlopeAngle = 45.0f;
 	}
@@ -67,7 +69,7 @@ void Player::Update()
 	UpdateComboGrace();
 
 	// 各ステートの更新
-	m_stateMachine.Update(*this);
+	m_stateMachine.Update();
 
 	UpdateGravity();
 
@@ -447,13 +449,13 @@ void Player::OnHit(const AttackInfo attackInfo)
 	{
 		m_hp = 0;
 		m_outroFlg = true;
-		ChangeState<PlayerDieState>();
+		m_stateMachine.ChangeState<PlayerDieState>();
 	}
 	else
 	{
 		if (GetStateType() != PlayerStateType::AttackState)
 		{
-			ChangeState<PlayerDamageState>();
+			m_stateMachine.ChangeState<PlayerDamageState>();
 		}
 	}
 

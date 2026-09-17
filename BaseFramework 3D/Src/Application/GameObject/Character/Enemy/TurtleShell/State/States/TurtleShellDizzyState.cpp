@@ -4,23 +4,23 @@
 
 #include"TurtleShellNormalState.h"
 
-void TurtleShellDizzyState::Enter(TurtleShell& turtleShell)
+void TurtleShellDizzyState::OnStart(TurtleShell* turtleShell)
 {
-	turtleShell.StartDizzy();
-	turtleShell.PlayAnimation(TurtleShellAnimationType::Dizzy);
+	turtleShell->StartDizzy();
+	turtleShell->PlayAnimation(TurtleShellAnimationType::Dizzy);
 }
 
-void TurtleShellDizzyState::Update(TurtleShell & turtleShell)
+void TurtleShellDizzyState::OnUpdate(TurtleShell * turtleShell)
 {
 
-	if (turtleShell.DizyyRemaining())
+	if (turtleShell->DizyyRemaining())
 	{
-		turtleShell.ChangeState<TurtleShellNormalState>();
+		m_pMachine->ChangeState<TurtleShellNormalState>();
 		return;
 	}
 }
 
-void TurtleShellDizzyState::Exit(TurtleShell & turtleShell)
+void TurtleShellDizzyState::OnExit(TurtleShell * turtleShell)
 {
-	turtleShell.EndDizzy();
+	turtleShell->EndDizzy();
 }

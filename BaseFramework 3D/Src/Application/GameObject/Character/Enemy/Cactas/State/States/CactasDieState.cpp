@@ -2,20 +2,20 @@
 
 #include"../../Cactas.h"
 
-void CactasDieState::Enter(Cactas& cactas)
+void CactasDieState::OnStart(Cactas* cactas)
 {
-	cactas.PlayAnimation(CactasAnimationType::Die);
+	cactas->PlayAnimation(CactasAnimationType::Die);
 }
 
-void CactasDieState::Update(Cactas & cactas)
+void CactasDieState::OnUpdate(Cactas * cactas)
 {
-	if (cactas.IsAnimationFinished())
+	if (cactas->IsAnimationFinished())
 	{
-		cactas.Destroy();
+		cactas->Destroy();
 	}
 }
 
-void CactasDieState::Exit(Cactas & cactas)
+void CactasDieState::OnExit(Cactas * cactas)
 {
 
 }

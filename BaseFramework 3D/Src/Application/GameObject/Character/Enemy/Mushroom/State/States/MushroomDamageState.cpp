@@ -4,21 +4,21 @@
 
 #include"MushroomNormalState.h"
 
-void MushroomDamageState::Enter(Mushroom& mushroom)
+void MushroomDamageState::OnStart(Mushroom* mushroom)
 {
-	mushroom.PlayAnimation(MushroomAnimationType::GetHit);
+	mushroom->PlayAnimation(MushroomAnimationType::GetHit);
 }
 
-void MushroomDamageState::Update(Mushroom & mushroom)
+void MushroomDamageState::OnUpdate(Mushroom * mushroom)
 {
 
-	if (mushroom.IsAnimationFinished())
+	if (mushroom->IsAnimationFinished())
 	{
-		mushroom.ChangeState<MushroomNormalState>();
+		m_pMachine->ChangeState<MushroomNormalState>();
 	}
 }
 
-void MushroomDamageState::Exit(Mushroom & mushroom)
+void MushroomDamageState::OnExit(Mushroom * mushroom)
 {
-	mushroom.EndAttack();
+	mushroom->EndAttack();
 }

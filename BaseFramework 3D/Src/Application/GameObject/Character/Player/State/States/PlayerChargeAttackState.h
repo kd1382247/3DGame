@@ -1,22 +1,20 @@
 ﻿#pragma once
 
-#include"../PlayerStateBase.h"
+class Player;
 
-class PlayerChargeAttackState :public PlayerStateBase
+#include"../../../StateMachine/StateBase.h"
+
+class PlayerChargeAttackState :public StateBase<Player>
 {
 public:
 
-	PlayerChargeAttackState() {}
-	~PlayerChargeAttackState()override {}
-
-
-	void Enter(Player& player)override;
-	void Update(Player& player)override;
-	void Exit(Player& player)override;
+	void OnStart(Player* owner)override;
+	void OnUpdate(Player* owner)override;
+	void OnExit(Player* owner)override;
 
 private:
 
-	void EffectUpdate(Player& player);
+	void EffectUpdate(Player* owner);
 
 	std::weak_ptr<KdEffekseerObject> m_wpEffekseerObj;
 

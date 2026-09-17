@@ -5,22 +5,22 @@
 #include"ChestMonsterSpawnEnemyState.h"
 
 
-void ChestMonsterNormalState::Enter(ChestMonster& chestMonster)
+void ChestMonsterNormalState::OnStart(ChestMonster* chestMonster)
 {
-	chestMonster.PlayAnimation(ChestMonsterAnimationType::Idle);
+	chestMonster->PlayAnimation(ChestMonsterAnimationType::Idle);
 }
 
-void ChestMonsterNormalState::Update(ChestMonster& chestMonster)
+void ChestMonsterNormalState::OnUpdate(ChestMonster* chestMonster)
 {
 
-	if (chestMonster.IsSpawnEnemy())
+	if (chestMonster->IsSpawnEnemy())
 	{
-		chestMonster.ChangeState<ChestMonsterSpawnEnemyState>();
+		m_pMachine->ChangeState<ChestMonsterSpawnEnemyState>();
 	}
 
 }
 
-void ChestMonsterNormalState::Exit(ChestMonster& chestMonster)
+void ChestMonsterNormalState::OnExit(ChestMonster* chestMonster)
 {
 
 }

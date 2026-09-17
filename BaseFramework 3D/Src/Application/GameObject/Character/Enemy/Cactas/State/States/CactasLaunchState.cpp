@@ -4,22 +4,22 @@
 
 #include"CactasNormalState.h"
 
-void CactasLaunchState::Enter(Cactas& cactas)
+void CactasLaunchState::OnStart(Cactas* cactas)
 {
-	cactas.PlayAnimation(CactasAnimationType::Idle);
+	cactas->PlayAnimation(CactasAnimationType::Idle);
 }
 
-void CactasLaunchState::Update(Cactas & cactas)
+void CactasLaunchState::OnUpdate(Cactas * cactas)
 {
-	cactas.UpdateLaunch();
+	cactas->UpdateLaunch();
 
-	if (!cactas.IsLaunch())
+	if (!cactas->IsLaunch())
 	{
-		cactas.ChangeState<CactasNormalState>();
+		m_pMachine->ChangeState<CactasNormalState>();
 	}
 }
 
-void CactasLaunchState::Exit(Cactas & cactas)
+void CactasLaunchState::OnExit(Cactas * cactas)
 {
 
 }

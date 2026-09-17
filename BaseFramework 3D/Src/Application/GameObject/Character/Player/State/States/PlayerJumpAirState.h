@@ -1,16 +1,15 @@
 ﻿#pragma once
 
-#include"../PlayerStateBase.h"
+class Player;
 
-class PlayerJumpAirState :public PlayerStateBase
+#include"../../../StateMachine/StateBase.h"
+
+class PlayerJumpAirState :public StateBase<Player>
 {
 public:
 
-	PlayerJumpAirState(){}
-	~PlayerJumpAirState()override{}
-
-	void Enter(Player& player)override;
-	void Update(Player& player)override;
-	void Exit(Player& player)override;
+	void OnStart(Player* owner)override;
+	void OnUpdate(Player* owner)override;
+	void OnExit(Player* owner)override;
 
 };

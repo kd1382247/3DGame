@@ -2,15 +2,15 @@
 
 class Mushroom;
 
-#include"../MushroomStateBase.h"
+#include"../../../../StateMachine/StateBase.h"
 
-class MushroomLaunchState :public MushroomStateBase
+class MushroomLaunchState :public StateBase<Mushroom>
 {
 public:
 
-	void Enter(Mushroom& mushroom)override;
-	void Update(Mushroom& mushroom)override;
-	void Exit(Mushroom& mushroom)override;
+	void OnStart(Mushroom* mushroom)override;
+	void OnUpdate(Mushroom* mushroom)override;
+	void OnExit(Mushroom* mushroom)override;
 
 };
 

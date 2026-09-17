@@ -4,24 +4,22 @@
 
 #include"../../Player.h"
 
-void PlayerJumpLandState::Enter(Player& player)
+void PlayerJumpLandState::OnStart(Player* owner)
 {
-	player.PlayAnimation(PlayerAnimationType::JumpLand);
+	owner->PlayAnimation(PlayerAnimationType::JumpLand);
 }
 
-void PlayerJumpLandState::Update(Player & player)
+void PlayerJumpLandState::OnUpdate(Player * owner)
 {
 
-	player.UpdateMove();
+	owner->UpdateMove();
 
-	if (player.IsAnimationFinished())
+	if (owner->IsAnimationFinished())
 	{
-		player.ChangeState<PlayerNormalState>();
+		m_pMachine->ChangeState<PlayerNormalState>();
 		return;
 	}
 }
 
-void PlayerJumpLandState::Exit(Player & player)
-{
-
-}
+void PlayerJumpLandState::OnExit(Player * owner)
+{}

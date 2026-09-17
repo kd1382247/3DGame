@@ -4,28 +4,28 @@
 
 #include"TurtleShellDizzyState.h"
 
-void TurtleShellSpinAttackRepeatState::Enter(TurtleShell& turtleShell)
+void TurtleShellSpinAttackRepeatState::OnStart(TurtleShell* turtleShell)
 {
-	turtleShell.PlayAnimation(TurtleShellAnimationType::SpinAttackRPT);
+	turtleShell->PlayAnimation(TurtleShellAnimationType::SpinAttackRPT);
 }
 
-void TurtleShellSpinAttackRepeatState::Update(TurtleShell & turtleShell)
+void TurtleShellSpinAttackRepeatState::OnUpdate(TurtleShell * turtleShell)
 {
 
-	turtleShell.UpdateSpinAttackMove();
+	turtleShell->UpdateSpinAttackMove();
 
 	// 当たり判定
-	turtleShell.UpdateAttackCollision();
+	turtleShell->UpdateAttackCollision();
 
 
-	if (turtleShell.SpinAttackRemaining())
+	if (turtleShell->SpinAttackRemaining())
 	{
-		turtleShell.ChangeState<TurtleShellDizzyState>();
+		m_pMachine->ChangeState<TurtleShellDizzyState>();
 		return;
 	}
 }
 
-void TurtleShellSpinAttackRepeatState::Exit(TurtleShell & turtleShell)
+void TurtleShellSpinAttackRepeatState::OnExit(TurtleShell * turtleShell)
 {
-	turtleShell.EndSpinAttack();
+	turtleShell->EndSpinAttack();
 }

@@ -4,21 +4,21 @@
 
 #include"TurtleShellSpinAttackRepeatState.h"
 
-void TurtleShellSpinAttackStartState::Enter(TurtleShell& turtleShell)
+void TurtleShellSpinAttackStartState::OnStart(TurtleShell* turtleShell)
 {
-	turtleShell.StartSpinAttack();
-	turtleShell.PlayAnimation(TurtleShellAnimationType::SpinAttackST);
+	turtleShell->StartSpinAttack();
+	turtleShell->PlayAnimation(TurtleShellAnimationType::SpinAttackST);
 }
 
-void TurtleShellSpinAttackStartState::Update(TurtleShell & turtleShell)
+void TurtleShellSpinAttackStartState::OnUpdate(TurtleShell * turtleShell)
 {
-	if (turtleShell.IsAnimationFinished())
+	if (turtleShell->IsAnimationFinished())
 	{
-		turtleShell.ChangeState<TurtleShellSpinAttackRepeatState>();
+		m_pMachine->ChangeState<TurtleShellSpinAttackRepeatState>();
 	}
 }
 
-void TurtleShellSpinAttackStartState::Exit(TurtleShell & turtleShell)
+void TurtleShellSpinAttackStartState::OnExit(TurtleShell * turtleShell)
 {
 
 }

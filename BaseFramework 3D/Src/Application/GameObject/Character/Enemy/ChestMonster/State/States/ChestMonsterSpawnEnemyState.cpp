@@ -4,27 +4,27 @@
 
 #include"ChestMonsterNormalState.h"
 
-void ChestMonsterSpawnEnemyState::Enter(ChestMonster& chestMonster)
+void ChestMonsterSpawnEnemyState::OnStart(ChestMonster* chestMonster)
 {
-	chestMonster.StartSpawnEnemy();
-	chestMonster.PlayAnimation(ChestMonsterAnimationType::GenerateMinion);
+	chestMonster->StartSpawnEnemy();
+	chestMonster->PlayAnimation(ChestMonsterAnimationType::GenerateMinion);
 }
 
-void ChestMonsterSpawnEnemyState::Update(ChestMonster& chestMonster)
+void ChestMonsterSpawnEnemyState::OnUpdate(ChestMonster* chestMonster)
 {
 
-	chestMonster.AnimFrame();
+	chestMonster->AnimFrame();
 
-	chestMonster.UpdateSpawnEnemy();
+	chestMonster->UpdateSpawnEnemy();
 
-	if (chestMonster.IsAnimationFinished())
+	if (chestMonster->IsAnimationFinished())
 	{
-		chestMonster.ChangeState<ChestMonsterNormalState>();
+		m_pMachine->ChangeState<ChestMonsterNormalState>();
 	}
 
 }
 
-void ChestMonsterSpawnEnemyState::Exit(ChestMonster & chestMonster)
+void ChestMonsterSpawnEnemyState::OnExit(ChestMonster * chestMonster)
 {
-	chestMonster.EndSpawnEnemy();
+	chestMonster->EndSpawnEnemy();
 }

@@ -5,7 +5,7 @@
 #include"Animation/ChestMonsterAnimationType.h"
 #include"Animation/ChestMonsterAnimation.h"
 #include"Parameter/ChestMonsterParameter.h"
-#include"State/ChestMonsterStateMachine.h"
+#include"../../StateMachine/StateMachine.h"
 
 
 class ChestMonster :public EnemyBase
@@ -21,12 +21,6 @@ public:
 
 
 	void SetUpReference()override;
-
-	template<class T>
-	void ChangeState()
-	{
-		m_stateMachine.ChangeState(*this, std::make_unique<T>());
-	}
 
 
 	bool IsSpawnEnemy() const { return m_isSpawnEnemy; }
@@ -80,7 +74,7 @@ private:
 
 
 	// ステートマシン
-	ChestMonsterStateMachine m_stateMachine;
+	StateMachine<ChestMonster> m_stateMachine;
 
 	// アニメーションクラス
 	ChestMonsterAnimation   m_animation;

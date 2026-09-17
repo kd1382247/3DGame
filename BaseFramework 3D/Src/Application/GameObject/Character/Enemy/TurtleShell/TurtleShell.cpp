@@ -36,7 +36,8 @@ void TurtleShell::Init()
 		m_spinAttackDuration = 5.0f;
 		m_hitCooldownDuration =  0.5f;
 
-		m_stateMachine.ChangeState (*this, std::make_unique<TurtleShellNormalState>());
+		m_stateMachine.Start(this);
+		m_stateMachine.ChangeState<TurtleShellNormalState>();
 	}
 
 	EnemyBase::Init();
@@ -50,7 +51,7 @@ void TurtleShell::Update()
 {
 	UpdateGravity();
 
-	m_stateMachine.Update(*this);
+	m_stateMachine.Update();
 
 	UpdateAttack();
 
@@ -58,7 +59,7 @@ void TurtleShell::Update()
 
 void TurtleShell::PostUpdate()
 {
-	
+
 	UpdateAnimation();
 
 	EnemyBase::PostUpdate();
@@ -137,7 +138,7 @@ void TurtleShell::UpdateLaunch()
 
 void TurtleShell::UpdateAttackCollision()
 {
-	
+
 	auto spPlayer = m_wpPlayer.lock();
 	if (!spPlayer)
 	{
@@ -150,7 +151,7 @@ void TurtleShell::UpdateAttackCollision()
 		HitCoolDownRemaining();
 		return;
 	}
-	
+
 	DirectX::BoundingSphere sphere;
 
 	sphere.Center = GetPos()+Math::Vector3(0.0f,0.5f,0.0f);
@@ -159,7 +160,7 @@ void TurtleShell::UpdateAttackCollision()
 	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
 
 	if (spPlayer->Intersects(sphereInfo, nullptr))
-	{	
+	{
 		// ノックバックの方向を作成
 		Math::Vector3 knockBackDir = spPlayer->GetPos()-GetPos();
 		knockBackDir.y = 0;
@@ -192,13 +193,13 @@ void TurtleShell::OnHit(const AttackInfo attackInfo)
 	{
 		m_hp = 0;
 		m_outroFlg = true;
-		ChangeState<TurtleShellDieState>();
+		m_stateMachine.ChangeState<TurtleShellDieState>();
 	}
 	else
 	{
 		if(!IsAttack())
 		{
-			ChangeState<TurtleShellDamageState>();
+			m_stateMachine.ChangeState<TurtleShellDamageState>();
 			RePlayAnimation(TurtleShellAnimationType::GetHit);
 		}
 	}
@@ -284,14 +285,14 @@ void TurtleShell::UpdateSpinAttackMove()
 
 		break;
 	}
-	
+
 	move = moveDir * (param + 0.07f) * 60.0f * m_deltaTime;
 	AddPendingMove(move);
 }
 
 bool TurtleShell::SpinAttackRemaining()
 {
-	
+
 	m_spinAttackRemaining -= m_deltaTime;
 
 	if (m_spinAttackRemaining <= 0)

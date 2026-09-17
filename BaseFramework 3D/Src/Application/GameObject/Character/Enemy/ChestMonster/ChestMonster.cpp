@@ -30,11 +30,12 @@ void ChestMonster::Init()
 
 
 		// ノーマルステートで初期化
-		m_stateMachine.ChangeState(*this, std::make_unique<ChestMonsterNormalState>());
+		m_stateMachine.Start(this);
+		m_stateMachine.ChangeState<ChestMonsterNormalState>();
 
 		m_spawnCountDown = m_spawnInterval;
 	}
-	
+
 	EnemyBase::Init();
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
@@ -48,7 +49,7 @@ void ChestMonster::Init()
 void ChestMonster::Update()
 {
 
-	m_stateMachine.Update(*this);
+	m_stateMachine.Update();
 
 	if (!IsSpawnEnemy())
 	{
@@ -89,7 +90,7 @@ void ChestMonster::DrawParameterInspector()
 void ChestMonster::UpdateSpawnEnemy()
 {
 
-	
+
 	if (m_animFrameCount <= m_spawnTiming.spawnStart || m_animFrameCount >= m_spawnTiming.spawnEnd)
 	{
 		return;
@@ -133,7 +134,7 @@ void ChestMonster::UpdateSpawnEnemy()
 void ChestMonster::StartSpawnEnemy()
 {
 	m_spawnFlg = true;
-	
+
 	SetSpawnTiming();
 }
 
@@ -168,13 +169,13 @@ void ChestMonster::OnHit(const AttackInfo attackInfo)
 	{
 		m_hp = 0;
 		m_outroFlg = true;
-		ChangeState<ChestMonsterDieState>();
+		m_stateMachine.ChangeState<ChestMonsterDieState>();
 	}
 	else
 	{
 		if(!IsSpawnEnemy())
 		{
-			ChangeState<ChestMonsterDamageState>();
+			m_stateMachine.ChangeState<ChestMonsterDamageState>();
 			RePlayAnimation(ChestMonsterAnimationType::GetHit);
 		}
 	}

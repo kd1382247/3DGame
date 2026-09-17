@@ -4,22 +4,22 @@
 
 #include"TurtleShellNormalState.h"
 
-void TurtleShellLaunchState::Enter(TurtleShell& turtleShell)
+void TurtleShellLaunchState::OnStart(TurtleShell* turtleShell)
 {
-	turtleShell.PlayAnimation(TurtleShellAnimationType::Idle);
+	turtleShell->PlayAnimation(TurtleShellAnimationType::Idle);
 }
 
-void TurtleShellLaunchState::Update(TurtleShell & turtleShell)
+void TurtleShellLaunchState::OnUpdate(TurtleShell * turtleShell)
 {
-	turtleShell.UpdateLaunch();
+	turtleShell->UpdateLaunch();
 
-	if (!turtleShell.IsLaunch())
+	if (!turtleShell->IsLaunch())
 	{
-		turtleShell.ChangeState<TurtleShellNormalState>();
+		m_pMachine->ChangeState<TurtleShellNormalState>();
 	}
 }
 
-void TurtleShellLaunchState::Exit(TurtleShell & turtleShell)
+void TurtleShellLaunchState::OnExit(TurtleShell * turtleShell)
 {
 
 }

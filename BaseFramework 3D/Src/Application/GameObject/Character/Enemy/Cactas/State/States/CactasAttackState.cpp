@@ -4,25 +4,25 @@
 
 #include"../../Cactas.h"
 
-void CactasAttackState::Enter(Cactas& cactas)
+void CactasAttackState::OnStart(Cactas* cactas)
 {
-	cactas.StartAttack();
-	cactas.PlayAnimation(CactasAnimationType::Attack);
+	cactas->StartAttack();
+	cactas->PlayAnimation(CactasAnimationType::Attack);
 }
 
-void CactasAttackState::Update(Cactas & cactas)
+void CactasAttackState::OnUpdate(Cactas * cactas)
 {
 
-	cactas.UpdateAttackCollision();
+	cactas->UpdateAttackCollision();
 
-	if (cactas.IsAnimationFinished())
+	if (cactas->IsAnimationFinished())
 	{
-		cactas.ChangeState<CactasNormalState>();
+		m_pMachine->ChangeState<CactasNormalState>();
 		return;
 	}
 }
 
-void CactasAttackState::Exit(Cactas & cactas)
+void CactasAttackState::OnExit(Cactas * cactas)
 {
-	cactas.EndAttack();
+	cactas->EndAttack();
 }

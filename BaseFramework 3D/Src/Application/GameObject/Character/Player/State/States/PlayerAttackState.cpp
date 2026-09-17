@@ -6,58 +6,58 @@
 
 #include"PlayerChargeAttackState.h"
 
-void PlayerAttackState::Enter(Player& player)
+void PlayerAttackState::OnStart(Player* owner)
 {
 
-	player.SetStateType(PlayerStateType::AttackState);
-	player.StartCurrentAttack();
+	owner->SetStateType(PlayerStateType::AttackState);
+	owner->StartCurrentAttack();
 }
 
-void PlayerAttackState::Update(Player& player)
+void PlayerAttackState::OnUpdate(Player * owner)
 {
 
-	player.UpdateAttackFrame();
-	player.UpdateAttackMove();
+	owner->UpdateAttackFrame();
+	owner->UpdateAttackMove();
 	// 当たり判定
-	player.UpdateAttackCollision(Player::AttackType::NormalAttack);
+	owner->UpdateAttackCollision(Player::AttackType::NormalAttack);
 
-	player.UpdateComboReception();
+	owner->UpdateComboReception();
 
-	if (player.IsAnimationFinished())
+	if (owner->IsAnimationFinished())
 	{
 
-		if (player.IsAttackLongPressed())
+		if (owner->IsAttackLongPressed())
 		{
-			player.ChangeState<PlayerChargeAttackState>();
+			m_pMachine->ChangeState<PlayerChargeAttackState>();
 			return;
 		}
 
-		if (player.HasNextCombo())
+		if (owner->HasNextCombo())
 		{
-			player.NextCombo();
-			player.StartCurrentAttack();
+			owner->NextCombo();
+			owner->StartCurrentAttack();
 		}
 		else
 		{
-			if (player.IsLastCombo())
+			if (owner->IsLastCombo())
 			{
-				player.ResetCombo();
+				owner->ResetCombo();
 			}
 			else
 			{
-				player.StartComboGrace();
+				owner->StartComboGrace();
 
 			}
 
-			player.ChangeState<PlayerNormalState>();
+			m_pMachine->ChangeState<PlayerNormalState>();
 		}
 
 		return;
 	}
-	
+
 }
 
-void PlayerAttackState::Exit(Player & player)
+void PlayerAttackState::OnExit(Player * owner)
 {
-	
+
 }

@@ -8,7 +8,7 @@
 
 #include"../../Player/Player.h"
 
-#include"State/SlimeStateMachine.h"
+#include"../../StateMachine/StateMachine.h"
 #include"State/States/SlimeNormalState.h"
 #include"State/States/SlimeDamageState.h"
 #include"State/States//SlimeDieState.h"
@@ -24,7 +24,8 @@ void Slime::Init()
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 
-		m_stateMachine.ChangeState(*this, std::make_unique<SlimeNormalState>());
+		m_stateMachine.Start(this);
+		m_stateMachine.ChangeState<SlimeNormalState>();
 
 		// パラメータクラス初期化
 		m_parameter.Init();
@@ -58,14 +59,14 @@ void Slime::Update()
 
 	UpdateGravity();
 
-	m_stateMachine.Update(*this);
-	
+	m_stateMachine.Update();
+
 	UpdateAttack();
 }
 
 void Slime::PostUpdate()
 {
-	
+
 	UpdateAnimation();
 
 	EnemyBase::PostUpdate();
@@ -186,11 +187,11 @@ void Slime::OnHit(const AttackInfo attackInfo)
 	{
 		m_hp = 0;
 		m_outroFlg = true;
-		ChangeState<SlimeDieState>();
+		m_stateMachine.ChangeState<SlimeDieState>();
 	}
 	else
 	{
-		ChangeState<SlimeDamageState>();
+		m_stateMachine.ChangeState<SlimeDamageState>();
 		RePlayAnimation(SlimeAnimationType::GetHit);
 	}
 

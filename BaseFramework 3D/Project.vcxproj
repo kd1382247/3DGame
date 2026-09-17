@@ -298,8 +298,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\Animation\CactasAnimationType.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\Cactas.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\Parameter\CactasParameter.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\CactasStateBase.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\CactasStateMachine.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasAttackState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasDamageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasDieState.h" />
@@ -310,8 +308,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Animation\ChestMonsterAnimation.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\ChestMonster.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter\ChestMonsterParameter.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterStateBase.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterStateMachine.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterDamageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterDieState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterNormalState.h" />
@@ -329,8 +325,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\Animation\MushroomAnimationType.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\Mushroom.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\Parameter\MushroomParameter.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\MushroomStateBase.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\MushroomStateMachine.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomAttackState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomDamageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomDieState.h" />
@@ -340,8 +334,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\Animation\SlimeAnimationType.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\Parameter\SlimeParameter.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\Slime.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\State\SlimeStateBase.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\State\SlimeStateMachine.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\State\States\SlimeAttackState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\State\States\SlimeDamageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Slime\State\States\SlimeDieState.h" />
@@ -365,8 +357,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellLaunchState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellNormalState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellSpinAttackStartState.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellStateBase.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellStateMachine.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\TurtleShell.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimationType.h" />
@@ -377,8 +367,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Player.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateBase.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateMachine.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateType.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.h" />
@@ -390,6 +378,8 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpStartState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerNormalState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpecialMoveState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\StateMachine\StateBase.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\StateMachine\StateMachine.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\EffectBase.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\EffectManager.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.h" />
@@ -495,7 +485,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\Animation\CactasAnimation.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\Cactas.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\Parameter\CactasParameter.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\CactasStateMachine.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasAttackState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasDamageState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\State\States\CactasDieState.cpp" />
@@ -505,7 +494,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Animation\ChestMonsterAnimation.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\ChestMonster.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter\ChestMonsterParameter.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\ChestMonsterMachine.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterDamageState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterDieState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State\States\ChestMonsterNormalState.cpp" />
@@ -520,7 +508,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\Animation\MushroomAnimation.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\Mushroom.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\Parameter\MushroomParameter.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\MushroomStateMachine.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomAttackState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomDamageState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\State\States\MushroomDieState.cpp" />
@@ -529,7 +516,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\Animation\SlimeAnimation.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\Parameter\SlimeParameter.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\Slime.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\State\SlimeStateMachine.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\State\States\SlimeAttackState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\State\States\SlimeDamageState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Slime\State\States\SlimeDieState.cpp" />
@@ -550,7 +536,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellLaunchState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellNormalState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellSpinAttackStartState.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\TurtleShellStateMachine.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\TurtleShell\TurtleShell.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Attack\PlayerAttack.cpp" />
@@ -560,7 +545,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Player.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Player\State\PlayerStateMachine.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.cpp" />

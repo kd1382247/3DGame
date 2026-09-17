@@ -27,7 +27,8 @@ void Mushroom::Init()
 
 		m_attackCooldownDuration = 1.0f;
 
-		m_stateMachine.ChangeState(*this, std::make_unique<MushroomNormalState>());
+		m_stateMachine.Start(this);
+		m_stateMachine.ChangeState<MushroomNormalState>();
 
 	}
 
@@ -44,7 +45,7 @@ void Mushroom::Update()
 
 	UpdateGravity();
 
-	m_stateMachine.Update(*this);
+	m_stateMachine.Update();
 
 	UpdateAttack();
 
@@ -52,7 +53,7 @@ void Mushroom::Update()
 
 void Mushroom::PostUpdate()
 {
-	
+
 	UpdateAnimation();
 
 	EnemyBase::PostUpdate();
@@ -86,11 +87,11 @@ void Mushroom::OnHit(const AttackInfo attackInfo)
 	{
 		m_hp = 0;
 		m_outroFlg = true;
-		ChangeState<MushroomDieState>();
+		m_stateMachine.ChangeState<MushroomDieState>();
 	}
 	else
 	{
-		ChangeState<MushroomDamageState>();
+		m_stateMachine.ChangeState<MushroomDamageState>();
 		RePlayAnimation(MushroomAnimationType::GetHit);
 	}
 

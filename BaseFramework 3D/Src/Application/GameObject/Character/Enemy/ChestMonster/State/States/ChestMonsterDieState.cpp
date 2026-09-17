@@ -2,20 +2,20 @@
 
 #include"../../ChestMonster.h"
 
-void ChestMonsterDieState::Enter(ChestMonster& chestMonster)
+void ChestMonsterDieState::OnStart(ChestMonster* chestMonster)
 {
-	chestMonster.PlayAnimation(ChestMonsterAnimationType::Die);
+	chestMonster->PlayAnimation(ChestMonsterAnimationType::Die);
 }
 
-void ChestMonsterDieState::Update(ChestMonster& chestMonster)
+void ChestMonsterDieState::OnUpdate(ChestMonster* chestMonster)
 {
-	if (chestMonster.IsAnimationFinished())
+	if (chestMonster->IsAnimationFinished())
 	{
-		chestMonster.Destroy();
+		chestMonster->Destroy();
 	}
 }
 
-void ChestMonsterDieState::Exit(ChestMonster& chestMonster)
+void ChestMonsterDieState::OnExit(ChestMonster* chestMonster)
 {
 
 }

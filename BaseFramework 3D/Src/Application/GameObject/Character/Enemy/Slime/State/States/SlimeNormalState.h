@@ -2,14 +2,14 @@
 
 class Slime;
 
-#include"../SlimeStateBase.h"
+#include"../../../../StateMachine/StateBase.h"
 
-class SlimeNormalState :public SlimeStateBase
+class SlimeNormalState :public StateBase<Slime>
 {
 public:
 
-	void Enter(Slime& slime)override;
-	void Update(Slime& slime)override;
-	void Exit(Slime& slime)override;
+	void OnStart(Slime* slime)override;
+	void OnUpdate(Slime* slime)override;
+	void OnExit(Slime* slime)override;
 };
 

@@ -5,7 +5,7 @@
 #include"Animation/TurtleShellAnimationType.h"
 #include"Animation/TurtleShellAnimation.h"
 #include"Parameter/TurtleShellParameter.h"
-#include"State/TurtleShellStateMachine.h"
+#include"../../StateMachine/StateMachine.h"
 
 class TurtleShell :public EnemyBase
 {
@@ -22,12 +22,6 @@ public:
 
 	void SetUpReference()override;
 
-
-	template<class T>
-	void ChangeState()
-	{
-		m_stateMachine.ChangeState(*this, std::make_unique<T>());
-	}
 
 	bool IsAttack()const { return m_attackFlg; }
 	bool IsLaunch()const { return m_launchFlg; }
@@ -95,7 +89,7 @@ private:
 	TurtleShellParameter   m_parameter;
 
 	// ステートマシン
-	TurtleShellStateMachine m_stateMachine;
+	StateMachine<TurtleShell> m_stateMachine;
 
 
 	float m_hitCooldownDuration = 0.0f;

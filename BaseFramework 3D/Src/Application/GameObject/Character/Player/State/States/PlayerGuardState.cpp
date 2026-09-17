@@ -4,46 +4,43 @@
 
 #include"PlayerNormalState.h"
 
-void PlayerGuardState::Enter(Player& player)
+void PlayerGuardState::OnStart(Player* owner)
 {
 
-	player.SetStateType(PlayerStateType::GuradState);
-	player.ResetGuardState();
-	player.PlayAnimation(player.GetGuardAnimation());
+	owner->SetStateType(PlayerStateType::GuradState);
+	owner->ResetGuardState();
+	owner->PlayAnimation(owner->GetGuardAnimation());
 }
 
-void PlayerGuardState::Update(Player & player)
+void PlayerGuardState::OnUpdate(Player * owner)
 {
 
-	player.UpdateAttackMove();
+	owner->UpdateAttackMove();
 
-	player.UpdateParryInput();
+	owner->UpdateParryInput();
 
 	// ガード解除
-	if (player.IsGuardCancel())
+	if (owner->IsGuardCancel())
 	{
-		player.ChangeState<PlayerNormalState>();
+		m_pMachine->ChangeState<PlayerNormalState>();
 		return;
 	}
-	
-	// Plaryy / GuardHit終了
-	if (player.IsGuardHitOrParyy())
-	{
-		player.PlayAnimation(player.GetGuardAnimation());
 
-		if (player.IsAnimationFinished())
+	// Plaryy / GuardHit終了
+	if (owner->IsGuardHitOrParyy())
+	{
+		owner->PlayAnimation(owner->GetGuardAnimation());
+
+		if (owner->IsAnimationFinished())
 		{
 			// 再度ガード状態に戻す
-			player.ResetGuardState();
-			player.PlayAnimation(PlayerAnimationType::Defend);
+			owner->ResetGuardState();
+			owner->PlayAnimation(PlayerAnimationType::Defend);
 		}
 	}
-
-
-
 }
 
-void PlayerGuardState::Exit(Player & player)
+void PlayerGuardState::OnExit(Player * owner)
 {
-	
+
 }

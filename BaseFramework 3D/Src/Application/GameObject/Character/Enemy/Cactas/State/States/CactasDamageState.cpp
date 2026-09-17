@@ -4,20 +4,20 @@
 
 #include"CactasNormalState.h"
 
-void CactasDamageState::Enter(Cactas& cactas)
+void CactasDamageState::OnStart(Cactas* cactas)
 {
-	cactas.PlayAnimation(CactasAnimationType::GetHit);
+	cactas->PlayAnimation(CactasAnimationType::GetHit);
 }
 
-void CactasDamageState::Update(Cactas & cactas)
+void CactasDamageState::OnUpdate(Cactas * cactas)
 {
-	if (cactas.IsAnimationFinished())
+	if (cactas->IsAnimationFinished())
 	{
-		cactas.ChangeState<CactasNormalState>();
+		m_pMachine->ChangeState<CactasNormalState>();
 	}
 }
 
-void CactasDamageState::Exit(Cactas & cactas)
+void CactasDamageState::OnExit(Cactas * cactas)
 {
-	cactas.EndAttack();
+	cactas->EndAttack();
 }

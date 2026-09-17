@@ -2,21 +2,21 @@
 
 #include"../../Slime.h"
 
-void SlimeDieState::Enter(Slime& slime)
+void SlimeDieState::OnStart(Slime* slime)
 {
-	slime.PlayAnimation(SlimeAnimationType::Die);
+	slime->PlayAnimation(SlimeAnimationType::Die);
 }
 
-void SlimeDieState::Update(Slime & slime)
+void SlimeDieState::OnUpdate(Slime * slime)
 {
-	if (slime.IsAnimationFinished())
+	if (slime->IsAnimationFinished())
 	{
-		slime.Split();
-		slime.Destroy();
+		slime->Split();
+		slime->Destroy();
 	}
 }
 
-void SlimeDieState::Exit(Slime & slime)
+void SlimeDieState::OnExit(Slime * slime)
 {
 
 }

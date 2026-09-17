@@ -5,31 +5,31 @@
 #include"TurtleShellSpinAttackStartState.h"
 #include"TurtleShellLaunchState.h"
 
-void TurtleShellNormalState::Enter(TurtleShell& turtleShell)
+void TurtleShellNormalState::OnStart(TurtleShell* turtleShell)
 {
-	turtleShell.PlayAnimation(TurtleShellAnimationType::Idle);
+	turtleShell->PlayAnimation(TurtleShellAnimationType::Idle);
 }
 
-void TurtleShellNormalState::Update(TurtleShell & turtleShell)
+void TurtleShellNormalState::OnUpdate(TurtleShell * turtleShell)
 {
 
-	turtleShell.UpdateMove();
+	turtleShell->UpdateMove();
 
-	if (turtleShell.IsLaunch())
+	if (turtleShell->IsLaunch())
 	{
-		turtleShell.ChangeState<TurtleShellLaunchState>();
+		m_pMachine->ChangeState<TurtleShellLaunchState>();
 		return;
 	}
 
-	if (turtleShell.IsAttack())
+	if (turtleShell->IsAttack())
 	{
-		turtleShell.ChangeState<TurtleShellSpinAttackStartState>();
+		m_pMachine->ChangeState<TurtleShellSpinAttackStartState>();
 		return;
 	}
 
 }
 
-void TurtleShellNormalState::Exit(TurtleShell & turtleShell)
+void TurtleShellNormalState::OnExit(TurtleShell * turtleShell)
 {
 
 }

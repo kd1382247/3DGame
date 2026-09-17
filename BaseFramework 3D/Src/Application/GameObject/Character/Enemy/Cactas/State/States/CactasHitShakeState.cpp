@@ -4,25 +4,25 @@
 
 #include"CactasDamageState.h"
 
-void CactasHitShakeState::Enter(Cactas& cactas)
+void CactasHitShakeState::OnStart(Cactas* cactas)
 {
-	cactas.StartHitShake();
-	cactas.PlayAnimation(CactasAnimationType::Idle);
+	cactas->StartHitShake();
+	cactas->PlayAnimation(CactasAnimationType::Idle);
 }
 
-void CactasHitShakeState::Update(Cactas& cactas)
+void CactasHitShakeState::OnUpdate(Cactas* cactas)
 {
 
-	cactas.UpdateHitShake();
+	cactas->UpdateHitShake();
 
-	if (!cactas.GetIsHitShake())
+	if (!cactas->GetIsHitShake())
 	{
-		cactas.ChangeState<CactasDamageState>();
+		m_pMachine->ChangeState<CactasDamageState>();
 	}
 
 }
 
-void CactasHitShakeState::Exit(Cactas& cactas)
+void CactasHitShakeState::OnExit(Cactas* cactas)
 {
-	cactas.EndHitShake();
+	cactas->EndHitShake();
 }

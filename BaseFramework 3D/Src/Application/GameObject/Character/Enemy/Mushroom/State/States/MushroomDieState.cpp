@@ -2,20 +2,20 @@
 
 #include"../../Mushroom.h"
 
-void MushroomDieState::Enter(Mushroom& mushroom)
+void MushroomDieState::OnStart(Mushroom* mushroom)
 {
-	mushroom.PlayAnimation(MushroomAnimationType::Die);
+	mushroom->PlayAnimation(MushroomAnimationType::Die);
 }
 
-void MushroomDieState::Update(Mushroom & mushroom)
+void MushroomDieState::OnUpdate(Mushroom * mushroom)
 {
-	if (mushroom.IsAnimationFinished())
+	if (mushroom->IsAnimationFinished())
 	{
-		mushroom.Destroy();
+		mushroom->Destroy();
 	}
 }
 
-void MushroomDieState::Exit(Mushroom & mushroom)
+void MushroomDieState::OnExit(Mushroom * mushroom)
 {
 
 }

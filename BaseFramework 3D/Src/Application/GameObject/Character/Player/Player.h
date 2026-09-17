@@ -6,7 +6,7 @@
 #include"Animation/PlayerAnimation.h"
 #include"Parameter/PlayerParameter.h"
 
-#include"State/PlayerStateMachine.h"
+#include"../StateMachine/StateMachine.h"
 #include"State/PlayerStateType.h"
 
 #include"Move/PlayerMove.h"
@@ -158,12 +158,6 @@ public:
 		SpecialMove
 	};
 
-	template<class T>
-	void ChangeState()
-	{
-		m_stateMachine.ChangeState(*this, std::make_unique<T>());
-	}
-
 	void SetStateType(PlayerStateType type);
 	PlayerStateType GetStateType() const { return m_playerStateType; }
 
@@ -229,7 +223,7 @@ private:
 	PlayerParameter           m_parameter;
 
 	// ステートマシン
-	PlayerStateMachine        m_stateMachine;
+	StateMachine<Player>      m_stateMachine;
 
 	PlayerStateType           m_playerStateType = PlayerStateType::NormalState;
 

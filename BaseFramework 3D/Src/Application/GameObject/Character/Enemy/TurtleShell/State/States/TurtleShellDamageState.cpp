@@ -4,21 +4,21 @@
 
 #include"TurtleShellNormalState.h"
 
-void TurtleShellDamageState::Enter(TurtleShell& turtleShell)
+void TurtleShellDamageState::OnStart(TurtleShell* turtleShell)
 {
-	turtleShell.PlayAnimation(TurtleShellAnimationType::GetHit);
+	turtleShell->PlayAnimation(TurtleShellAnimationType::GetHit);
 }
 
-void TurtleShellDamageState::Update(TurtleShell & turtleShell)
+void TurtleShellDamageState::OnUpdate(TurtleShell * turtleShell)
 {
 
-	if (turtleShell.IsAnimationFinished())
+	if (turtleShell->IsAnimationFinished())
 	{
-		turtleShell.ChangeState<TurtleShellNormalState>();
+		m_pMachine->ChangeState<TurtleShellNormalState>();
 	}
 }
 
-void TurtleShellDamageState::Exit(TurtleShell & turtleShell)
+void TurtleShellDamageState::OnExit(TurtleShell * turtleShell)
 {
-	turtleShell.EndSpinAttack();
+	turtleShell->EndSpinAttack();
 }

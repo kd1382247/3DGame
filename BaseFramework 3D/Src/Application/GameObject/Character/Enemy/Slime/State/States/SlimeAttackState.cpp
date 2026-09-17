@@ -4,26 +4,26 @@
 
 #include"SlimeNormalState.h"
 
-void SlimeAttackState::Enter(Slime& slime)
+void SlimeAttackState::OnStart(Slime* slime)
 {
-	slime.StartAttack();
-	slime.PlayAnimation(SlimeAnimationType::Attack);
+	slime->StartAttack();
+	slime->PlayAnimation(SlimeAnimationType::Attack);
 }
 
-void SlimeAttackState::Update(Slime & slime)
+void SlimeAttackState::OnUpdate(Slime * slime)
 {
 
-	slime.UpdateAttackCollision();
+	slime->UpdateAttackCollision();
 
-	if (slime.IsAnimationFinished())
+	if (slime->IsAnimationFinished())
 	{
-		slime.ChangeState<SlimeNormalState>();
+		m_pMachine->ChangeState<SlimeNormalState>();
 		return;
 	}
 
 }
 
-void SlimeAttackState::Exit(Slime & slime)
+void SlimeAttackState::OnExit(Slime * slime)
 {
-	slime.EndAttack();
+	slime->EndAttack();
 }

@@ -4,22 +4,22 @@
 
 #include"MushroomNormalState.h"
 
-void MushroomLaunchState::Enter(Mushroom& mushroom)
+void MushroomLaunchState::OnStart(Mushroom* mushroom)
 {
-	mushroom.PlayAnimation(MushroomAnimationType::Idle);
+	mushroom->PlayAnimation(MushroomAnimationType::Idle);
 }
 
-void MushroomLaunchState::Update(Mushroom & mushroom)
+void MushroomLaunchState::OnUpdate(Mushroom * mushroom)
 {
-	mushroom.UpdateLaunch();
+	mushroom->UpdateLaunch();
 
-	if (!mushroom.IsLaunch())
+	if (!mushroom->IsLaunch())
 	{
-		mushroom.ChangeState<MushroomNormalState>();
+		m_pMachine->ChangeState<MushroomNormalState>();
 	}
 }
 
-void MushroomLaunchState::Exit(Mushroom & mushroom)
+void MushroomLaunchState::OnExit(Mushroom * mushroom)
 {
 
 }

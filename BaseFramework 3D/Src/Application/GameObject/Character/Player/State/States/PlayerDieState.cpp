@@ -2,23 +2,21 @@
 
 #include"../../Player.h"
 
-void PlayerDieState::Enter(Player& player)
+void PlayerDieState::OnStart(Player* owner)
 {
-	player.SetStateType(PlayerStateType::DieState);
-	player.PlayAnimation(PlayerAnimationType::Die);
+	owner->SetStateType(PlayerStateType::DieState);
+	owner->PlayAnimation(PlayerAnimationType::Die);
 }
 
-void PlayerDieState::Update(Player & player)
+void PlayerDieState::OnUpdate(Player * owner)
 {
-	
-	if (player.IsAnimationFinished())
+	if (owner->IsAnimationFinished())
 	{
 
 	}
-
 }
 
-void PlayerDieState::Exit(Player & player)
+void PlayerDieState::OnExit(Player * owner)
 {
 
 }

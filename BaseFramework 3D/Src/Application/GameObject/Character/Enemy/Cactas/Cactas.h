@@ -6,7 +6,7 @@
 #include"Animation/CactasAnimation.h"
 #include"Parameter/CactasParameter.h"
 
-#include"State/CactasStateMachine.h"
+#include"../../StateMachine/StateMachine.h"
 
 class Cactas :public EnemyBase
 {
@@ -22,12 +22,6 @@ public:
 	void SetUpReference()override;
 
 	void DrawDebug()override;
-
-	template<class T>
-	void ChangeState()
-	{
-		m_stateMachine.ChangeState(*this, std::make_unique<T>());
-	}
 
 	bool IsAttack()const { return m_attackFlg; }
 	bool IsLaunch()const { return m_launchFlg; }
@@ -77,5 +71,5 @@ private:
 	CactasParameter   m_parameter;
 
 	// ステートマシン
-	CactasStateMachine m_stateMachine;
+	StateMachine<Cactas> m_stateMachine;
 };

@@ -1,0 +1,138 @@
+StateBase.h に関する質問への回答
+====================================
+
+対象: template<typename OwnerType> class StateBase の実装
+（記事: https://zenn.dev/kd_gamegikenblg/articles/cf0781e4235efa）
+
+
+1. friend class とは何か
+------------------------------------
+
+普通、あるクラスの private / protected なメンバは「そのクラス自身」からしかアクセスできない。
+friend は、その例外として「特定の外部クラス（または関数）にだけ、private / protected メンバへのアクセスを許可する」ための仕組み。
+
+書き方:
+
+    class StateBase
+    {
+        friend class StateMachine<OwnerType>;   // ← StateMachineだけ特別扱い
+        ...
+    };
+
+書く場所は public / private / protected のどこでもよい。friend宣言はアクセス指定子の影響を受けない、単なる「許可証」のようなもの。
+
+今回のケースで実際に friend が必要になっている理由:
+
+    void SetMachine(StateMachine<OwnerType>* a_pMachine) { ... }   // private
+    void CallStart(OwnerType* a_pOwner) { ... }                    // private
+    void CallUpdate(OwnerType* a_pOwner) { ... }                   // private
+    void CallExit(OwnerType* a_pOwner) { ... }                     // private
+
+これらは private。StateMachine 側のコードは
+
+    m_spNowState->SetMachine(this);
+    m_spNowState->CallStart(m_pOwner);
+
+のように、StateBase の「外」から private メンバを呼び出している。
+friend 宣言がなければ、これは「private メンバへの不正アクセス」としてコンパイルエラーになる。
+つまり friend の本当の役目は「StateMachine だけが SetMachine / CallStart / CallUpdate / CallExit を呼べるようにする」ため、というのが正確な理解。
+
+注意点:
+  ・friend は一方通行。StateMachine が StateBase の中身を触れるようになるだけで、逆（StateBaseがStateMachineの中身を触れる）にはならない。
+  ・friend は継承されない。Player_JumpState のような派生クラスには、このfriend関係は引き継がれない（そもそも派生クラスがCallUpdateなどを呼ぶ必要もない）。
+
+
+2. なぜ OnStart / OnUpdate / OnExit は protected なのか
+------------------------------------
+
+前回「friendのため」とだけ説明したが、正確には少し違う。整理すると:
+
+  ・OnStart / OnUpdate / OnExit … protected
+  ・SetMachine / CallStart / CallUpdate / CallExit … private（friendでStateMachineだけ許可）
+
+friend が要るのは private 側（SetMachine, Call系）にアクセスするため。
+OnStart たちは StateBase 自身のメンバ関数（CallStart など）の「中」から呼ばれているだけなので、そこは同じクラス内の呼び出しであり friend は関係ない。
+
+ではなぜ OnStart たちは public でも private でもなく protected なのか。
+
+  ・public にしない理由:
+    public にすると、誰でも state.OnUpdate(owner) のように直接呼べてしまう。
+    これだと「ステートの更新は必ず StateMachine 経由（CallUpdateのnullチェックを通す）」というルールを、外部コードが簡単に破れてしまう。
+    直接呼べないようにして、更新の入り口を CallUpdate ひとつに絞りたい。
+
+  ・private にしない理由:
+    C++では、実はprivateなvirtual関数でも派生クラスからoverrideすること自体はできる。
+    ただし private だと、派生クラス（Player_JumpStateなど）が自分のoverride内で
+    「StateBase<Player>::OnStart(a_pPlayer);」のように基底クラスの処理を明示的に呼び出すことができなくなる（アクセス権がないため）。
+    protected にしておけば、将来「基底の処理 + 独自の追加処理」のように処理をつなげたくなったときに対応できる。
+
+  ・まとめ: protected は「外部からは直接呼べないが、派生クラスからは触れる（overrideもできるし、必要なら基底版を明示的に呼べる）」という、ちょうどよい中間の公開範囲。
+
+
+3. typename とは何か（class Tとの違い）
+------------------------------------
+
+結論: 今回のような使い方では、typename と class は完全に同じ意味。
+
+    template<typename OwnerType> class StateBase { ... }
+    template<class OwnerType>    class StateBase { ... }   // ↑と全く同じ意味
+
+どちらも「これから使う OwnerType という名前は、何らかの“型”（int, Player, std::string など）です」とコンパイラに伝えているだけ。
+
+なぜ2つのキーワードが存在するのか（歴史的な話、覚えなくてよい）:
+  テンプレートは元々 class キーワードで書く仕様だった。しかしその後、
+  「テンプレート引数に渡せるのはクラス型だけじゃなく、int や float のような組み込み型でもいい」
+  という点をより正確に表す言葉として typename が追加された。
+  結果として、テンプレート引数の宣言に関しては両方とも同じ意味のまま今に至る。
+  （プロジェクトやチームの好みでどちらを使うかが決まることが多い）
+
+typename には実はもう1つ別の用途がある（今回のコードには出てこないので参考程度）:
+  「OwnerType::SomeType」のように、テンプレート引数に依存した名前を使うとき、
+  それが型なのか、それとも static変数のような値なのかをコンパイラが判断できないことがある。
+  そのときに「typename OwnerType::SomeType」と書いて「これは型です」と明示する、という使い方。
+  今の実装では出てこないので、「テンプレート引数の型を宣言するときの class の言い換え」くらいの理解で十分。
+
+補足: StateMachineのChangeStateで出てくる「typename...ArgType」の「...」は typename とは別の話で、
+「複数の型をまとめて受け取れるようにする」ための可変長テンプレート引数という機能。これはStateMachineの回で説明する。
+
+
+4. StateBase の中で StateMachine を前方宣言している意味
+------------------------------------
+
+    template<typename OwnerType>
+    class StateMachine;      // ← これが前方宣言
+
+    template<typename OwnerType>
+    class StateBase
+    {
+        friend class StateMachine<OwnerType>;
+        ...
+        StateMachine<OwnerType>* m_pMachine = nullptr;
+    };
+
+質問への回答: 「friend class の宣言のためだけ」ではない。もう1つ理由がある。
+
+StateBase.h の中では StateMachine<OwnerType> を2箇所で使っている。
+
+  ① friend class StateMachine<OwnerType>;         … アクセス許可のため
+  ② StateMachine<OwnerType>* m_pMachine;           … ポインタ型のメンバ変数として
+
+②のように「ポインタ」や「参照」、あるいは関数の引数・戻り値の型として使うだけなら、
+その型の中身（メンバ変数や関数が何個あるか等）をコンパイラが知っている必要はなく、
+「そういう名前の型がある」ということさえ分かれば十分（これを「不完全型」と呼ぶ）。
+
+なので前方宣言が果たしている役割は実質的に2つ:
+  ・friend 宣言を書くために「StateMachineという名前が存在する」と教える
+  ・m_pMachine というポインタメンバを宣言するために「StateMachineという名前が存在する」と教える
+
+もし StateBase.h の中で StateMachine の中身（メンバ関数の呼び出しなど）まで使う必要が出てきたら、
+前方宣言だけでは足りず、StateMachine.h を #include する必要が出てくる。
+ただしそれをやると StateMachine.h 側も StateBase.h を #include しているため、
+お互いがお互いを #include し合う「循環参照」になってしまう。
+前方宣言＋ポインタ運用にしておくことで、この循環参照を避けている。
+
+
+次のステップ
+------------------------------------
+ここまで整理できたら、実際に StateBase.h を書いてみてください。
+書けたら次は StateMachine.h / .cpp の実装に進みます（可変長テンプレート、std::function による遅延実行、shared_ptr などが出てきます）。

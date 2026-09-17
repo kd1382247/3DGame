@@ -5,31 +5,31 @@
 #include"SlimeAttackState.h"
 #include"SlimeLaunchState.h"
 
-void SlimeNormalState::Enter(Slime& slime)
+void SlimeNormalState::OnStart(Slime* slime)
 {
-	slime.PlayAnimation(SlimeAnimationType::Idle);
+	slime->PlayAnimation(SlimeAnimationType::Idle);
 }
 
-void SlimeNormalState::Update(Slime & slime)
+void SlimeNormalState::OnUpdate(Slime * slime)
 {
 
-	slime.UpdateMove();
+	slime->UpdateMove();
 
-	if (slime.IsLaunch())
+	if (slime->IsLaunch())
 	{
-		slime.ChangeState<SlimeLaunchState>();
+		m_pMachine->ChangeState<SlimeLaunchState>();
 		return;
 	}
 
-	if (slime.IsAttack())
+	if (slime->IsAttack())
 	{
-		slime.ChangeState<SlimeAttackState>();
+		m_pMachine->ChangeState<SlimeAttackState>();
 		return;
 	}
-	
+
 }
 
-void SlimeNormalState::Exit(Slime & slime)
+void SlimeNormalState::OnExit(Slime * slime)
 {
 
 }

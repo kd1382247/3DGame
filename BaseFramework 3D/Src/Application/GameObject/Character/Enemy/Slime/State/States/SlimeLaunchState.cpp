@@ -4,24 +4,24 @@
 
 #include"SlimeNormalState.h"
 
-void SlimeLaunchState::Enter(Slime& slime)
+void SlimeLaunchState::OnStart(Slime* slime)
 {
-	slime.PlayAnimation(SlimeAnimationType::Idle);
+	slime->PlayAnimation(SlimeAnimationType::Idle);
 }
 
-void SlimeLaunchState::Update(Slime & slime)
+void SlimeLaunchState::OnUpdate(Slime * slime)
 {
-	
-	slime.UpdateLaunch();
 
-	if (!slime.IsLaunch())
+	slime->UpdateLaunch();
+
+	if (!slime->IsLaunch())
 	{
-		slime.ChangeState<SlimeNormalState>();
+		m_pMachine->ChangeState<SlimeNormalState>();
 		return;
 	}
 }
 
-void SlimeLaunchState::Exit(Slime & slime)
+void SlimeLaunchState::OnExit(Slime * slime)
 {
 
 }

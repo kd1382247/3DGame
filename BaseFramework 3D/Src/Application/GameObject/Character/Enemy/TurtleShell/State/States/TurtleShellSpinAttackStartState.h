@@ -2,15 +2,15 @@
 
 class TurtleShell;
 
-#include"../TurtleShellStateBase.h"
+#include"../../../../StateMachine/StateBase.h"
 
-class TurtleShellSpinAttackStartState :public TurtleShellStateBase
+class TurtleShellSpinAttackStartState :public StateBase<TurtleShell>
 {
 public:
 
-	void Enter(TurtleShell& turtleShell)override;
-	void Update(TurtleShell& turtleShell)override;
-	void Exit(TurtleShell& turtleShell)override;
+	void OnStart(TurtleShell* turtleShell)override;
+	void OnUpdate(TurtleShell* turtleShell)override;
+	void OnExit(TurtleShell* turtleShell)override;
 
 };
 

@@ -2,15 +2,15 @@
 
 class Cactas;
 
-#include"../CactasStateBase.h"
+#include"../../../../StateMachine/StateBase.h"
 
-class CactasHitShakeState :public CactasStateBase
+class CactasHitShakeState :public StateBase<Cactas>
 {
 public:
 
-	void Enter(Cactas& cactas)override;
-	void Update(Cactas& cactas)override;
-	void Exit(Cactas& cactas)override;
+	void OnStart(Cactas* cactas)override;
+	void OnUpdate(Cactas* cactas)override;
+	void OnExit(Cactas* cactas)override;
 
 };
 

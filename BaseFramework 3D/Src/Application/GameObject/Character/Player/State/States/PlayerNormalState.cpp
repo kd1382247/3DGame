@@ -8,56 +8,54 @@
 #include"PlayerJumpStartState.h"
 #include"PlayerGuardState.h"
 
-
-void PlayerNormalState::Enter(Player& player)
+void PlayerNormalState::OnStart(Player* owner)
 {
-	player.SetStateType(PlayerStateType::NormalState);
+	owner->SetStateType(PlayerStateType::NormalState);
 }
 
-void PlayerNormalState::Update(Player & player)
+void PlayerNormalState::OnUpdate(Player* owner)
 {
-	player.UpdateMove();
+	owner->UpdateMove();
 
 	// 移動アニメーション
-	if (player.IsMovePressed())
+	if (owner->IsMovePressed())
 	{
-		player.PlayAnimation(PlayerAnimationType::MoveFWD);
+		owner->PlayAnimation(PlayerAnimationType::MoveFWD);
 	}
 	else
 	{
-		player.PlayAnimation(PlayerAnimationType::Idle);
+		owner->PlayAnimation(PlayerAnimationType::Idle);
 	}
 
-	// 状態遷移
-	if (player.IsGuardTrigger())
+
+	if (owner->IsGuardTrigger())
 	{
-		player.ChangeState<PlayerGuardState>();
+		m_pMachine->ChangeState<PlayerGuardState>();
 		return;
 	}
 
-	if (player.IsJumpPressed())
+	if (owner->IsJumpPressed())
 	{
-		player.ChangeState<PlayerJumpStartState>();
+		m_pMachine->ChangeState<PlayerJumpStartState>();
 		return;
 	}
 
-	if (player.IsAttackPressed())
+	if (owner->IsAttackPressed())
 	{
-		player.ChangeState<PlayerAttackState>();
+		m_pMachine->ChangeState<PlayerAttackState>();
 		return;
 	}
 
-	if (player.GetStateType() != PlayerStateType::AttackState)
+	if (owner->GetStateType() != PlayerStateType::AttackState)
 	{
-		if (player.IsAttackLongPressed())
+		if (owner->IsAttackLongPressed())
 		{
-			player.ChangeState<PlayerChargeAttackState>();
+			m_pMachine->ChangeState<PlayerChargeAttackState>();
 		}
 	}
-
 }
 
-void PlayerNormalState::Exit(Player & player)
+void PlayerNormalState::OnExit(Player* owner)
 {
 
 }

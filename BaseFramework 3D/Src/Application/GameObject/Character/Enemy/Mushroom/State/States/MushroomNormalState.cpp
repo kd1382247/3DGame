@@ -5,31 +5,31 @@
 #include"MushroomAttackState.h"
 #include"MushroomLaunchState.h"
 
-void MushroomNormalState::Enter(Mushroom& mushroom)
+void MushroomNormalState::OnStart(Mushroom* mushroom)
 {
-	mushroom.PlayAnimation(MushroomAnimationType::Idle);
+	mushroom->PlayAnimation(MushroomAnimationType::Idle);
 }
 
-void MushroomNormalState::Update(Mushroom & mushroom)
+void MushroomNormalState::OnUpdate(Mushroom * mushroom)
 {
 
-	mushroom.UpdateMove();
+	mushroom->UpdateMove();
 
-	if (mushroom.IsLaunch())
+	if (mushroom->IsLaunch())
 	{
-		mushroom.ChangeState<MushroomLaunchState>();
+		m_pMachine->ChangeState<MushroomLaunchState>();
 		return;
 	}
 
-	if (mushroom.IsAttack())
+	if (mushroom->IsAttack())
 	{
-		mushroom.ChangeState<MushroomAttackState>();
+		m_pMachine->ChangeState<MushroomAttackState>();
 		return;
 	}
 
 }
 
-void MushroomNormalState::Exit(Mushroom & mushroom)
+void MushroomNormalState::OnExit(Mushroom * mushroom)
 {
 
 }

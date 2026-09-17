@@ -2,20 +2,20 @@
 
 #include"../../TurtleShell.h"
 
-void TurtleShellDieState::Enter(TurtleShell& turtleShell)
+void TurtleShellDieState::OnStart(TurtleShell* turtleShell)
 {
-	turtleShell.PlayAnimation(TurtleShellAnimationType::Die);
+	turtleShell->PlayAnimation(TurtleShellAnimationType::Die);
 }
 
-void TurtleShellDieState::Update(TurtleShell & turtleShell)
+void TurtleShellDieState::OnUpdate(TurtleShell * turtleShell)
 {
-	if (turtleShell.IsAnimationFinished())
+	if (turtleShell->IsAnimationFinished())
 	{
-		turtleShell.Destroy();
+		turtleShell->Destroy();
 	}
 }
 
-void TurtleShellDieState::Exit(TurtleShell & turtleShell)
+void TurtleShellDieState::OnExit(TurtleShell * turtleShell)
 {
 
 }

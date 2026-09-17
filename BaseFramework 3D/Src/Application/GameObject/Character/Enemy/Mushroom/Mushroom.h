@@ -5,7 +5,7 @@
 #include"Animation/MushroomAnimationType.h"
 #include"Animation/MushroomAnimation.h"
 #include"Parameter/MushroomParameter.h"
-#include"State/MushroomStateMachine.h"
+#include"../../StateMachine/StateMachine.h"
 
 
 class Mushroom :public EnemyBase
@@ -23,15 +23,9 @@ public:
 
 	void SetUpReference()override;
 
-	template<class T>
-	void ChangeState()
-	{
-		m_stateMachine.ChangeState(*this, std::make_unique<T>());
-	}
-
 	bool IsAttack()const { return m_attackFlg; }
 	bool IsLaunch()const { return m_launchFlg; }
-	
+
 
 	// パラメータのゲッター
 	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
@@ -74,6 +68,6 @@ private:
 	MushroomParameter   m_parameter;
 
 	// ステートマシン
-	MushroomStateMachine m_stateMachine;
+	StateMachine<Mushroom> m_stateMachine;
 
 };

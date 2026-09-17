@@ -2,15 +2,15 @@
 
 class ChestMonster;
 
-#include"../ChestMonsterStateBase.h"
+#include"../../../../StateMachine/StateBase.h"
 
-class ChestMonsterNormalState :public ChestMonsterStateBase
+class ChestMonsterNormalState :public StateBase<ChestMonster>
 {
 public:
 
-	void Enter(ChestMonster& chestMonster)override;
-	void Update(ChestMonster& chestMonster)override;
-	void Exit(ChestMonster& chestMonster)override;
+	void OnStart(ChestMonster* chestMonster)override;
+	void OnUpdate(ChestMonster* chestMonster)override;
+	void OnExit(ChestMonster* chestMonster)override;
 
 };
 
