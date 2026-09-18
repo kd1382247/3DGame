@@ -306,7 +306,6 @@ void CollisionManager::AddSweepContact(SweepResult& result, float toi, const Mat
 		// 重複Normalも意図的に保持する
 		result.m_normals.push_back(normal);
 	}
-
 }
 
 void CollisionManager::ResolveStartOverlapContact(const Math::Vector3& push, const Math::Vector3& normal, Math::Vector3& currentPos, Math::Vector3& remainingMove, bool isWalkable)

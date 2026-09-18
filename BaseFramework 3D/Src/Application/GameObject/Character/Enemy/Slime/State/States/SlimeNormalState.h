@@ -12,4 +12,3 @@ public:
 	void OnUpdate(Slime* slime)override;
 	void OnExit(Slime* slime)override;
 };
-

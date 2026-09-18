@@ -94,27 +94,42 @@ void EnemyBase::UpdateDirectChase()
 	float         moveSpeed = GetMoveSpeed();
 
 	Math::Vector3 targetDir = spPlayer->GetPos() - pos;
-	
+
 
 	// Y成分はいらない
 	targetDir.y = 0;
 
 	SetMoveDir(targetDir);
 
+	const float distance = targetDir.Length();
 
-	if (targetDir.Length()<=1.5f)
+	// 到達判定の距離
+	constexpr float reachDistance = 1.5f;
+
+	constexpr float resumeChaseDistance = reachDistance + 0.1f;
+
+	const float threshold = m_hasReachedTarget ? resumeChaseDistance : reachDistance;
+
+	if (distance <= threshold)
 	{
 		m_hasReachedTarget = true;
 		return;
 	}
-	else
-	{
-		m_hasReachedTarget = false;
-	}
+
+	m_hasReachedTarget = false;
 
 	targetDir.Normalize();
 
 	Math::Vector3 move = targetDir * (moveSpeed*60.0f)*m_deltaTime;
+
+	// 1フレームの移動量がreachDistanceを大きく飛び越えないように、
+	// 残り距離(reachDistanceまでの距離)以上は進ませない
+	const float remaining = distance - reachDistance;
+
+	if (move.Length() > remaining)
+	{
+		move = targetDir * remaining;
+	}
 
 	AddPendingMove(move);
 }

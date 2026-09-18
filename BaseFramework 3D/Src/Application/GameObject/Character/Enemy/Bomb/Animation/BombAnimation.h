@@ -13,11 +13,12 @@ public:
 	void Init(std::shared_ptr<KdModelWork>& _model);
 
 	void Play(BombAnimationType _animType);
+	void RePlay(BombAnimationType type);
 
 private:
 
+	void Animations(BombAnimationType type);
+
 	BombAnimationType m_currentAnimation = BombAnimationType::None;
-
-
 
 };

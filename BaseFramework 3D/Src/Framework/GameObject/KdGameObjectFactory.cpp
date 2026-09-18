@@ -19,7 +19,6 @@
 #include"../../Application/GameObject//Character/Enemy/Mushroom/Mushroom.h"
 #include"../../Application/GameObject//Character/Enemy/Slime/Slime.h"
 #include"../../Application/GameObject//Character/Enemy/StarFish/StarFish.h"
-#include"../../Application/GameObject//Character/Enemy/Swarm/Swarm.h"
 #include"../../Application/GameObject//Character/Enemy/TurtleShell/TurtleShell.h"
 
 // ステージ
@@ -38,6 +37,9 @@
 #include"../../Application/GameObject/Effect/Stun/StunEffect.h"
 #include"../../Application/GameObject/Effect/HitEffect/HitEffect.h"
 
+// 爆発
+#include"../../Application/GameObject/Explosion/Explosion.h"
+
 
 void KdGameObjectFactory::Init()
 {
@@ -53,7 +55,7 @@ void KdGameObjectFactory::Init()
 
 	// プレイヤー
 	Register<Player>("Player",KdGameObject::ObjectCategory::Character);
-	
+
 	//===================================================================
 	// 敵
 	//===================================================================
@@ -76,8 +78,6 @@ void KdGameObjectFactory::Init()
 	Register<Slime>("Slime", KdGameObject::ObjectCategory::Character);
 	// StarFish
 	Register<StarFish>("StarFish", KdGameObject::ObjectCategory::Character);
-	// Swarm
-	Register<Swarm>("Swarm", KdGameObject::ObjectCategory::Character);
 	// TurtleShell
 	Register<TurtleShell>("TurtleShell", KdGameObject::ObjectCategory::Character);
 
@@ -115,6 +115,9 @@ void KdGameObjectFactory::Init()
 	//===================================================================
 	Register<StunEffect>("Stun", KdGameObject::ObjectCategory::Effect);
 	Register<HitEffect>("HitEffect", KdGameObject::ObjectCategory::Effect);
+
+	// Explosion(爆発の当たり判定専用オブジェクト)
+	Register<Explosion>("Explosion", KdGameObject::ObjectCategory::Effect);
 
 
 }

@@ -121,6 +121,17 @@ public:
 		std::array<PointLight, MaxPointLightNum> PointLights;
 	};
 
+	// カラースフィア
+	struct cbEffect
+	{
+		int					colorEnable = 0;
+		Math::Vector3		colorPos = {};
+
+		float               colorRadius = 0;
+		Math::Vector3       colorColor = {};
+	};
+
+
 	static KdShaderManager& Instance()
 	{
 		static KdShaderManager instance;
@@ -198,6 +209,9 @@ public:
 	void WriteCBShadowArea(const Math::Matrix& proj, float dirLightHeight);
 	void WriteCBPointLight(const std::list<PointLight>& pointLights);
 
+	void WriteCBColorEnable(const bool enable);
+	void WriteCBColor(Math::Vector3 pos, float radius, Math::Vector3 color);
+
 	//==========================
 	//
 	// その他
@@ -226,6 +240,9 @@ private:
 
 	// ライト定数バッファ
 	KdConstantBuffer<cbLight>	m_cb9_Light;
+
+	// エフェクト定数バッファ
+	KdConstantBuffer<cbEffect>	m_cb10_Effect;
 
 	KdAmbientController m_ambientController;
 

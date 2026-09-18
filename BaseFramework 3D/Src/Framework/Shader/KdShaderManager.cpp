@@ -38,6 +38,12 @@ void KdShaderManager::Init()
 	KdDirect3D::Instance().WorkDevContext()->VSSetConstantBuffers(9, 1, m_cb9_Light.GetAddress());
 	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(9, 1, m_cb9_Light.GetAddress());
 
+
+	m_cb10_Effect.Create();
+	m_cb10_Effect.Write();
+	KdDirect3D::Instance().WorkDevContext()->VSSetConstantBuffers(10, 1, m_cb10_Effect.GetAddress());
+	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(10, 1, m_cb10_Effect.GetAddress());
+
 	//============================================
 	// パイプラインステート関係
 	//============================================
@@ -486,6 +492,26 @@ void KdShaderManager::WriteCBPointLight(const std::list<PointLight>& pointLights
 	}
 
 	m_cb9_Light.Write();
+}
+
+void KdShaderManager::WriteCBColorEnable(const bool enable)
+{
+	// データをセット
+	m_cb10_Effect.Work().colorEnable = enable;
+
+	// GPUに転送
+	m_cb10_Effect.Write();
+}
+
+void KdShaderManager::WriteCBColor(Math::Vector3 pos, float radius, Math::Vector3 color)
+{
+	// データをセット
+	m_cb10_Effect.Work().colorPos = pos;
+	m_cb10_Effect.Work().colorRadius = radius;
+	m_cb10_Effect.Work().colorColor = color;
+
+	// GPUに転送
+	m_cb10_Effect.Write();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////

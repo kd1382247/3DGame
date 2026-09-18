@@ -301,6 +301,9 @@
     <Filter Include="Src\Application\GameObject\FlyText">
       <UniqueIdentifier>{b249e094-3b7c-4df9-aa3e-ccc6e6780a27}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Explosion">
+      <UniqueIdentifier>{2c635618-5199-49a1-81a3-891b960371d2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Src\Application\Editor\SceneView">
       <UniqueIdentifier>{b980eb43-3341-416b-9891-4194bd82988b}</UniqueIdentifier>
     </Filter>
@@ -384,9 +387,6 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\StarFish\State\States">
       <UniqueIdentifier>{73992ed2-79c3-4979-ad3d-6c369cf0d4cc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Explosion">
-      <UniqueIdentifier>{e32e758b-128f-404f-bebe-6ae8335faeec}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -954,6 +954,12 @@
     <ClInclude Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.h">
       <Filter>Src\Application\GameObject\Effect\HitEffect</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Explosion\Explosion.h">
+      <Filter>Src\Application\GameObject\Explosion</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Explosion\ExplosionManager.h">
+      <Filter>Src\Application\GameObject\Explosion</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.h">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClInclude>
@@ -998,12 +1004,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Bomb\State\States\BombChargeState.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Bomb\State\States</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Explosion\Explosion.h">
-      <Filter>Src\Application\GameObject\Explosion</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Explosion\ExplosionManager.h">
-      <Filter>Src\Application\GameObject\Explosion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1502,6 +1502,12 @@
     <ClCompile Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.cpp">
       <Filter>Src\Application\GameObject\Effect\HitEffect</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Explosion\Explosion.cpp">
+      <Filter>Src\Application\GameObject\Explosion</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Explosion\ExplosionManager.cpp">
+      <Filter>Src\Application\GameObject\Explosion</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.cpp">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClCompile>
@@ -1537,12 +1543,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Bomb\State\States\BombChargeState.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Bomb\State\States</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Explosion\Explosion.cpp">
-      <Filter>Src\Application\GameObject\Explosion</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Explosion\ExplosionManager.cpp">
-      <Filter>Src\Application\GameObject\Explosion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

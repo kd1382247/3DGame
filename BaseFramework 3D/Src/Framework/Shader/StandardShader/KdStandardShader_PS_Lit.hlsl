@@ -84,6 +84,22 @@ float4 main(VSOutput In) : SV_Target0
 	// ラフネスを逆転させ「滑らか」さにする
 	float smoothness = 1.0 - roughness; 
 	float specPower = pow(2, 11 * smoothness); // 1～2048
+
+
+	// 黒崎授業9 FINAL
+	if (g_colorEnable)
+	{
+		// 範囲内化どうかを調べる
+		// 今から塗ろうとしているピクセル座標から
+		// エフェクトを発生させる座標までベクトル
+		float3 v = g_colorPos - In.wPos;
+
+		if (length(v) < g_colorRadius)
+		{
+			// 範囲内
+			baseColor.rgb += g_colorColor;
+		}
+	}
 	
 	//------------------------------------------
 	// ライティング

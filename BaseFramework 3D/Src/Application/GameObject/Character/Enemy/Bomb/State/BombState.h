@@ -4,23 +4,9 @@ enum class BombAnimationType
 {
 	None,
 	Attack,
+	AttackCharge,
 	GetHit,
 	Idle,
 	Walk,
 	Die
-};
-
-// 攻撃しているか
-enum class BombActionState
-{
-	Normal,
-	Attack,
-	Damage,
-	Death
-};
-
-enum class BombMoveState
-{
-	Idle,
-	Walk
 };

@@ -61,3 +61,15 @@ cbuffer cbLight : register(b9)
 	    int			IsBright;		// 明度用ライトかどうか
 	} g_PointLights[100];
 };
+
+//------------------------------
+// 定数バッファ(エフェクト)
+//------------------------------
+cbuffer cbEffect : register(b10)
+{
+	int g_colorEnable;
+	float3 g_colorPos;
+
+	float g_colorRadius;
+	float3 g_colorColor;
+};

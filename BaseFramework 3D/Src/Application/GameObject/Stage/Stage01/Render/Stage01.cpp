@@ -39,6 +39,11 @@ void Stage01::Update()
 	m_spGroundCollision->SetMatrix(m_mWorld);
 	m_spWallCollision->SetMatrix(m_mWorld);
 	m_spAIBlockCollision->SetMatrix(m_mWorld);
+
+	// 表示する範囲・座標・色はBombなど爆発する側が
+	// ShowExplosionRange()/HideExplosionRange()で書き込むので、
+	// ここでは何もしない(何も書き込まれていない間はcolorRadius=0のままなので、
+	// ステージの色は変化しない)
 }
 
 void Stage01::DrawInspector()
@@ -48,7 +53,14 @@ void Stage01::DrawInspector()
 
 void Stage01::DrawLit()
 {
+
+	KdShaderManager::Instance().WriteCBColorEnable(true);
+
 	StageBase::DrawLit();
 
+	KdShaderManager::Instance().WriteCBColorEnable(false);
+
+
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_model, m_mWorld);
+
 }
