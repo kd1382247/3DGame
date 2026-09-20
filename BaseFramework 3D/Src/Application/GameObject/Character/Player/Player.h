@@ -100,7 +100,6 @@ public:
 	PlayerAnimationType GetChargeMoveAnimation()const;
 
 
-
 	//================================
 	// ジャンプ
 	//================================

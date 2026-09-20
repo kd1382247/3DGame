@@ -1,16 +1,13 @@
 ﻿#pragma once
 
-#include"../../../StageBase.h"
-
-class WallCollision :public StageBase
+class AABBCollision :public KdGameObject
 {
 
 public:
-	WallCollision() {}
-	~WallCollision()override {}
+	AABBCollision() {}
+	~AABBCollision()override {}
 
 	void Init()override;
-	void DrawLit()override {}
 
 	void DrawDebug()override;
 

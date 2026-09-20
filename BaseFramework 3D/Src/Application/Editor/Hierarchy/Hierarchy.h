@@ -3,7 +3,7 @@
 class Hierarchy
 {
 public:
-	
+
 	enum class HierarchyCategory
 	{
 		GameObject,
@@ -20,12 +20,12 @@ public:
 
 private:
 
+	// カテゴリ選択(ボタンを押すと一覧が出て選択でき、選んだカテゴリ名をボタンの隣に表示する)
+	void DrawCategorySelector();
+	void CategorySelectItem(const char* label, HierarchyCategory category);
+	static const char* GetCategoryLabel(HierarchyCategory category);
 
-	void DrawCategoryButtons();
-	// 描画するカテゴリを選択するボタン
-	void CategoryButton(const char*label,HierarchyCategory category);
-
-	// オブジェクトを追加するボタン
+	// 選択中カテゴリのAddボタン
 	void DrawAddButtons();
 
 	void AddGameObject();
@@ -33,8 +33,13 @@ private:
 	void AddStage();
 	void AddCollisionBox();
 	void AddOBB();
-	
-	void DrawScrollableList();
+
+	// 検索ボックス(名前の一部で一覧を絞り込む)
+	void DrawSearchFilter();
+	bool MatchesSearchFilter(const std::string& name) const;
+
+	// 選択中カテゴリのオブジェクト一覧
+	void DrawSelectedCategoryList();
 
 	void DrawGameObjects();
 	void DrawWayPoints();
@@ -51,7 +56,11 @@ private:
 
 
 	// オブジェクト選択
-	void SelectObject(const std::shared_ptr<KdGameObject>& obj);
+	void SelectHierarchyObject(const std::shared_ptr<KdGameObject>& obj);
 
+	// 現在選択中のカテゴリ(シーンビューでのクリック選択対象にもなる)
 	HierarchyCategory m_category = HierarchyCategory::GameObject;
+
+	// 検索ボックスの入力内容
+	char m_searchFilter[128] = "";
 };

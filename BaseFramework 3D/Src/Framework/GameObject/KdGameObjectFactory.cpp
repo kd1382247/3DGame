@@ -22,11 +22,11 @@
 #include"../../Application/GameObject//Character/Enemy/TurtleShell/TurtleShell.h"
 
 // ステージ
-#include"../../Application/GameObject/Stage/Stage01/Render/Stage01.h"
+#include"../../Application/GameObject/Stage/StageObject.h"
 
 // 当たり判定(壁)
-#include"../../Application/GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
-#include"../../Application/GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollision.h"
+#include"../../Application/GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
+#include"../../Application/GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 
 // ギミック
 #include"../../Application/GameObject/Gimmick/EnemySpawner/EnemySpawner.h"
@@ -86,14 +86,14 @@ void KdGameObjectFactory::Init()
 	//===================================================================
 
 	// Stage01
-	Register<Stage01>("Stage01", KdGameObject::ObjectCategory::Stage);
+	Register<StageObject>("StageObject", KdGameObject::ObjectCategory::Stage);
 
 	//===================================================================
 	// 当たり判定
 	//===================================================================
 
-	// 壁
-	Register<WallCollision>("WallCollision", KdGameObject::ObjectCategory::None);
+	// 壁(AABB)
+	Register<AABBCollision>("AABBCollision", KdGameObject::ObjectCategory::None);
 
 	// OBB
 	Register<OBBCollision>("OBBCollision", KdGameObject::ObjectCategory::None);

@@ -86,7 +86,6 @@ float4 main(VSOutput In) : SV_Target0
 	float specPower = pow(2, 11 * smoothness); // 1～2048
 
 
-	// 黒崎授業9 FINAL
 	if (g_colorEnable)
 	{
 		// 範囲内化どうかを調べる
@@ -288,6 +287,21 @@ float4 main(VSOutput In) : SV_Target0
 	
 	totalBrightness = saturate( totalBrightness );
 	outColor *= totalBrightness;
+
+
+	if(g_IsSelected)
+	{
+		float rim = 1.0 - saturate(dot(vCam, wN));
+
+		rim = pow(rim, 3.0);
+
+		float3 highlightColor = float3(1.0, 1.0, 0.0); // 黄色
+
+		float highlightPower = 2.0f; // 光の強さの倍率
+
+		outColor += rim * highlightColor * highlightPower;
+	}
+
 	
 	//------------------------------------------
 	// 出力

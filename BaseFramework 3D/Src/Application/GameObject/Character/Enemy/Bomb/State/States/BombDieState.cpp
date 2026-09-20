@@ -5,6 +5,7 @@
 void BombDieState::OnStart(Bomb* bomb)
 {
 	bomb->PlayAnimation(BombAnimationType::Die);
+	bomb->HideExplosionRange();
 }
 
 void BombDieState::OnUpdate(Bomb * bomb)

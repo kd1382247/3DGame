@@ -5,11 +5,11 @@
 #include "../../Framework/GameObject/KdGameObjectFactory.h"
 #include"../System/WayPointManager/WayPointManager.h"
 #include"../GameObject/WayPoint/WayPoint.h"
-#include"../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
-#include"../GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
+#include"../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
+#include"../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
 
-#include"../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollisionManager.h"
-#include"../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollision.h"
+#include"../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 
 #include"../Scene/EditorScene/EditorScene.h"
 
@@ -109,7 +109,7 @@ void EditorManager::StartPlayMode()
 	// Play中の状態を削除
 	editorScene->BackupObjectList();
 	WayPointManager::Instance().ClearWayPoints();
-	WallCollisionManager::Instance().ClearWallCollisionList();
+	AABBCollisionManager::Instance().ClearAABBCollisionList();
 	OBBCollisionManager::Instance().ClearOBBCollisionList();
 
 
@@ -119,7 +119,7 @@ void EditorManager::StartPlayMode()
 		// ロードに失敗したため復元する
 		editorScene->RestoreObjectList();
 		WayPointManager::Instance().RestoreWayPoints();
-		WallCollisionManager::Instance().RestoreWallCollisionList();
+		AABBCollisionManager::Instance().RestoreAABBCollisionList();
 		OBBCollisionManager::Instance().RestoreOBBCollisionList();
 
 		return;
@@ -128,7 +128,7 @@ void EditorManager::StartPlayMode()
 	// バックアップリストをクリア
 	editorScene->ClearBackupList();
 	WayPointManager::Instance().ClearBackup();
-	WallCollisionManager::Instance().ClearBackup();
+	AABBCollisionManager::Instance().ClearBackup();
 	OBBCollisionManager::Instance().ClearBackup();
 
 	// モードを切り替える
@@ -156,7 +156,7 @@ void EditorManager::StopPlayMode()
 	// Play中の状態を削除
 	editorScene->BackupObjectList();
 	WayPointManager::Instance().ClearWayPoints();
-	WallCollisionManager::Instance().ClearWallCollisionList();
+	AABBCollisionManager::Instance().ClearAABBCollisionList();
 	OBBCollisionManager::Instance().ClearOBBCollisionList();
 
 	// Edit開始前の状態を復元
@@ -165,7 +165,7 @@ void EditorManager::StopPlayMode()
 		// ロードに失敗したため復元する
 		editorScene->RestoreObjectList();
 		WayPointManager::Instance().RestoreWayPoints();
-		WallCollisionManager::Instance().RestoreWallCollisionList();
+		AABBCollisionManager::Instance().RestoreAABBCollisionList();
 		OBBCollisionManager::Instance().RestoreOBBCollisionList();
 
 		return;
@@ -174,7 +174,7 @@ void EditorManager::StopPlayMode()
 	// バックアップリストをクリア
 	editorScene->ClearBackupList();
 	WayPointManager::Instance().ClearBackup();
-	WallCollisionManager::Instance().ClearBackup();
+	AABBCollisionManager::Instance().ClearBackup();
 	OBBCollisionManager::Instance().ClearBackup();
 
 	// モードを切り替える
@@ -479,7 +479,7 @@ void EditorManager::SelectWayPointByMouse()
 void EditorManager::SelectBoxByMouse()
 {
 	auto selectedObj = SelectClosestByMouse(
-		WallCollisionManager::Instance().GetWallCollisionList(),
+		AABBCollisionManager::Instance().GetAABBCollisionList(),
 		KdCollider::TypeBump,
 		[](const std::shared_ptr<KdGameObject>&) { return true; });
 
@@ -504,12 +504,48 @@ void EditorManager::CreateGameObject(const std::string& className)
 	if (!newObject)
 	{
 		OutputDebugStringA("オブジェクトの生成に失敗しました\n");
+		KdDebugGUI::Instance().AddErrorLog("オブジェクトの生成に失敗しました\n");
 		return;
 	}
 	newObject->Init();
+
+	// ファクトリー登録名を保持しておく(SaveDataの"Class"に使う。表示名とは別)
+	newObject->SetFactoryClassName(className);
+
+	// 表示名は"Slime_0"のように自動採番する
+	newObject->SetObjectName(MakeUniqueObjectName(className));
 
 	SceneManager::Instance().AddObject(newObject);
 
 	// 現在選択中のオブジェクト
 	SetSelectedObject(newObject);
+}
+
+std::string EditorManager::MakeUniqueObjectName(const std::string& className) const
+{
+	int id = 0;
+
+	// 0から順に、シーン上に同じ名前のオブジェクトが存在しない番号を探す
+	while (true)
+	{
+		const std::string candidate = className + "_" + std::to_string(id);
+
+		bool exists = false;
+
+		for (const auto& obj : SceneManager::Instance().GetObjList())
+		{
+			if (obj && obj->GetObjectName() == candidate)
+			{
+				exists = true;
+				break;
+			}
+		}
+
+		if (!exists)
+		{
+			return candidate;
+		}
+
+		++id;
+	}
 }

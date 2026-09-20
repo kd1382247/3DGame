@@ -87,9 +87,14 @@ public:
 	bool Intersects(const KdCollider::RayInfo& targetShape, std::list<KdCollider::CollisionResult>* pResults);
 
 
-	// オブジェクト名
+	// オブジェクト名(Hierarchy/Inspectorに表示される名前。"Slime_0"のような自動採番込みの名前)
 	const std::string& GetObjectName() const { return m_objectName; }
 	void SetObjectName(const std::string& name) { m_objectName = name; }
+
+	// クラス名(KdGameObjectFactoryに登録されている生成用の名前。例:"Slime")
+	// SaveData()の"Class"に使う。表示名(m_objectName)とは別で持つ
+	const std::string& GetFactoryClassName() const { return m_className; }
+	void SetFactoryClassName(const std::string& name) { m_className = name; }
 
 
 	// クラスの関連付け用の関数
@@ -103,13 +108,17 @@ public:
 	void SetSelected(bool selected) { m_isSelected = selected; }
 
 
-
 	// カテゴリをセット
 	void SetObjectCategory(const ObjectCategory category) { m_objectCategory = category; }
 	const ObjectCategory GetObjectCategory() const{ return m_objectCategory; }
 
 
 	virtual nlohmann::json SaveData()const;
+
+	// SaveData()で保存した、そのクラス固有の追加データを読み込む
+	// (共通項目(Class/Name/Position/Scale/Rotation)はStageDataManager側で読み込み済み。
+	//  ここでは各クラスが自分で追加したフィールドだけを読み込む)
+	virtual void LoadData(const nlohmann::json&) {}
 
 protected:
 
@@ -152,6 +161,9 @@ protected:
 
 	// エディターに表示するオブジェクト名
 	std::string m_objectName = {};
+
+	// KdGameObjectFactoryに登録されているクラス名
+	std::string m_className = {};
 
 	// オブジェクトのカテゴリー
 	ObjectCategory m_objectCategory=ObjectCategory::None;

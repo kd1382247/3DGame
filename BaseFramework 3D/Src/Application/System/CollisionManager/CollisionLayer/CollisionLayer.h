@@ -9,7 +9,7 @@ enum class CollisionLayer
 	EnemyAttack,
 	CharacterBump,
 	Gimmick,
-	Wall,
+	AABB,
 	OBB,
 	AIBlock,
 	Max

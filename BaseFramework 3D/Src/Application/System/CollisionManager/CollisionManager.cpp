@@ -4,11 +4,11 @@
 #include"CollisionMath/CollisionMath.h"
 
 #include"../../../Framework/GameObject/KdGameObject.h"
-#include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
-#include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollision.h"
+#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
 
-#include"../../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollisionManager.h"
-#include"../../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollision.h"
+#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 
 #include"../../GameObject/Character/CharacterBase.h"
 
@@ -173,7 +173,7 @@ CollisionManager::SweepResult CollisionManager::FindSweepContacts(const std::sha
 
 	Math::Vector3 sweepStart = GetBumpSphereCenterAt(character, currentPos);
 
-	const auto& walls =WallCollisionManager::Instance().GetWallCollisionList();
+	const auto& walls =AABBCollisionManager::Instance().GetAABBCollisionList();
 
 	for (const auto& wall : walls)
 	{
@@ -551,7 +551,7 @@ std::vector<std::shared_ptr<CharacterBase>> CollisionManager::GetCharacters()
 void CollisionManager::ResolveAABBStartOverlap(const std::shared_ptr<CharacterBase>& character, Math::Vector3& currentPos, Math::Vector3& remainingMove)
 {
 	const auto& walls =
-		WallCollisionManager::Instance().GetWallCollisionList();
+		AABBCollisionManager::Instance().GetAABBCollisionList();
 
 	for (const auto& wall : walls)
 	{

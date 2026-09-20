@@ -45,6 +45,8 @@ void Bomb::Init()
 void Bomb::Update()
 {
 
+	m_pDebugWire->AddDebugSphere(GetPos(),m_explosionRadius,kRedColor);
+
 	UpdateGravity();
 
 	m_stateMachine.Update();
@@ -140,7 +142,7 @@ void Bomb::Explode()
 
 	// 爆発エフェクト
 	KdEffekseerManager::GetInstance().
-		Play("Explosion/Explosion.efkefc", explosionPos, 0.4f, 1.0f, false);
+		Play("Explosion/Explosion.efkefc", explosionPos, 0.6f, 1.4f, false);
 }
 
 void Bomb::ShowExplosionRange()

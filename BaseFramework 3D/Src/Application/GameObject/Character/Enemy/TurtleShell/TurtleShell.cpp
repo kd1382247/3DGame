@@ -2,8 +2,8 @@
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
 #include"../../../../System/CollisionManager/CollisionMath/CollisionMath.h"
-#include"../../../Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
-#include"../../../Stage/Stage01/Collision/WallCollision/WallCollision.h"
+#include"../../../Stage/Collision/AABBCollision/AABBCollisionManager.h"
+#include"../../../Stage/Collision/AABBCollision/AABBCollision.h"
 
 #include"../../../Effect/EffectManager.h"
 
@@ -237,7 +237,7 @@ void TurtleShell::UpdateSpinAttackMove()
 	Math::Vector3 move = moveDir * (param + 0.07f) * 60.0f * m_deltaTime;
 
 
-	for (auto wall : WallCollisionManager::Instance().GetWallCollisionList())
+	for (auto wall : AABBCollisionManager::Instance().GetAABBCollisionList())
 	{
 		if (!wall)
 		{

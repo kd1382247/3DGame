@@ -1,8 +1,7 @@
 ﻿#pragma once
 
-#include"../../../StageBase.h"
 
-class OBBCollision :public StageBase
+class OBBCollision :public KdGameObject
 {
 
 public:

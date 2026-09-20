@@ -23,7 +23,7 @@ private:
 
 	std::weak_ptr<Player> m_wpPlayer;
 
-	float m_radius = 2.0f;
+	float m_radius = 3.0f;
 	float m_damage = 0.0f;
 	float m_knockBackPower = 0.0f;
 

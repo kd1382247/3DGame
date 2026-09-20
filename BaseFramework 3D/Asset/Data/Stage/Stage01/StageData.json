@@ -20,8 +20,8 @@
             }
         },
         {
-            "Class": "Stage01",
-            "Name": "Stage01",
+            "Class": "StageObject",
+            "Name": "StageObject",
             "Position": {
                 "x": 0.0,
                 "y": -1.0,
@@ -40,11 +40,11 @@
         },
         {
             "Class": "Player",
-            "Name": "Player",
+            "Name": "Player_0",
             "Position": {
-                "x": -7.099999904632568,
-                "y": 5.699999809265137,
-                "z": -5.300000190734863
+                "x": -6.400000095367432,
+                "y": 3.0999999046325684,
+                "z": -5.800000190734863
             },
             "Rotation": {
                 "x": 0.0,
@@ -59,7 +59,7 @@
         },
         {
             "Class": "Bomb",
-            "Name": "Bomb",
+            "Name": "Bomb_0",
             "Position": {
                 "x": 0.0,
                 "y": 0.0,

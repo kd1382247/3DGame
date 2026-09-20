@@ -265,21 +265,6 @@
     <Filter Include="Src\Application\GameObject\Stage">
       <UniqueIdentifier>{30d95ea9-9d6c-4602-babd-2e5b004b74d0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Stage\Stage01">
-      <UniqueIdentifier>{8c808a1c-7860-4340-9395-88bac228d58e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Stage\Stage01\Render">
-      <UniqueIdentifier>{a5abb3c0-5e3c-437c-950e-42b919c9dfde}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision">
-      <UniqueIdentifier>{951a0f0d-2621-45cf-be81-df3ff79cec17}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision">
-      <UniqueIdentifier>{e403af3b-ffd4-4523-a9d4-f13fe8d4d7ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision">
-      <UniqueIdentifier>{fd853f4f-c024-4112-b051-5c8297be0620}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\StageDataManager">
       <UniqueIdentifier>{ac463d04-d4d0-41e4-87a2-a202f1fb5506}</UniqueIdentifier>
     </Filter>
@@ -291,9 +276,6 @@
     </Filter>
     <Filter Include="Src\Application\System\WayPointManager">
       <UniqueIdentifier>{16ea0773-1cb7-4e0b-a443-167e6ad4ce1f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision">
-      <UniqueIdentifier>{567349c9-f5fb-4004-a44c-aee239827de9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\System\CombatCollisionManager">
       <UniqueIdentifier>{92f6603e-1b19-499d-8558-f3fb6857775c}</UniqueIdentifier>
@@ -340,9 +322,6 @@
     <Filter Include="Src\Application\System\TimeManager">
       <UniqueIdentifier>{98b2b7c4-08ac-4720-8008-c05070b2050d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision">
-      <UniqueIdentifier>{91fec0a9-4908-43a7-a847-a4fa54631ab1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\CollisionManager\CollisionMath">
       <UniqueIdentifier>{5c658fc9-dde8-4aa4-8b0a-a9319fdacb0b}</UniqueIdentifier>
     </Filter>
@@ -387,6 +366,24 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Explosion">
       <UniqueIdentifier>{e32e758b-128f-404f-bebe-6ae8335faeec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\StageLoder">
+      <UniqueIdentifier>{3a084459-fdd2-4641-a5e1-309da6fe8a07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Collision">
+      <UniqueIdentifier>{e58707ad-0208-4b17-a5b3-410c0df48a1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Collision\AABBCollision">
+      <UniqueIdentifier>{884cf8e0-0196-477e-b542-ef211bbdb1b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Collision\OBBCollision">
+      <UniqueIdentifier>{b2f7fcf4-2bf7-455c-a6b9-bdd280603e6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Collision\GroundCollision">
+      <UniqueIdentifier>{112993c6-a364-48b5-a21c-8df8d50e3638}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision">
+      <UniqueIdentifier>{ffed1a1d-6144-4899-84c8-5809af951ff7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -726,18 +723,6 @@
     <ClInclude Include="Src\Application\Editor\StageEditor\StageEditor.h">
       <Filter>Src\Application\Editor\StageEditor</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Stage\StageBase.h">
-      <Filter>Src\Application\GameObject\Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Render\Stage01.h">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision\GroundCollision.h">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollision.h">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\StageDataManager\StageDataManager.h">
       <Filter>Src\Application\System\StageDataManager</Filter>
     </ClInclude>
@@ -749,12 +734,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\WayPoint\WayPoint.h">
       <Filter>Src\Application\GameObject\WayPoint</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.h">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollisionManager.h">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\System\CombatCollisionManager\CombatCollisionManager.h">
       <Filter>Src\Application\System\CombatCollisionManager</Filter>
@@ -897,12 +876,6 @@
     <ClInclude Include="Src\Application\System\TimeManager\TimeManager.h">
       <Filter>Src\Application\System\TimeManager</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollision.h">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollisionManager.h">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionMath\CollisionMath.h">
       <Filter>Src\Application\System\CollisionManager\CollisionMath</Filter>
     </ClInclude>
@@ -1004,6 +977,30 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Explosion\ExplosionManager.h">
       <Filter>Src\Application\GameObject\Explosion</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\StageLoder\StageLoder.h">
+      <Filter>Src\Application\System\StageLoder</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\StageObject.h">
+      <Filter>Src\Application\GameObject\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollision.h">
+      <Filter>Src\Application\GameObject\Stage\Collision\AABBCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.h">
+      <Filter>Src\Application\GameObject\Stage\Collision\AABBCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Collision\GroundCollision\GroundCollision.h">
+      <Filter>Src\Application\GameObject\Stage\Collision\GroundCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockCollision.h">
+      <Filter>Src\Application\GameObject\Stage\Collision\AIBlockCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollision.h">
+      <Filter>Src\Application\GameObject\Stage\Collision\OBBCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.h">
+      <Filter>Src\Application\GameObject\Stage\Collision\OBBCollision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1295,18 +1292,6 @@
     <ClCompile Include="Src\Application\Editor\StageEditor\StageEditor.cpp">
       <Filter>Src\Application\Editor\StageEditor</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Stage\StageBase.cpp">
-      <Filter>Src\Application\GameObject\Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Render\Stage01.cpp">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision\GroundCollision.cpp">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\GroundCollision</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollision.cpp">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\StageDataManager\StageDataManager.cpp">
       <Filter>Src\Application\System\StageDataManager</Filter>
     </ClCompile>
@@ -1318,12 +1303,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\WayPoint\WayPoint.cpp">
       <Filter>Src\Application\GameObject\WayPoint</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision\AIBlockCollision.cpp">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\AIBlockCollision</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\WallCollision\WallCollisionManager.cpp">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\WallCollision</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\System\CombatCollisionManager\CombatCollisionManager.cpp">
       <Filter>Src\Application\System\CombatCollisionManager</Filter>
@@ -1445,12 +1424,6 @@
     <ClCompile Include="Src\Application\System\TimeManager\TimeManager.cpp">
       <Filter>Src\Application\System\TimeManager</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollision.cpp">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision\OBBCollisionManager.cpp">
-      <Filter>Src\Application\GameObject\Stage\Stage01\Collision\OBBCollision</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\CollisionManager\CollisionMath\CollisionMath.cpp">
       <Filter>Src\Application\System\CollisionManager\CollisionMath</Filter>
     </ClCompile>
@@ -1543,6 +1516,30 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Explosion\ExplosionManager.cpp">
       <Filter>Src\Application\GameObject\Explosion</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\StageLoder\StageLoder.cpp">
+      <Filter>Src\Application\System\StageLoder</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\StageObject.cpp">
+      <Filter>Src\Application\GameObject\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollision.cpp">
+      <Filter>Src\Application\GameObject\Stage\Collision\AABBCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.cpp">
+      <Filter>Src\Application\GameObject\Stage\Collision\AABBCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Collision\GroundCollision\GroundCollision.cpp">
+      <Filter>Src\Application\GameObject\Stage\Collision\GroundCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockCollision.cpp">
+      <Filter>Src\Application\GameObject\Stage\Collision\AIBlockCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollision.cpp">
+      <Filter>Src\Application\GameObject\Stage\Collision\OBBCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.cpp">
+      <Filter>Src\Application\GameObject\Stage\Collision\OBBCollision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

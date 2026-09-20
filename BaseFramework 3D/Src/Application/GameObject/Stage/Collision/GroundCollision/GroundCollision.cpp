@@ -1,6 +1,6 @@
 ﻿#include "GroundCollision.h"
 
-#include"../../../../../System/CollisionManager/CollisionManager.h"
+#include"../../../../System/CollisionManager/CollisionManager.h"
 
 void GroundCollision::Init()
 {

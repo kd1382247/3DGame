@@ -3,6 +3,8 @@
 #include"../../System/CollisionManager/CollisionManager.h"
 #include"../../System/TimeManager/TimeManager.h"
 
+#include"../../Editor/EditorManager.h"
+
 
 CharacterBase::CharacterBase()
 {
@@ -42,16 +44,27 @@ void CharacterBase::PostUpdate()
 // 描画
 void CharacterBase::DrawLit()
 {
-	if (m_spModel)
+	if (!m_spModel)
 	{
-		Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos() + m_visualOffset);
-		Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_charaAngle));
-		Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
-
-		Math::Matrix localMat = scaleMat * rotYMat * transMat;
-
-		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, localMat);
+		return;
 	}
+
+	
+	Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos() + m_visualOffset);
+	Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_charaAngle));
+	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
+
+	Math::Matrix localMat = scaleMat * rotYMat * transMat;
+
+	if (IsSelected())
+	{
+		KdShaderManager::Instance().m_StandardShader.SetSelected(true);
+	}
+
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, localMat);
+
+	KdShaderManager::Instance().m_StandardShader.SetSelected(false);
+
 }
 
 void CharacterBase::GenerateDepthMapFromLight()
@@ -68,6 +81,12 @@ void CharacterBase::DrawInspector()
 	DrawBasicInspecter();
 
 	ImGui::Separator();
+
+	// 当たり判定(押し戻し)球の半径
+	if (ImGui::DragFloat("BumpSphereRadius", &m_bumpSphereRadius, 0.01f, 0.01f))
+	{
+		EditorManager::Instance().MarkDirty();
+	}
 }
 
 DirectX::BoundingSphere CharacterBase::GetBumpSphere() const
@@ -75,7 +94,7 @@ DirectX::BoundingSphere CharacterBase::GetBumpSphere() const
 	DirectX::BoundingSphere sphere;
 
 	sphere.Center = GetPos() + Math::Vector3(0, 0.5, 0);
-	sphere.Radius = 0.5;
+	sphere.Radius = m_bumpSphereRadius;
 
 	return sphere;
 }

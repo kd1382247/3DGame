@@ -118,12 +118,16 @@ public:
 	void AddLog(const char* fmt, ...);
 	void ClearLog();
 	
+	void AddErrorLog(const char*fmt,...);
+	void ClearErrorLog();
+
 private:
 	void GuiRelease();
 
 	// ImGui
 	std::unique_ptr<ImGuiAppLog> m_uqLog = nullptr;
 
+	std::unique_ptr<ImGuiAppLog>m_uqErrorLog = nullptr;
 //=====================================================
 // シングルトンパターン
 //=====================================================

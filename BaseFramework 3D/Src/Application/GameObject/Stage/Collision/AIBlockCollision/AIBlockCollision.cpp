@@ -1,6 +1,6 @@
 ﻿#include "AIBlockCollision.h"
 
-#include"../../../../../System/CollisionManager/CollisionManager.h"
+#include"../../../../System/CollisionManager/CollisionManager.h"
 
 void AIBlockCollision::Init()
 {

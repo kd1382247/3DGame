@@ -7,6 +7,7 @@
 #include"../../../System/WayPointManager/WayPointManager.h"
 #include"../../../GameObject/WayPoint/WayPoint.h"
 
+#include"../../../Editor/EditorManager.h"
 
 #include"../Player/Player.h"
 
@@ -32,6 +33,12 @@ void EnemyBase::DrawInspector()
 {
 	CharacterBase::DrawInspector();
 
+	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
+	if (ImGui::DragFloat("ReachDistance", &m_reachDistance, 0.01f, 0.0f))
+	{
+		EditorManager::Instance().MarkDirty();
+	}
+
 	DrawParameterInspector();
 }
 
@@ -44,7 +51,7 @@ void EnemyBase::Launch(const Math::Vector3& dir, float power)
 {
 	m_launchVec = dir;
 	m_launchFlg = true;
-	
+
 	// 重力を反転
 	m_gravity -= power*60.0f;
 }
@@ -103,14 +110,7 @@ void EnemyBase::UpdateDirectChase()
 
 	const float distance = targetDir.Length();
 
-	// 到達判定の距離
-	constexpr float reachDistance = 1.5f;
-
-	constexpr float resumeChaseDistance = reachDistance + 0.1f;
-
-	const float threshold = m_hasReachedTarget ? resumeChaseDistance : reachDistance;
-
-	if (distance <= threshold)
+	if (distance <= m_reachDistance)
 	{
 		m_hasReachedTarget = true;
 		return;
@@ -122,21 +122,12 @@ void EnemyBase::UpdateDirectChase()
 
 	Math::Vector3 move = targetDir * (moveSpeed*60.0f)*m_deltaTime;
 
-	// 1フレームの移動量がreachDistanceを大きく飛び越えないように、
-	// 残り距離(reachDistanceまでの距離)以上は進ませない
-	const float remaining = distance - reachDistance;
-
-	if (move.Length() > remaining)
-	{
-		move = targetDir * remaining;
-	}
-
 	AddPendingMove(move);
 }
 
 void EnemyBase::UpdateFollowPath()
 {
-	
+
 	// 経路が空
 	if (m_path.empty())
 	{
@@ -165,7 +156,7 @@ void EnemyBase::UpdateFollowPath()
 	// WayPointへの方向
 	Math::Vector3 targetDir = targetPoint->GetPos() - GetPos();
 
-	
+
 	// X・Z平面だけで移動・到着判定する
 	targetDir.y = 0.0f;
 
@@ -232,7 +223,7 @@ bool EnemyBase::CanDirectChase()
 
 	// レイ情報
 	KdCollider::RayInfo rayInfo(KdCollider::Type::TypeSight,startPos,direction,rayLength);
-	
+
 	bool hit = false;
 
 	for (auto& wpGameObj :CollisionManager::Instance().GetObjects(CollisionLayer::AIBlock))
@@ -249,7 +240,7 @@ bool EnemyBase::CanDirectChase()
 			hit = true;
 		}
 	}
-	
+
 	if (hit)
 	{
 		// ウェイポイントが無ければ変更しない
@@ -262,7 +253,7 @@ bool EnemyBase::CanDirectChase()
 	{
 		m_nextMoveState = MoveState::DirectChase;
 	}
-	
+
 	return true;
 
 }
@@ -282,7 +273,7 @@ void EnemyBase::CreatePath()
 		WayPointManager::Instance().FindNearest(GetPos(),GetCurrentAreaID(GetPos()));
 
 	// ゴール（目標地点）
-	auto goalPoint = 
+	auto goalPoint =
 		WayPointManager::Instance().FindNearest(player->GetPos(), player->GetCurrentAreaID(player->GetPos()));
 
 
@@ -499,5 +490,4 @@ void EnemyBase::DrawBumpDebugSphere(const Math::Vector3& offset, float radius)
 {
 	m_pDebugWire->AddDebugSphere(GetPos() + offset, radius, kRedColor);
 }
-
 

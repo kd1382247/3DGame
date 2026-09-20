@@ -1,24 +1,24 @@
-﻿#include "WallCollision.h"
+﻿#include "AABBCollision.h"
 
-#include"WallCollisionManager.h"
+#include"AABBCollisionManager.h"
 
-#include"../../../../../Editor/EditorManager.h"
-#include"../../../../../System/CollisionManager/CollisionManager.h"
+#include"../../../../Editor/EditorManager.h"
+#include"../../../../System/CollisionManager/CollisionManager.h"
 
-void WallCollision::Init()
+void AABBCollision::Init()
 {
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("Wall",GetBox(),KdCollider::TypeBump);
+	m_pCollider->RegisterCollisionShape("AABB",GetBox(),KdCollider::TypeBump);
 
-	CollisionManager::Instance().RegisterObject(CollisionLayer::Wall, shared_from_this());
+	CollisionManager::Instance().RegisterObject(CollisionLayer::AABB, shared_from_this());
 
 	SetPos(Math::Vector3::Zero);
 }
 
-void WallCollision::DrawDebug()
+void AABBCollision::DrawDebug()
 {
 
 	Math::Color color;
@@ -38,7 +38,7 @@ void WallCollision::DrawDebug()
 
 }
 
-DirectX::BoundingBox WallCollision::GetBox() const
+DirectX::BoundingBox AABBCollision::GetBox() const
 {
 	DirectX::BoundingBox box;
 
@@ -54,7 +54,7 @@ DirectX::BoundingBox WallCollision::GetBox() const
 	return box;
 }
 
-void WallCollision::DrawInspector()
+void AABBCollision::DrawInspector()
 {
 	// 座標変更
 	Math::Vector3 pos = GetPos();
@@ -75,7 +75,7 @@ void WallCollision::DrawInspector()
 	}
 }
 
-void WallCollision::Destroy()
+void AABBCollision::Destroy()
 {
-	WallCollisionManager::Instance().RemoveWallCollision(GetID());
+	AABBCollisionManager::Instance().RemoveAABBCollision(GetID());
 }

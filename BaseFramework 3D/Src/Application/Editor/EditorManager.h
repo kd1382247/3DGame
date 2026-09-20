@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-
 class Hierarchy;
 class Inspector;
 class StageEditor;
@@ -57,7 +56,7 @@ public:
 	// オブジェクトを作成
 	void CreateGameObject(const std::string& className);
 
-	
+
 	// 編集したかどうか
 	const bool IsDirty()const { return m_isDirty; }
 	void ClearDirty() { m_isDirty = false; }
@@ -105,6 +104,10 @@ private:
 
 	// OBBを選択
 	void SelectOBBByMouse();
+
+	// 指定したクラス名で、シーン上の名前と重複しない名前を作る(例:"Slime_0")
+	// (同じクラス名の中で、未使用の最小の番号を採用する。番号の欠番は次回そこから埋まる)
+	std::string MakeUniqueObjectName(const std::string& className) const;
 
 
 private:

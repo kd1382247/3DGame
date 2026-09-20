@@ -2,8 +2,8 @@
 
 #include "../../Scene/SceneManager.h"
 #include "../../System/WayPointManager/WayPointManager.h"
-#include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
-#include"../../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 
 
 bool StageDataManager::Save(const std::string& stageName)
@@ -78,8 +78,8 @@ bool StageDataManager::SaveToFolder(const std::filesystem::path& folder)
 		return false;
 	}
 
-	// Wallを保存
-	if (!WallCollisionManager::Instance().Save((stageFolder / "WallCollisionData.json").string()))
+	// AABBを保存
+	if (!AABBCollisionManager::Instance().Save((stageFolder / "AABBCollisionData.json").string()))
 	{
 		return false;
 	}
@@ -104,8 +104,8 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 	// ウェイポイントデータ
 	const std::filesystem::path wayPointDataPath = stageFolder / "WayPointData.json";
 
-	// 壁の当たり判定データ
-	const std::filesystem::path wallCollisionDataPath = stageFolder / "WallCollisionData.json";
+	// AABBの当たり判定データ
+	const std::filesystem::path aabbCollisionDataPath = stageFolder / "AABBCollisionData.json";
 
 	// OBBのデータ
 	const std::filesystem::path obbCollisionDataPath = stageFolder / "OBBCollisionData.json";
@@ -113,7 +113,7 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 	// 読込失敗で現在の編集内容を消さないよう、先に必要ファイルを確認する
 	if (!std::filesystem::exists(stageDataPath) ||
 		!std::filesystem::exists(wayPointDataPath)||
-		!std::filesystem::exists(wallCollisionDataPath)||
+		!std::filesystem::exists(aabbCollisionDataPath)||
 		!std::filesystem::exists(obbCollisionDataPath))
 	{
 		return false;
@@ -136,6 +136,7 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 	{
 		OutputDebugStringA(e.what());
 		OutputDebugStringA("\n");
+		KdDebugGUI::Instance().AddErrorLog("%s\n", e.what());
 
 		return false;
 	}
@@ -156,6 +157,7 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 			!objectJson.contains("Rotation"))
 		{
 			OutputDebugStringA("必要なデータが不足しているオブジェクトをスキップしました\n");
+			KdDebugGUI::Instance().AddErrorLog("必要なデータが不足しているオブジェクトをスキップしました\n");
 			continue;
 		}
 
@@ -168,6 +170,10 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 		}
 
 		obj->Init();
+
+		// クラス名を保持(再度SaveDataする時に"Class"が壊れないようにする)
+		obj->SetFactoryClassName(className);
+
 		// 名前読込
 		const std::string name = objectJson["Name"];
 		obj->SetObjectName(name);
@@ -196,6 +202,9 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 
 		obj->SetRotation(rotation);
 
+		// そのクラス固有の追加データを読み込む(何もオーバーライドしていなければ何もしない)
+		obj->LoadData(objectJson);
+
 		SceneManager::Instance().AddObject(obj);
 	}
 
@@ -205,8 +214,8 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 		return false;
 	}
 
-	// 壁の当たり判定を生成
-	if (!WallCollisionManager::Instance().Load(wallCollisionDataPath.string()))
+	// AABBの当たり判定を生成
+	if (!AABBCollisionManager::Instance().Load(aabbCollisionDataPath.string()))
 	{
 		return false;
 	}

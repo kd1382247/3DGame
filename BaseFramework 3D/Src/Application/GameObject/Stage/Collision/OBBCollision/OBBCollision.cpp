@@ -2,8 +2,8 @@
 
 #include"OBBCollisionManager.h"
 
-#include"../../../../../Editor/EditorManager.h"
-#include"../../../../../System/CollisionManager/CollisionManager.h"
+#include"../../../../Editor/EditorManager.h"
+#include"../../../../System/CollisionManager/CollisionManager.h"
 
 void OBBCollision::Init()
 {

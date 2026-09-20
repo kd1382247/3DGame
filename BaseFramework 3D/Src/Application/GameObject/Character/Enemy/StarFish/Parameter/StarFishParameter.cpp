@@ -73,6 +73,7 @@ void StarFishParameter::SaveToJson()
 	else
 	{
 		OutputDebugStringA("StarFish parameter save filed\n");
+		KdDebugGUI::Instance().AddErrorLog("StarFish parameter save filed\n");
 
 		return;
 	}
@@ -88,6 +89,7 @@ void StarFishParameter::LoadFromJson()
 	if (!file.is_open())
 	{
 		OutputDebugStringA("ParameterData.jsonを開けませんでした\n");
+		KdDebugGUI::Instance().AddErrorLog("ParameterData.jsonを開けませんでした\n");
 		return;
 	}
 
@@ -108,6 +110,8 @@ void StarFishParameter::LoadFromJson()
 		OutputDebugStringA("JSONの読み込みに失敗しました\n");
 		OutputDebugStringA(e.what());
 		OutputDebugStringA("\n");
+		KdDebugGUI::Instance().AddErrorLog("JSONの読み込みに失敗しました\n");
+		KdDebugGUI::Instance().AddErrorLog("%s\n", e.what());
 		return;
 	}
 }

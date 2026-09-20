@@ -449,6 +449,7 @@ bool WayPointManager::Save(const std::string& filePath)
 	if (!file.is_open())
 	{
 		OutputDebugStringA("WayPointDataの保存に失敗しました\n");
+		KdDebugGUI::Instance().AddErrorLog("WayPointDataの保存に失敗しました\n");
 
 		return false;
 	}
@@ -468,6 +469,7 @@ bool WayPointManager::Load(const std::string& filePath)
 		OutputDebugStringA(
 			"WayPointDataを開けませんでした\n"
 		);
+		KdDebugGUI::Instance().AddErrorLog("WayPointDataを開けませんでした\n");
 
 		return false;
 	}
@@ -483,9 +485,11 @@ bool WayPointManager::Load(const std::string& filePath)
 		OutputDebugStringA(
 			"WayPointDataの読み込みに失敗しました\n"
 		);
+		KdDebugGUI::Instance().AddErrorLog("WayPointDataの読み込みに失敗しました\n");
 
 		OutputDebugStringA(e.what());
 		OutputDebugStringA("\n");
+		KdDebugGUI::Instance().AddErrorLog("%s\n", e.what());
 
 		return false;
 	}
@@ -496,6 +500,7 @@ bool WayPointManager::Load(const std::string& filePath)
 		OutputDebugStringA(
 			"WayPoints配列がありません\n"
 		);
+		KdDebugGUI::Instance().AddErrorLog("WayPoints配列がありません\n");
 
 		return false;
 	}

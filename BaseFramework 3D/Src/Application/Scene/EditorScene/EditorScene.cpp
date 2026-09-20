@@ -5,8 +5,8 @@
 
 #include"../../System/WayPointManager/WayPointManager.h"
 #include"../../GameObject/WayPoint/WayPoint.h"
-#include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
-#include"../../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 
 
 void EditorScene::EditorUpdate()
@@ -38,7 +38,7 @@ void EditorScene::DrawDebug()
 
 	BaseScene::DrawDebug();
 
-	WallCollisionManager::Instance().DrawDebug();
+	AABBCollisionManager::Instance().DrawDebug();
 
 	OBBCollisionManager::Instance().DrawDebug();
 

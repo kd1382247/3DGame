@@ -62,7 +62,7 @@ void TPSCamera::PostUpdate()
 	std::vector<const std::vector< std::weak_ptr<KdGameObject>>*>lists;
 
 	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::Ground));
-	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::Wall));
+	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::AABB));
 
 	
 	for (const auto&objList:lists )

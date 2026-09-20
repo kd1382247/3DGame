@@ -6,8 +6,8 @@
 
 #include "../../System/WayPointManager/WayPointManager.h"
 #include"../../System/StageDataManager/StageDataManager.h"
-#include"../../GameObject/Stage/Stage01/Collision/WallCollision/WallCollisionManager.h"
-#include"../../GameObject/Stage/Stage01/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 
 
 #include"../../GameObject/Camera/TPSCamera/TPSCamera.h"
@@ -425,7 +425,7 @@ void StageEditor::LoadSucceeded(const std::string& stageName)
 
 	editorScene->ClearBackupList();
 	WayPointManager::Instance().ClearBackup();
-	WallCollisionManager::Instance().ClearBackup();
+	AABBCollisionManager::Instance().ClearBackup();
 
 	OBBCollisionManager::Instance().ClearBackup();
 
@@ -456,7 +456,7 @@ void StageEditor::LoadFailed()
 	// ウェイポイントを復元
 	WayPointManager::Instance().RestoreWayPoints();
 
-	WallCollisionManager::Instance().RestoreWallCollisionList();
+	AABBCollisionManager::Instance().RestoreAABBCollisionList();
 
 	OBBCollisionManager::Instance().RestoreOBBCollisionList();
 }
@@ -592,8 +592,8 @@ void StageEditor::ClearStage()
 	// WayPointをクリア
 	WayPointManager::Instance().ClearWayPoints();
 
-	// ABBをクリア
-	WallCollisionManager::Instance().ClearWallCollisionList();
+	// AABBをクリア
+	AABBCollisionManager::Instance().ClearAABBCollisionList();
 
 	// OBBをクリア
 	OBBCollisionManager::Instance().ClearOBBCollisionList();

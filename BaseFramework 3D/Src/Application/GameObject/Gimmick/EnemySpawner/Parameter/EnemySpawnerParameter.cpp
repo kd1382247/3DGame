@@ -37,6 +37,7 @@ void EnemySpawnerParameter::Load()
 	if (!file.is_open())
 	{
 		OutputDebugStringA("ParameterData.jsonを開けませんでした\n");
+		KdDebugGUI::Instance().AddErrorLog("ParameterData.jsonを開けませんでした\n");
 		return;
 	}
 
@@ -55,6 +56,8 @@ void EnemySpawnerParameter::Load()
 		OutputDebugStringA("JSONの読み込みに失敗しました\n");
 		OutputDebugStringA(e.what());
 		OutputDebugStringA("\n");
+		KdDebugGUI::Instance().AddErrorLog("JSONの読み込みに失敗しました\n");
+		KdDebugGUI::Instance().AddErrorLog("%s\n", e.what());
 		return;
 	}
 }
@@ -76,6 +79,7 @@ void EnemySpawnerParameter::Save()
 	else
 	{
 		OutputDebugStringA("EnemySpawner parameter save filed\n");
+		KdDebugGUI::Instance().AddErrorLog("EnemySpawner parameter save filed\n");
 
 		return;
 	}

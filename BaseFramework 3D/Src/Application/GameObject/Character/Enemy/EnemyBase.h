@@ -42,6 +42,9 @@ public:
 	// ターゲットに到達するまで追跡し、到達後はノックバック方向を向く
 	void UpdateMove();
 
+	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
+	float GetReachDistance()const { return m_reachDistance; }
+
 protected:
 
 	std::weak_ptr<Player>m_wpPlayer;
@@ -116,5 +119,8 @@ protected:
 	Math::Vector3 m_launchVec;
 
 	bool          m_launchFlg = false;
+
+	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
+	float m_reachDistance = 1.5f;
 
 };

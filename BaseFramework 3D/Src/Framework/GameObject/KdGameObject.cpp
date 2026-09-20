@@ -93,7 +93,7 @@ nlohmann::json KdGameObject::SaveData() const
 {
 	nlohmann::json json;
 
-	json["Class"] = GetObjectName();
+	json["Class"] = GetFactoryClassName();
 
 	json["Name"] = GetObjectName();
 
@@ -146,16 +146,12 @@ void KdGameObject::DrawTransformInspector()
 
 void KdGameObject::DrawNameInspector()
 {
-		// オブジェクトの名前変更
+		// オブジェクトの名前を表示(自動採番されるため変更不可にしている)
 		char nameBaffer[128];
 
 		strcpy_s(nameBaffer, sizeof(nameBaffer), GetObjectName().c_str());
 
-		if (ImGui::InputText("Name", nameBaffer, sizeof(nameBaffer)))
-		{
-			SetObjectName(nameBaffer);
-			EditorManager::Instance().MarkDirty();
-		}
+		ImGui::InputText("Name", nameBaffer, sizeof(nameBaffer), ImGuiInputTextFlags_ReadOnly);
 }
 
 void KdGameObject::DrawPositionInspector()

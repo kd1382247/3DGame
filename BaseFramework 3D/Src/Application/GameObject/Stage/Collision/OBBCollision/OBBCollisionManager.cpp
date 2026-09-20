@@ -124,6 +124,7 @@ bool OBBCollisionManager::Save(const std::string& filePath)
 	if (!file.is_open())
 	{
 		OutputDebugStringA("OBBCollisionDataの保存に失敗しました\n");
+		KdDebugGUI::Instance().AddErrorLog("OBBCollisionDataの保存に失敗しました\n");
 
 		return false;
 	}
@@ -142,6 +143,7 @@ bool OBBCollisionManager::Load(const std::string& filePath)
 		OutputDebugStringA(
 			"OBBCollisionDataを開けませんでした\n"
 		);
+		KdDebugGUI::Instance().AddErrorLog("OBBCollisionDataを開けませんでした\n");
 
 		return false;
 	}
@@ -157,9 +159,11 @@ bool OBBCollisionManager::Load(const std::string& filePath)
 		OutputDebugStringA(
 			"OBBCollisionDataの読み込みに失敗しました\n"
 		);
+		KdDebugGUI::Instance().AddErrorLog("OBBCollisionDataの読み込みに失敗しました\n");
 
 		OutputDebugStringA(e.what());
 		OutputDebugStringA("\n");
+		KdDebugGUI::Instance().AddErrorLog("%s\n", e.what());
 
 		return false;
 	}
@@ -170,6 +174,7 @@ bool OBBCollisionManager::Load(const std::string& filePath)
 		OutputDebugStringA(
 			"OBBCollisions配列がありません\n"
 		);
+		KdDebugGUI::Instance().AddErrorLog("OBBCollisions配列がありません\n");
 
 		return false;
 	}

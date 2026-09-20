@@ -28,6 +28,9 @@ public:
 	// スフィア情報
 	DirectX::BoundingSphere GetBumpSphere()const;
 
+	// 当たり判定(押し戻し)球の半径
+	float GetBumpSphereRadius()const { return m_bumpSphereRadius; }
+
 	float GetMaxWalkableSlopeAngle()const { return m_maxWalkableSlopeAngle; }
 
 
@@ -82,17 +85,16 @@ public:
 	void SetDeltaTime(const float deltaTime) { m_deltaTime = deltaTime; }
 	float GetDeltaTime()       const         { return m_deltaTime; }
 
-	// 
+	//
 	void UpdateHitShake();
 
-	// 
+	//
 	bool GetIsHitShake() const { return m_isHitShake; }
 	void SetIsHitShake(const bool isHitShake) { m_isHitShake = isHitShake; }
 
 	// 移動方向
 	void SetMoveDir(const Math::Vector3& moveDir) { m_moveDir = moveDir; }
 	Math::Vector3 GetMoveDir() { return m_moveDir; }
-
 
 
 	void  UpdateFacingDirection();
@@ -131,7 +133,7 @@ protected:
 	// 攻撃判定のタイミング
 	float        m_animFrame = 0;
 	AttackTiming m_attackTiming = {};
-	
+
 	// ノックバック
 	Math::Vector3 m_knockBack = {};
 
@@ -166,6 +168,9 @@ protected:
 
 	float m_hitShakeInterval = 0.03f;
 	float m_hitShakeIntervalTimer = 0.0f;
+
+	// 当たり判定(押し戻し)球の半径
+	float m_bumpSphereRadius = 0.5f;
 
 
 };

@@ -5,10 +5,11 @@
 
 void Inspector::Draw()
 {
+	// 項目名や値が横に長くなった場合、はみ出た分だけ横スクロールできるようにする
 	ImGuiWindowFlags flags =
 		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoScrollWithMouse;
+		ImGuiWindowFlags_NoScrollWithMouse |
+		ImGuiWindowFlags_HorizontalScrollbar;
 
 	ImGui::Begin("Inspector",nullptr,flags);
 

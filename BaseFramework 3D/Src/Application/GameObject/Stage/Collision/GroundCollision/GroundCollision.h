@@ -1,8 +1,6 @@
 ﻿#pragma once
 
-#include"../../../StageBase.h"
-
-class GroundCollision:public StageBase
+class GroundCollision:public KdGameObject
 {
 
 public:
@@ -10,7 +8,10 @@ public:
 	~GroundCollision()override{}
 
 	void Init()override;
-	void DrawLit()override{}
 
 	void SetMatrix(Math::Matrix mat) { m_mWorld = mat; }
+
+private:
+
+	std::shared_ptr<KdModelWork>m_spModel = nullptr;
 };

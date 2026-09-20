@@ -36,6 +36,8 @@ void KdDebugGUI::GuiInit(int w, int h)
 	// 日本語対応
 	io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\msgothic.ttc", 13.0f, &config, glyphRangesJapanese);
 	m_uqLog = std::make_unique<ImGuiAppLog>();
+
+	m_uqErrorLog = std::make_unique<ImGuiAppLog>();
 }
 
 void KdDebugGUI::GuiProcess()
@@ -64,10 +66,16 @@ void KdDebugGUI::GuiProcess()
 
 
 
-	//if(EditorManager::Instance().IsEditMode())
+	if(EditorManager::Instance().IsPlayMode())
 	{
 		// ログウィンドウ
 		m_uqLog->Draw("Log Window");
+	}
+
+	if (EditorManager::Instance().IsEditMode())
+	{
+		// エラーウィンドウ
+		m_uqErrorLog->Draw("Error Window");
 	}
 
 	EditorManager::Instance().Draw();
@@ -113,12 +121,34 @@ void KdDebugGUI::ClearLog()
 	m_uqLog->Clear();
 }
 
+void KdDebugGUI::AddErrorLog(const char* fmt, ...)
+{
+	// 初期化されてないなら動作させない
+	if (!m_uqErrorLog) return;
+
+	char tmpStr[128] = {};
+	va_list args;
+	va_start(args, fmt);
+	vsprintf_s(tmpStr, fmt, args);
+	m_uqErrorLog->AddLog(tmpStr);
+	va_end(args);
+}
+
+void KdDebugGUI::ClearErrorLog()
+{
+	// 初期化されてないなら動作させない
+	if (!m_uqErrorLog) return;
+
+	m_uqErrorLog->Clear();
+}
+
 void KdDebugGUI::GuiRelease()
 {
 	// 初期化されてないなら動作させない
 	if (!m_uqLog) return;
 
 	m_uqLog = nullptr;
+	m_uqErrorLog = nullptr;
 
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();

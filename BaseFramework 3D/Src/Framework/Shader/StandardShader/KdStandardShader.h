@@ -31,6 +31,11 @@ public:
 		float			DissolveEdgeRange = 0.03f;	// 0 ～ 1
 
 		Math::Vector3	DissolveEmissive = { 0.0f, 1.0f, 1.0f };
+
+		// 選択中のオブジェクト
+		int				IsSelected = 0;
+		int             _blank[3];
+
 	};
 
 	// 定数バッファ(メッシュ単位更新)
@@ -83,6 +88,16 @@ public:
 
 		m_dirtyCBObj = true;
 	}
+
+	// オブジェクトを選択中か
+	void SetSelected(bool selected)
+	{
+		m_cb0_Obj.Work().IsSelected = selected;
+
+		m_dirtyCBObj = true;
+	}
+
+
 
 	// ディゾルブ設定
 	void SetDissolve(float threshold, const float* range = nullptr, const Math::Vector3* edgeColor = nullptr)
