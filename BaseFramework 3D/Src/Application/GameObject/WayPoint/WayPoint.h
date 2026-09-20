@@ -17,6 +17,14 @@ public:
 	int GetAreaID()const { return m_areaID; }
 	void SetAreaID(const int areaID) { m_areaID = areaID; }
 
+	// Stageからのローカル位置(Inspectorではこちらを編集する)
+	const Math::Vector3& GetLocalPos()const { return m_localPos; }
+	void SetLocalPos(const Math::Vector3& pos) { m_localPos = pos; }
+
+	// Stage(親)のワールド位置・大きさを受け取り、実際の位置に反映する
+	// (WayPointは大きさを持たないため、大きさはオフセット位置のスケーリングにのみ使う)
+	void SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale);
+
 
 	// このWayPointから直接移動できる接続先ID
 	const std::vector<int>& GetLinks() const
@@ -44,6 +52,9 @@ private:
 
 	// 直接移動可能なWayPointのID
 	std::vector<int> m_linkIDs;
+
+	// Stageからのローカル位置
+	Math::Vector3 m_localPos = Math::Vector3::Zero;
 
 	// ウェイポイントのIDを描画する
 	unsigned long    m_wayPointID = {};

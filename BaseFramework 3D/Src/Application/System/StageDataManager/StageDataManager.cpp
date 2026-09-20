@@ -4,6 +4,7 @@
 #include "../../System/WayPointManager/WayPointManager.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../../System/StageLoder/StageLoder.h"
 
 
 bool StageDataManager::Save(const std::string& stageName)
@@ -72,20 +73,39 @@ bool StageDataManager::SaveToFolder(const std::filesystem::path& folder)
 
 	file << stageJson.dump(4);
 
+	// このステージが使用しているステージモデル名を取得
+	// (StageObjectがSaveData()で書き込む"StageModel"を探す。見つからない場合は"Stage01"にフォールバック)
+	std::string stageModelName = "Stage01";
+
+	for (const auto& objectJson : stageJson["Objects"])
+	{
+		if (objectJson.contains("StageModel"))
+		{
+			stageModelName = objectJson["StageModel"].get<std::string>();
+			break;
+		}
+	}
+
+	// AABB/OBB/WayPointは、ステージモデル単位のフォルダーに保存する
+	const std::filesystem::path stageModelDataFolder = StageLoder::Instance().GetAABBCollisionDataPath(stageModelName).parent_path();
+
+	// フォルダーがない場合作成
+	std::filesystem::create_directories(stageModelDataFolder);
+
 	// WayPointを保存
-	if (!WayPointManager::Instance().Save((stageFolder / "WayPointData.json").string()))
+	if (!WayPointManager::Instance().Save(StageLoder::Instance().GetWayPointDataPath(stageModelName).string()))
 	{
 		return false;
 	}
 
 	// AABBを保存
-	if (!AABBCollisionManager::Instance().Save((stageFolder / "AABBCollisionData.json").string()))
+	if (!AABBCollisionManager::Instance().Save(StageLoder::Instance().GetAABBCollisionDataPath(stageModelName).string()))
 	{
 		return false;
 	}
 
 	// OBBを保存
-	if (!OBBCollisionManager::Instance().Save((stageFolder / "OBBCollisionData.json").string()))
+	if (!OBBCollisionManager::Instance().Save(StageLoder::Instance().GetOBBCollisionDataPath(stageModelName).string()))
 	{
 		return false;
 	}
@@ -101,20 +121,9 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 
 	// ステージデータ
 	const std::filesystem::path stageDataPath = stageFolder / "StageData.json";
-	// ウェイポイントデータ
-	const std::filesystem::path wayPointDataPath = stageFolder / "WayPointData.json";
-
-	// AABBの当たり判定データ
-	const std::filesystem::path aabbCollisionDataPath = stageFolder / "AABBCollisionData.json";
-
-	// OBBのデータ
-	const std::filesystem::path obbCollisionDataPath = stageFolder / "OBBCollisionData.json";
 
 	// 読込失敗で現在の編集内容を消さないよう、先に必要ファイルを確認する
-	if (!std::filesystem::exists(stageDataPath) ||
-		!std::filesystem::exists(wayPointDataPath)||
-		!std::filesystem::exists(aabbCollisionDataPath)||
-		!std::filesystem::exists(obbCollisionDataPath))
+	if (!std::filesystem::exists(stageDataPath))
 	{
 		return false;
 	}
@@ -142,6 +151,32 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 	}
 
 	if (!stageJson.contains("Objects") || !stageJson["Objects"].is_array())
+	{
+		return false;
+	}
+
+	// このステージが使用しているステージモデル名を取得
+	// (オブジェクトを生成する前に、jsonデータのまま"StageModel"を持つものを探す。見つからない場合は"Stage01"にフォールバック)
+	std::string stageModelName = "Stage01";
+
+	for (const auto& objectJson : stageJson["Objects"])
+	{
+		if (objectJson.contains("StageModel"))
+		{
+			stageModelName = objectJson["StageModel"].get<std::string>();
+			break;
+		}
+	}
+
+	// AABB/OBB/WayPointは、ステージモデル単位のフォルダーに保存されている
+	const std::filesystem::path wayPointDataPath = StageLoder::Instance().GetWayPointDataPath(stageModelName);
+	const std::filesystem::path aabbCollisionDataPath = StageLoder::Instance().GetAABBCollisionDataPath(stageModelName);
+	const std::filesystem::path obbCollisionDataPath = StageLoder::Instance().GetOBBCollisionDataPath(stageModelName);
+
+	// 読込失敗で現在の編集内容を消さないよう、オブジェクトを生成する前に必要ファイルを確認する
+	if (!std::filesystem::exists(wayPointDataPath) ||
+		!std::filesystem::exists(aabbCollisionDataPath) ||
+		!std::filesystem::exists(obbCollisionDataPath))
 	{
 		return false;
 	}

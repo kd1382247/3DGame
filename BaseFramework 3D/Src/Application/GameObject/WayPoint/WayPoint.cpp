@@ -55,7 +55,14 @@ void WayPoint::DrawDebug()
 void WayPoint::DrawInspector()
 {
 
-	DrawPositionInspector();
+	// 座標変更(Stageからのローカル位置)
+	Math::Vector3 pos = GetLocalPos();
+
+	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
+	{
+		SetLocalPos(pos);
+		EditorManager::Instance().MarkDirty();
+	}
 
 
 	// AreaIDをセット
@@ -149,6 +156,11 @@ void WayPoint::SetID(int id)
 	SetUpDrawID();
 }
 
+void WayPoint::SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale)
+{
+	SetPos(stagePos + m_localPos * stageScale);
+}
+
 void WayPoint::Destroy()
 {
 	WayPointManager::Instance().RemoveWayPoint(GetID());
@@ -185,7 +197,7 @@ bool WayPoint::HasLink(int id) const
 
 void WayPoint::DrawID()
 {
-	
+
 	for (int i = 0; i < m_renderDigitCount; i++)
 	{
 
@@ -204,7 +216,7 @@ void WayPoint::SetUpDrawID()
 	// 配列に各桁の数値を格納
 	m_wayPointID = GetID();
 	int tmp = m_wayPointID;
-	
+
 	for (int i = 0; i < maxDigits; ++i)
 	{
 		// 下位の桁から抽出し、配列に格納

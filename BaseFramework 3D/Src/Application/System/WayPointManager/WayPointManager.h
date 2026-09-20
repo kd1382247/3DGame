@@ -51,6 +51,9 @@ public:
 		return m_spWayPoints;
 	}
 
+	// Stage(親)のワールド位置・大きさを、管理している全WayPointに反映する
+	void SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale);
+
 private:
 
 	struct SearchNode

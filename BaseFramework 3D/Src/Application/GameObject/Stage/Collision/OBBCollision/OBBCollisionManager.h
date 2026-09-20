@@ -42,6 +42,9 @@ public:
 	// デバッグ表示
 	void DrawDebug();
 
+	// Stage(親)のワールド位置・大きさを、管理している全OBBに反映する
+	void SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale);
+
 private:
 
 	void Init();

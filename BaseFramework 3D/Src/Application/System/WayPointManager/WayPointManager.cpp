@@ -253,7 +253,7 @@ std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
 		// ゴールのIDと同じか
 		if (currentId == goalId)
 		{
-			// 
+			//
 			return ReconstructPath(searchNodes, goalId);
 		}
 
@@ -431,7 +431,8 @@ bool WayPointManager::Save(const std::string& filePath)
 
 		wayPointJson["Name"] = wayPoint->GetObjectName();
 
-		const auto& pos = wayPoint->GetPos();
+		// 座標(Stageからのローカル位置)
+		const auto& pos = wayPoint->GetLocalPos();
 
 		wayPointJson["Position"]["x"] = pos.x;
 		wayPointJson["Position"]["y"] = pos.y;
@@ -527,8 +528,8 @@ bool WayPointManager::Load(const std::string& filePath)
 		wayPoint->SetID(wpJson["ID"].get<int>());
 		//Name
 		wayPoint->SetObjectName(wpJson["Name"].get<std::string>());
-		//Position
-		wayPoint->SetPos({
+		//Position(Stageからのローカル位置)
+		wayPoint->SetLocalPos({
 			wpJson["Position"]["x"].get<float>(),
 			wpJson["Position"]["y"].get<float>(),
 			wpJson["Position"]["z"].get<float>()
@@ -613,3 +614,15 @@ std::vector<int> WayPointManager::ReconstructPath(const std::unordered_map<int, 
 	return path;
 }
 
+void WayPointManager::SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale)
+{
+	for (const auto& point : m_spWayPoints)
+	{
+		if (!point)
+		{
+			continue;
+		}
+
+		point->SetStageTransform(stagePos, stageScale);
+	}
+}

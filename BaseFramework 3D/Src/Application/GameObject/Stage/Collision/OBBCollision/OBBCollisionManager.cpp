@@ -97,19 +97,19 @@ bool OBBCollisionManager::Save(const std::string& filePath)
 
 		OBBCollisionJson["Name"] = obb->GetObjectName();
 
-		// 座標
-		const auto& pos = obb->GetPos();
+		// 座標(Stageからのローカル位置)
+		const auto& pos = obb->GetLocalPos();
 		OBBCollisionJson["Position"]["x"] = pos.x;
 		OBBCollisionJson["Position"]["y"] = pos.y;
 		OBBCollisionJson["Position"]["z"] = pos.z;
 
-		// 大きさ
-		const auto& scale = obb->GetScale();
+		// 大きさ(Stageからのローカル大きさ)
+		const auto& scale = obb->GetLocalScale();
 		OBBCollisionJson["Scale"]["x"] = scale.x;
 		OBBCollisionJson["Scale"]["y"] = scale.y;
 		OBBCollisionJson["Scale"]["z"] = scale.z;
 
-		// 回転
+		// 回転(Stageには追従しない、OBB自身の回転)
 		const auto& rotation = obb->GetRotation();
 		OBBCollisionJson["Rotation"]["x"] = rotation.x;
 		OBBCollisionJson["Rotation"]["y"] = rotation.y;
@@ -201,21 +201,21 @@ bool OBBCollisionManager::Load(const std::string& filePath)
 		obb->SetID(obbJson["ID"].get<int>());
 		// 名前
 		obb->SetObjectName(obbJson["Name"].get<std::string>());
-		// 座標
-		obb->SetPos({
+		// 座標(Stageからのローカル位置)
+		obb->SetLocalPos({
 			obbJson["Position"]["x"].get<float>(),
 			obbJson["Position"]["y"].get<float>(),
 			obbJson["Position"]["z"].get<float>()
 			});
 
-		// 大きさ
-		obb->SetScale({
+		// 大きさ(Stageからのローカル大きさ)
+		obb->SetLocalScale({
 			obbJson["Scale"]["x"].get<float>(),
 			obbJson["Scale"]["y"].get<float>(),
 			obbJson["Scale"]["z"].get<float>()
 			});
 
-		// 回転
+		// 回転(Stageには追従しない、OBB自身の回転)
 		obb->SetRotation({
 			obbJson["Rotation"]["x"].get<float>(),
 			obbJson["Rotation"]["y"].get<float>(),
@@ -253,6 +253,19 @@ void OBBCollisionManager::DrawDebug()
 	{
 		if (!obb) { continue; }
 		obb->DrawDebug();
+	}
+}
+
+void OBBCollisionManager::SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale)
+{
+	for (const auto& obb : m_spOBBCollisionList)
+	{
+		if (!obb)
+		{
+			continue;
+		}
+
+		obb->SetStageTransform(stagePos, stageScale);
 	}
 }
 

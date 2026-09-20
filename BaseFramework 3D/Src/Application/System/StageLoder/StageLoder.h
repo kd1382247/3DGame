@@ -25,6 +25,10 @@ public:
 	// WayPointデータ(json)のパス
 	std::filesystem::path GetWayPointDataPath(const std::string& modelName) const;
 
+
+	// 現在存在するステージモデル名の一覧を取得(Asset/Models/Stage/直下のフォルダー名)
+	std::vector<std::string> GetAvailableModelNames() const;
+
 private:
 
 	// モデル置き場のフォルダー "Asset/Models/Stage/<modelName>"

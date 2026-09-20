@@ -97,14 +97,14 @@ bool AABBCollisionManager::Save(const std::string& filePath)
 
 		AABBCollisionJson["Name"] = wall->GetObjectName();
 
-		// 座標
-		const auto& pos = wall->GetPos();
+		// 座標(Stageからのローカル位置)
+		const auto& pos = wall->GetLocalPos();
 		AABBCollisionJson["Position"]["x"] = pos.x;
 		AABBCollisionJson["Position"]["y"] = pos.y;
 		AABBCollisionJson["Position"]["z"] = pos.z;
 
-		// 大きさ
-		const auto& scale = wall->GetScale();
+		// 大きさ(Stageからのローカル大きさ)
+		const auto& scale = wall->GetLocalScale();
 		AABBCollisionJson["Scale"]["x"] = scale.x;
 		AABBCollisionJson["Scale"]["y"] = scale.y;
 		AABBCollisionJson["Scale"]["z"] = scale.z;
@@ -195,15 +195,15 @@ bool AABBCollisionManager::Load(const std::string& filePath)
 		wall->SetID(wallJson["ID"].get<int>());
 		// 名前
 		wall->SetObjectName(wallJson["Name"].get<std::string>());
-		// 座標
-		wall->SetPos({
+		// 座標(Stageからのローカル位置)
+		wall->SetLocalPos({
 			wallJson["Position"]["x"].get<float>(),
 			wallJson["Position"]["y"].get<float>(),
 			wallJson["Position"]["z"].get<float>()
 			});
 
-		// 大きさ
-		wall->SetScale({
+		// 大きさ(Stageからのローカル大きさ)
+		wall->SetLocalScale({
 			wallJson["Scale"]["x"].get<float>(),
 			wallJson["Scale"]["y"].get<float>(),
 			wallJson["Scale"]["z"].get<float>()
@@ -238,6 +238,19 @@ void AABBCollisionManager::DrawDebug()
 	{
 		if (!wall){continue;}
 		wall->DrawDebug();
+	}
+}
+
+void AABBCollisionManager::SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale)
+{
+	for (const auto& wall : m_spAABBCollisionList)
+	{
+		if (!wall)
+		{
+			continue;
+		}
+
+		wall->SetStageTransform(stagePos, stageScale);
 	}
 }
 
