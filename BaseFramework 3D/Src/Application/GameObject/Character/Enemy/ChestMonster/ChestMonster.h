@@ -22,7 +22,6 @@ public:
 
 	void SetUpReference()override;
 
-
 	bool IsSpawnEnemy() const { return m_isSpawnEnemy; }
 
 	void SetIsSpawnEnemy(const bool flg) { m_isSpawnEnemy = flg; }
@@ -82,7 +81,7 @@ private:
 	// パラメータクラス
 	ChestMonsterParameter   m_parameter;
 
-	Enemes m_enemes;
+	Enemes m_enemes = {};
 
 	bool  m_isSpawnEnemy = false;
 

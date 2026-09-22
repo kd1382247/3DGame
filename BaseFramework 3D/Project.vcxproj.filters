@@ -124,14 +124,8 @@
     <Filter Include="Src\Application\GameObject\Character\Enemy">
       <UniqueIdentifier>{7b620f96-ce03-4ae1-ab71-113b17281ddb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Beholder">
-      <UniqueIdentifier>{58f20320-36ea-4b0f-9c01-69e560e9c046}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\Mushroom">
       <UniqueIdentifier>{6c1cc284-3c18-439f-a675-319b1e708ce8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Golem">
-      <UniqueIdentifier>{46885049-651e-49a3-96d7-aed3e992e9ba}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\StarFish">
       <UniqueIdentifier>{6344aee2-47e8-4c9b-9b77-3d3a301e0468}</UniqueIdentifier>
@@ -148,32 +142,17 @@
     <Filter Include="Src\Application\GameObject\Character\Enemy\Cactas">
       <UniqueIdentifier>{2d5abb5e-4899-49cb-91fb-d824c32623b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Mage">
-      <UniqueIdentifier>{eaf54129-a2a9-41ad-8f7c-9ef0d469c826}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\Bomb">
       <UniqueIdentifier>{3372bf5d-a499-4499-8a2c-41eb1448dfae}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Animation">
       <UniqueIdentifier>{6d57d8b3-585c-4309-8450-bb3f3f38e74f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Beholder\State">
-      <UniqueIdentifier>{f1ede9f3-b37f-49c1-a607-e61d608bb0e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Beholder\Animation">
-      <UniqueIdentifier>{4969b231-4fca-4090-8145-cbc8dfa7b6ae}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Animation">
       <UniqueIdentifier>{6bc07782-041b-4ff9-9cc3-154680159450}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\ChestMonster\State">
       <UniqueIdentifier>{e3038278-aa07-4f1f-9b04-bb4e3b52c144}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Golem\Animation">
-      <UniqueIdentifier>{4d747066-9e93-4be4-af04-5da828cb55fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Golem\State">
-      <UniqueIdentifier>{1ed6c1db-5e74-47e6-ae9f-191f71081c6e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\Mushroom\Animation">
       <UniqueIdentifier>{81072ce7-0483-41cd-911b-23e049717b21}</UniqueIdentifier>
@@ -186,12 +165,6 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\Cactas\State">
       <UniqueIdentifier>{f620db00-62a6-444f-942a-bf969c7a5c00}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Mage\Animation">
-      <UniqueIdentifier>{68bc63e4-39d9-4ab2-9d9a-98dd24b2cb21}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Mage\State">
-      <UniqueIdentifier>{b395fe95-ca3d-4c28-9ee4-74a4bba6534a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\Bomb\Animation">
       <UniqueIdentifier>{00640055-97fd-4524-8d09-01de82181094}</UniqueIdentifier>
@@ -220,9 +193,6 @@
     <Filter Include="Src\Application\GameObject\Character\Player\Parameter">
       <UniqueIdentifier>{0b2704a4-33e4-4046-906d-7686b3e8e0cc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Beholder\Parameter">
-      <UniqueIdentifier>{cfc78af4-463c-4a73-945c-ae2d237dacf6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\Bomb\Parameter">
       <UniqueIdentifier>{9f779fdb-fe34-417a-b703-6f2b54ed82d6}</UniqueIdentifier>
     </Filter>
@@ -231,12 +201,6 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter">
       <UniqueIdentifier>{4a722537-2c50-483e-af9f-10947ea5e0ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Golem\Parameter">
-      <UniqueIdentifier>{a570494e-4c01-4604-a6ee-96075e778b22}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Enemy\Mage\Parameter">
-      <UniqueIdentifier>{a80b4287-37a2-46d3-b777-86d4d45871ad}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Enemy\Mushroom\Parameter">
       <UniqueIdentifier>{a8e012e5-a9a2-4f6d-a77b-33e3b06b2155}</UniqueIdentifier>
@@ -384,6 +348,57 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision">
       <UniqueIdentifier>{ffed1a1d-6144-4899-84c8-5809af951ff7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\EnergyBullet">
+      <UniqueIdentifier>{c55db896-6e19-40e0-a43b-75d6cd80b3bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss">
+      <UniqueIdentifier>{a0151253-f995-407e-8695-e2aed66ae834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Beholder">
+      <UniqueIdentifier>{58f20320-36ea-4b0f-9c01-69e560e9c046}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\State">
+      <UniqueIdentifier>{f1ede9f3-b37f-49c1-a607-e61d608bb0e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\State\States">
+      <UniqueIdentifier>{a2248f75-f8c3-4a61-bf79-6ffdad5015b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\Animation">
+      <UniqueIdentifier>{4969b231-4fca-4090-8145-cbc8dfa7b6ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\Parameter">
+      <UniqueIdentifier>{cfc78af4-463c-4a73-945c-ae2d237dacf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Golem">
+      <UniqueIdentifier>{46885049-651e-49a3-96d7-aed3e992e9ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Golem\Animation">
+      <UniqueIdentifier>{4d747066-9e93-4be4-af04-5da828cb55fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Golem\State">
+      <UniqueIdentifier>{1ed6c1db-5e74-47e6-ae9f-191f71081c6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Golem\State\States">
+      <UniqueIdentifier>{2367637c-26f3-47de-8888-135177cfabe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Golem\Parameter">
+      <UniqueIdentifier>{a570494e-4c01-4604-a6ee-96075e778b22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Mage">
+      <UniqueIdentifier>{eaf54129-a2a9-41ad-8f7c-9ef0d469c826}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Mage\Animation">
+      <UniqueIdentifier>{68bc63e4-39d9-4ab2-9d9a-98dd24b2cb21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Mage\State">
+      <UniqueIdentifier>{b395fe95-ca3d-4c28-9ee4-74a4bba6534a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Mage\State\States">
+      <UniqueIdentifier>{58a0c92b-e36f-43ee-815e-3b2be1aaadc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Mage\Parameter">
+      <UniqueIdentifier>{a80b4287-37a2-46d3-b777-86d4d45871ad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -600,14 +615,8 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\EnemyBase.h">
       <Filter>Src\Application\GameObject\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Beholder\Beholder.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Beholder</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\Mushroom.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Mushroom</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Golem\Golem.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Golem</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\ChestMonster.h">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster</Filter>
@@ -624,41 +633,20 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\Cactas.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Cactas</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mage\Mage.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Mage</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Bomb\Bomb.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Bomb</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Animation\AnimationBase.h">
       <Filter>Src\Application\GameObject\Character\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Beholder\Animation\BeholderAnimation.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Beholder\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Beholder\State\BeholderState.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Beholder\State</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Animation\ChestMonsterAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Golem\Animation\GolemAnimation.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Golem\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Golem\State\GolemState.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Golem\State</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\Animation\MushroomAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Cactas\Animation\CactasAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Cactas\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mage\Animation\MageAnimation.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Mage\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mage\State\MageState.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Mage\State</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Bomb\Animation\BombAnimation.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Bomb\Animation</Filter>
@@ -681,9 +669,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.h">
       <Filter>Src\Application\GameObject\Character\Player\Parameter</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Beholder\Parameter\BeholderParameter.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Beholder\Parameter</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Bomb\Parameter\BombParameter.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Bomb\Parameter</Filter>
     </ClInclude>
@@ -692,12 +677,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter\ChestMonsterParameter.h">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Golem\Parameter\GolemParameter.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Golem\Parameter</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mage\Parameter\MageParameter.h">
-      <Filter>Src\Application\GameObject\Character\Enemy\Mage\Parameter</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\Mushroom\Parameter\MushroomParameter.h">
       <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\Parameter</Filter>
@@ -1002,6 +981,60 @@
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.h">
       <Filter>Src\Application\GameObject\Stage\Collision\OBBCollision</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\EnergyBullet\EnergyBullet.h">
+      <Filter>Src\Application\GameObject\EnergyBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\EnergyBullet\EnergyBulletManager.h">
+      <Filter>Src\Application\GameObject\EnergyBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\BossBase.h">
+      <Filter>Src\Application\GameObject\Character\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\Animation\BeholderAnimation.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\Parameter\BeholderParameter.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\BeholderState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\Beholder.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Golem\Animation\GolemAnimation.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Golem\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Golem\Parameter\GolemParameter.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Golem\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Golem\State\GolemState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Golem\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Golem\State\States\GolemNormalState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Golem\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Golem\Golem.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Golem</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\Animation\MageAnimation.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\Parameter\MageParameter.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\MageState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNormalState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\Mage.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1184,14 +1217,8 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\EnemyBase.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Beholder\Beholder.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Beholder</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\Mushroom.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Mushroom</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Golem\Golem.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Golem</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\ChestMonster.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster</Filter>
@@ -1208,32 +1235,20 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\Cactas.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Cactas</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mage\Mage.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Mage</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Bomb\Bomb.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Bomb</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Animation\AnimationBase.cpp">
       <Filter>Src\Application\GameObject\Character\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Beholder\Animation\BeholderAnimation.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Beholder\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Animation\ChestMonsterAnimation.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Golem\Animation\GolemAnimation.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Golem\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\Animation\MushroomAnimation.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Cactas\Animation\CactasAnimation.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Cactas\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mage\Animation\MageAnimation.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Mage\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Bomb\Animation\BombAnimation.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Bomb\Animation</Filter>
@@ -1250,9 +1265,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.cpp">
       <Filter>Src\Application\GameObject\Character\Player\Parameter</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Beholder\Parameter\BeholderParameter.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Beholder\Parameter</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Bomb\Parameter\BombParameter.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Bomb\Parameter</Filter>
     </ClCompile>
@@ -1261,12 +1273,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter\ChestMonsterParameter.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster\Parameter</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Golem\Parameter\GolemParameter.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Golem\Parameter</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mage\Parameter\MageParameter.cpp">
-      <Filter>Src\Application\GameObject\Character\Enemy\Mage\Parameter</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\Mushroom\Parameter\MushroomParameter.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\Mushroom\Parameter</Filter>
@@ -1540,6 +1546,51 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.cpp">
       <Filter>Src\Application\GameObject\Stage\Collision\OBBCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\EnergyBullet\EnergyBullet.cpp">
+      <Filter>Src\Application\GameObject\EnergyBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\EnergyBullet\EnergyBulletManager.cpp">
+      <Filter>Src\Application\GameObject\EnergyBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\BossBase.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\Animation\BeholderAnimation.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\Parameter\BeholderParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\Beholder.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Golem\Animation\GolemAnimation.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Golem\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Golem\Parameter\GolemParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Golem\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Golem\Golem.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Golem</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Golem\State\States\GolemNormalState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Golem\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\Animation\MageAnimation.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\Parameter\MageParameter.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\Mage.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNormalState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

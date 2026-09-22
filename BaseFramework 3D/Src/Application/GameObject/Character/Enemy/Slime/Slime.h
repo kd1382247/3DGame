@@ -12,11 +12,8 @@ class Slime :public EnemyBase
 {
 public:
 
-	enum class SlimeSize
-	{
-		Large,
-		Small
-	};
+	// パラメータをどのサイズで引くか(定義はSlimeParameter側)
+	using SlimeSize = SlimeParameter::SlimeSize;
 
 	Slime() {}
 	~Slime()override {}
@@ -28,14 +25,16 @@ public:
 
 	void DrawDebug()override;
 
+	// スライムの大きさに応じた拡大率を固定で適用する(引数のScale値は無視する)
+	void SetScale(const Math::Vector3& scale)override;
 
 	bool IsAttack()const { return m_attackFlg; }
 	bool IsLaunch()const { return m_launchFlg; }
 
 	// パラメータのゲッター
-	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
-	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
-	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
+	int GetMaxHP()const override { return m_parameter.GetParam(m_slimeSize).m_maxHP; }
+	float GetTurnSpeed()const override { return m_parameter.GetParam(m_slimeSize).m_turnSpeed; }
+	float GetMoveSpeed()const override { return m_parameter.GetParam(m_slimeSize).m_moveSpeed; }
 
 
 	bool IsAnimationFinished()const { return m_animation.IsFinished(); }

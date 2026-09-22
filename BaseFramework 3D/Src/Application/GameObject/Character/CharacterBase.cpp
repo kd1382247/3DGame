@@ -49,9 +49,8 @@ void CharacterBase::DrawLit()
 		return;
 	}
 
-	
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos() + m_visualOffset);
-	Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_charaAngle));
+	Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(GetRotation().y));
 	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
 
 	Math::Matrix localMat = scaleMat * rotYMat * transMat;
@@ -78,6 +77,7 @@ void CharacterBase::GenerateDepthMapFromLight()
 
 void CharacterBase::DrawInspector()
 {
+
 	DrawBasicInspecter();
 
 	ImGui::Separator();
@@ -87,6 +87,21 @@ void CharacterBase::DrawInspector()
 	{
 		EditorManager::Instance().MarkDirty();
 	}
+}
+
+void CharacterBase::SetRotation(const Math::Vector3& rotation)
+{
+	
+	// キャラは基本Y軸回転しかしないのでY軸の回転行列を作る
+	Math::Matrix rotYMat =
+		Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(rotation.y));
+
+	Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos());
+	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
+
+	m_mWorld = scaleMat * rotYMat * transMat;
+
+	m_rotation = Math::Vector3(0.0f, rotation.y, 0.0f);
 }
 
 DirectX::BoundingSphere CharacterBase::GetBumpSphere() const
@@ -137,9 +152,27 @@ void CharacterBase::Release()
 	m_spModel = nullptr;
 }
 
+void CharacterBase::InitCharacterModel(const std::string& modelPath, const std::string& colliderName, const Math::Vector3& colliderOffset, float colliderRadius, const std::string& objectName)
+{
+	m_spModel = std::make_shared<KdModelWork>();
+	m_spModel->SetModelData(modelPath);
+
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape(colliderName, colliderOffset, colliderRadius, KdCollider::TypeBump);
+
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+	// オブジェクト名セット
+	SetObjectName(objectName);
+}
+
+void CharacterBase::DrawBumpDebugSphere(const Math::Vector3& offset, float radius)
+{
+	m_pDebugWire->AddDebugSphere(GetPos() + offset, radius, kRedColor);
+}
+
 void CharacterBase::UpdateFacingDirection()
 {
-
 
 	Math::Vector3 nowDir = m_mWorld.Backward();
 	nowDir.y = 0.0f;
@@ -164,6 +197,8 @@ void CharacterBase::UpdateFacingDirection()
 	// 角度に変換
 	float angle = DirectX::XMConvertToDegrees(acos(dot));
 
+	float rotationY = GetRotation().y;
+
 	// 少しでも回転する必要があったら
 	if (angle >= 0.1f)
 	{
@@ -180,31 +215,32 @@ void CharacterBase::UpdateFacingDirection()
 		if (cross.y >= 0)
 		{
 			// 右回転
-			m_charaAngle += angle;
+			rotationY += angle;
 		}
 		else
 		{
 			// 左回転
-			m_charaAngle -= angle;
+			rotationY -= angle;
 		}
 
 		// 角度を循環
-		if (m_charaAngle >= 360)
+		if (rotationY >= 360)
 		{
-			m_charaAngle -= 360;
+			rotationY -= 360;
 		}
-		else if (m_charaAngle < 0)
+		else if (rotationY < 0)
 		{
-			m_charaAngle += 360;
+			rotationY += 360;
 		}
 	}
 
+	SetRotation(Math::Vector3(0.0f, rotationY, 0.0f));
 }
 
 void CharacterBase::UpdateMatrix()
 {
 	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
-	Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_charaAngle));
+	Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(GetRotation().y));
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos());
 
 	m_mWorld = scaleMat * rotYMat * transMat;

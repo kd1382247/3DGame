@@ -20,10 +20,13 @@ public:
 	void Update()		override;
 	void PostUpdate()	override;
 
+
 	void DrawLit()		override;
 	void GenerateDepthMapFromLight()	override;
 
 	void DrawInspector()override;
+
+	void SetRotation(const Math::Vector3& rotation)override;
 
 	// スフィア情報
 	DirectX::BoundingSphere GetBumpSphere()const;
@@ -64,9 +67,11 @@ public:
 	void AddKnockBack(const Math::Vector3& dir, const float power);
 
 	int         GetCurrentHP()const { return m_hp; }
-	virtual int GetMaxHP()const = 0;
 
+
+	virtual int GetMaxHP()      const = 0;
 	virtual float GetTurnSpeed()const = 0;
+	virtual float GetMoveSpeed()const = 0;
 
 	// キャラの移動量をセット
 	void          ClearPendingMove(const Math::Vector3& move) { m_pendingMove = move; }
@@ -108,9 +113,16 @@ private:
 
 protected:
 
+	// キャラクターの初期化で共通する処理をまとめる
+	// (モデル生成・当たり判定コライダー登録・デバッグワイヤー生成・オブジェクト名設定)
+	void InitCharacterModel(const std::string& modelPath, const std::string& colliderName,
+		const Math::Vector3& colliderOffset, float colliderRadius, const std::string& objectName);
+
+	// デバッグ用の当たり判定球を描画する
+	void DrawBumpDebugSphere(const Math::Vector3& offset, float radius);
+
 
 	Math::Vector3                 m_moveDir = Math::Vector3::Zero;
-
 
 	std::shared_ptr<KdModelWork>  m_spModel = nullptr;
 
@@ -124,8 +136,6 @@ protected:
 
 
 	float         m_hp = {};
-
-	float         m_charaAngle = 0;
 
 	// エリアID
 	int m_currentAreaID = 0;

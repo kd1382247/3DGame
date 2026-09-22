@@ -4,8 +4,6 @@
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 #include"../../../FlyText/FlyTextManager.h"
 
-#include"../../Player/Player.h"
-
 #include"State/States/MushroomNormalState.h"
 #include"State/States/MushroomDamageState.h"
 #include"State/States/MushroomDieState.h"
@@ -14,7 +12,14 @@ void Mushroom::Init()
 {
 	if (!m_spModel)
 	{
-		InitEnemyModel("Asset/Models/Enemy/Mushroom/MushroomSmile/MushroomSmile.gltf", "Mushroom",
+		// 一定確率でAngryタイプを抽選する
+		LotteryMushroomType();
+
+		const std::string modelPath = (m_mushroomType == MushroomType::Angry) ?
+			"Asset/Models/Enemy/Mushroom/MushroomAngry/MushroomAngry.gltf" :
+			"Asset/Models/Enemy/Mushroom/MushroomSmile/MushroomSmile.gltf";
+
+		InitCharacterModel(modelPath, "Mushroom",
 			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "Mushroom");
 
 		// アニメーションクラス初期化
@@ -23,7 +28,7 @@ void Mushroom::Init()
 		// パラメータクラス初期化
 		m_parameter.Init();
 
-		m_hp = m_parameter.GetParam().m_maxHP;
+		m_hp = m_parameter.GetParam(m_mushroomType).m_maxHP;
 
 		m_attackCooldownDuration = 1.0f;
 
@@ -163,5 +168,14 @@ void Mushroom::SetAttackTiming()
 
 void Mushroom::UpdateAttackCollision()
 {
-	UpdateMeleeAttackCollision(0.05f);
+	UpdateMeleeAttackCollision(0.05f, m_parameter.GetParam(m_mushroomType).m_attackPower);
+}
+
+void Mushroom::LotteryMushroomType()
+{
+	// Angryタイプになる確率(%)
+	constexpr float kAngryRate = 30.0f;
+
+	m_mushroomType = (KdRandom::GetFloat(0.0f, 100.0f) < kAngryRate) ?
+		MushroomType::Angry : MushroomType::Smile;
 }

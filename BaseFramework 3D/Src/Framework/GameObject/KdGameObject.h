@@ -59,9 +59,8 @@ public:
 	virtual Math::Vector3 GetScale() const;
 
 	// 回転角度
-	void SetRotation(const Math::Vector3& rotation);
-	Math::Vector3 GetRotation()const { return m_rotation; }
-
+	virtual void SetRotation(const Math::Vector3& rotation);
+	 Math::Vector3 GetRotation()const { return m_rotation; }
 
 	const Math::Matrix& GetMatrix() const { return m_mWorld; }
 

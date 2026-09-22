@@ -18,7 +18,7 @@ void ChestMonster::Init()
 {
 	if (!m_spModel)
 	{
-		InitEnemyModel("Asset/Models/Enemy/ChestMonster/ChestMonster.gltf", "ChestMonster",
+		InitCharacterModel("Asset/Models/Enemy/ChestMonster/ChestMonster.gltf", "ChestMonster",
 			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "ChestMonster");
 
 		// アニメーションクラス初期化
@@ -200,6 +200,8 @@ void ChestMonster::CreateEnemy(const std::string& enemyName)
 	enemy->Init();
 	enemy->SetPos(GetPos()+Math::Vector3(0,2,0));
 	enemy->SetPrevPos(GetPos() + Math::Vector3(0, 2, 0));
+	enemy->SetRotation(GetRotation());
+
 
 	float power = 0.2;
 

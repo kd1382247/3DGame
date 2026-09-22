@@ -18,7 +18,7 @@ void Slime::Init()
 {
 	if (!m_spModel)
 	{
-		InitEnemyModel("Asset/Models/Enemy/Slime/Slime.gltf", "Slime",
+		InitCharacterModel("Asset/Models/Enemy/Slime/Slime.gltf", "Slime",
 			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "Slime");
 
 		// アニメーションクラス初期化
@@ -30,22 +30,8 @@ void Slime::Init()
 		// パラメータクラス初期化
 		m_parameter.Init();
 
-		switch (GetSlimeSize())
-		{
-		case SlimeSize::Large:
-
-			SetScale(1.5f);
-
-			break;
-		case SlimeSize::Small:
-
-			SetScale(1.0f);
-
-			break;
-		}
-
 		m_attackCooldownDuration = 0.5f;
-		m_hp = m_parameter.GetParam().m_maxHP;
+		m_hp = m_parameter.GetParam(m_slimeSize).m_maxHP;
 	}
 
 	EnemyBase::Init();
@@ -86,6 +72,14 @@ void Slime::DrawDebug()
 {
 	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
 	//m_pDebugWire->Draw();
+}
+
+void Slime::SetScale(const Math::Vector3&)
+{
+	// スライムの大きさはステージ側のScale値に関わらず、常にm_slimeSizeに応じた固定値にする
+	const float scale = m_parameter.GetParam(m_slimeSize).m_scale;
+
+	KdGameObject::SetScale(Math::Vector3(scale));
 }
 
 void Slime::DrawParameterInspector()
@@ -129,6 +123,8 @@ void Slime::Split()
 		slime->SetSlimeSize(SlimeSize::Small);
 		slime->Init();
 		slime->SetPos(GetPos());
+		slime->SetPrevPos(GetPos());
+		slime->SetRotation(GetRotation());
 		slime->SetUpReference();
 
 		slime->Launch(m_launchDir[i]*0.05f, 0.3);
@@ -176,7 +172,7 @@ void Slime::SetAttackTiming()
 
 void Slime::UpdateAttackCollision()
 {
-	UpdateMeleeAttackCollision(0.05f);
+	UpdateMeleeAttackCollision(0.05f, m_parameter.GetParam(m_slimeSize).m_attackPower);
 }
 
 void Slime::OnHit(const AttackInfo attackInfo)

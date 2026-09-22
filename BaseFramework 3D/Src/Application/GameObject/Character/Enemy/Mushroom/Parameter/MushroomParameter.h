@@ -14,7 +14,15 @@ public:
 		float m_turnSpeed = 12.0f;
 	};
 
-	Parameter GetParam() const{ return m_param; }
+	// Mushroomのタイプ(パラメータをこのタイプごとに切り替える)
+	enum class MushroomType
+	{
+		Smile,
+		Angry
+	};
+
+	// タイプを指定してパラメータを取得
+	Parameter GetParam(const MushroomType type)const;
 
 	void Init();
 
@@ -26,8 +34,8 @@ private:
 	void SaveToJson();
 	void LoadFromJson();
 
-	Parameter m_param = {};
+	Parameter m_paramSmile = {};
+	Parameter m_paramAngry = {};
 };
-
 
 

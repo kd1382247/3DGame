@@ -20,7 +20,7 @@ void Cactas::Init()
 {
 	if (!m_spModel)
 	{
-		InitEnemyModel("Asset/Models/Enemy/Cactas/Cactas.gltf", "Cactas",
+		InitCharacterModel("Asset/Models/Enemy/Cactas/Cactas.gltf", "Cactas",
 			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "Cactas");
 
 		// アニメーションクラス初期化

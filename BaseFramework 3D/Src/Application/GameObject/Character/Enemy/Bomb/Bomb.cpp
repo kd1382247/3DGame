@@ -18,7 +18,7 @@ void Bomb::Init()
 {
 	if (!m_spModel)
 	{
-		InitEnemyModel("Asset/Models/Enemy/Bomb/Bomb.gltf", "Bomb",
+		InitCharacterModel("Asset/Models/Enemy/Bomb/Bomb.gltf", "Bomb",
 			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "Bomb");
 
 		// アニメーションクラス初期化

@@ -12,6 +12,9 @@ class Mushroom :public EnemyBase
 {
 public:
 
+	// パラメータをどのタイプで引くか(定義はMushroomParameter側)
+	using MushroomType = MushroomParameter::MushroomType;
+
 	Mushroom() {}
 	~Mushroom()override {}
 
@@ -28,9 +31,9 @@ public:
 
 
 	// パラメータのゲッター
-	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
-	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
-	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
+	int GetMaxHP()const override { return m_parameter.GetParam(m_mushroomType).m_maxHP; }
+	float GetTurnSpeed()const override { return m_parameter.GetParam(m_mushroomType).m_turnSpeed; }
+	float GetMoveSpeed()const override { return m_parameter.GetParam(m_mushroomType).m_moveSpeed; }
 
 	void PlayAnimation(MushroomAnimationType type);
 	void RePlayAnimation(MushroomAnimationType type);
@@ -42,6 +45,9 @@ public:
 	void EndAttack();
 
 	void UpdateLaunch();
+
+	// 抽選で決まったタイプ(Smile/Angry)を取得
+	MushroomType GetMushroomType()const { return m_mushroomType; }
 
 	void OnHit(const AttackInfo attackInfo)override;
 
@@ -59,7 +65,13 @@ private:
 
 	void SetAttackTiming();
 
+	// 一定確率でAngryタイプを抽選する
+	void LotteryMushroomType();
+
 private:
+
+	// 抽選で決まったMushroomのタイプ
+	MushroomType m_mushroomType = MushroomType::Smile;
 
 	// アニメーションクラス
 	MushroomAnimation   m_animation;

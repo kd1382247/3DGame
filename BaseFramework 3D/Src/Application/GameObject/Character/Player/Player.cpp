@@ -20,18 +20,14 @@ void Player::Init()
 {
 	if (!m_spModel)
 	{
-		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Player/Player.gltf");
 
-		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape
-		("Player",Math::Vector3(0,0.5,0),0.5,KdCollider::TypeBump);
-
-		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+		InitCharacterModel("Asset/Models/Player/Player.gltf", "Player"
+			, Math::Vector3(0, 0.5, 0), 0.5, "Player");
 
 		// オブジェクト名セット
 		SetObjectName("Player");
 
+		
 		// カテゴリーをセット
 		SetObjectCategory(ObjectCategory::Character);
 
@@ -60,9 +56,6 @@ void Player::Init()
 
 void Player::Update()
 {
-
-
-
 	// 操作入力
 	UpdateInput();
 
@@ -78,10 +71,8 @@ void Player::Update()
 void Player::PostUpdate()
 {
 
-
-	// アニメーション更新
+	//アニメーション更新
 	UpdateAnimation();
-	
 	
 	CharacterBase::PostUpdate();
 }
@@ -324,6 +315,8 @@ void Player::FacingDirectionToCamera()
 	// 角度に変換
 	float angle = DirectX::XMConvertToDegrees(acos(dot));
 
+	float rotationY = GetRotation().y;
+
 	// 少しでも回転する必要があったら
 	if (angle >= 0.1f)
 	{
@@ -332,14 +325,16 @@ void Player::FacingDirectionToCamera()
 		if (cross.y >= 0)
 		{
 			// 右回転
-			m_charaAngle += angle;
+			rotationY += angle;
 		}
 		else
 		{
 			// 左回転
-			m_charaAngle -= angle;
+			rotationY -= angle;
 		}
 	}
+
+	SetRotation(Math::Vector3(0.0f, rotationY, 0.0f));
 }
 
 void Player::ApplyCameraRelativeMove(float speed)

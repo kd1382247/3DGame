@@ -6,6 +6,18 @@
 #include<fstream>
 
 
+MushroomParameter::Parameter MushroomParameter::GetParam(const MushroomType type) const
+{
+	if (type == MushroomType::Angry)
+	{
+		return m_paramAngry;
+	}
+	else
+	{
+		return m_paramSmile;
+	}
+}
+
 void MushroomParameter::Init()
 {
 	LoadFromJson();
@@ -15,36 +27,75 @@ void MushroomParameter::DrawInspecter()
 {
 	if (ImGui::CollapsingHeader("Parameter", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		// HP
-		if (ImGui::DragInt("MaxHP", &m_param.m_maxHP, 1, 0))
+		if (ImGui::TreeNodeEx("Smile", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			EditorManager::Instance().MarkDirty();
+			// HP
+			if (ImGui::DragInt("MaxHP##Smile", &m_paramSmile.m_maxHP, 1, 0))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			// 攻撃力
+			if (ImGui::DragFloat("AttackPow##Smile", &m_paramSmile.m_attackPower, 1.0f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			// 移動スピード
+			if (ImGui::DragFloat("MoveSpeed##Smile", &m_paramSmile.m_moveSpeed, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			//ジャンプパワー
+			if (ImGui::DragFloat("JumpPow##Smile", &m_paramSmile.m_jumpPow, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			// 回転速度
+			if (ImGui::DragFloat("TurnSpeed##Smile", &m_paramSmile.m_turnSpeed, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			ImGui::TreePop();
 		}
 
-		// 攻撃力
-		if (ImGui::DragFloat("AttackPow", &m_param.m_attackPower, 1.0f, 0.0f))
+		if (ImGui::TreeNodeEx("Angry", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			EditorManager::Instance().MarkDirty();
-		}
+			// HP
+			if (ImGui::DragInt("MaxHP##Angry", &m_paramAngry.m_maxHP, 1, 0))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
 
-		// 移動スピード
-		if (ImGui::DragFloat("MoveSpeed", &m_param.m_moveSpeed, 0.01f, 0.0f))
-		{
-			EditorManager::Instance().MarkDirty();
-		}
+			// 攻撃力
+			if (ImGui::DragFloat("AttackPow##Angry", &m_paramAngry.m_attackPower, 1.0f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
 
-		//ジャンプパワー
-		if (ImGui::DragFloat("JumpPow", &m_param.m_jumpPow, 0.01f, 0.0f))
-		{
-			EditorManager::Instance().MarkDirty();
-		}
+			// 移動スピード
+			if (ImGui::DragFloat("MoveSpeed##Angry", &m_paramAngry.m_moveSpeed, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
 
-		// 回転速度
-		if (ImGui::DragFloat("TurnSpeed", &m_param.m_turnSpeed, 0.01f, 0.0f))
-		{
-			EditorManager::Instance().MarkDirty();
-		}
+			//ジャンプパワー
+			if (ImGui::DragFloat("JumpPow##Angry", &m_paramAngry.m_jumpPow, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
 
+			// 回転速度
+			if (ImGui::DragFloat("TurnSpeed##Angry", &m_paramAngry.m_turnSpeed, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			ImGui::TreePop();
+		}
 
 		// セーブ
 		if (ImGui::Button("SaveToJson"))
@@ -56,13 +107,23 @@ void MushroomParameter::DrawInspecter()
 
 void MushroomParameter::SaveToJson()
 {
+	auto toJson = [](const Parameter& param)
+	{
+		nlohmann::json paramJson;
+
+		paramJson["MaxHP"] = param.m_maxHP;
+		paramJson["AttackPower"] = param.m_attackPower;
+		paramJson["MoveSpeed"] = param.m_moveSpeed;
+		paramJson["JumpPower"] = param.m_jumpPow;
+		paramJson["TurnSpeed"] = param.m_turnSpeed;
+
+		return paramJson;
+	};
+
 	nlohmann::json paramJson;
 
-	paramJson["MaxHP"] = m_param.m_maxHP;
-	paramJson["AttackPower"] = m_param.m_attackPower;
-	paramJson["MoveSpeed"] = m_param.m_moveSpeed;
-	paramJson["JumpPower"] = m_param.m_jumpPow;
-	paramJson["TurnSpeed"] = m_param.m_turnSpeed;
+	paramJson["Smile"] = toJson(m_paramSmile);
+	paramJson["Angry"] = toJson(m_paramAngry);
 
 	std::ofstream file("Asset/Data/Enemy/Mushroom/Parameter/MushroomParameter.json");
 
@@ -93,15 +154,21 @@ void MushroomParameter::LoadFromJson()
 
 	nlohmann::json paramJson;
 
+	auto fromJson = [](const nlohmann::json& json, Parameter& param)
+	{
+		param.m_maxHP = json["MaxHP"].get<int>();
+		param.m_attackPower = json["AttackPower"].get<float>();
+		param.m_moveSpeed = json["MoveSpeed"].get<float>();
+		param.m_jumpPow = json["JumpPower"].get<float>();
+		param.m_turnSpeed = json["TurnSpeed"].get<float>();
+	};
+
 	try
 	{
 		file >> paramJson;
 
-		m_param.m_maxHP = paramJson["MaxHP"].get<int>();
-		m_param.m_attackPower = paramJson["AttackPower"].get<float>();
-		m_param.m_moveSpeed = paramJson["MoveSpeed"].get<float>();
-		m_param.m_jumpPow = paramJson["JumpPower"].get<float>();
-		m_param.m_turnSpeed = paramJson["TurnSpeed"].get<float>();
+		fromJson(paramJson["Smile"], m_paramSmile);
+		fromJson(paramJson["Angry"], m_paramAngry);
 	}
 	catch (const nlohmann::json::exception& e)
 	{

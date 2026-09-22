@@ -97,7 +97,6 @@ void EnemyBase::UpdateDirectChase()
 
 	Math::Vector3 pos = GetPos();
 
-
 	float         moveSpeed = GetMoveSpeed();
 
 	Math::Vector3 targetDir = spPlayer->GetPos() - pos;
@@ -334,6 +333,12 @@ void EnemyBase::SetPath(const std::vector<int>& path,const int goalID)
 
 void EnemyBase::UpdateMove()
 {
+
+	if (m_launchFlg)
+	{
+		return;
+	}
+
 	if (m_knockBack != Math::Vector3::Zero)
 	{
 		// キャラの向き
@@ -471,23 +476,4 @@ bool EnemyBase::UpdateMeleeAttackCollision(float knockBackPower, float damage, f
 	return hit;
 }
 
-void EnemyBase::InitEnemyModel(const std::string& modelPath, const std::string& colliderName,
-	const Math::Vector3& colliderOffset, float colliderRadius, const std::string& objectName)
-{
-	m_spModel = std::make_shared<KdModelWork>();
-	m_spModel->SetModelData(modelPath);
-
-	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape(colliderName, colliderOffset, colliderRadius, KdCollider::TypeBump);
-
-	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
-
-	// オブジェクト名セット
-	SetObjectName(objectName);
-}
-
-void EnemyBase::DrawBumpDebugSphere(const Math::Vector3& offset, float radius)
-{
-	m_pDebugWire->AddDebugSphere(GetPos() + offset, radius, kRedColor);
-}
 

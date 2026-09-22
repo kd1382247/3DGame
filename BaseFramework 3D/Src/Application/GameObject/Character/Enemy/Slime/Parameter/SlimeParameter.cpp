@@ -3,8 +3,18 @@
 #include"../../../../../Editor/EditorManager.h"
 
 #include"json.hpp"
-#include<fstream>
 
+SlimeParameter::Parameter SlimeParameter::GetParam(const SlimeSize size) const
+{
+	if (size == SlimeSize::Large)
+	{
+		return m_paramLarge;
+	}
+	else
+	{
+		return m_paramSmall;
+	}
+}
 
 void SlimeParameter::Init()
 {
@@ -15,36 +25,87 @@ void SlimeParameter::DrawInspecter()
 {
 	if (ImGui::CollapsingHeader("Parameter", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		// HP
-		if (ImGui::DragInt("MaxHP", &m_param.m_maxHP, 1, 0))
+		if (ImGui::TreeNodeEx("Large", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			EditorManager::Instance().MarkDirty();
+			// HP
+			if (ImGui::DragInt("MaxHP##Large", &m_paramLarge.m_maxHP, 1, 0))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			// 攻撃力
+			if (ImGui::DragFloat("AttackPow##Large", &m_paramLarge.m_attackPower, 1.0f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			// 移動スピード
+			if (ImGui::DragFloat("MoveSpeed##Large", &m_paramLarge.m_moveSpeed, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			//ジャンプパワー
+			if (ImGui::DragFloat("JumpPow##Large", &m_paramLarge.m_jumpPow, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			// 回転速度
+			if (ImGui::DragFloat("TurnSpeed##Large", &m_paramLarge.m_turnSpeed, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			// 拡大率
+			if (ImGui::DragFloat("Scale##Large", &m_paramLarge.m_scale, 0.01f, 0.0001f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			ImGui::TreePop();
 		}
 
-		// 攻撃力
-		if (ImGui::DragFloat("AttackPow", &m_param.m_attackPower, 1.0f, 0.0f))
+		if (ImGui::TreeNodeEx("Small", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			EditorManager::Instance().MarkDirty();
-		}
+			// HP
+			if (ImGui::DragInt("MaxHP##Small", &m_paramSmall.m_maxHP, 1, 0))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
 
-		// 移動スピード
-		if (ImGui::DragFloat("MoveSpeed", &m_param.m_moveSpeed, 0.01f, 0.0f))
-		{
-			EditorManager::Instance().MarkDirty();
-		}
+			// 攻撃力
+			if (ImGui::DragFloat("AttackPow##Small", &m_paramSmall.m_attackPower, 1.0f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
 
-		//ジャンプパワー
-		if (ImGui::DragFloat("JumpPow", &m_param.m_jumpPow, 0.01f, 0.0f))
-		{
-			EditorManager::Instance().MarkDirty();
-		}
+			// 移動スピード
+			if (ImGui::DragFloat("MoveSpeed##Small", &m_paramSmall.m_moveSpeed, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
 
-		// 回転速度
-		if (ImGui::DragFloat("TurnSpeed", &m_param.m_turnSpeed, 0.01f, 0.0f))
-		{
-			EditorManager::Instance().MarkDirty();
-		}
+			//ジャンプパワー
+			if (ImGui::DragFloat("JumpPow##Small", &m_paramSmall.m_jumpPow, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
 
+			// 回転速度
+			if (ImGui::DragFloat("TurnSpeed##Small", &m_paramSmall.m_turnSpeed, 0.01f, 0.0f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			// 拡大率
+			if (ImGui::DragFloat("Scale##Small", &m_paramSmall.m_scale, 0.01f, 0.0001f))
+			{
+				EditorManager::Instance().MarkDirty();
+			}
+
+			ImGui::TreePop();
+		}
 
 		// セーブ
 		if (ImGui::Button("SaveParameter"))
@@ -56,13 +117,24 @@ void SlimeParameter::DrawInspecter()
 
 void SlimeParameter::SaveToJson()
 {
+	auto toJson = [](const Parameter& param)
+	{
+		nlohmann::json paramJson;
+
+		paramJson["MaxHP"] = param.m_maxHP;
+		paramJson["AttackPower"] = param.m_attackPower;
+		paramJson["MoveSpeed"] = param.m_moveSpeed;
+		paramJson["JumpPower"] = param.m_jumpPow;
+		paramJson["TurnSpeed"] = param.m_turnSpeed;
+		paramJson["Scale"] = param.m_scale;
+
+		return paramJson;
+	};
+
 	nlohmann::json paramJson;
 
-	paramJson["MaxHP"] = m_param.m_maxHP;
-	paramJson["AttackPower"] = m_param.m_attackPower;
-	paramJson["MoveSpeed"] = m_param.m_moveSpeed;
-	paramJson["JumpPower"] = m_param.m_jumpPow;
-	paramJson["TurnSpeed"] = m_param.m_turnSpeed;
+	paramJson["Large"] = toJson(m_paramLarge);
+	paramJson["Small"] = toJson(m_paramSmall);
 
 	std::ofstream file("Asset/Data/Enemy/Slime/Parameter/SlimeParameter.json");
 
@@ -93,15 +165,22 @@ void SlimeParameter::LoadFromJson()
 
 	nlohmann::json paramJson;
 
+	auto fromJson = [](const nlohmann::json& json, Parameter& param)
+	{
+		param.m_maxHP = json["MaxHP"].get<int>();
+		param.m_attackPower = json["AttackPower"].get<float>();
+		param.m_moveSpeed = json["MoveSpeed"].get<float>();
+		param.m_jumpPow = json["JumpPower"].get<float>();
+		param.m_turnSpeed = json["TurnSpeed"].get<float>();
+		param.m_scale = json["Scale"].get<float>();
+	};
+
 	try
 	{
 		file >> paramJson;
 
-		m_param.m_maxHP = paramJson["MaxHP"].get<int>();
-		m_param.m_attackPower = paramJson["AttackPower"].get<float>();
-		m_param.m_moveSpeed = paramJson["MoveSpeed"].get<float>();
-		m_param.m_jumpPow = paramJson["JumpPower"].get<float>();
-		m_param.m_turnSpeed = paramJson["TurnSpeed"].get<float>();
+		fromJson(paramJson["Large"], m_paramLarge);
+		fromJson(paramJson["Small"], m_paramSmall);
 	}
 	catch (const nlohmann::json::exception& e)
 	{

@@ -10,16 +10,18 @@
 #include"../../Application/GameObject/WayPoint/WayPoint.h"
 
 // 敵
-#include"../../Application/GameObject/Character/Enemy/Beholder/Beholder.h"
 #include"../../Application/GameObject//Character/Enemy/Bomb/Bomb.h"
 #include"../../Application/GameObject//Character/Enemy/Cactas/Cactas.h"
 #include"../../Application/GameObject//Character/Enemy/ChestMonster/ChestMonster.h"
-#include"../../Application/GameObject//Character/Enemy/Golem/Golem.h"
-#include"../../Application/GameObject//Character/Enemy/Mage/Mage.h"
 #include"../../Application/GameObject//Character/Enemy/Mushroom/Mushroom.h"
 #include"../../Application/GameObject//Character/Enemy/Slime/Slime.h"
 #include"../../Application/GameObject//Character/Enemy/StarFish/StarFish.h"
 #include"../../Application/GameObject//Character/Enemy/TurtleShell/TurtleShell.h"
+
+// ボス
+#include"../../Application/GameObject/Character/Boss/Beholder/Beholder.h"
+#include"../../Application/GameObject//Character/Boss/Golem/Golem.h"
+#include"../../Application/GameObject//Character/Boss/Mage/Mage.h"
 
 // ステージ
 #include"../../Application/GameObject/Stage/StageObject.h"
@@ -39,6 +41,9 @@
 
 // 爆発
 #include"../../Application/GameObject/Explosion/Explosion.h"
+
+// エネルギー弾
+#include"../../Application/GameObject/EnergyBullet/EnergyBullet.h"
 
 
 void KdGameObjectFactory::Init()
@@ -118,6 +123,9 @@ void KdGameObjectFactory::Init()
 
 	// Explosion(爆発の当たり判定専用オブジェクト)
 	Register<Explosion>("Explosion", KdGameObject::ObjectCategory::Effect);
+
+	// EnergyBullet(StarFishなどの遠隔攻撃弾)
+	Register<EnergyBullet>("EnergyBullet", KdGameObject::ObjectCategory::Effect);
 
 
 }

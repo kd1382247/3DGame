@@ -12,8 +12,10 @@ void StarFishAttackState::OnStart(StarFish* starFish)
 
 void StarFishAttackState::OnUpdate(StarFish * starFish)
 {
-
-	starFish->UpdateAttackCollision();
+	if (!starFish->HasFiredBullet())
+	{
+		starFish->UpdateBulletFireTiming();
+	}
 
 	if (starFish->IsAnimationFinished())
 	{

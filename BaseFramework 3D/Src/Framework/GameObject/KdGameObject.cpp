@@ -55,7 +55,6 @@ void KdGameObject::SetRotation(const Math::Vector3& rotation)
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos());
 	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
 
-
 	m_mWorld = scaleMat * rotMat * transMat;
 
 	m_rotation = rotation;
@@ -146,12 +145,12 @@ void KdGameObject::DrawTransformInspector()
 
 void KdGameObject::DrawNameInspector()
 {
-		// オブジェクトの名前を表示(自動採番されるため変更不可にしている)
-		char nameBaffer[128];
+	// オブジェクトの名前を表示(自動採番されるため変更不可にしている)
+	char nameBaffer[128];
 
-		strcpy_s(nameBaffer, sizeof(nameBaffer), GetObjectName().c_str());
+	strcpy_s(nameBaffer, sizeof(nameBaffer), GetObjectName().c_str());
 
-		ImGui::InputText("Name", nameBaffer, sizeof(nameBaffer), ImGuiInputTextFlags_ReadOnly);
+	ImGui::InputText("Name", nameBaffer, sizeof(nameBaffer), ImGuiInputTextFlags_ReadOnly);
 }
 
 void KdGameObject::DrawPositionInspector()

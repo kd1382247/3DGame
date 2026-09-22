@@ -20,7 +20,7 @@ void TurtleShell::Init()
 {
 	if (!m_spModel)
 	{
-		InitEnemyModel("Asset/Models/Enemy/TurtleShell/TurtleShell.gltf", "TurtleShell",
+		InitCharacterModel("Asset/Models/Enemy/TurtleShell/TurtleShell.gltf", "TurtleShell",
 			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "TurtleShell");
 
 		// アニメーションクラス初期化

@@ -8,6 +8,8 @@
 
 #include"../../Player/Player.h"
 
+#include"../../../EnergyBullet/EnergyBulletManager.h"
+
 #include"State/States/StarFishNormalState.h"
 #include"State/States/StarFishDamageState.h"
 #include"State/States/StarFishDieState.h"
@@ -16,7 +18,7 @@ void StarFish::Init()
 {
 	if (!m_spModel)
 	{
-		InitEnemyModel("Asset/Models/Enemy/StarFish/StarFish.gltf", "StarFish",
+		InitCharacterModel("Asset/Models/Enemy/StarFish/StarFish.gltf", "StarFish",
 			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "StarFish");
 
 		// アニメーションクラス初期化
@@ -28,6 +30,9 @@ void StarFish::Init()
 		m_hp = m_parameter.GetParam().m_maxHP;
 
 		m_attackCooldownDuration = 1.0f;
+
+		// 5m以内に近づいたら攻撃(Energy弾を発射)する
+		m_reachDistance = 5.0f;
 
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<StarFishNormalState>();
@@ -111,6 +116,7 @@ void StarFish::RePlayAnimation(StarFishAnimationType type)
 void StarFish::StartAttack()
 {
 	m_hitTarget = false;
+	m_hasFiredBullet = false;
 	SetAttackTiming();
 }
 
@@ -149,14 +155,58 @@ void StarFish::PlayIdleAnimation()
 
 void StarFish::SetAttackTiming()
 {
-	m_attackTiming.hitStart = 16.0f;
-	m_attackTiming.hitEnd = 20.0f;
-
-	// フレームを0に
+	// 攻撃アニメーション開始からのフレーム数
 	m_animFrame = 0.0f;
+
+	// Energy弾を発射するフレーム(m_bulletFireFrameはヘッダで初期化済み)
 }
 
-void StarFish::UpdateAttackCollision()
+void StarFish::FireEnergyBullet()
 {
-	UpdateMeleeAttackCollision(0.08f, m_parameter.GetParam().m_attackPow);
+	auto spPlayer = m_wpPlayer.lock();
+
+	if (!spPlayer)
+	{
+		return;
+	}
+
+	// 正面方向(水平)を作る
+	Math::Vector3 attackDir = m_mWorld.Backward();
+	attackDir.y = 0;
+
+	if (attackDir.LengthSquared() > 0.000001f)
+	{
+		attackDir.Normalize();
+	}
+
+	// 発射位置(口元の高さ・少し前方)
+	Math::Vector3 spawnPos = GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f) + attackDir * 0.3f;
+
+	// プレイヤーへ向かう方向(発射時に一度だけ決定)
+	Math::Vector3 dir = (spPlayer->GetPos()+Math::Vector3(0.0f,0.8f,0.0f)) - spawnPos;
+
+	if (dir.LengthSquared() > 0.000001f)
+	{
+		dir.Normalize();
+	}
+
+	EnergyBulletManager::Instance().CreateEnergyBullet(
+		spawnPos, dir, /*speed=*/0.08f, /*radius=*/0.05f,
+		/*damage=*/m_parameter.GetParam().m_attackPow, /*knockBackPower=*/0.08f, /*lifeTime=*/4.0f);
+}
+
+void StarFish::UpdateBulletFireTiming()
+{
+	m_animFrame += 60.0f * m_deltaTime;
+
+	if (m_animFrame < m_bulletFireFrame)
+	{
+		return;
+	}
+
+	// アニメーションのタイミングで発射
+	FireEnergyBullet();
+
+	m_hasFiredBullet = true;
+
 }

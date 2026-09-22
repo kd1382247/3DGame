@@ -1,7 +1,18 @@
 {
-    "AttackPower": 10.0,
-    "JumpPower": 0.4000000059604645,
-    "MaxHP": 30,
-    "MoveSpeed": 0.07999999821186066,
-    "TurnSpeed": 12.0
+    "Large": {
+        "AttackPower": 10.0,
+        "JumpPower": 0.4000000059604645,
+        "MaxHP": 100,
+        "MoveSpeed": 0.07000000029802322,
+        "Scale": 1.5,
+        "TurnSpeed": 12.0
+    },
+    "Small": {
+        "AttackPower": 10.0,
+        "JumpPower": 0.4000000059604645,
+        "MaxHP": 100,
+        "MoveSpeed": 0.07999999821186066,
+        "Scale": 1.0,
+        "TurnSpeed": 12.0
+    }
 }
