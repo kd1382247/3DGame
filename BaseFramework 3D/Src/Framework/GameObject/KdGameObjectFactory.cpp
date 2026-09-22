@@ -45,6 +45,9 @@
 // エネルギー弾
 #include"../../Application/GameObject/EnergyBullet/EnergyBullet.h"
 
+// Mageの魔法円
+#include"../../Application/GameObject/MageMagicCircle/MageMagicCircle.h"
+
 
 void KdGameObjectFactory::Init()
 {
@@ -126,6 +129,9 @@ void KdGameObjectFactory::Init()
 
 	// EnergyBullet(StarFishなどの遠隔攻撃弾)
 	Register<EnergyBullet>("EnergyBullet", KdGameObject::ObjectCategory::Effect);
+
+	// MageMagicCircle(Mageの魔法円攻撃の当たり判定)
+	Register<MageMagicCircle>("MageMagicCircle", KdGameObject::ObjectCategory::Effect);
 
 
 }

@@ -68,6 +68,8 @@ public:
 
 	int         GetCurrentHP()const { return m_hp; }
 
+	// 被弾時の処理。各キャラクターが必要に応じてoverrideする
+	virtual void OnHit(const AttackInfo attackInfo) {}
 
 	virtual int GetMaxHP()      const = 0;
 	virtual float GetTurnSpeed()const = 0;

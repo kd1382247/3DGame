@@ -6,7 +6,6 @@
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 #include"../../../FlyText/FlyTextManager.h"
 
-#include"../../Player/Player.h"
 
 #include"../../StateMachine/StateMachine.h"
 #include"State/States/SlimeNormalState.h"
@@ -32,11 +31,15 @@ void Slime::Init()
 
 		m_attackCooldownDuration = 0.5f;
 		m_hp = m_parameter.GetParam(m_slimeSize).m_maxHP;
+
 	}
 
 	EnemyBase::Init();
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
+
+	// 初期化時に念のため大きさをセット
+	SetScale(Math::Vector3::Zero);
 
 }
 
@@ -71,7 +74,6 @@ void Slime::SetUpReference()
 void Slime::DrawDebug()
 {
 	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
-	//m_pDebugWire->Draw();
 }
 
 void Slime::SetScale(const Math::Vector3&)
@@ -85,6 +87,9 @@ void Slime::SetScale(const Math::Vector3&)
 void Slime::DrawParameterInspector()
 {
 	m_parameter.DrawInspecter();
+	
+	// パラメータ調整中に大きさをいじった時にScaleをすぐに反映
+	SetScale(Math::Vector3::Zero);
 }
 
 void Slime::PlayAnimation(SlimeAnimationType type)

@@ -40,7 +40,7 @@ void Player::Init()
 		const auto& param = m_parameter.GetParam();
 
 		m_hp = param.m_maxHP;
-		m_bumpPushRate = 0.0f;
+		m_bumpPushRate = 0.1f;
 
 		// ステートマシンに持ち主をセット
 		m_stateMachine.Start(this);
@@ -173,8 +173,8 @@ void Player::UpdateAttackCollision(const AttackType type)
 			continue;
 		}
 
-		// Enemyだけ取得
-		auto enemy = std::dynamic_pointer_cast<EnemyBase>(obj);
+		// キャラクター(Enemy・Boss)だけ取得
+		auto enemy = std::dynamic_pointer_cast<CharacterBase>(obj);
 
 		if (!enemy)
 		{
@@ -374,7 +374,7 @@ void Player::StartComboGrace()
 	m_playerAttack.StartComboGrace();
 }
 
-bool Player::IsAlreadyHit(const std::shared_ptr<EnemyBase>& enemy) const
+bool Player::IsAlreadyHit(const std::shared_ptr<CharacterBase>& enemy) const
 {
 
 	for (const auto& weakEnemy : m_hitTargets)

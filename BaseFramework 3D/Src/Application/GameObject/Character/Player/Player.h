@@ -190,7 +190,7 @@ private:
 
 	void ClearHitTargets();
 
-	bool IsAlreadyHit(const std::shared_ptr<EnemyBase>&enemy)const;
+	bool IsAlreadyHit(const std::shared_ptr<CharacterBase>&character)const;
 
 	// 攻撃判定のスフィアを作る
 	DirectX::BoundingSphere CreateAttackSphere()             const;
@@ -227,7 +227,7 @@ private:
 	PlayerStateType           m_playerStateType = PlayerStateType::NormalState;
 
 	// 攻撃が当たった敵リスト
-	std::vector<std::weak_ptr<EnemyBase>>m_hitTargets = {};
+	std::vector<std::weak_ptr<CharacterBase>>m_hitTargets = {};
 
 	// 一定時間で当たった敵のリストをクリア
 	float                                m_hitCooldownTimer = 0.0f;

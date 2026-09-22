@@ -16,6 +16,8 @@ void Beholder::Init()
 		// パラメータクラス初期化
 		m_parameter.Init();
 
+		m_hp = m_parameter.GetParam().m_maxHP;
+
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<BeholderNormalState>();
 	}

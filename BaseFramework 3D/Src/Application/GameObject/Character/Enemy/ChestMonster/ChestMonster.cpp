@@ -42,7 +42,7 @@ void ChestMonster::Init()
 
 
 	SetPos({ 0.0f,0.0f,0.0f });
-
+	SetScale(2.0f);
 	m_bumpPushRate = 0.0f;
 }
 
@@ -115,7 +115,7 @@ void ChestMonster::UpdateSpawnEnemy()
 	switch (static_cast<Enemes>(m_LayerNum))
 	{
 	case Enemes::Cactas:
-		CreateEnemy("Cactas");
+		CreateEnemy("Slime");
 		break;
 	case Enemes::Mushroom:
 		CreateEnemy("Mushroom");
