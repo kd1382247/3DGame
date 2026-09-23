@@ -197,6 +197,14 @@ const bool KdEffekseerManager::IsPlaying(const int handle) const
 	return (m_efkManager->GetInstanceCount(handle) != 0);
 }
 
+bool KdEffekseerManager::HasEffectFinished(const Effekseer::Handle& handle) const
+{
+	// 未再生、または既に無効化されたハンドルは「終了している」とみなす
+	if (handle < 0) { return true; }
+
+	return m_efkManager->GetInstanceCount(handle) == 0;
+}
+
 std::weak_ptr<KdEffekseerObject> KdEffekseerManager::Play(const PlayEfkInfo& info)
 {
 	// 渡された座標をEffekseerの座標に置き換え

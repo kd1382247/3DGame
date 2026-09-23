@@ -16,23 +16,37 @@ public:
 
 	void SetUpReference()override;
 
-	// 魔法円の設定(座標・半径・発動までの予備動作時間(秒)・ダメージ・ノックバックの強さ)
-	void Setup(const Math::Vector3& pos, float radius, float telegraphTime, float damage, float knockBackPower);
+	// 魔法円の設定(座標・半径・発動までの予備動作時間(秒)・ダメージ)
+	void Setup(const Math::Vector3& pos, float radius, float telegraphTime, float damage);
 
 private:
 
+	// 当たり判定と同じ座標・半径を使うことで、見た目と実際の範囲を一致させる
+	void CreateMagicCircleRange();
+	void UpdateMagicCircleRange();
+	void HideMagicCircleRange();
+
+
 	std::weak_ptr<Player> m_wpPlayer;
 
-	float m_radius = 1.0f;
+	// 再生中の雷エフェクトのハンドル(未再生の間は-1)
+	// KdEffekseerObject(weak_ptr)ではなくハンドルで持つことで、
+	// KdEffekseerManager側のオブジェクト破棄タイミングに左右されずに
+	// HasEffectFinished()で再生終了を判定できる
+	Effekseer::Handle m_effectHandle = -1;
+
+	float m_radius = 2.0f;
 
 	// 発動までの残り予備動作時間(秒)
 	float m_telegraphTime = 0.0f;
 
 	float m_damage = 0.0f;
-	float m_knockBackPower = 0.0f;
 
 	bool m_hitTarget = false;
 
-	// 当たり判定を持続させるフレーム数(判定漏れ防止の余裕)
-	float m_lifeTime = 4.0f;
+	// 当たり判定の有効時間(秒)
+	float m_hitboxActiveTime = 1.0f;
+
+	// カラースフィアのスロット番号保存用
+	int m_colorSphereHandle = -1;
 };

@@ -6,7 +6,7 @@
 #include"../../Scene/SceneManager.h"
 
 
-void MageMagicCircleManager::CreateMagicCircle(const Math::Vector3& pos, float radius, float telegraphTime, float damage, float knockBackPower)
+void MageMagicCircleManager::CreateMagicCircle(const Math::Vector3& pos, float radius, float telegraphTime, float damage)
 {
 	auto obj = KdGameObjectFactory::Instance().CreateGameObject("MageMagicCircle");
 
@@ -18,7 +18,7 @@ void MageMagicCircleManager::CreateMagicCircle(const Math::Vector3& pos, float r
 	}
 
 	magicCircle->Init();
-	magicCircle->Setup(pos, radius, telegraphTime, damage, knockBackPower);
+	magicCircle->Setup(pos, radius, telegraphTime, damage);
 
 	SceneManager::Instance().AddObject(magicCircle);
 }

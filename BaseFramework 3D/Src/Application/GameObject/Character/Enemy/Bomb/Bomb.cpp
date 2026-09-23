@@ -145,18 +145,28 @@ void Bomb::Explode()
 		Play("Explosion/Explosion.efkefc", explosionPos, 0.6f, 1.4f, false);
 }
 
-void Bomb::ShowExplosionRange()
+void Bomb::CreateExplosionRange()
 {
-	// ステージの色を変えて爆発範囲を表示する
-	// (当たり判定(Explosion)と同じ半径を使うことで、見た目と実際の範囲を一致させる。
-	//  座標は地面の色塗りなので、当たり判定のような高さオフセットは付けず、地面と同じ高さで見る)
-	KdShaderManager::Instance().WriteCBColor(GetPos(), m_explosionRadius, Math::Vector3(0.3f, 0.0f, 0.0f));
+	// 爆発範囲を表示するカラースフィアを作る
+	m_colorSphereHandle = KdShaderManager::Instance().CreateColorSphere();
+}
+
+void Bomb::UpdateExplosionRange()
+{
+	if (m_colorSphereHandle != -1)
+	{
+		KdShaderManager::Instance().WriteCBColorSphere(
+			m_colorSphereHandle,
+			GetPos(),
+			m_explosionRadius,
+			Math::Vector3(2.0f, 0.0f, 0.0f));
+	}
 }
 
 void Bomb::HideExplosionRange()
 {
-	// 表示を消す(半径0にすることでどのピクセルも範囲内に入らなくなる)
-	KdShaderManager::Instance().WriteCBColor(GetPos(), 0.0f, Math::Vector3::Zero);
+	// 表示を消す
+	KdShaderManager::Instance().ReleaseColorSphere(m_colorSphereHandle);
 }
 
 void Bomb::OnHit(const AttackInfo attackInfo)

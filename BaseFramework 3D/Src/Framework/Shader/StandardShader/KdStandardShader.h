@@ -34,7 +34,10 @@ public:
 
 		// 選択中のオブジェクト
 		int				IsSelected = 0;
-		int             _blank[3];
+		
+		// カラースフィア
+		int             ColorSphereEnable = 0;
+		int             _blank[2];
 
 	};
 
@@ -97,6 +100,13 @@ public:
 		m_dirtyCBObj = true;
 	}
 
+	// カラースフィアで色を変更対象か
+	void SetColorSphereEnable(bool enable)
+	{
+		m_cb0_Obj.Work().ColorSphereEnable = enable;
+
+		m_dirtyCBObj = true;
+	}
 
 
 	// ディゾルブ設定

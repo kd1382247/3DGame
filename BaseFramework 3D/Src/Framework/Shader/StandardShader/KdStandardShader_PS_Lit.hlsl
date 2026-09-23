@@ -89,17 +89,32 @@ float4 main(VSOutput In) : SV_Target0
 	//------------------------------------------
 	// カラースフィア
 	//------------------------------------------
-	if (g_colorEnable)
-	{
-		// 範囲内化どうかを調べる
-		// 今から塗ろうとしているピクセル座標から
-		// エフェクトを発生させる座標までベクトル
-		float3 v = g_colorPos - In.wPos;
 
-		if (length(v) < g_colorRadius)
+	{
+		if (g_ColorSphereEnable)
 		{
-			// 範囲内
-			baseColor.rgb += g_colorColor;
+			for (int i = 0; i < 20; i++)
+			{
+				if (g_ColorSpheres[i].Enable)
+				{
+					// 範囲内化どうかを調べる
+					// 今から塗ろうとしているピクセル座標から
+					// エフェクトを発生させる座標までベクトル
+					float3 v = g_ColorSpheres[i].Pos - In.wPos;
+
+					float dist = length(v);
+
+					float color = dist / g_ColorSpheres[i].Radius;
+
+					color = pow(color, 5.0f);
+					
+					if (dist < g_ColorSpheres[i].Radius)
+					{
+						// 範囲内
+						baseColor.rgb += g_ColorSpheres[i].Color*color;
+					}
+				}
+			}
 		}
 	}
 	
@@ -310,7 +325,6 @@ float4 main(VSOutput In) : SV_Target0
 		outColor += rim * highlightColor * highlightPower;
 	}
 
-	
 	//------------------------------------------
 	// 出力
 	//------------------------------------------

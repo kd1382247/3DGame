@@ -52,6 +52,11 @@ public:
 	// 再生中かどうか
 	const bool IsPlaying(const int handle) const;
 
+	// 指定ハンドルの再生が終了しているかどうか
+	// (ハンドルは値そのものなので、KdEffekseerObjectが既に破棄されていても、
+	//  そもそも一度も再生していない(無効なハンドルの)場合でも安全に判定できる)
+	bool HasEffectFinished(const Effekseer::Handle& handle) const;
+
 	// カメラセット
 	void SetCamera(const std::shared_ptr<KdCamera>& camera)
 	{

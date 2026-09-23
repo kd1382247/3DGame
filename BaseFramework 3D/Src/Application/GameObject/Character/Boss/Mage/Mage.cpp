@@ -174,8 +174,8 @@ void Mage::CastMagicCircle()
 	}
 
 	MageMagicCircleManager::Instance().CreateMagicCircle(
-		spPlayer->GetPos(), /*radius=*/1.2f, /*telegraphTime=*/0.8f,
-		/*damage=*/m_parameter.GetParam().m_attackPow, /*knockBackPower=*/0.2f);
+		spPlayer->GetPos(), /*radius=*/2.0f, /*telegraphTime=*/0.8f,
+		/*damage=*/m_parameter.GetParam().m_attackPow);
 }
 
 void Mage::ForwardAreaAttack()

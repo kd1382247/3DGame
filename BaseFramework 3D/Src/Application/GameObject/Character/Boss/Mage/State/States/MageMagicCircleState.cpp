@@ -24,6 +24,7 @@ void MageMagicCircleState::OnUpdate(Mage* mage)
 	{
 		mage->CastMagicCircle();
 		m_hasCast = true;
+		m_shotCount++;
 	}
 
 	if (mage->IsAnimationFinished())

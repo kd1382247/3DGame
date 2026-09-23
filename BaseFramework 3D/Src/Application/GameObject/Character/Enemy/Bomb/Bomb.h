@@ -51,7 +51,8 @@ public:
 
 	// 爆発範囲の表示(ステージの色を変えるエフェクト)の表示/非表示
 	// 当たり判定と同じ座標・半径を使うことで、見た目と実際の範囲を一致させる
-	void ShowExplosionRange();
+	void CreateExplosionRange();
+	void UpdateExplosionRange();
 	void HideExplosionRange();
 
 private:
@@ -82,4 +83,7 @@ private:
 
 	// ためモーションの長さ(秒)
 	const float m_chargeDuration = 1.5f;
+
+	// カラースフィアのスロット番号保存用
+	int m_colorSphereHandle = -1;
 };

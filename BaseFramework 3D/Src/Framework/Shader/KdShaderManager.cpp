@@ -39,10 +39,10 @@ void KdShaderManager::Init()
 	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(9, 1, m_cb9_Light.GetAddress());
 
 
-	m_cb10_Effect.Create();
-	m_cb10_Effect.Write();
-	KdDirect3D::Instance().WorkDevContext()->VSSetConstantBuffers(10, 1, m_cb10_Effect.GetAddress());
-	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(10, 1, m_cb10_Effect.GetAddress());
+	m_cb10_ColorSphere.Create();
+	m_cb10_ColorSphere.Write();
+	KdDirect3D::Instance().WorkDevContext()->VSSetConstantBuffers(10, 1, m_cb10_ColorSphere.GetAddress());
+	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(10, 1, m_cb10_ColorSphere.GetAddress());
 
 	//============================================
 	// パイプラインステート関係
@@ -494,24 +494,60 @@ void KdShaderManager::WriteCBPointLight(const std::list<PointLight>& pointLights
 	m_cb9_Light.Write();
 }
 
-void KdShaderManager::WriteCBColorEnable(const bool enable)
+int KdShaderManager::CreateColorSphere()
 {
-	// データをセット
-	m_cb10_Effect.Work().colorEnable = enable;
+	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
 
-	// GPUに転送
-	m_cb10_Effect.Write();
+	for (int i = 0; i < cbColorSphere::MaxColorSphereNum; i++)
+	{
+		// 空きが見つかったらEnableをtrueにして
+		// 空きスロットの番号を返す(i)
+		if (!colorSp.ColorSpheres[i].Enable)
+		{
+			colorSp.ColorSpheres[i].Enable = true;
+			m_cb10_ColorSphere.Write();
+
+			return i;
+		}
+	}
+
+	// 見つからなかったら
+	return -1;
 }
 
-void KdShaderManager::WriteCBColor(Math::Vector3 pos, float radius, Math::Vector3 color)
+void KdShaderManager::WriteCBColorSphere(int handle, const Math::Vector3& pos, float radius, const Math::Vector3& color)
 {
-	// データをセット
-	m_cb10_Effect.Work().colorPos = pos;
-	m_cb10_Effect.Work().colorRadius = radius;
-	m_cb10_Effect.Work().colorColor = color;
+	
+	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
 
-	// GPUに転送
-	m_cb10_Effect.Write();
+	colorSp.ColorSpheres[handle].Pos = pos;
+	colorSp.ColorSpheres[handle].Radius = radius;
+	colorSp.ColorSpheres[handle].Color = color;
+	
+	m_cb10_ColorSphere.Write();
+
+}
+
+void KdShaderManager::ReleaseColorSphere(int handle)
+{
+	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
+
+	colorSp.ColorSpheres[handle].Enable = false;
+
+	m_cb10_ColorSphere.Write();
+}
+
+void KdShaderManager::ClearColorSphere()
+{
+
+	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
+
+	for (int i = 0; i < colorSp.MaxColorSphereNum; i++)
+	{
+		colorSp.ColorSpheres[i].Enable = false;
+	}
+
+	m_cb10_ColorSphere.Write();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////

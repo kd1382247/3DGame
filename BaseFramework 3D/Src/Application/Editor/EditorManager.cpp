@@ -183,6 +183,9 @@ void EditorManager::StopPlayMode()
 	// エフェクトをストップ
 	KdEffekseerManager::GetInstance().StopAllEffect();
 
+	// カラースフィアを消す
+	KdShaderManager::Instance().ClearColorSphere();
+
 	// マウスカーソル
 	ShowCursor(true);
 }

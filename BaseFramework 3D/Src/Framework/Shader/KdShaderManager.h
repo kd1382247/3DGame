@@ -17,6 +17,15 @@ struct PointLight
 	int		IsBright = 0;	// 明度用ライトかどうか
 };
 
+// カラースフィアデータ
+struct ColorSphere
+{
+	Math::Vector3 Color;
+	float         Radius=0.0f;
+	Math::Vector3 Pos;
+	int           Enable=0;
+};
+
 //==========================
 //
 // 各パイプラインステートの呼び出しID
@@ -122,14 +131,10 @@ public:
 	};
 
 	// カラースフィア
-	struct cbEffect
+	struct cbColorSphere
 	{
-
-		int					colorEnable = 0;
-		Math::Vector3		colorPos = {};
-
-		float               colorRadius = 0;
-		Math::Vector3       colorColor = {};
+		static const int MaxColorSphereNum = 20;
+		std::array<ColorSphere, MaxColorSphereNum>ColorSpheres;
 	};
 
 
@@ -210,8 +215,11 @@ public:
 	void WriteCBShadowArea(const Math::Matrix& proj, float dirLightHeight);
 	void WriteCBPointLight(const std::list<PointLight>& pointLights);
 
-	void WriteCBColorEnable(const bool enable);
-	void WriteCBColor(Math::Vector3 pos, float radius, Math::Vector3 color);
+	int CreateColorSphere();
+	void WriteCBColorSphere(int handle, const Math::Vector3& pos, float radius, const Math::Vector3& color);
+	void ReleaseColorSphere(int handle);
+	void ClearColorSphere();
+
 
 	//==========================
 	//
@@ -243,7 +251,7 @@ private:
 	KdConstantBuffer<cbLight>	m_cb9_Light;
 
 	// エフェクト定数バッファ
-	KdConstantBuffer<cbEffect>	m_cb10_Effect;
+	KdConstantBuffer<cbColorSphere>	m_cb10_ColorSphere;
 
 	KdAmbientController m_ambientController;
 

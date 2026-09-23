@@ -13,6 +13,8 @@ cbuffer cbObject : register(b0)
 	float3 g_dissolveEmissive;	// 境界の色
 
 	int   g_IsSelected;
+
+	int   g_ColorSphereEnable;
 	
 };
 

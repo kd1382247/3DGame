@@ -63,13 +63,17 @@ cbuffer cbLight : register(b9)
 };
 
 //------------------------------
-// 定数バッファ(エフェクト)
+// 定数バッファ(カラースフィア)
 //------------------------------
-cbuffer cbEffect : register(b10)
+cbuffer cbColorSphere : register(b10)
 {
-	int g_colorEnable;
-	float3 g_colorPos;
-
-	float g_colorRadius;
-	float3 g_colorColor;
+	// データ
+	struct ColorSphere
+	{
+		float3 Color;
+		float  Radius;
+		float3 Pos;
+		int    Enable;
+	}g_ColorSpheres[20];
+	
 };

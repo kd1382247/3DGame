@@ -85,11 +85,12 @@ void StageObject::DrawInspector()
 void StageObject::DrawLit()
 {
 
-	KdShaderManager::Instance().WriteCBColorEnable(true);
+	KdShaderManager::Instance().m_StandardShader.SetColorSphereEnable(true);
 
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 
-	KdShaderManager::Instance().WriteCBColorEnable(false);
+	KdShaderManager::Instance().m_StandardShader.SetColorSphereEnable(false);
+
 
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_model, m_mWorld);
 }

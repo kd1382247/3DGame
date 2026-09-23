@@ -16,25 +16,71 @@ void MageMagicCircle::SetUpReference()
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
 }
 
-void MageMagicCircle::Setup(const Math::Vector3& pos, float radius, float telegraphTime, float damage, float knockBackPower)
+void MageMagicCircle::Setup(const Math::Vector3& pos, float radius, float telegraphTime, float damage)
 {
 	SetPos(pos);
 
 	m_radius = radius;
 	m_telegraphTime = telegraphTime;
 	m_damage = damage;
-	m_knockBackPower = knockBackPower;
+
+	CreateMagicCircleRange();
+}
+
+void MageMagicCircle::CreateMagicCircleRange()
+{
+	// 攻撃範囲を表示するカラースフィアを作る
+	m_colorSphereHandle = KdShaderManager::Instance().CreateColorSphere();
+}
+
+void MageMagicCircle::UpdateMagicCircleRange()
+{
+	if (m_colorSphereHandle != -1)
+	{
+		KdShaderManager::Instance().WriteCBColorSphere(
+			m_colorSphereHandle,
+			GetPos(),
+			m_radius,
+			Math::Vector3(2.0f, 0.0f, 0.0f));
+	}
+}
+
+void MageMagicCircle::HideMagicCircleRange()
+{
+	// 表示を消す
+	KdShaderManager::Instance().ReleaseColorSphere(m_colorSphereHandle);
 }
 
 void MageMagicCircle::Update()
 {
 	float deltaTime = TimeManager::Instance().GetDeltaTime();
 
+	UpdateMagicCircleRange();
+
 	// 予備動作中は当たり判定なし
 	if (m_telegraphTime > 0.0f)
 	{
 		m_telegraphTime -= deltaTime;
 		return;
+	}
+
+
+	if (m_effectHandle < 0)
+	{
+		// エフェクト再生(最初の1回だけ呼ぶ)
+		auto spEffekseerObj = KdEffekseerManager::GetInstance().
+			Play("Thunder/Thunder2.efkefc", GetPos() + Math::Vector3(0.0f, 0.2f, 0.0f), 0.5f, 2.0f, false,0,165).lock();
+
+		if (spEffekseerObj)
+		{
+			m_effectHandle = spEffekseerObj->GetHandle();
+		}
+	}
+	// ハンドルベースでの終了判定(KdEffekseerObjectの生存期間に依存しない)
+	else if (KdEffekseerManager::GetInstance().HasEffectFinished(m_effectHandle))
+	{
+		Destroy();
+		HideMagicCircleRange();
 	}
 
 	if (!m_hitTarget)
@@ -52,33 +98,22 @@ void MageMagicCircle::Update()
 
 			if (spPlayer->Intersects(sphereInfo, nullptr))
 			{
-				// ノックバックの方向を作る
-				Math::Vector3 knockBackDir = spPlayer->GetPos() - GetPos();
-				knockBackDir.y = 0;
-
-				if (knockBackDir.LengthSquared() > 0.000001f)
-				{
-					knockBackDir.Normalize();
-				}
 
 				AttackInfo attackInfo;
-
-				attackInfo.knockBackDir = knockBackDir;
-				attackInfo.knockBackPower = m_knockBackPower;
 				attackInfo.damage = m_damage;
 
 				spPlayer->OnHit(attackInfo);
-			}
 
-			// 当たったかどうかに関わらず、一度判定したら二度と判定しない
+
+				m_hitTarget = true;
+			}
+		}
+
+		// 一定時間たつと当たり判定しない
+		m_hitboxActiveTime -= deltaTime;
+		if (m_hitboxActiveTime < 0)
+		{
 			m_hitTarget = true;
 		}
-	}
-
-	m_lifeTime -= 60.0f * deltaTime;
-
-	if (m_lifeTime <= 0.0f)
-	{
-		Destroy();
 	}
 }
