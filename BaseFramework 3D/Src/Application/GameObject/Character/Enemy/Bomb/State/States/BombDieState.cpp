@@ -12,6 +12,7 @@ void BombDieState::OnUpdate(Bomb * bomb)
 {
 	if (bomb->IsAnimationFinished())
 	{
+		bomb->CreateDeathSmoke();
 		bomb->Destroy();
 	}
 }

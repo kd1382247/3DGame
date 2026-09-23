@@ -11,6 +11,7 @@ void TurtleShellDieState::OnUpdate(TurtleShell * turtleShell)
 {
 	if (turtleShell->IsAnimationFinished())
 	{
+		turtleShell->CreateDeathSmoke();
 		turtleShell->Destroy();
 	}
 }

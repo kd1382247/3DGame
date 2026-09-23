@@ -11,6 +11,7 @@ void StarFishDieState::OnUpdate(StarFish * starFish)
 {
 	if (starFish->IsAnimationFinished())
 	{
+		starFish->CreateDeathSmoke();
 		starFish->Destroy();
 	}
 }

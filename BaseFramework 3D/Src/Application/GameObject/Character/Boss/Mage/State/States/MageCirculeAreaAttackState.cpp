@@ -1,4 +1,4 @@
-﻿#include "MageAllDirectionState.h"
+﻿#include "MageCirculeAreaAttackState.h"
 
 #include"../../Mage.h"
 #include"MageNormalState.h"
@@ -9,20 +9,20 @@ namespace
 	constexpr float kCastDelay = 0.6f;
 }
 
-void MageAllDirectionState::OnStart(Mage* mage)
+void MageCirculeAreaAttackState::OnStart(Mage* mage)
 {
 	mage->PlayAnimation(MageAnimationType::Attack2);
 	m_castTimer = 0.0f;
 	m_hasCast = false;
 }
 
-void MageAllDirectionState::OnUpdate(Mage* mage)
+void MageCirculeAreaAttackState::OnUpdate(Mage* mage)
 {
 	m_castTimer += mage->GetDeltaTime();
 
 	if (!m_hasCast && m_castTimer >= kCastDelay)
 	{
-		mage->FireAllDirection();
+		mage->CirculeAreaAttack();
 		m_hasCast = true;
 	}
 
@@ -32,7 +32,7 @@ void MageAllDirectionState::OnUpdate(Mage* mage)
 	}
 }
 
-void MageAllDirectionState::OnExit(Mage* mage)
+void MageCirculeAreaAttackState::OnExit(Mage* mage)
 {
 	mage->EndAttack();
 }

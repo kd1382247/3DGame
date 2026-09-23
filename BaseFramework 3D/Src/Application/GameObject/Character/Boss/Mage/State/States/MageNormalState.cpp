@@ -6,7 +6,7 @@
 #include"MageMagicCircleState.h"
 #include"MageForwardAreaState.h"
 #include"MageBoltState.h"
-#include"MageAllDirectionState.h"
+#include"MageCirculeAreaAttackState.h"
 #include"MageCloneState.h"
 
 void MageNormalState::OnStart(Mage* mage)
@@ -21,7 +21,7 @@ void MageNormalState::OnUpdate(Mage* mage)
 		return;
 	}
 
-	switch (MageAttackPattern::MagicCircle)
+	switch (MageAttackPattern::CirculeAreaAttack)
 	{
 	case MageAttackPattern::Summon:
 		m_pMachine->ChangeState<MageSummonState>();
@@ -35,8 +35,8 @@ void MageNormalState::OnUpdate(Mage* mage)
 	case MageAttackPattern::Bolt:
 		m_pMachine->ChangeState<MageBoltState>();
 		break;
-	case MageAttackPattern::AllDirection:
-		m_pMachine->ChangeState<MageAllDirectionState>();
+	case MageAttackPattern::CirculeAreaAttack:
+		m_pMachine->ChangeState<MageCirculeAreaAttackState>();
 		break;
 	case MageAttackPattern::Clone:
 		m_pMachine->ChangeState<MageCloneState>();

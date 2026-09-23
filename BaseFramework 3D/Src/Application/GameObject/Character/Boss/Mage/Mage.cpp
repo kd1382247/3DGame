@@ -112,7 +112,7 @@ MageAttackPattern Mage::SelectAttackPattern()
 	// HP50%を超えている間は、後半専用パターンを除外する
 	if (!IsSecondPhase())
 	{
-		weights[static_cast<size_t>(MageAttackPattern::AllDirection)] = 0.0f;
+		weights[static_cast<size_t>(MageAttackPattern::CirculeAreaAttack)] = 0.0f;
 		weights[static_cast<size_t>(MageAttackPattern::Clone)] = 0.0f;
 	}
 
@@ -174,8 +174,15 @@ void Mage::CastMagicCircle()
 	}
 
 	MageMagicCircleManager::Instance().CreateMagicCircle(
-		spPlayer->GetPos(), /*radius=*/2.0f, /*telegraphTime=*/0.8f,
-		/*damage=*/m_parameter.GetParam().m_attackPow);
+		spPlayer->GetPos(),
+		/*radius=*/2.0f,
+		/*telegraphTime=*/0.8f,
+		/*damage=*/m_parameter.GetParam().m_attackPow,
+		"Tornado/Tornado.efkefc",
+		0.5,
+		2.0f,
+		0,
+		165);
 }
 
 void Mage::ForwardAreaAttack()
@@ -245,25 +252,19 @@ void Mage::FireBolt()
 		/*damage=*/m_parameter.GetParam().m_attackPow, /*knockBackPower=*/0.15f, /*lifeTime=*/4.0f);
 }
 
-void Mage::FireAllDirection()
+void Mage::CirculeAreaAttack()
 {
-	constexpr int bulletCount = 8;
-
-	Math::Vector3 spawnPos = GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f);
-
-	for (int i = 0; i < bulletCount; i++)
-	{
-		float angle = i * (2.0f * 3.1415926535f / bulletCount);
-
-		Math::Vector3 dir;
-		dir.x = std::sinf(angle);
-		dir.y = 0.0f;
-		dir.z = std::cosf(angle);
-
-		EnergyBulletManager::Instance().CreateEnergyBullet(
-			spawnPos, dir, /*speed=*/0.1f, /*radius=*/0.2f,
-			/*damage=*/m_parameter.GetParam().m_attackPow, /*knockBackPower=*/0.15f, /*lifeTime=*/3.0f);
-	}
+	
+	MageMagicCircleManager::Instance().CreateMagicCircle(
+		GetPos(),
+		/*radius=*/6.0f,
+		/*telegraphTime=*/1.5f,
+		/*damage=*/m_parameter.GetParam().m_attackPow,
+		"Salamander/Salamander.efkefc",
+		1.2f,
+		1.0f,
+		0,
+		45);
 }
 
 void Mage::SpawnClones()

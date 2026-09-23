@@ -11,9 +11,9 @@ void FlyText::Init(int damage, const Math::Vector3& spawnPos)
 	{
 		m_spPolygon = std::make_shared<KdSquarePolygon>();
 
-		m_spPolygon->SetMaterial("Asset/Textures/Numbers/Numbers.png");
+		m_spPolygon->SetMaterial("Asset/Textures/DamageNumber/DamageNumber_Orange.png");
 		m_spPolygon->SetSplit(10, 1);
-		m_spPolygon->SetScale(0.3f);
+		m_spPolygon->SetScale(0.5f);
 
 		m_text = std::to_string(damage);
 
@@ -34,7 +34,7 @@ void FlyText::Update()
 
 	SetPos(pos);
 
-	m_alpha -= 0.033;
+	m_alpha -= 0.023;
 
 	m_lifeTime--;
 
@@ -50,7 +50,7 @@ void FlyText::DrawEffect()
 
 	KdShaderManager::Instance().ChangeDepthStencilState(KdDepthStencilState::ZDisable);
 
-	const float digitSpace = 0.3f;
+	const float digitSpace = 0.35f;
 
 	// 数字全体を中央揃えするための開始位置
 	const float startOffset =-((m_text.size() - 1) * digitSpace) * 0.5f;

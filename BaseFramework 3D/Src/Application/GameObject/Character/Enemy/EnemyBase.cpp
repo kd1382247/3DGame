@@ -380,6 +380,12 @@ void EnemyBase::UpdateMove()
 	UpdateFacingDirection();
 }
 
+void EnemyBase::CreateDeathSmoke()
+{
+	KdEffekseerManager::GetInstance().
+		Play("Smoke/Smoke.efkefc",GetPos(),0.2f,1.0f,false);
+}
+
 void EnemyBase::UpdateAttack()
 {
 	// ターゲットに到達したら攻撃する

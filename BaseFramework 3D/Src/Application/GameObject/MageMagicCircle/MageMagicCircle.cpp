@@ -27,6 +27,16 @@ void MageMagicCircle::Setup(const Math::Vector3& pos, float radius, float telegr
 	CreateMagicCircleRange();
 }
 
+void MageMagicCircle::SetEffectInfo(const std::string& fileName, float size, float speed, float startFrame, float endFrame)
+{
+	m_effectInfo.m_fileName = fileName;
+	m_effectInfo.m_size = size;
+	m_effectInfo.m_speed = speed;
+	m_effectInfo.m_startFrame = startFrame;
+	m_effectInfo.m_endFrame = endFrame;
+}
+
+
 void MageMagicCircle::CreateMagicCircleRange()
 {
 	// 攻撃範囲を表示するカラースフィアを作る
@@ -64,12 +74,17 @@ void MageMagicCircle::Update()
 		return;
 	}
 
-
 	if (m_effectHandle < 0)
 	{
 		// エフェクト再生(最初の1回だけ呼ぶ)
-		auto spEffekseerObj = KdEffekseerManager::GetInstance().
-			Play("Thunder/Thunder2.efkefc", GetPos() + Math::Vector3(0.0f, 0.2f, 0.0f), 0.5f, 2.0f, false,0,165).lock();
+		auto spEffekseerObj = KdEffekseerManager::GetInstance().Play(
+			m_effectInfo.m_fileName,
+			GetPos() + Math::Vector3(0.0f, 0.2f, 0.0f),
+			m_effectInfo.m_size,
+			m_effectInfo.m_speed,
+			false,
+			m_effectInfo.m_startFrame,
+			m_effectInfo.m_endFrame).lock();
 
 		if (spEffekseerObj)
 		{

@@ -300,7 +300,7 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\Mage.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\Parameter\MageParameter.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\MageState.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageAllDirectionState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageCirculeAreaAttackState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBoltState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageCloneState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardAreaState.h" />
@@ -510,7 +510,7 @@
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\Animation\MageAnimation.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\Mage.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\Parameter\MageParameter.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageAllDirectionState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageCirculeAreaAttackState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBoltState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageCloneState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardAreaState.cpp" />

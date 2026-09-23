@@ -55,8 +55,8 @@ public:
 	void ForwardAreaAttack();
 	// 4. プレイヤーへ単発魔法弾
 	void FireBolt();
-	// 5. 全方位魔法
-	void FireAllDirection();
+	// 5. 半径数メートルの範囲攻撃
+	void CirculeAreaAttack();
 	// 6. 分身
 	void SpawnClones();
 

@@ -11,6 +11,7 @@ void MushroomDieState::OnUpdate(Mushroom * mushroom)
 {
 	if (mushroom->IsAnimationFinished())
 	{
+		mushroom->CreateDeathSmoke();
 		mushroom->Destroy();
 	}
 }

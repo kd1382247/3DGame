@@ -11,6 +11,7 @@ void ChestMonsterDieState::OnUpdate(ChestMonster* chestMonster)
 {
 	if (chestMonster->IsAnimationFinished())
 	{
+		chestMonster->CreateDeathSmoke();
 		chestMonster->Destroy();
 	}
 }

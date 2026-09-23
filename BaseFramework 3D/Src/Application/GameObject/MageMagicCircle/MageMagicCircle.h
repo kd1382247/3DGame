@@ -16,16 +16,27 @@ public:
 
 	void SetUpReference()override;
 
-	// 魔法円の設定(座標・半径・発動までの予備動作時間(秒)・ダメージ)
+	// 魔法円の設定(座標・半径・発動までの予備動作時間(秒)・ダメージ・エフェクトサイズ)
 	void Setup(const Math::Vector3& pos, float radius, float telegraphTime, float damage);
 
+	void SetEffectInfo(const std::string& fileName, float size,float speed,float startFrame,float endFrame);
+
 private:
+
+
+	struct EffectInfo
+	{
+		std::string m_fileName   = {};
+		float       m_size       = 0.0f;
+		float       m_speed      = 0.0f;
+		float       m_startFrame = 0.0f;
+		float       m_endFrame   = 0.0f;
+	};
 
 	// 当たり判定と同じ座標・半径を使うことで、見た目と実際の範囲を一致させる
 	void CreateMagicCircleRange();
 	void UpdateMagicCircleRange();
 	void HideMagicCircleRange();
-
 
 	std::weak_ptr<Player> m_wpPlayer;
 
@@ -34,6 +45,8 @@ private:
 	// KdEffekseerManager側のオブジェクト破棄タイミングに左右されずに
 	// HasEffectFinished()で再生終了を判定できる
 	Effekseer::Handle m_effectHandle = -1;
+
+	EffectInfo m_effectInfo = {};
 
 	float m_radius = 2.0f;
 

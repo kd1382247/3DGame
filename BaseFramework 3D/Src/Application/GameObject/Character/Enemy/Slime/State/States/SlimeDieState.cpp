@@ -12,6 +12,7 @@ void SlimeDieState::OnUpdate(Slime * slime)
 	if (slime->IsAnimationFinished())
 	{
 		slime->Split();
+		slime->CreateDeathSmoke();
 		slime->Destroy();
 	}
 }

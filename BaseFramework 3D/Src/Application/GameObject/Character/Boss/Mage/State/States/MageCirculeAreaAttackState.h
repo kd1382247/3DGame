@@ -4,7 +4,7 @@ class Mage;
 
 #include"../../../../StateMachine/StateBase.h"
 
-class MageAllDirectionState :public StateBase<Mage>
+class MageCirculeAreaAttackState :public StateBase<Mage>
 {
 public:
 
