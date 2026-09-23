@@ -21,7 +21,7 @@ void MageNormalState::OnUpdate(Mage* mage)
 		return;
 	}
 
-	switch (mage->SelectAttackPattern())
+	switch (MageAttackPattern::MagicCircle)
 	{
 	case MageAttackPattern::Summon:
 		m_pMachine->ChangeState<MageSummonState>();

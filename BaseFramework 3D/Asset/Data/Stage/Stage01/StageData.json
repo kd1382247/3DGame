@@ -59,8 +59,8 @@
             }
         },
         {
-            "Class": "ChestMonster",
-            "Name": "ChestMonster_0",
+            "Class": "Mage",
+            "Name": "Mage_0",
             "Position": {
                 "x": 0.0,
                 "y": 0.0,
@@ -72,9 +72,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 2.0,
-                "y": 2.0,
-                "z": 2.0
+                "x": 1.5,
+                "y": 1.5,
+                "z": 1.5
             }
         }
     ]

@@ -72,6 +72,11 @@ void Mage::PlayAnimation(MageAnimationType type)
 	m_animation.Play(type);
 }
 
+void Mage::RePlayAnimation(MageAnimationType type)
+{
+	m_animation.RePlay(type);
+}
+
 void Mage::OnHit(const AttackInfo attackInfo)
 {
 	if (m_isClone)

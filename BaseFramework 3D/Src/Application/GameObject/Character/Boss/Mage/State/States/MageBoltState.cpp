@@ -6,7 +6,7 @@
 namespace
 {
 	// 詠唱開始から魔法弾を発射するまでの時間(秒)
-	constexpr float kCastDelay = 0.3f;
+	constexpr float kCastDelay = 0.4f;
 }
 
 void MageBoltState::OnStart(Mage* mage)
@@ -24,11 +24,21 @@ void MageBoltState::OnUpdate(Mage* mage)
 	{
 		mage->FireBolt();
 		m_hasCast = true;
+		m_shotCount++;
 	}
 
 	if (mage->IsAnimationFinished())
 	{
-		m_pMachine->ChangeState<MageNormalState>();
+		if (m_shotCount < maxShotCount)
+		{
+			OnStart(mage);
+			// アニメーションを再再生
+			mage->RePlayAnimation(MageAnimationType::Attack1);
+		}
+		else
+		{
+			m_pMachine->ChangeState<MageNormalState>();
+		}
 	}
 }
 

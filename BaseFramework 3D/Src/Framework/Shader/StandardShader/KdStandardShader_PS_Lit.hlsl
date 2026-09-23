@@ -85,7 +85,10 @@ float4 main(VSOutput In) : SV_Target0
 	float smoothness = 1.0 - roughness; 
 	float specPower = pow(2, 11 * smoothness); // 1～2048
 
-
+	
+	//------------------------------------------
+	// カラースフィア
+	//------------------------------------------
 	if (g_colorEnable)
 	{
 		// 範囲内化どうかを調べる
@@ -289,6 +292,11 @@ float4 main(VSOutput In) : SV_Target0
 	outColor *= totalBrightness;
 
 
+
+	
+	//------------------------------------------
+	// リムライト
+	//------------------------------------------
 	if(g_IsSelected)
 	{
 		float rim = 1.0 - saturate(dot(vCam, wN));

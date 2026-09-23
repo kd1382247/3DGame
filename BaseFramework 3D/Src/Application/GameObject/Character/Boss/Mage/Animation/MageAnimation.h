@@ -10,11 +10,14 @@ public:
 	MageAnimation() {}
 	~MageAnimation() {}
 
-	void Init(std::shared_ptr<KdModelWork>& _model);
+	void Init(std::shared_ptr<KdModelWork>& model);
 
-	void Play(MageAnimationType _animType);
+	void Play(MageAnimationType animType);
+	void RePlay(MageAnimationType animType);
 
 private:
+
+	void Animations(MageAnimationType animType);
 
 	MageAnimationType m_currentAnimation = MageAnimationType::None;
 

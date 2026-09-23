@@ -27,6 +27,7 @@ public:
 	void OnHit(const AttackInfo attackInfo)override;
 
 	void PlayAnimation(MageAnimationType type);
+	void RePlayAnimation(MageAnimationType type);
 
 	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
 
@@ -81,7 +82,7 @@ private:
 
 	// 攻撃のクールダウン
 	float m_attackCooldown = 0.0f;
-	float m_attackCooldownDuration = 3.0f;
+	float m_attackCooldownDuration = 2.0f;
 
 	bool m_attackFlg = false;
 

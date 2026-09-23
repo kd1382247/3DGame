@@ -124,6 +124,7 @@ public:
 	// カラースフィア
 	struct cbEffect
 	{
+
 		int					colorEnable = 0;
 		Math::Vector3		colorPos = {};
 

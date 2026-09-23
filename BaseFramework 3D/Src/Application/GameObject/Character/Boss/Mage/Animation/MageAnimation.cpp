@@ -1,26 +1,41 @@
 ﻿#include "MageAnimation.h"
 
-void MageAnimation::Init(std::shared_ptr<KdModelWork>& _model)
+void MageAnimation::Init(std::shared_ptr<KdModelWork>& model)
 {
-	m_spModel = _model;
+	m_spModel = model;
 	m_spAnimator = std::make_shared<KdAnimator>();
 
 }
 
-void MageAnimation::Play(MageAnimationType _animType)
+void MageAnimation::Play(MageAnimationType animType)
 {
-	if (m_currentAnimation == _animType)
+	if (m_currentAnimation == animType)
 	{
 		return;
 	}
 
-	switch (_animType)
+	Animations(animType);
+	m_currentAnimation = animType;
+}
+
+void MageAnimation::RePlay(MageAnimationType animType)
+{
+
+	// 同じアニメーションでも強制的に0から再生
+	Animations(animType);
+	m_currentAnimation = animType;
+
+}
+
+void MageAnimation::Animations(MageAnimationType animType)
+{
+	switch (animType)
 	{
 	case MageAnimationType::None:
 		break;
 	case MageAnimationType::Attack1:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack1"), false);
-		m_animSpeed = 1.0f;
+		m_animSpeed = 1.4f;
 		break;
 	case MageAnimationType::Attack2:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack2"), false);
@@ -44,6 +59,4 @@ void MageAnimation::Play(MageAnimationType _animType)
 		m_animSpeed = 1.0f;
 		break;
 	}
-
-	m_currentAnimation = _animType;
 }

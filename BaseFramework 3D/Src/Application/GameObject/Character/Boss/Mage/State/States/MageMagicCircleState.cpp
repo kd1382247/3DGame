@@ -6,12 +6,12 @@
 namespace
 {
 	// 詠唱開始から魔法円が発生するまでの時間(秒)
-	constexpr float kCastDelay = 0.5f;
+	constexpr float kCastDelay = 0.4f;
 }
 
 void MageMagicCircleState::OnStart(Mage* mage)
 {
-	mage->PlayAnimation(MageAnimationType::Attack2);
+	mage->PlayAnimation(MageAnimationType::Attack1);
 	m_castTimer = 0.0f;
 	m_hasCast = false;
 }
@@ -28,7 +28,17 @@ void MageMagicCircleState::OnUpdate(Mage* mage)
 
 	if (mage->IsAnimationFinished())
 	{
-		m_pMachine->ChangeState<MageNormalState>();
+
+		if (m_shotCount < maxShot)
+		{
+			OnStart(mage);
+			mage->RePlayAnimation(MageAnimationType::Attack1);
+		}
+		else
+		{
+			m_pMachine->ChangeState<MageNormalState>();
+		}
+
 	}
 }
 
