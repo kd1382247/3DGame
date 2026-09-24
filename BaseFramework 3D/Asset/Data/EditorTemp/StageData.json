@@ -59,65 +59,8 @@
             }
         },
         {
-            "Class": "Bomb",
-            "Name": "Bomb_0",
-            "Position": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": -5.5
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
-        },
-        {
-            "Class": "ChestMonster",
-            "Name": "ChestMonster_0",
-            "Position": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 4.5
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 2.0,
-                "y": 2.0,
-                "z": 2.0
-            }
-        },
-        {
-            "Class": "Mushroom",
-            "Name": "Mushroom_0",
-            "Position": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": -3.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
-        },
-        {
-            "Class": "StarFish",
-            "Name": "StarFish_0",
+            "Class": "Mage",
+            "Name": "Mage_0",
             "Position": {
                 "x": 0.0,
                 "y": 0.0,
@@ -129,9 +72,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+                "x": 1.5,
+                "y": 1.5,
+                "z": 1.5
             }
         }
     ]

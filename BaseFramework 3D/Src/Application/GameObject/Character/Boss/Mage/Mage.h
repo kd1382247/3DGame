@@ -33,32 +33,29 @@ public:
 
 	bool IsAttack()const { return m_attackFlg; }
 
-	// 攻撃パターンを抽選する(HP50%以下限定パターン・分身自身は除外して選ぶ)
+	// 攻撃パターンを抽選する(NovaCircleはHPが50%以下の時のみ選択対象に含まれる)
 	MageAttackPattern SelectAttackPattern();
 
 	// 攻撃終了時にクールダウンを再セットする
 	void EndAttack();
 
-	// 分身かどうかの設定/取得
-	void SetIsClone(bool flg) { m_isClone = flg; }
-	bool IsClone()const { return m_isClone; }
-
 	//================================
 	// 各攻撃パターンの実行(各AttackStateから呼ばれる)
 	//================================
 
-	// 1. 敵を召喚
-	void SummonEnemy();
-	// 2. プレイヤー位置に魔法円
-	void CastMagicCircle();
-	// 3. 前方範囲魔法
-	void ForwardAreaAttack();
+	// 1. 敵を召喚(5体、ボスを囲むように配置)
+	// 1-1. 出現座標を計算し、煙エフェクトを再生する
+	void PrepareSummonPositions();
+	// 1-2. 用意しておいた座標に敵を生成する
+	void SpawnEnemies();
+	// 2. プレイヤー位置に魔法攻撃(魔法円)
+	void CastTargetCircle();
+	// 3. 前方に扇形の範囲攻撃
+	void CastForwardSector();
 	// 4. プレイヤーへ単発魔法弾
 	void FireBolt();
-	// 5. 半径数メートルの範囲攻撃
-	void CirculeAreaAttack();
-	// 6. 分身
-	void SpawnClones();
+	// 5. ボス中心から半径数メートルの範囲攻撃(HP50%以下限定)
+	void CastNovaCircle();
 
 private:
 
@@ -86,7 +83,7 @@ private:
 
 	bool m_attackFlg = false;
 
-	// 分身(本物の代わりに攻撃するクローン)かどうか
-	bool m_isClone = false;
+	// 召喚攻撃で使う、敵の出現予定座標(煙エフェクト再生時に計算し、敵生成時に消費する)
+	std::vector<Math::Vector3> m_summonPositions;
 
 };

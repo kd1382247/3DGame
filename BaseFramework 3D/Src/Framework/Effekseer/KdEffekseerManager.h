@@ -192,6 +192,20 @@ public:
 			static_cast<float>(m_info.EndFrame - m_info.StartFrame);
 	}
 
+	float GetProgress() const
+	{
+		// 終了指定なし、または不正な範囲なら0.0fを返す
+		if (m_info.EndFrame <= m_info.StartFrame)
+		{
+			return 0.0f;
+		}
+
+		float rate = m_elapsedFrames/(m_info.EndFrame- m_info.StartFrame);
+
+		// 0.0f～1.0fの範囲に収める
+		return std::clamp(rate,0.0f,1.0f);
+	}
+
 private:
 
 	Effekseer::ManagerRef				m_parentManager = nullptr;

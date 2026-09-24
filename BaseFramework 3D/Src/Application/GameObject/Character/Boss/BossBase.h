@@ -34,6 +34,6 @@ protected:
 
 	std::weak_ptr<Player>m_wpPlayer;
 
-
+	const std::string m_flyTextPath = "DamageNumber_Orange.png";
 
 };

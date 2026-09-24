@@ -3,11 +3,10 @@
 #include"../../Mage.h"
 
 #include"MageSummonState.h"
-#include"MageMagicCircleState.h"
-#include"MageForwardAreaState.h"
+#include"MageTargetCircleState.h"
+#include"MageForwardSectorState.h"
 #include"MageBoltState.h"
-#include"MageCirculeAreaAttackState.h"
-#include"MageCloneState.h"
+#include"MageNovaCircleState.h"
 
 void MageNormalState::OnStart(Mage* mage)
 {
@@ -21,25 +20,23 @@ void MageNormalState::OnUpdate(Mage* mage)
 		return;
 	}
 
-	switch (MageAttackPattern::CirculeAreaAttack)
+	//switch (mage->SelectAttackPattern())
+	switch (MageAttackPattern::Summon)
 	{
 	case MageAttackPattern::Summon:
 		m_pMachine->ChangeState<MageSummonState>();
 		break;
-	case MageAttackPattern::MagicCircle:
-		m_pMachine->ChangeState<MageMagicCircleState>();
+	case MageAttackPattern::TargetCircle:
+		m_pMachine->ChangeState<MageTargetCircleState>();
 		break;
-	case MageAttackPattern::ForwardArea:
-		m_pMachine->ChangeState<MageForwardAreaState>();
+	case MageAttackPattern::ForwardSector:
+		m_pMachine->ChangeState<MageForwardSectorState>();
 		break;
 	case MageAttackPattern::Bolt:
 		m_pMachine->ChangeState<MageBoltState>();
 		break;
-	case MageAttackPattern::CirculeAreaAttack:
-		m_pMachine->ChangeState<MageCirculeAreaAttackState>();
-		break;
-	case MageAttackPattern::Clone:
-		m_pMachine->ChangeState<MageCloneState>();
+	case MageAttackPattern::NovaCircle:
+		m_pMachine->ChangeState<MageNovaCircleState>();
 		break;
 	}
 }

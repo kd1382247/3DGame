@@ -14,12 +14,11 @@ enum class MageAnimationType
 // Mageの攻撃パターン
 enum class MageAttackPattern
 {
-	Summon,       // 1. 敵を召喚
-	MagicCircle,  // 2. プレイヤー位置に魔法円
-	ForwardArea,  // 3. 前方範囲魔法
-	Bolt,         // 4. プレイヤーへ単発魔法弾
-	CirculeAreaAttack, // 5. 半径数メートルの範囲攻撃
-	Clone,        // 6. 分身(HP50%以下)
+	Summon,        // 1. 敵を召喚
+	TargetCircle,  // 2. プレイヤー位置に魔法攻撃(魔法円)
+	ForwardSector, // 3. 前方に扇形の範囲攻撃
+	Bolt,          // 4. プレイヤーへ単発魔法弾
+	NovaCircle,    // 5. ボス中心から半径数メートルの範囲攻撃(HP50%以下限定)
 
 	Num
 };

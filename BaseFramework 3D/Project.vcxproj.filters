@@ -403,6 +403,9 @@
     <Filter Include="Src\Application\GameObject\Character\Boss\Mage\Parameter">
       <UniqueIdentifier>{a80b4287-37a2-46d3-b777-86d4d45871ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\MageMagicSector">
+      <UniqueIdentifier>{e38b4ee8-b64b-407f-99a4-6b0896401726}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1044,23 +1047,26 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageSummonState.h">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageMagicCircleState.h">
-      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardAreaState.h">
-      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBoltState.h">
-      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageCirculeAreaAttackState.h">
-      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageCloneState.h">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\Mage.h">
       <Filter>Src\Application\GameObject\Character\Boss\Mage</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\MageMagicSector\MageMagicSector.h">
+      <Filter>Src\Application\GameObject\MageMagicSector</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\MageMagicSector\MageMagicSectorManager.h">
+      <Filter>Src\Application\GameObject\MageMagicSector</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardSectorState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNovaCircleState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageTargetCircleState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1628,19 +1634,22 @@
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageSummonState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageMagicCircleState.cpp">
-      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardAreaState.cpp">
-      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBoltState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageCirculeAreaAttackState.cpp">
+    <ClCompile Include="Src\Application\GameObject\MageMagicSector\MageMagicSector.cpp">
+      <Filter>Src\Application\GameObject\MageMagicSector</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\MageMagicSector\MageMagicSectorManager.cpp">
+      <Filter>Src\Application\GameObject\MageMagicSector</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardSectorState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageCloneState.cpp">
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNovaCircleState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageTargetCircleState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClCompile>
   </ItemGroup>

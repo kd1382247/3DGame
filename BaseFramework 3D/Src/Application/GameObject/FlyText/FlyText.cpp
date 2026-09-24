@@ -5,13 +5,13 @@
 #include"../Camera/CameraBase.h"
 
 
-void FlyText::Init(int damage, const Math::Vector3& spawnPos)
+void FlyText::Init(int damage, const Math::Vector3& spawnPos, const std::string filePath)
 {
 	if (!m_spPolygon)
 	{
 		m_spPolygon = std::make_shared<KdSquarePolygon>();
 
-		m_spPolygon->SetMaterial("Asset/Textures/DamageNumber/DamageNumber_Orange.png");
+		m_spPolygon->SetMaterial("Asset/Textures/DamageNumber/"+filePath);
 		m_spPolygon->SetSplit(10, 1);
 		m_spPolygon->SetScale(0.5f);
 

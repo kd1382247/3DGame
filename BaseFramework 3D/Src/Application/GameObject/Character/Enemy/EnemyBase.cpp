@@ -72,6 +72,13 @@ Math::Vector3 EnemyBase::CreateSpawnDirection()
 	return launchVec;
 }
 
+void EnemyBase::PlayHitEffect()
+{
+
+	KdEffekseerManager::GetInstance().
+		Play("Hit/Hit2.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.3f, 1.0f, false);
+}
+
 void EnemyBase::UpdateGravity()
 {
 

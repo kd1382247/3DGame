@@ -74,6 +74,15 @@ cbuffer cbColorSphere : register(b10)
 		float  Radius;
 		float3 Pos;
 		int    Enable;
+		float3 Dir;
+		int    ShapeType;
+		float  Angle;
+		float2 RectSize;
 	}g_ColorSpheres[20];
-	
+
 };
+
+
+#define COLORSPHERE_SHAPE_CIRCLE 0
+#define COLORSPHERE_SHAPE_SECTOR 1
+#define COLORSPHERE_SHAPE_RECTANGLE 2

@@ -9,7 +9,7 @@ public:
 	FlyText(){}
 	~FlyText()override{}
 	 
-	void Init(int damage, const Math::Vector3& spawnPos);
+	void Init(int damage, const Math::Vector3& spawnPos,const std::string filePath);
 	void Update();
 	void DrawEffect()override;
 

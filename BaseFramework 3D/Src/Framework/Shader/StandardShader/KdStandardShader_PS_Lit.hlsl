@@ -93,27 +93,112 @@ float4 main(VSOutput In) : SV_Target0
 	{
 		if (g_ColorSphereEnable)
 		{
-			for (int i = 0; i < 20; i++)
+			// 45度の坂まで色を変える
+			if(0.707f<dot(wN,float3(0,1,0)))
 			{
-				if (g_ColorSpheres[i].Enable)
+				for (int i = 0; i < 20; i++)
 				{
-					// 範囲内化どうかを調べる
-					// 今から塗ろうとしているピクセル座標から
-					// エフェクトを発生させる座標までベクトル
-					float3 v = g_ColorSpheres[i].Pos - In.wPos;
-
-					float dist = length(v);
-
-					float color = dist / g_ColorSpheres[i].Radius;
-
-					color = pow(color, 5.0f);
-					
-					if (dist < g_ColorSpheres[i].Radius)
+					if (g_ColorSpheres[i].Enable)
 					{
-						// 範囲内
-						baseColor.rgb += g_ColorSpheres[i].Color*color;
+						// 円形
+						if (g_ColorSpheres[i].ShapeType == COLORSPHERE_SHAPE_CIRCLE)
+						{
+							// 今から塗ろうとしているピクセル座標からエフェクトを発生させる座標までベクトル
+							float3 v = g_ColorSpheres[i].Pos - In.wPos;
+
+							float dist = length(v);
+
+							// 範囲内か
+							if (dist < g_ColorSpheres[i].Radius)
+							{
+								float rate = dist / g_ColorSpheres[i].Radius;
+
+								rate = pow(rate, 15.0f);
+
+								if (rate < 0.08)
+								{
+									rate = 0.08;
+								}
+								
+								baseColor.rgb += g_ColorSpheres[i].Color * rate;
+							}
+						}
+						else if (g_ColorSpheres[i].ShapeType == COLORSPHERE_SHAPE_SECTOR)
+						{
+							float3 toPixel = In.wPos - g_ColorSpheres[i].Pos;
+							toPixel.y = 0;
+
+							float3 dirFlat = g_ColorSpheres[i].Dir;
+							dirFlat.y = 0;
+						
+							float dist = length(toPixel);
+
+							float3 toPixelNorm = normalize(toPixel);
+							float3 dirNorm = normalize(dirFlat);
+
+				
+							float d = dot(toPixelNorm, dirNorm);
+
+							float halfAngleRad = radians(g_ColorSpheres[i].Angle * 0.5);
+							float cosHalfAngle = cos(halfAngleRad);
+
+							// 範囲内か
+							if (dist < g_ColorSpheres[i].Radius && d > cosHalfAngle)
+							{
+
+								float distRate = dist / g_ColorSpheres[i].Radius;
+								float angleRate = (1.0 - d) / (1.0 - cosHalfAngle);
+								float rate = max(distRate, angleRate);
+								rate = pow(rate, 15.0f);
+
+								if (rate < 0.08)
+								{
+									rate = 0.08;
+								}
+								
+							
+								baseColor.rgb += g_ColorSpheres[i].Color * rate;
+							}
+						}
+						else if (g_ColorSpheres[i].ShapeType == COLORSPHERE_SHAPE_RECTANGLE)
+						{
+							float3 toPixel = In.wPos - g_ColorSpheres[i].Pos;
+							toPixel.y = 0;
+
+							float3 dirFlat = g_ColorSpheres[i].Dir;
+							dirFlat.y = 0;
+							dirFlat = normalize(dirFlat);
+
+							float3 right = normalize(cross(dirFlat, float3(0, 1, 0)));
+
+							float forwardDist = dot(toPixel, dirFlat); // 前後方向のズレ
+							float sideDist = dot(toPixel, right);      // 左右方向のズレ
+
+							// 範囲内か
+							if (abs(forwardDist) < g_ColorSpheres[i].RectSize.y * 0.5 &&
+							    abs(sideDist) < g_ColorSpheres[i].RectSize.x * 0.5)
+							{
+
+								float forwardRate = abs(forwardDist) / (g_ColorSpheres[i].RectSize.y * 0.5);
+								float sideRate = abs(sideDist) / (g_ColorSpheres[i].RectSize.x * 0.5);
+
+								float rate = max(forwardRate, sideRate);
+								
+								rate = pow(rate, 15.0f);
+
+								if(rate<0.08)
+								{
+									rate = 0.08;
+								}
+								
+								baseColor.rgb += g_ColorSpheres[i].Color*rate;
+							}
+						
+						}
+					
 					}
 				}
+
 			}
 		}
 	}

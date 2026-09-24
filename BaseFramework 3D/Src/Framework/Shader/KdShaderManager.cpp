@@ -515,19 +515,6 @@ int KdShaderManager::CreateColorSphere()
 	return -1;
 }
 
-void KdShaderManager::WriteCBColorSphere(int handle, const Math::Vector3& pos, float radius, const Math::Vector3& color)
-{
-	
-	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
-
-	colorSp.ColorSpheres[handle].Pos = pos;
-	colorSp.ColorSpheres[handle].Radius = radius;
-	colorSp.ColorSpheres[handle].Color = color;
-	
-	m_cb10_ColorSphere.Write();
-
-}
-
 void KdShaderManager::ReleaseColorSphere(int handle)
 {
 	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
@@ -546,6 +533,55 @@ void KdShaderManager::ClearColorSphere()
 	{
 		colorSp.ColorSpheres[i].Enable = false;
 	}
+
+	m_cb10_ColorSphere.Write();
+}
+
+void KdShaderManager::WriteCBColorSphereCircle(int handle, const Math::Vector3& pos, float radius, const Math::Vector3& color)
+{
+
+	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
+
+	colorSp.ColorSpheres[handle].Pos = pos;
+	colorSp.ColorSpheres[handle].Radius = radius;
+	colorSp.ColorSpheres[handle].Color = color;
+	colorSp.ColorSpheres[handle].ShapeType = ColorSphereShape::Circle;
+
+	m_cb10_ColorSphere.Write();
+}
+
+void KdShaderManager::WriteCBColorSphereSector(int handle, const Math::Vector3 & pos, const Math::Vector3 & dir, float radius, float angle, const Math::Vector3 & color)
+{
+
+	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
+
+	Math::Vector3 normalizeDir = dir;
+
+	normalizeDir.Normalize();
+
+	colorSp.ColorSpheres[handle].Pos = pos;
+	colorSp.ColorSpheres[handle].Dir = normalizeDir;
+	colorSp.ColorSpheres[handle].Radius = radius;
+	colorSp.ColorSpheres[handle].Angle = angle;
+	colorSp.ColorSpheres[handle].Color = color;
+	colorSp.ColorSpheres[handle].ShapeType = ColorSphereShape::Sector;
+
+	m_cb10_ColorSphere.Write();
+}
+
+void KdShaderManager::WriteCBColorSphereRectangle(int handle, const Math::Vector3 & pos, const Math::Vector3 & dir, const Math::Vector2 & rectSize, const Math::Vector3 & color)
+{
+	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
+
+	Math::Vector3 normalizeDir = dir;
+
+	normalizeDir.Normalize();
+
+	colorSp.ColorSpheres[handle].Pos = pos;
+	colorSp.ColorSpheres[handle].Dir = normalizeDir;
+	colorSp.ColorSpheres[handle].RectSize=rectSize;
+	colorSp.ColorSpheres[handle].Color = color;
+	colorSp.ColorSpheres[handle].ShapeType = ColorSphereShape::Rectangle;
 
 	m_cb10_ColorSphere.Write();
 }

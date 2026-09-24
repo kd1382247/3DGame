@@ -196,10 +196,9 @@ void Slime::OnHit(const AttackInfo attackInfo)
 		RePlayAnimation(SlimeAnimationType::GetHit);
 	}
 
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
+	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(), m_flyTextPath);
 
-	KdEffekseerManager::GetInstance().
-		Play("Hit/Hit.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, 1.0f, false);
+	PlayHitEffect();
 
 	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }

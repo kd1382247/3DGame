@@ -48,6 +48,9 @@
 // Mageの魔法円
 #include"../../Application/GameObject/MageMagicCircle/MageMagicCircle.h"
 
+// Mageの扇型
+#include"../../Application/GameObject/MageMagicSector/MageMagicSector.h"
+
 
 void KdGameObjectFactory::Init()
 {
@@ -132,6 +135,9 @@ void KdGameObjectFactory::Init()
 
 	// MageMagicCircle(Mageの魔法円攻撃の当たり判定)
 	Register<MageMagicCircle>("MageMagicCircle", KdGameObject::ObjectCategory::Effect);
+
+	// MageMagicCircle(Mageの扇形攻撃の当たり判定)
+	Register<MageMagicSector>("MageMagicSector", KdGameObject::ObjectCategory::Effect);
 
 
 }

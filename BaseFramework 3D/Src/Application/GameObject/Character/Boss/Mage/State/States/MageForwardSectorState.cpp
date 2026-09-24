@@ -1,4 +1,4 @@
-﻿#include "MageForwardAreaState.h"
+﻿#include "MageForwardSectorState.h"
 
 #include"../../Mage.h"
 #include"MageNormalState.h"
@@ -9,20 +9,20 @@ namespace
 	constexpr float kCastDelay = 0.35f;
 }
 
-void MageForwardAreaState::OnStart(Mage* mage)
+void MageForwardSectorState::OnStart(Mage* mage)
 {
 	mage->PlayAnimation(MageAnimationType::Attack1);
 	m_castTimer = 0.0f;
 	m_hasCast = false;
 }
 
-void MageForwardAreaState::OnUpdate(Mage* mage)
+void MageForwardSectorState::OnUpdate(Mage* mage)
 {
 	m_castTimer += mage->GetDeltaTime();
 
 	if (!m_hasCast && m_castTimer >= kCastDelay)
 	{
-		mage->ForwardAreaAttack();
+		mage->CastForwardSector();
 		m_hasCast = true;
 	}
 
@@ -32,7 +32,7 @@ void MageForwardAreaState::OnUpdate(Mage* mage)
 	}
 }
 
-void MageForwardAreaState::OnExit(Mage* mage)
+void MageForwardSectorState::OnExit(Mage* mage)
 {
 	mage->EndAttack();
 }

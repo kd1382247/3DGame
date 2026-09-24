@@ -10,6 +10,8 @@
 
 #include"../../../EnergyBullet/EnergyBulletManager.h"
 #include"../../../MageMagicCircle/MageMagicCircleManager.h"
+#include"../../../MageMagicSector/MageMagicSectorManager.h"
+
 
 #include"State/States/MageNormalState.h"
 
@@ -79,13 +81,6 @@ void Mage::RePlayAnimation(MageAnimationType type)
 
 void Mage::OnHit(const AttackInfo attackInfo)
 {
-	if (m_isClone)
-	{
-		// 分身は偽物なので、1発当たれば即座に消える
-		Destroy();
-		return;
-	}
-
 	BossBase::OnHit(attackInfo);
 }
 
@@ -112,14 +107,7 @@ MageAttackPattern Mage::SelectAttackPattern()
 	// HP50%を超えている間は、後半専用パターンを除外する
 	if (!IsSecondPhase())
 	{
-		weights[static_cast<size_t>(MageAttackPattern::CirculeAreaAttack)] = 0.0f;
-		weights[static_cast<size_t>(MageAttackPattern::Clone)] = 0.0f;
-	}
-
-	// 分身自身はこれ以上分身を出さない(無限増殖防止)
-	if (m_isClone)
-	{
-		weights[static_cast<size_t>(MageAttackPattern::Clone)] = 0.0f;
+		weights[static_cast<size_t>(MageAttackPattern::NovaCircle)] = 0.0f;
 	}
 
 	int index = LotteryPattern(weights);
@@ -132,39 +120,70 @@ MageAttackPattern Mage::SelectAttackPattern()
 	return static_cast<MageAttackPattern>(index);
 }
 
-void Mage::SummonEnemy()
+void Mage::PrepareSummonPositions()
 {
-	std::string enemyName;
+	constexpr int enemyCount = 5;
+	constexpr float offsetRadius = 4.0f;
 
-	switch (KdRandom::GetInt(0, 3))
+	m_summonPositions.clear();
+
+	for (int i = 0; i < enemyCount; i++)
 	{
-	case 0: enemyName = "Cactas";     break;
-	case 1: enemyName = "Mushroom";   break;
-	case 2: enemyName = "Slime";      break;
-	case 3: enemyName = "TurtleShell"; break;
+		// ボスを囲むように、円周上に等間隔で配置する
+		float angle = i * (2.0f * 3.1415926535f / enemyCount);
+
+		Math::Vector3 offset;
+		offset.x = std::sinf(angle) * offsetRadius;
+		offset.y = 0.0f;
+		offset.z = std::cosf(angle) * offsetRadius;
+
+		Math::Vector3 spawnPos = GetPos() + offset;
+
+		m_summonPositions.push_back(spawnPos);
+
+		// 出現前の煙エフェクト
+		KdEffekseerManager::GetInstance().
+			Play("Smoke/Smoke_White.efkefc", spawnPos + Math::Vector3(0.0f, 0.5f, 0.0f), 0.3f, 1.0f, false);
 	}
-
-	auto obj = KdGameObjectFactory::Instance().CreateGameObject(enemyName);
-
-	auto enemy = std::dynamic_pointer_cast<EnemyBase>(obj);
-
-	if (!enemy)
-	{
-		return;
-	}
-
-	// Mageの少し前方に召喚する
-	Math::Vector3 spawnPos = GetPos() + m_mWorld.Backward() * 1.5f;
-
-	enemy->Init();
-	enemy->SetPos(spawnPos);
-	enemy->SetPrevPos(spawnPos);
-	enemy->SetUpReference();
-
-	SceneManager::Instance().AddObject(enemy);
 }
 
-void Mage::CastMagicCircle()
+void Mage::SpawnEnemies()
+{
+	for (const auto& spawnPos : m_summonPositions)
+	{
+		std::string enemyName;
+
+		switch (KdRandom::GetInt(0, 5))
+		{
+		case 0: enemyName = "Cactas";     break;
+		case 1: enemyName = "Mushroom";   break;
+		case 2: enemyName = "Slime";      break;
+		case 3: enemyName = "TurtleShell"; break;
+		case 4: enemyName = "StarFish"; break;
+		case 5: enemyName = "Bomb"; break;
+		}
+
+		auto obj = KdGameObjectFactory::Instance().CreateGameObject(enemyName);
+
+		auto enemy = std::dynamic_pointer_cast<EnemyBase>(obj);
+
+		if (!enemy)
+		{
+			continue;
+		}
+
+		enemy->Init();
+		enemy->SetPos(spawnPos);
+		enemy->SetPrevPos(spawnPos);
+		enemy->SetUpReference();
+
+		SceneManager::Instance().AddObject(enemy);
+	}
+
+	m_summonPositions.clear();
+}
+
+void Mage::CastTargetCircle()
 {
 	auto spPlayer = m_wpPlayer.lock();
 
@@ -175,58 +194,31 @@ void Mage::CastMagicCircle()
 
 	MageMagicCircleManager::Instance().CreateMagicCircle(
 		spPlayer->GetPos(),
-		/*radius=*/2.0f,
+		/*radius=*/2.5f,
 		/*telegraphTime=*/0.8f,
 		/*damage=*/m_parameter.GetParam().m_attackPow,
 		"Tornado/Tornado.efkefc",
-		0.5,
-		2.0f,
+		0.4,
+		1.0f,
 		0,
-		165);
+		90);
 }
 
-void Mage::ForwardAreaAttack()
+void Mage::CastForwardSector()
 {
-	auto spPlayer = m_wpPlayer.lock();
-
-	if (!spPlayer)
-	{
-		return;
-	}
-
-	Math::Vector3 forward = m_mWorld.Backward();
-	forward.y = 0.0f;
-
-	if (forward.LengthSquared() > 0.000001f)
-	{
-		forward.Normalize();
-	}
-
-	DirectX::BoundingSphere sphere;
-
-	sphere.Center = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f) + forward * 1.5f;
-	sphere.Radius = 1.2f;
-
-	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
-
-	if (spPlayer->Intersects(sphereInfo, nullptr))
-	{
-		Math::Vector3 knockBackDir = spPlayer->GetPos() - GetPos();
-		knockBackDir.y = 0.0f;
-
-		if (knockBackDir.LengthSquared() > 0.000001f)
-		{
-			knockBackDir.Normalize();
-		}
-
-		AttackInfo attackInfo;
-
-		attackInfo.damage = m_parameter.GetParam().m_attackPow;
-		attackInfo.knockBackDir = knockBackDir;
-		attackInfo.knockBackPower = 0.2f;
-
-		spPlayer->OnHit(attackInfo);
-	}
+	MageMagicSectorManager::Instance().CreateMagicSector(
+		GetPos(),
+		m_mWorld.Backward(),
+		100,
+		6.5f,
+		0.8f,
+		10,
+		"Sword/Sword.efkefc",
+		0.6f,
+		1.0f,
+		0,
+		60
+	);
 }
 
 void Mage::FireBolt()
@@ -252,9 +244,8 @@ void Mage::FireBolt()
 		/*damage=*/m_parameter.GetParam().m_attackPow, /*knockBackPower=*/0.15f, /*lifeTime=*/4.0f);
 }
 
-void Mage::CirculeAreaAttack()
+void Mage::CastNovaCircle()
 {
-	
 	MageMagicCircleManager::Instance().CreateMagicCircle(
 		GetPos(),
 		/*radius=*/6.0f,
@@ -265,36 +256,4 @@ void Mage::CirculeAreaAttack()
 		1.0f,
 		0,
 		45);
-}
-
-void Mage::SpawnClones()
-{
-	constexpr int cloneCount = 3;
-	constexpr float offsetRadius = 2.0f;
-
-	for (int i = 0; i < cloneCount; i++)
-	{
-		auto obj = KdGameObjectFactory::Instance().CreateGameObject("Mage");
-
-		auto clone = std::dynamic_pointer_cast<Mage>(obj);
-
-		if (!clone)
-		{
-			continue;
-		}
-
-		float angle = i * (2.0f * 3.1415926535f / cloneCount);
-
-		Math::Vector3 offset;
-		offset.x = std::sinf(angle) * offsetRadius;
-		offset.y = 0.0f;
-		offset.z = std::cosf(angle) * offsetRadius;
-
-		clone->SetIsClone(true);
-		clone->Init();
-		clone->SetPos(GetPos() + offset);
-		clone->SetUpReference();
-
-		SceneManager::Instance().AddObject(clone);
-	}
 }

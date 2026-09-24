@@ -454,7 +454,7 @@ void Player::OnHit(const AttackInfo attackInfo)
 		}
 	}
 
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage,GetPos());
+	FlyTextManager::Instance().CreateDamateText(attackInfo.damage,GetPos(), m_flyTextPath);
 
 	AddKnockBack(attackInfo.knockBackDir,attackInfo.knockBackPower);
 }

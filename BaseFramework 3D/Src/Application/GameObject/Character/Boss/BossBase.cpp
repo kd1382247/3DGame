@@ -40,10 +40,10 @@ void BossBase::OnHit(const AttackInfo attackInfo)
 		m_outroFlg = true;
 	}
 
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
+	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(),m_flyTextPath);
 
 	KdEffekseerManager::GetInstance().
-		Play("Hit/Hit.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, 1.0f, false);
+		Play("Hit/Hit2.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, 1.0f, false);
 }
 
 bool BossBase::IsSecondPhase()const

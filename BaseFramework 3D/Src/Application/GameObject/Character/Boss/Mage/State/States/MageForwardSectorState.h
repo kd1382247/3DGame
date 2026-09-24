@@ -4,7 +4,8 @@ class Mage;
 
 #include"../../../../StateMachine/StateBase.h"
 
-class MageForwardAreaState :public StateBase<Mage>
+// 3. 敵(ボス)前方への扇形範囲攻撃
+class MageForwardSectorState :public StateBase<Mage>
 {
 public:
 

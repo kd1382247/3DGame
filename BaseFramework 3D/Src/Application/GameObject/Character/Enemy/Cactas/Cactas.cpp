@@ -188,11 +188,9 @@ void Cactas::OnHit(const AttackInfo attackInfo)
 		m_stateMachine.ChangeState<CactasHitShakeState>();
 	}
 
-	//EffectManager::Instance().CreateEffect("HitEffect", shared_from_this(),Math::Vector3(0,0.8,-1.0f));
+	
+	PlayHitEffect();
 
-	KdEffekseerManager::GetInstance().
-		Play("Hit/Hit.efkefc", GetPos()+Math::Vector3(0.0f,0.5f,0.0f), 0.4f, 1.0f, false);
-
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos());
+	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(), m_flyTextPath);
 
 }

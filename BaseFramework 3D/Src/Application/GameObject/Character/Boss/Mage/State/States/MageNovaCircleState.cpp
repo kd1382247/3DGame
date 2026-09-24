@@ -1,4 +1,4 @@
-﻿#include "MageCirculeAreaAttackState.h"
+﻿#include "MageNovaCircleState.h"
 
 #include"../../Mage.h"
 #include"MageNormalState.h"
@@ -9,20 +9,20 @@ namespace
 	constexpr float kCastDelay = 0.6f;
 }
 
-void MageCirculeAreaAttackState::OnStart(Mage* mage)
+void MageNovaCircleState::OnStart(Mage* mage)
 {
 	mage->PlayAnimation(MageAnimationType::Attack2);
 	m_castTimer = 0.0f;
 	m_hasCast = false;
 }
 
-void MageCirculeAreaAttackState::OnUpdate(Mage* mage)
+void MageNovaCircleState::OnUpdate(Mage* mage)
 {
 	m_castTimer += mage->GetDeltaTime();
 
 	if (!m_hasCast && m_castTimer >= kCastDelay)
 	{
-		mage->CirculeAreaAttack();
+		mage->CastNovaCircle();
 		m_hasCast = true;
 	}
 
@@ -32,7 +32,7 @@ void MageCirculeAreaAttackState::OnUpdate(Mage* mage)
 	}
 }
 
-void MageCirculeAreaAttackState::OnExit(Mage* mage)
+void MageNovaCircleState::OnExit(Mage* mage)
 {
 	mage->EndAttack();
 }

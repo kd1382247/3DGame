@@ -4,7 +4,7 @@
 
 #include"../../Scene/SceneManager.h"
 
-void FlyTextManager::CreateDamateText(const int damage,const Math::Vector3& pos)
+void FlyTextManager::CreateDamateText(const int damage,const Math::Vector3& pos, const std::string filePath)
 {
 	Math::Vector3 spawnPos = pos;
 
@@ -15,7 +15,7 @@ void FlyTextManager::CreateDamateText(const int damage,const Math::Vector3& pos)
 
 	auto flyText = std::make_shared<FlyText>();
 
-	flyText->Init(damage, spawnPos);
+	flyText->Init(damage, spawnPos,filePath);
 
 	SceneManager::Instance().AddObject(flyText);
 }

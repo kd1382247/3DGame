@@ -4,7 +4,8 @@ class Mage;
 
 #include"../../../../StateMachine/StateBase.h"
 
-class MageMagicCircleState :public StateBase<Mage>
+// 5. ボス中心から半径数メートルの範囲攻撃(HP50%以下限定)
+class MageNovaCircleState :public StateBase<Mage>
 {
 public:
 
@@ -16,8 +17,5 @@ private:
 
 	float m_castTimer = 0.0f;
 	bool  m_hasCast = false;
-
-	const int maxShot = 5;
-	int       m_shotCount = 0;
 
 };

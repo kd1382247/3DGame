@@ -231,4 +231,6 @@ private:
 
 	// 一定時間で当たった敵のリストをクリア
 	float                                m_hitCooldownTimer = 0.0f;
+
+	const std::string                    m_flyTextPath = "DamageNumber_Red.png";
 };

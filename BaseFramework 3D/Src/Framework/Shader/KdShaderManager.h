@@ -17,13 +17,29 @@ struct PointLight
 	int		IsBright = 0;	// 明度用ライトかどうか
 };
 
+enum class ColorSphereShape
+{
+	Circle,
+	Sector,
+	Rectangle
+};
+
 // カラースフィアデータ
 struct ColorSphere
 {
-	Math::Vector3 Color;
-	float         Radius=0.0f;
-	Math::Vector3 Pos;
-	int           Enable=0;
+	Math::Vector3      Color;
+	float              Radius=0.0f;
+
+	Math::Vector3      Pos;
+	int                Enable=0;
+
+	Math::Vector3      Dir;
+	ColorSphereShape   ShapeType=ColorSphereShape::Circle;
+
+	float              Angle = 0;
+	Math::Vector2      RectSize;
+	float              _blank;
+
 };
 
 //==========================
@@ -216,10 +232,12 @@ public:
 	void WriteCBPointLight(const std::list<PointLight>& pointLights);
 
 	int CreateColorSphere();
-	void WriteCBColorSphere(int handle, const Math::Vector3& pos, float radius, const Math::Vector3& color);
 	void ReleaseColorSphere(int handle);
 	void ClearColorSphere();
 
+	void WriteCBColorSphereCircle(int handle, const Math::Vector3& pos, float radius, const Math::Vector3& color);
+	void WriteCBColorSphereSector(int handle, const Math::Vector3& pos, const Math::Vector3& dir, float radius, float angle, const Math::Vector3& color);
+	void WriteCBColorSphereRectangle(int handle, const Math::Vector3& pos, const Math::Vector3& dir, const Math::Vector2& rectSize, const Math::Vector3& color);
 
 	//==========================
 	//
