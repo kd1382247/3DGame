@@ -3,6 +3,9 @@
 #include"../../Camera/CameraBase.h"
 #include"../Enemy/EnemyBase.h"
 
+#include"../../Stage/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../../Stage/Collision/AABBCollision/AABBCollisionManager.h"
+
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../../System/CollisionManager/CollisionManager.h"
 
@@ -66,6 +69,10 @@ void Player::Update()
 
 	UpdateGravity();
 
+	if (!IsGrounded())
+	{
+		UpdateGroundPosY();
+	}
 }
 
 void Player::PostUpdate()
@@ -366,6 +373,58 @@ void Player::ApplyCameraRelativeMove(float speed)
 void Player::UpdateAnimation()
 {
 	m_animation.Update(m_deltaTime);
+}
+
+void Player::UpdateGroundPosY()
+{
+	KdCollider::RayInfo rayInfo;
+	// レイの発射位置を設定
+	rayInfo.m_pos = GetPos();
+
+	// 少し高いところから飛ばす(段差の許容範囲)
+	static float enableStepHigh = 0.2f;
+	rayInfo.m_pos.y += enableStepHigh;
+
+	// レイの発射方向を設定
+	rayInfo.m_dir = Math::Vector3::Down;
+	// レイの長さを設定
+	rayInfo.m_range = 100.f;
+
+	// 当たり判定をしたいタイプを設定
+	rayInfo.m_type = KdCollider::TypeGround | KdCollider::TypeBump;
+
+	std::vector<const std::vector< std::weak_ptr<KdGameObject>>*>lists;
+
+	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::Ground));
+	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::AABB));
+
+
+	for (const auto& objList : lists)
+	{
+		for (const auto wpGameObj : *objList)
+		{
+			std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
+			if (spGameObj)
+			{
+				std::list<KdCollider::CollisionResult> retRayList;
+				spGameObj->Intersects(rayInfo, &retRayList);
+
+				// レイに当たったリストから一番近いオブジェクトを検出
+				float maxOverLap = 0;
+				Math::Vector3 hitPos = {};
+				for (auto& ret : retRayList)
+				{
+					// レイを遮断しオーバーした長さが
+					// 一番長いものを探す
+					if (maxOverLap < ret.m_overlapDistance)
+					{
+						maxOverLap = ret.m_overlapDistance;
+						SetGroundYPos(ret.m_hitPos.y);
+					}
+				}
+			}
+		}
+	}
 }
 
 

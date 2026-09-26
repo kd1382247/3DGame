@@ -11,6 +11,7 @@
 #include"../../../EnergyBullet/EnergyBulletManager.h"
 #include"../../../MageMagicCircle/MageMagicCircleManager.h"
 #include"../../../MageMagicSector/MageMagicSectorManager.h"
+#include"../../../MageBeam/MageBeamManager.h"
 
 
 #include"State/States/MageNormalState.h"
@@ -36,7 +37,6 @@ void Mage::Init()
 	BossBase::Init();
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
-
 
 	SetPos({ 0.0f,0.0f,0.0f });
 	SetScale(1.5f);
@@ -192,8 +192,15 @@ void Mage::CastTargetCircle()
 		return;
 	}
 
+	Math::Vector3 targetPos = spPlayer->GetPos();
+
+	if (!spPlayer->IsGrounded())
+	{
+		targetPos.y = spPlayer->GetGroundYPos();
+	}
+
 	MageMagicCircleManager::Instance().CreateMagicCircle(
-		spPlayer->GetPos(),
+		targetPos,
 		/*radius=*/2.5f,
 		/*telegraphTime=*/0.8f,
 		/*damage=*/m_parameter.GetParam().m_attackPow,
@@ -214,10 +221,10 @@ void Mage::CastForwardSector()
 		0.8f,
 		10,
 		"Sword/Sword.efkefc",
-		0.6f,
-		1.0f,
+		0.8f,
+		1.5f,
 		0,
-		60
+		80
 	);
 }
 
@@ -249,11 +256,39 @@ void Mage::CastNovaCircle()
 	MageMagicCircleManager::Instance().CreateMagicCircle(
 		GetPos(),
 		/*radius=*/6.0f,
-		/*telegraphTime=*/1.5f,
+		/*telegraphTime=*/1.2f,
 		/*damage=*/m_parameter.GetParam().m_attackPow,
 		"Salamander/Salamander.efkefc",
 		1.2f,
 		1.0f,
 		0,
 		45);
+}
+
+Math::Vector3 Mage::GetBeamEffectRotation()const
+{
+	// エフェクト側の初期正面とキャラクターの正面が180度ズレているため補正
+	Math::Vector3 rotation = GetRotation();
+	rotation.y += 180.0f;
+
+	return rotation;
+}
+
+std::shared_ptr<MageBeam> Mage::FireBeam(const Math::Vector3& pos, const Math::Vector3& dir, float length, float width,const Math::Vector3&effectPos)
+{
+	return MageBeamManager::Instance().CreateBeam(
+		pos,
+		dir,
+		length,
+		width,
+		/*damage=*/m_parameter.GetParam().m_attackPow,
+		/*duration=*/3.0f,
+		// TODO: 実在するレーザー系のエフェクトアセットに差し替える
+		"Beam/Beam.efkefc",
+		0.6f,
+		1.0f,
+		130,
+		250,
+		GetBeamEffectRotation(),
+		effectPos);
 }

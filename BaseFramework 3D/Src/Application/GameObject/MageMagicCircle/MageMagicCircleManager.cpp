@@ -21,6 +21,5 @@ void MageMagicCircleManager::CreateMagicCircle(const Math::Vector3& pos, float r
 	magicCircle->Setup(pos, radius, telegraphTime, damage);
 	magicCircle->SetEffectInfo(fileName, size, speed, startFrame, endFrame);
 
-
 	SceneManager::Instance().AddObject(magicCircle);
 }

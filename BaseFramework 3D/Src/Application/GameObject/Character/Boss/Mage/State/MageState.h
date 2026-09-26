@@ -19,6 +19,7 @@ enum class MageAttackPattern
 	ForwardSector, // 3. 前方に扇形の範囲攻撃
 	Bolt,          // 4. プレイヤーへ単発魔法弾
 	NovaCircle,    // 5. ボス中心から半径数メートルの範囲攻撃(HP50%以下限定)
+	Beam,          // 6. レーザーを放つ
 
 	Num
 };

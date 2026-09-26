@@ -149,13 +149,12 @@ float4 main(VSOutput In) : SV_Target0
 								float distRate = dist / g_ColorSpheres[i].Radius;
 								float angleRate = (1.0 - d) / (1.0 - cosHalfAngle);
 								float rate = max(distRate, angleRate);
-								rate = pow(rate, 15.0f);
+								rate = pow(rate, 30.0f);
 
 								if (rate < 0.08)
 								{
 									rate = 0.08;
 								}
-								
 							
 								baseColor.rgb += g_ColorSpheres[i].Color * rate;
 							}
@@ -179,12 +178,17 @@ float4 main(VSOutput In) : SV_Target0
 							    abs(sideDist) < g_ColorSpheres[i].RectSize.x * 0.5)
 							{
 
-								float forwardRate = abs(forwardDist) / (g_ColorSpheres[i].RectSize.y * 0.5);
-								float sideRate = abs(sideDist) / (g_ColorSpheres[i].RectSize.x * 0.5);
+								float forwardEdgeDist = (g_ColorSpheres[i].RectSize.y * 0.5f) - abs(forwardDist);
+								float sideEdgeDist = (g_ColorSpheres[i].RectSize.x * 0.5f) - abs(sideDist);
+
+								float edgeThickness = 1.0f; // 縁の太さ(m)。好きな値に調整可能
+
+								float forwardRate = saturate(1.0f - forwardEdgeDist / edgeThickness);
+								float sideRate = saturate(1.0f - sideEdgeDist / edgeThickness);
 
 								float rate = max(forwardRate, sideRate);
 								
-								rate = pow(rate, 15.0f);
+								rate = pow(rate, 10.0f);
 
 								if(rate<0.08)
 								{

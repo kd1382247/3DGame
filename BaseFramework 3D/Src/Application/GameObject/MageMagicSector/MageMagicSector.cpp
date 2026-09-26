@@ -28,10 +28,12 @@ void MageMagicSector::Setup(const Math::Vector3& pos,const Math::Vector3& dir, f
 	m_sector.m_angleDeg = angleDeg;
 	m_sector.m_radius = radius;
 
-
 	m_telegraphTime = telegraphTime;
+	m_telegraphTimeTotal = telegraphTime;
+
 	m_damage = damage;
 
+	CreateTelegraphIndicator();
 	CreateMagicSectorRange();
 }
 
@@ -74,10 +76,47 @@ void MageMagicSector::HideMagicSectorRange()
 	KdShaderManager::Instance().ReleaseColorSphere(m_colorSphereHandle);
 }
 
+
+void MageMagicSector::CreateTelegraphIndicator()
+{
+	m_telegraphIndicatorHandle = KdShaderManager::Instance().CreateColorSphere();
+}
+
+void MageMagicSector::UpdateTelegraphIndicator()
+{
+	if (m_telegraphIndicatorHandle != -1)
+	{
+		// 表示する円の大きさを更新
+		float progress = 1.0 - (m_telegraphTime / m_telegraphTimeTotal);
+		float currentRadius = progress * m_sector.m_radius;
+
+		KdShaderManager::Instance().WriteCBColorSphereSector(
+			m_telegraphIndicatorHandle,
+			GetPos(),
+			m_mWorld.Backward(),
+			currentRadius,
+			m_sector.m_angleDeg,
+			Math::Vector3(2.0f, 0.0f, 0.0f));
+	}
+}
+
+void MageMagicSector::HideTelegraphIndicator()
+{
+	if (m_telegraphIndicatorHandle != -1)
+	{
+		// 表示を消す
+		KdShaderManager::Instance().ReleaseColorSphere(m_telegraphIndicatorHandle);
+
+		m_telegraphIndicatorHandle = -1;
+	}
+}
+
+
 void MageMagicSector::Update()
 {
 	float deltaTime = TimeManager::Instance().GetDeltaTime();
 
+	UpdateTelegraphIndicator();
 	UpdateMagicSectorRange();
 
 	// 予備動作中は当たり判定なし
@@ -86,18 +125,23 @@ void MageMagicSector::Update()
 		m_telegraphTime -= deltaTime;
 		return;
 	}
+	else
+	{
+		HideTelegraphIndicator();
+	}
 
 	if (m_effectHandle < 0)
 	{
 		// エフェクト再生(最初の1回だけ呼ぶ)
 		auto spEffekseerObj = KdEffekseerManager::GetInstance().Play(
 			m_effectInfo.m_fileName,
-			m_effectInfo.m_pos,
+			m_effectInfo.m_pos+m_mWorld.Backward()*-3.8f,
 			m_effectInfo.m_size,
 			m_effectInfo.m_speed,
 			false,
 			m_effectInfo.m_startFrame,
-			m_effectInfo.m_endFrame).lock();
+			m_effectInfo.m_endFrame,
+			Math::Vector3(0,145,0)).lock();
 
 		if (spEffekseerObj)
 		{
@@ -162,7 +206,7 @@ void MageMagicSector::Update()
 	auto spEffekseerObj = m_wpEffekseerObj.lock();
 	if (spEffekseerObj)
 	{
-		if (spEffekseerObj->GetProgress() > 0.8f)
+		if (spEffekseerObj->GetProgress() > 0.6f)
 		{
 			HideMagicSectorRange();
 			m_hitTarget = true;

@@ -22,8 +22,11 @@ void MageMagicCircle::Setup(const Math::Vector3& pos, float radius, float telegr
 
 	m_radius = radius;
 	m_telegraphTime = telegraphTime;
+	m_telegraphTimeTotal = telegraphTime;
+
 	m_damage = damage;
 
+	CreateTelegraphIndicator();
 	CreateMagicCircleRange();
 }
 
@@ -61,10 +64,44 @@ void MageMagicCircle::HideMagicCircleRange()
 	KdShaderManager::Instance().ReleaseColorSphere(m_colorSphereHandle);
 }
 
+void MageMagicCircle::CreateTelegraphIndicator()
+{
+	m_telegraphIndicatorHandle=KdShaderManager::Instance().CreateColorSphere();
+}
+
+void MageMagicCircle::UpdateTelegraphIndicator()
+{
+	if(m_telegraphIndicatorHandle!=-1)
+	{
+		// 表示する円の大きさを更新
+		float progress = 1.0 - (m_telegraphTime / m_telegraphTimeTotal);
+		float currentRadius = progress * m_radius;
+
+
+		KdShaderManager::Instance().WriteCBColorSphereCircle(
+			m_telegraphIndicatorHandle,
+			GetPos(),
+			currentRadius,
+			Math::Vector3(2.0f,0.0f,0.0f));
+	}
+}
+
+void MageMagicCircle::HideTelegraphIndicator()
+{
+	if(m_telegraphIndicatorHandle!=-1)
+	{
+		// 表示を消す
+		KdShaderManager::Instance().ReleaseColorSphere(m_telegraphIndicatorHandle);
+
+		m_telegraphIndicatorHandle = -1;
+	}
+}
+
 void MageMagicCircle::Update()
 {
 	float deltaTime = TimeManager::Instance().GetDeltaTime();
 
+	UpdateTelegraphIndicator();
 	UpdateMagicCircleRange();
 
 	// 予備動作中は当たり判定なし
@@ -72,6 +109,10 @@ void MageMagicCircle::Update()
 	{
 		m_telegraphTime -= deltaTime;
 		return;
+	}
+	else
+	{
+		HideTelegraphIndicator();
 	}
 
 	if (m_effectHandle < 0)

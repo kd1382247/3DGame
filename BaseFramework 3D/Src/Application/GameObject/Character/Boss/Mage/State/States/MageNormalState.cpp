@@ -7,6 +7,7 @@
 #include"MageForwardSectorState.h"
 #include"MageBoltState.h"
 #include"MageNovaCircleState.h"
+#include"MageBeamState.h"
 
 void MageNormalState::OnStart(Mage* mage)
 {
@@ -21,7 +22,7 @@ void MageNormalState::OnUpdate(Mage* mage)
 	}
 
 	//switch (mage->SelectAttackPattern())
-	switch (MageAttackPattern::Summon)
+	switch (MageAttackPattern::ForwardSector)
 	{
 	case MageAttackPattern::Summon:
 		m_pMachine->ChangeState<MageSummonState>();
@@ -37,6 +38,9 @@ void MageNormalState::OnUpdate(Mage* mage)
 		break;
 	case MageAttackPattern::NovaCircle:
 		m_pMachine->ChangeState<MageNovaCircleState>();
+		break;
+	case MageAttackPattern::Beam:
+		m_pMachine->ChangeState<MageBeamState>();
 		break;
 	}
 }

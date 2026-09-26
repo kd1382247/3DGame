@@ -16,7 +16,7 @@ public:
 		std::string FileName = "";
 		Math::Vector3 Pos = Math::Vector3::Zero;
 		Math::Vector3 Size = Math::Vector3::One;
-		Math::Vector3 Rotate = Math::Vector3::One;
+		Math::Vector3 Rotate = Math::Vector3::Zero;
 		float Speed = 1.0f;
 		int   StartFrame = 0;
 		int   EndFrame = -1; // -1なら終了フレームを指定しない
@@ -24,7 +24,7 @@ public:
 	};
 
 	// Effekseerエフェクト再生
-	std::weak_ptr<KdEffekseerObject> Play(const std::string& effName, const DirectX::SimpleMath::Vector3& pos, const float size = 1, const float speed = 1, const bool isLoop = false,const int startFrame=0,const int endFrame=-1);
+	std::weak_ptr<KdEffekseerObject> Play(const std::string& effName, const DirectX::SimpleMath::Vector3& pos, const float size = 1, const float speed = 1, const bool isLoop = false,const int startFrame=0,const int endFrame=-1, const Math::Vector3& rotate = Math::Vector3::Zero);
 
 	void StopAllEffect();
 	void StopEffect(const std::string& name);

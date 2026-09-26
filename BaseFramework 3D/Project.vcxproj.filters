@@ -406,6 +406,9 @@
     <Filter Include="Src\Application\GameObject\MageMagicSector">
       <UniqueIdentifier>{e38b4ee8-b64b-407f-99a4-6b0896401726}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\MageBeam">
+      <UniqueIdentifier>{3ee0f68e-da6e-4764-8c82-1abb93037ba5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1068,6 +1071,15 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageTargetCircleState.h">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBeamState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\MageBeam\MageBeamManager.h">
+      <Filter>Src\Application\GameObject\MageBeam</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\MageBeam\MageBeam.h">
+      <Filter>Src\Application\GameObject\MageBeam</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1651,6 +1663,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageTargetCircleState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBeamState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\MageBeam\MageBeamManager.cpp">
+      <Filter>Src\Application\GameObject\MageBeam</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\MageBeam\MageBeam.cpp">
+      <Filter>Src\Application\GameObject\MageBeam</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

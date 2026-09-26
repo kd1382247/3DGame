@@ -51,6 +51,9 @@
 // Mageの扇型
 #include"../../Application/GameObject/MageMagicSector/MageMagicSector.h"
 
+// Mageのビーム
+#include"../../Application/GameObject/MageBeam/MageBeam.h"
+
 
 void KdGameObjectFactory::Init()
 {
@@ -138,6 +141,9 @@ void KdGameObjectFactory::Init()
 
 	// MageMagicCircle(Mageの扇形攻撃の当たり判定)
 	Register<MageMagicSector>("MageMagicSector", KdGameObject::ObjectCategory::Effect);
+
+	// MageBeam(Mageのビーム攻撃の当たり判定)
+	Register<MageBeam>("MageBeam", KdGameObject::ObjectCategory::Effect);
 
 
 }

@@ -69,13 +69,14 @@ void KdEffekseerManager::Draw()
 }
 
 std::weak_ptr<KdEffekseerObject> KdEffekseerManager::Play(
-	const std::string& effName, const DirectX::SimpleMath::Vector3& pos, const float size, const float speed, bool isLoop, const int startFrame,const int endFrame)
+	const std::string& effName, const DirectX::SimpleMath::Vector3& pos, const float size, const float speed, bool isLoop, const int startFrame,const int endFrame, const Math::Vector3& rotate)
 {
 	PlayEfkInfo info;
 
 	info.FileName	= effName;
 	info.Pos		= pos;
 	info.Size		= Math::Vector3(size);
+	info.Rotate		= rotate;
 	info.Speed		= speed;
 	info.IsLoop		= isLoop;
 	info.StartFrame = startFrame;

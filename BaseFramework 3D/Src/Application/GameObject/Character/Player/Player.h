@@ -149,6 +149,8 @@ public:
 
 	void UpdateMove();
 
+	void SetGroundYPos(const float pos) { m_groundYPos = pos; }
+	float GetGroundYPos() const { return m_groundYPos; }
 
 	enum class AttackType
 	{
@@ -183,6 +185,8 @@ private:
 
 	void UpdateAnimation();
 
+	void UpdateGroundPosY();
+
 
 	//================================
 	// 当たり判定
@@ -208,7 +212,7 @@ private:
 	PlayerJump        m_playerJump;
 	PlayerGuard       m_playerGuard;
 
-
+	float           m_groundYPos = 0.0f;
 
 	MoveType        m_moveType = MoveType::IDLE;
 

@@ -6,6 +6,7 @@
 #include"Parameter/MageParameter.h"
 #include"../../StateMachine/StateMachine.h"
 
+class MageBeam;
 
 class Mage :public BossBase
 {
@@ -56,6 +57,11 @@ public:
 	void FireBolt();
 	// 5. ボス中心から半径数メートルの範囲攻撃(HP50%以下限定)
 	void CastNovaCircle();
+	// 6. レーザーを放つ(生成したMageBeamを返す)
+	std::shared_ptr<MageBeam> FireBeam(const Math::Vector3& pos, const Math::Vector3& dir, float length, float width, const Math::Vector3& effectPos);
+
+	// Beamのエフェクト再生用の回転値を取得(エフェクト側の初期正面とのズレを補正済み)
+	Math::Vector3 GetBeamEffectRotation()const;
 
 private:
 

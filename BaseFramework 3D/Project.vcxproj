@@ -300,6 +300,7 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\Mage.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\Parameter\MageParameter.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\MageState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBeamState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBoltState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardSectorState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNormalState.h" />
@@ -411,6 +412,8 @@
     <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\PlayerHPBar\PlayerHPBar.h" />
+    <ClInclude Include="Src\Application\GameObject\MageBeam\MageBeam.h" />
+    <ClInclude Include="Src\Application\GameObject\MageBeam\MageBeamManager.h" />
     <ClInclude Include="Src\Application\GameObject\MageMagicCircle\MageMagicCircle.h" />
     <ClInclude Include="Src\Application\GameObject\MageMagicCircle\MageMagicCircleManager.h" />
     <ClInclude Include="Src\Application\GameObject\MageMagicSector\MageMagicSector.h" />
@@ -511,6 +514,7 @@
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\Animation\MageAnimation.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\Mage.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\Parameter\MageParameter.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBeamState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBoltState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardSectorState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNormalState.cpp" />
@@ -611,6 +615,8 @@
     <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\PlayerHPBar\PlayerHPBar.cpp" />
+    <ClCompile Include="Src\Application\GameObject\MageBeam\MageBeam.cpp" />
+    <ClCompile Include="Src\Application\GameObject\MageBeam\MageBeamManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\MageMagicCircle\MageMagicCircle.cpp" />
     <ClCompile Include="Src\Application\GameObject\MageMagicCircle\MageMagicCircleManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\MageMagicSector\MageMagicSector.cpp" />

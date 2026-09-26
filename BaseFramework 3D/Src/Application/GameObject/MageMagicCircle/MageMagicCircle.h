@@ -38,6 +38,11 @@ private:
 	void UpdateMagicCircleRange();
 	void HideMagicCircleRange();
 
+	// 攻撃が発生するタイミングを表す
+	void CreateTelegraphIndicator();
+	void UpdateTelegraphIndicator();
+	void HideTelegraphIndicator();
+
 	std::weak_ptr<Player> m_wpPlayer;
 
 
@@ -53,6 +58,9 @@ private:
 	// 発動までの残り予備動作時間(秒)
 	float m_telegraphTime = 0.0f;
 
+	// 発動までの時間を保持
+	float m_telegraphTimeTotal = 0.0f;
+
 	float m_damage = 0.0f;
 
 	bool m_hitTarget = false;
@@ -62,4 +70,6 @@ private:
 
 	// カラースフィアのスロット番号保存用
 	int m_colorSphereHandle = -1;
+
+	int m_telegraphIndicatorHandle=-1;
 };
