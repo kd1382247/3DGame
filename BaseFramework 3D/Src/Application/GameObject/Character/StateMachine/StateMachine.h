@@ -37,6 +37,14 @@ public:
 			};
 	}
 
+	// 現在のステートが StateType かどうかを返す
+	// (ChangeStateは次のUpdateで反映されるため、ChangeState直後もしばらくは変更前のステートを指す)
+	template<typename StateType>
+	bool IsState() const
+	{
+		return dynamic_cast<const StateType*>(m_spNowState.get()) != nullptr;
+	}
+
 	void Update()
 	{
 		m_fnChangeState();

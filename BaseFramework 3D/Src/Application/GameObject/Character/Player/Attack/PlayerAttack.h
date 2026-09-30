@@ -1,73 +1,15 @@
 ﻿#pragma once
 
 #include"../Animation/PlayerAnimationType.h"
+#include"../Parameter/PlayerParameter.h"
+#include"../PlayerActionTiming.h"
+#include"../PlayerInput.h"
 
-class Player;
-
+// 通常攻撃(コンボ)とチャージの状態を持つクラス
+// Playerのことは知らない。必要な情報は引数で受け取る
 class PlayerAttack
 {
 public:
-
-	PlayerAttack() {}
-	~PlayerAttack() {}
-
-	// 入力チェック
-	void UpdateAttackInput();
-
-	// 攻撃ボタンが押されたかを返す
-	bool IsAttackTrigger()           const { return m_isAttackTrigger; }
-
-	void UpdateAttackMove(Player& player);
-
-	void StartAttack();
-
-	void SetAttackTiming(float& hitStart, float& hitEnd);
-
-	//=================================
-	// 攻撃コンボ関連
-	//=================================
-	
-	bool IsLastCombo() const { return m_currentAttackCombo == AttackCombo::Attack3; }
-	bool HasNextCombo() const { return m_nextAttack; }
-
-	void StartComboGrace();
-	void UpdateComboGrace();
-
-	void ComboInputStartFrame();
-	void UpdateComboReception(const float animFrameCount);
-
-
-	void UpdateComboState();
-
-	void ResetCombo();
-
-	// コンボ状態でアニメーションタイプを返す
-	PlayerAnimationType GetAttackAnimation()const;
-
-
-
-	//=================================
-	// チャージ攻撃関連
-	//=================================
-
-	bool IsAttackLongPressed() const { return m_isAttackLongPressed; }
-	bool IsAttackDown() const { return m_preAttackPressed; }
-
-	bool IsChargeComplete() const { return m_isChargeComplete; }
-
-
-	void StartCharge();
-	void EndCharge();
-	void UpdateChargeTime();
-
-
-
-	// チャージ中の移動アニメーションタイプを返す
-	PlayerAnimationType GetChargeMoveAnimation(const Player& player)const;
-
-private:
-
-	void UpdateChargeAttackInput();
 
 	enum class AttackCombo
 	{
@@ -76,9 +18,83 @@ private:
 		Attack3
 	};
 
-	// 攻撃フラグ
-	bool            m_isAttackTrigger = false;
-	bool            m_preAttackPressed = false;
+	// コンボ1段ぶんのデータ(段ごとの違いはこの構造体に集める)
+	struct AttackData
+	{
+		// 再生するアニメーション
+		PlayerAnimationType animation = PlayerAnimationType::Attack1;
+
+		// 攻撃判定・トレイルのフレーム区間
+		PlayerActionTiming  timing = {};
+
+		// 次のコンボ入力を受け付け始めるフレーム
+		float               comboInputStartFrame = 0.0f;
+	};
+
+
+	PlayerAttack() {}
+	~PlayerAttack() {}
+
+	// パラメータの参照を受け取る(使う側が持つ)
+	void Init(const PlayerParameter::AttackParam& param) { m_pParam = &param; }
+
+	//=================================
+	// 通常攻撃
+	//=================================
+
+	// 攻撃開始時の初期化(コンボ入力の受付状態をリセットする)
+	void StartAttack();
+
+	// 現在のコンボ段のデータ
+	const AttackData& GetCurrentAttackData() const;
+
+	// 現在のコンボ段の攻撃力
+	// (コンボ段ごとに攻撃力を変えたい時は、ここで段ごとの倍率を掛ける)
+	float GetCurrentAttackPower() const { return m_pParam->m_attackPower; }
+
+	// 攻撃中の移動スピード
+	float GetMoveSpeed() const { return m_pParam->m_attackMoveSpeed; }
+
+	//=================================
+	// 攻撃コンボ関連
+	//=================================
+
+	bool IsLastCombo() const { return m_currentAttackCombo == AttackCombo::Attack3; }
+	bool HasNextCombo() const { return m_nextAttack; }
+
+	// コンボ状態を返す
+	AttackCombo GetCurrentAttackCombo() const { return m_currentAttackCombo; }
+
+	// 攻撃後の、次のコンボを受け付ける猶予時間を開始する
+	void StartComboGrace();
+	void UpdateComboGrace(const PlayerInput& input, const float deltaTime);
+
+	// 攻撃中の、次のコンボ入力の受付
+	void UpdateComboReception(const PlayerInput& input, const float animFrameCount);
+
+	// 次のコンボ段へ進める
+	void NextCombo();
+
+	void ResetCombo();
+
+
+	//=================================
+	// チャージ攻撃関連
+	//=================================
+
+	bool IsChargeComplete() const { return m_isChargeComplete; }
+
+	void StartCharge();
+	void EndCharge();
+	void UpdateChargeTime(const float deltaTime);
+
+	// チャージ中の移動方向に合わせたアニメーションタイプを返す
+	PlayerAnimationType GetChargeMoveAnimation(const PlayerInput::MoveType moveType) const;
+
+private:
+
+	// パラメータ(Playerが持つPlayerParameterの中身を参照する)
+	const PlayerParameter::AttackParam* m_pParam = nullptr;
 
 	// 攻撃コンボ
 	AttackCombo     m_currentAttackCombo = AttackCombo::Attack1;
@@ -91,14 +107,8 @@ private:
 	float           m_comboGraceDuration = 0.2f;
 	bool            m_comboGraceActive = false;
 
-
-
-	float           m_attackHeldSeconds = 0.0f;
-	const float     m_longPressSeconds = 0.2f;
-	bool            m_isAttackLongPressed = false;
-
+	// チャージ
 	bool            m_isChargeComplete = false;
-
 
 	float           m_chargeSeconds = 0.0f;
 	const float     m_maxChargeSeconds = 0.5f;

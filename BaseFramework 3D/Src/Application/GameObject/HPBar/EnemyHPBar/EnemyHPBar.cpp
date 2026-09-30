@@ -8,40 +8,13 @@
 
 void EnemyHPBar::Init()
 {
+	
+	// 各ポリゴンの初期化
+	InitPolygon(m_spFrame, "Frame.png", KdSquarePolygon::PivotType::Left_Bottom, { m_barWidth,m_barHeight });
+	InitPolygon(m_spFrameBackground, "Frame_bg.png", KdSquarePolygon::PivotType::Left_Bottom, { m_barWidth,m_barHeight });
+	InitPolygon(m_spBarRed, "Bar_red.png", KdSquarePolygon::PivotType::Left_Bottom);
+	InitPolygon(m_spBarGreen, "Bar_green.png", KdSquarePolygon::PivotType::Left_Bottom);
 
-	if (!m_spBackground)
-	{
-		m_spBackground = std::make_shared<KdSquarePolygon>();
-
-		m_spBackground->SetMaterial("Asset/Textures/HP/Background.png");
-		m_spBackground->SetPivot(KdSquarePolygon::PivotType::Left_Bottom);
-
-		m_spBackground->SetSplit(1, 1);
-		m_spBackground->SetUVRect(0);
-		m_spBackground->SetScale({ m_barWidth,m_barHeight });
-	}
-
-	if (!m_spDamageBar)
-	{
-		m_spDamageBar = std::make_shared<KdSquarePolygon>();
-
-		m_spDamageBar->SetMaterial("Asset/Textures/HP/DamageBar.png");
-		m_spDamageBar->SetPivot(KdSquarePolygon::PivotType::Left_Bottom);
-
-		m_spDamageBar->SetSplit(1, 1);
-		m_spDamageBar->SetUVRect(0);
-	}
-
-	if (!m_spHPBar)
-	{
-		m_spHPBar = std::make_shared<KdSquarePolygon>();
-
-		m_spHPBar->SetMaterial("Asset/Textures/HP/HPBar.png");
-		m_spHPBar->SetPivot(KdSquarePolygon::PivotType::Left_Bottom);
-
-		m_spHPBar->SetSplit(1, 1);
-		m_spHPBar->SetUVRect(0);
-	}
 
 	SetUpReference();
 }
@@ -49,8 +22,16 @@ void EnemyHPBar::Init()
 void EnemyHPBar::Update()
 {
 	auto spEnemy = std::dynamic_pointer_cast<EnemyBase>(m_wpTarget.lock());
+	
+	if (!spEnemy)
+	{
+		Destroy();
+		return;
+	}
+
 	auto spPlayer = m_wpPlayer.lock();
-	if (!spEnemy||!spPlayer)
+
+	if (!spPlayer)
 	{
 		return;
 	}
@@ -59,6 +40,7 @@ void EnemyHPBar::Update()
 
 	if (maxHP <= 0)
 	{
+
 		return;
 	}
 
@@ -76,6 +58,10 @@ void EnemyHPBar::Update()
 		{
 			m_damageRate = m_hpRate;
 		}
+	}
+	else
+	{
+		m_damageRate = m_hpRate;
 	}
 
 	Math::Vector3 displayDistance = spEnemy->GetPos() - spPlayer->GetPos();
@@ -107,12 +93,12 @@ void EnemyHPBar::DrawEffect()
 		return;
 	}
 
-	KdShaderManager::Instance().ChangeDepthStencilState(
-		KdDepthStencilState::ZDisable);
+	KdShaderManager::Instance().ChangeDepthStencilState(KdDepthStencilState::ZDisable);
 
-	DrawBackground();
-	DrawDamageBar();
-	DrawHPBar();
+	DrawFrameBackground();
+	DrawBarRed();
+	DrawBarGreen();
+	DrawFrame();
 
 	KdShaderManager::Instance().UndoDepthStencilState();
 
@@ -131,29 +117,54 @@ void EnemyHPBar::SetUpReference()
 	}
 }
 
-void EnemyHPBar::DrawBackground()
+
+void EnemyHPBar::InitPolygon(std::shared_ptr<KdSquarePolygon>& polygon, const std::string& filePath, const KdSquarePolygon::PivotType type, const Math::Vector2& scale, const Math::Vector2& split)
+{
+	if (polygon)
+	{
+		return;
+	}
+
+	polygon = std::make_shared<KdSquarePolygon>();
+
+	polygon->SetMaterial(MaterialPath + filePath);
+	polygon->SetScale(scale);
+	polygon->SetSplit(split.x,split.y);
+	polygon->SetPivot(type);
+
+}
+
+void EnemyHPBar::DrawFrame()
 {
 
 	Math::Matrix drawMat = CreateBaseMatrix();
 
-	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spBackground,drawMat);
+	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spFrame, drawMat);
 }
 
-void EnemyHPBar::DrawDamageBar()
+void EnemyHPBar::DrawFrameBackground()
 {
-	DrawBar(m_spDamageBar, m_damageRate, DamageBarDepth);
+
+	Math::Matrix drawMat = CreateBaseMatrix();
+
+	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spFrameBackground,drawMat);
 }
 
-void EnemyHPBar::DrawHPBar()
+void EnemyHPBar::DrawBarRed()
 {
-	DrawBar(m_spHPBar, m_hpRate, HPBarDepth);
+	DrawBar(m_spBarRed, m_damageRate, DamageBarDepth);
+}
+
+void EnemyHPBar::DrawBarGreen()
+{
+	DrawBar(m_spBarGreen, m_hpRate, HPBarDepth);
 }
 
 void EnemyHPBar::DrawBar(const std::shared_ptr<KdSquarePolygon>&polygon, float rate, float depth)
 {
 
 	polygon->SetScale({ m_barWidth * rate,m_barHeight });
-
+	polygon->SetUVRect({0.0f,0.0f},{rate,1.0f});
 	Math::Matrix depthMat = Math::Matrix::CreateTranslation({ 0.0f,0.0f,depth});
 	Math::Matrix drawMat = depthMat * CreateBaseMatrix();
 

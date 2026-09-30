@@ -206,10 +206,15 @@ void TurtleShell::OnHit(const AttackInfo attackInfo)
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(), m_flyTextPath);
 
+	StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
+
+	StartDamageHitStop(attackInfo.damage);
+
 	PlayHitEffect();
 
 	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }
+
 
 
 void TurtleShell::UpdateSpinAttackMove()

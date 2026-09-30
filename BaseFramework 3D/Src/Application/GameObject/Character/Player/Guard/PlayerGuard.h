@@ -1,9 +1,10 @@
 ﻿#pragma once
 
 #include"../Animation/PlayerAnimationType.h"
+#include"../PlayerInput.h"
 
-class Player;
-
+// ガードの状態(ガード中・解除・パリィ)を持つクラス
+// Playerのことは知らない。入力はPlayerInputから受け取る
 class PlayerGuard
 {
 public:
@@ -11,17 +12,17 @@ public:
 	PlayerGuard(){}
 	~PlayerGuard(){}
 
-	void UpdateGuardInput();
-	void UpdateParryInput();
+	// ガードボタンを押した瞬間に、ガード/解除を切り替える(毎フレーム呼ぶ)
+	void Update(const PlayerInput& input);
 
-	
-	bool IsGuardTrigger() const { return m_guardTrigger; }
+	// ガード中に攻撃ボタンが押されたらパリィにする
+	void UpdateParry(const PlayerInput& input);
 
 	PlayerAnimationType GetGuardAnimation()const;
 
 	// ガード関連
 	bool IsGuardCancel()const { return m_guardState == GuardState::GuardCancel; }
-	bool IsGuardHitOrParyy()const { return m_guardState == GuardState::GuardHit || m_guardState == GuardState::Parry; }
+	bool IsGuardHitOrParry()const { return m_guardState == GuardState::GuardHit || m_guardState == GuardState::Parry; }
 	void ResetGuardState() { m_guardState = GuardState::Guard; }
 
 private:
@@ -36,10 +37,5 @@ private:
 
 	// ガード状態
 	GuardState      m_guardState = GuardState::Guard;
-
-	// ガードフラグ
-	bool            m_prevGuardPressed = false;
-	bool            m_guardTrigger = false;
-
 
 };

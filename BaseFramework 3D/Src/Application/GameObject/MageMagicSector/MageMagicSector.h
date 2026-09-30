@@ -19,7 +19,9 @@ public:
 	// 魔法円の設定(座標・半径・発動までの予備動作時間(秒)・ダメージ・)
 	void Setup(const Math::Vector3& pos,const Math::Vector3& dir,float angleDeg, float radius, float telegraphTime, float damage);
 
-	void SetEffectInfo(const std::string& fileName, float size, float speed, float startFrame, float endFrame);
+	void SetEffectInfo(const std::string& fileName, float size, float speed, float startFrame, float endFrame,const Math::Vector3& rotation);
+
+	bool IsFinished()const { return m_isFinished; }
 
 private:
 
@@ -32,6 +34,7 @@ private:
 		float       m_speed = 0.0f;
 		float       m_startFrame = 0.0f;
 		float       m_endFrame = 0.0f;
+		Math::Vector3 m_rotation = {};
 	};
 
 
@@ -62,6 +65,8 @@ private:
 	EffectInfo m_effectInfo = {};
 
 	Sector     m_sector = {};
+
+	bool       m_isFinished = false;
 
 	// 発動までの残り予備動作時間(秒)
 	float m_telegraphTime = 0.0f;

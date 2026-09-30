@@ -21,9 +21,17 @@ public:
 
 private:
 
-	void DrawBackground();
-	void DrawDamageBar();
-	void DrawHPBar();
+	void InitPolygon(
+		std::shared_ptr<KdSquarePolygon>& polygon,
+		const std::string& filePath,
+		const KdSquarePolygon::PivotType type,
+		const Math::Vector2& scale={1,1},
+		const Math::Vector2& split={1,1});
+
+	void DrawFrame();
+	void DrawFrameBackground();
+	void DrawBarRed();
+	void DrawBarGreen();
 	
 	void DrawBar(const std::shared_ptr<KdSquarePolygon>& polygon, float rate, float depth);
 
@@ -33,9 +41,10 @@ private:
 	std::weak_ptr<KdGameObject>m_wpTarget;
 	std::weak_ptr<KdGameObject>m_wpPlayer;
 
-	std::shared_ptr<KdSquarePolygon>m_spBackground = nullptr;
-	std::shared_ptr<KdSquarePolygon>m_spDamageBar = nullptr;
-	std::shared_ptr<KdSquarePolygon>m_spHPBar = nullptr;
+	std::shared_ptr<KdSquarePolygon>m_spFrame=nullptr;
+	std::shared_ptr<KdSquarePolygon>m_spFrameBackground = nullptr;
+	std::shared_ptr<KdSquarePolygon>m_spBarRed = nullptr;
+	std::shared_ptr<KdSquarePolygon>m_spBarGreen = nullptr;
 
 	float m_hpRate = 1.0f;      // 緑
 	float m_damageRate = 1.0f;  // 赤
@@ -50,4 +59,6 @@ private:
 
 	static constexpr float DamageBarDepth = -0.0001f;
 	static constexpr float HPBarDepth = -0.0002f;
+
+	const std::string MaterialPath = "Asset/Textures/HP/Enemy/";
 };

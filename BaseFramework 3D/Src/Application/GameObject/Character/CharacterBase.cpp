@@ -38,6 +38,8 @@ void CharacterBase::Update()
 
 void CharacterBase::PostUpdate()
 {
+	UpdateOverlay();
+
 	UpdateMatrix();
 }
 
@@ -49,7 +51,7 @@ void CharacterBase::DrawLit()
 		return;
 	}
 
-	Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos() + m_visualOffset);
+	Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos());
 	Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(GetRotation().y));
 	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
 
@@ -59,6 +61,8 @@ void CharacterBase::DrawLit()
 	{
 		KdShaderManager::Instance().m_StandardShader.SetSelected(true);
 	}
+
+	KdShaderManager::Instance().m_StandardShader.SetColorOverlay(m_overlayColor, GetOverlayRate());
 
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, localMat);
 
@@ -114,36 +118,27 @@ DirectX::BoundingSphere CharacterBase::GetBumpSphere() const
 	return sphere;
 }
 
-void CharacterBase::UpdateHitShake()
-{
 
+float CharacterBase::GetOverlayRate() 
+{
+	if (m_overlayTime <= 0)
+	{
+		return m_maxOverlayRate = 0.0f;
+	}
+
+	return m_maxOverlayRate *= m_overlayTime / m_overlayDuration;
+}
+
+void CharacterBase::UpdateOverlay()
+{
 	float UnscaledDeltaTime = TimeManager::Instance().GetUnscaleeDeltaTime();
 
-	m_hitShakeTime -= UnscaledDeltaTime;
+	m_overlayTime -= UnscaledDeltaTime;
 
-	if (m_hitShakeTime <= 0)
+	if (m_overlayTime <= 0)
 	{
-		m_hitShakeTime = 0;
-		m_visualOffset = Math::Vector3::Zero;
-		SetIsHitShake(false);
-		return;
+		m_overlayTime = 0.0f;
 	}
-
-	float progress = 1.0f - (m_hitShakeTime / m_hitShakeDuration);
-
-	float currentPower = std::lerp(m_hitShakePower, 0.0f, progress);
-
-	// 揺れ位置を変更するまでの時間を進める
-	m_hitShakeIntervalTimer += UnscaledDeltaTime;
-
-	if(m_hitShakeIntervalTimer>=m_hitShakeInterval)
-	{
-		m_hitShakeIntervalTimer = 0.0f;
-
-		m_visualOffset.x = KdRandom::GetFloat(-currentPower, currentPower);
-		m_visualOffset.y = KdRandom::GetFloat(-currentPower, currentPower);
-	}
-
 }
 
 // 解放

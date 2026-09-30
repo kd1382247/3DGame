@@ -6,7 +6,6 @@
 
 void PlayerSpecialMoveState::OnStart(Player* owner)
 {
-	owner->SetStateType(PlayerStateType::SpecialMoveState);
 	owner->StartSpecialMove();
 	owner->PlayAnimation(PlayerAnimationType::AttackSpin);
 }

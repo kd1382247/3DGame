@@ -43,6 +43,7 @@ public:
 
 	void OnHit(const AttackInfo attackInfo)override;
 
+
 	// Energy弾を発射する(UpdateBulletFireTiming()から、攻撃アニメーションが発射フレームまで進んだ時に呼ばれる)
 	void FireEnergyBullet();
 

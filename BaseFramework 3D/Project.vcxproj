@@ -378,13 +378,13 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimationType.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Attack\PlayerAttack.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Attack\PlayerHitChecker.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Guard\PlayerGuard.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Player\Jump\PlayerJump.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Player\Move\PlayerMove.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Player.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\PlayerActionTiming.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\PlayerInput.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateType.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.h" />
@@ -395,6 +395,7 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpStartState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerNormalState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpecialMoveState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\SwordTrail\PlayerSwordTrail.h" />
     <ClInclude Include="Src\Application\GameObject\Character\StateMachine\StateBase.h" />
     <ClInclude Include="Src\Application\GameObject\Character\StateMachine\StateMachine.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\EffectBase.h" />
@@ -409,6 +410,7 @@
     <ClInclude Include="Src\Application\GameObject\FlyText\FlyTextManager.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\Parameter\EnemySpawnerParameter.h" />
+    <ClInclude Include="Src\Application\GameObject\HPBar\BossHPBar\BossHPBar.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\PlayerHPBar\PlayerHPBar.h" />
@@ -585,8 +587,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Attack\PlayerAttack.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Guard\PlayerGuard.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Player\Jump\PlayerJump.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Player\Move\PlayerMove.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Parameter\PlayerParameter.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\Player.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.cpp" />
@@ -600,6 +600,7 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpStartState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerNormalState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpecialMoveState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Player\SwordTrail\PlayerSwordTrail.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\EffectBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\EffectManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.cpp" />
@@ -612,6 +613,7 @@
     <ClCompile Include="Src\Application\GameObject\FlyText\FlyTextManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\Parameter\EnemySpawnerParameter.cpp" />
+    <ClCompile Include="Src\Application\GameObject\HPBar\BossHPBar\BossHPBar.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\PlayerHPBar\PlayerHPBar.cpp" />

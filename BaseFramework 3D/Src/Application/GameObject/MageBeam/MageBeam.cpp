@@ -9,7 +9,7 @@
 namespace
 {
 	// 再ヒットまでの間隔(秒)
-	constexpr float kHitInterval = 1.0f;
+	constexpr float kHitInterval = 0.4f;
 }
 
 void MageBeam::Init()

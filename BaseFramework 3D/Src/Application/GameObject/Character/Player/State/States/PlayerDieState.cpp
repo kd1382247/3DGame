@@ -4,7 +4,6 @@
 
 void PlayerDieState::OnStart(Player* owner)
 {
-	owner->SetStateType(PlayerStateType::DieState);
 	owner->PlayAnimation(PlayerAnimationType::Die);
 }
 

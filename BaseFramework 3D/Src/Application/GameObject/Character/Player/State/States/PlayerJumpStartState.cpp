@@ -7,7 +7,6 @@
 void PlayerJumpStartState::OnStart(Player* owner)
 {
 
-	owner->SetStateType(PlayerStateType::JumpState);
 	owner->StartJump();
 	owner->PlayAnimation(PlayerAnimationType::JumpStart);
 }

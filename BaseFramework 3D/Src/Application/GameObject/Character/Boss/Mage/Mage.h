@@ -7,6 +7,7 @@
 #include"../../StateMachine/StateMachine.h"
 
 class MageBeam;
+class MageMagicSector;
 
 class Mage :public BossBase
 {
@@ -18,6 +19,8 @@ public:
 	void Init()override;
 	void Update()override;
 	void PostUpdate()override;
+
+	void SetUpReference()override;
 
 	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
 
@@ -52,7 +55,7 @@ public:
 	// 2. プレイヤー位置に魔法攻撃(魔法円)
 	void CastTargetCircle();
 	// 3. 前方に扇形の範囲攻撃
-	void CastForwardSector();
+	std::shared_ptr<MageMagicSector> CastForwardSector();
 	// 4. プレイヤーへ単発魔法弾
 	void FireBolt();
 	// 5. ボス中心から半径数メートルの範囲攻撃(HP50%以下限定)
@@ -60,9 +63,10 @@ public:
 	// 6. レーザーを放つ(生成したMageBeamを返す)
 	std::shared_ptr<MageBeam> FireBeam(const Math::Vector3& pos, const Math::Vector3& dir, float length, float width, const Math::Vector3& effectPos);
 
-	// Beamのエフェクト再生用の回転値を取得(エフェクト側の初期正面とのズレを補正済み)
-	Math::Vector3 GetBeamEffectRotation()const;
+	// エフェクト再生用の回転値を取得(エフェクト側の初期正面とのズレを補正済み)
+	Math::Vector3 GetEffectRotation(const float value)const;
 
+	
 private:
 
 	void UpdateAnimation();
@@ -71,6 +75,9 @@ private:
 	void UpdateAttack();
 
 	void DrawParameterInspector() override;
+
+	void PlayWalkAnimation()override;
+	void PlayIdleAnimation()override;
 
 private:
 

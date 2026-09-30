@@ -6,35 +6,38 @@
 
 void PlayerGuardState::OnStart(Player* owner)
 {
+	PlayerGuard& guard = owner->GetGuard();
 
-	owner->SetStateType(PlayerStateType::GuradState);
-	owner->ResetGuardState();
-	owner->PlayAnimation(owner->GetGuardAnimation());
+	owner->GetAttack().ResetCombo();
+
+	guard.ResetGuardState();
+	owner->PlayAnimation(guard.GetGuardAnimation());
 }
 
 void PlayerGuardState::OnUpdate(Player * owner)
 {
+	PlayerGuard& guard = owner->GetGuard();
 
 	owner->UpdateAttackMove();
 
-	owner->UpdateParryInput();
+	guard.UpdateParry(owner->GetInput());
 
 	// ガード解除
-	if (owner->IsGuardCancel())
+	if (guard.IsGuardCancel())
 	{
 		m_pMachine->ChangeState<PlayerNormalState>();
 		return;
 	}
 
-	// Plaryy / GuardHit終了
-	if (owner->IsGuardHitOrParyy())
+	// Parry / GuardHit終了
+	if (guard.IsGuardHitOrParry())
 	{
-		owner->PlayAnimation(owner->GetGuardAnimation());
+		owner->PlayAnimation(guard.GetGuardAnimation());
 
 		if (owner->IsAnimationFinished())
 		{
 			// 再度ガード状態に戻す
-			owner->ResetGuardState();
+			guard.ResetGuardState();
 			owner->PlayAnimation(PlayerAnimationType::Defend);
 		}
 	}

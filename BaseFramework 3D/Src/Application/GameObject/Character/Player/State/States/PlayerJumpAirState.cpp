@@ -2,6 +2,8 @@
 
 #include"PlayerJumpLandState.h"
 
+#include"PlayerAttackState.h"
+
 #include"../../Player.h"
 
 void PlayerJumpAirState::OnStart(Player* owner)
@@ -15,7 +17,15 @@ void PlayerJumpAirState::OnUpdate(Player * owner)
 
 	if (owner->IsGrounded())
 	{
-		m_pMachine->ChangeState<PlayerJumpLandState>();
+
+		if (owner->GetInput().IsAttackDown())
+		{
+			m_pMachine->ChangeState<PlayerAttackState>();
+		}
+		else
+		{
+			m_pMachine->ChangeState<PlayerJumpLandState>();
+		}
 	}
 }
 

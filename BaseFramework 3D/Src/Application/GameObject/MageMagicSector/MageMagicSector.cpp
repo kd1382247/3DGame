@@ -37,14 +37,14 @@ void MageMagicSector::Setup(const Math::Vector3& pos,const Math::Vector3& dir, f
 	CreateMagicSectorRange();
 }
 
-void MageMagicSector::SetEffectInfo(const std::string& fileName, float size, float speed, float startFrame, float endFrame)
+void MageMagicSector::SetEffectInfo(const std::string& fileName, float size, float speed, float startFrame, float endFrame,const Math::Vector3& rotation)
 {
 	m_effectInfo.m_fileName = fileName;
 	m_effectInfo.m_size = size;
 	m_effectInfo.m_speed = speed;
 	m_effectInfo.m_startFrame = startFrame;
 	m_effectInfo.m_endFrame = endFrame;
-
+	m_effectInfo.m_rotation = rotation;
 	// 座標をセット
 	m_effectInfo.m_pos = GetPos() + (m_sector.dir * 4.0f);
 }
@@ -63,7 +63,7 @@ void MageMagicSector::UpdateMagicSectorRange()
 		KdShaderManager::Instance().WriteCBColorSphereSector(
 			m_colorSphereHandle,
 			GetPos(),
-			m_mWorld.Backward(),
+			m_sector.dir,
 			m_sector.m_radius,
 			m_sector.m_angleDeg,
 			Math::Vector3(2.0f, 0.0f, 0.0f));
@@ -93,7 +93,7 @@ void MageMagicSector::UpdateTelegraphIndicator()
 		KdShaderManager::Instance().WriteCBColorSphereSector(
 			m_telegraphIndicatorHandle,
 			GetPos(),
-			m_mWorld.Backward(),
+			m_sector.dir,
 			currentRadius,
 			m_sector.m_angleDeg,
 			Math::Vector3(2.0f, 0.0f, 0.0f));
@@ -135,13 +135,13 @@ void MageMagicSector::Update()
 		// エフェクト再生(最初の1回だけ呼ぶ)
 		auto spEffekseerObj = KdEffekseerManager::GetInstance().Play(
 			m_effectInfo.m_fileName,
-			m_effectInfo.m_pos+m_mWorld.Backward()*-3.8f,
+			m_effectInfo.m_pos+m_sector.dir*-1.4f,
 			m_effectInfo.m_size,
 			m_effectInfo.m_speed,
 			false,
 			m_effectInfo.m_startFrame,
 			m_effectInfo.m_endFrame,
-			Math::Vector3(0,145,0)).lock();
+			m_effectInfo.m_rotation).lock();
 
 		if (spEffekseerObj)
 		{
@@ -152,6 +152,7 @@ void MageMagicSector::Update()
 	// ハンドルベースでの終了判定(KdEffekseerObjectの生存期間に依存しない)
 	else if (KdEffekseerManager::GetInstance().HasEffectFinished(m_effectHandle))
 	{
+		m_isFinished = true;
 		Destroy();
 	}
 

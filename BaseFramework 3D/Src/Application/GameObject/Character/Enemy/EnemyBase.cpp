@@ -3,6 +3,7 @@
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 
 #include"../../../System/CollisionManager/CollisionManager.h"
+#include"../../../System/TimeManager/TimeManager.h"
 
 #include"../../../System/WayPointManager/WayPointManager.h"
 #include"../../../GameObject/WayPoint/WayPoint.h"
@@ -27,6 +28,15 @@ void EnemyBase::Update()
 void EnemyBase::PostUpdate()
 {
 	CharacterBase::PostUpdate();
+}
+
+void EnemyBase::StartDamageHitStop(float damage)
+{
+	float damageRate = std::clamp(damage / 50.0f, 0.0f, 1.0f);
+
+	float hitStopDuration = std::lerp(0.04f, 0.09f, damageRate);
+
+	TimeManager::Instance().StartHitStop(hitStopDuration);
 }
 
 void EnemyBase::DrawInspector()
@@ -76,7 +86,14 @@ void EnemyBase::PlayHitEffect()
 {
 
 	KdEffekseerManager::GetInstance().
-		Play("Hit/Hit2.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.3f, 1.0f, false);
+		Play("Hit/Hit2.efkefc", GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f), 0.3f, 0.8f, false);
+
+	KdEffekseerManager::GetInstance().
+		Play("Hit/Hit3.efkefc", GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f), 0.3f, 0.6f, false);
+
+
+	KdEffekseerManager::GetInstance().
+		Play("Hit/Hit.efkefc", GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f), 0.4f, 0.6f, false);
 }
 
 void EnemyBase::UpdateGravity()
@@ -116,13 +133,32 @@ void EnemyBase::UpdateDirectChase()
 
 	const float distance = targetDir.Length();
 
-	if (distance <= m_reachDistance)
-	{
-		m_hasReachedTarget = true;
-		return;
-	}
+	float reachDistanceMargin = m_reachDistance+0.3f;
 
-	m_hasReachedTarget = false;
+	if (m_hasReachedTarget)
+	{
+		if (distance > reachDistanceMargin)
+		{
+			m_hasReachedTarget = false;
+		}
+		else
+		{
+			m_hasReachedTarget = true;
+			return;
+		}
+	}
+	else
+	{
+		if (distance < m_reachDistance)
+		{
+			m_hasReachedTarget = true;
+			return;
+		}
+		else
+		{
+			m_hasReachedTarget = false;
+		}
+	}
 
 	targetDir.Normalize();
 

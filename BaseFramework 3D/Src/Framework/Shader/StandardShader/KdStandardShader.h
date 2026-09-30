@@ -39,6 +39,12 @@ public:
 		int             ColorSphereEnable = 0;
 		int             _blank[2];
 
+
+		// 指定色への色寄せ(被ダメージ演出など)
+		Math::Vector3   OverlayColor = {};
+		float           OverlayRate = 0.0f;
+
+		
 	};
 
 	// 定数バッファ(メッシュ単位更新)
@@ -107,6 +113,16 @@ public:
 
 		m_dirtyCBObj = true;
 	}
+
+	// 指定色への色寄せ(被ダメージ演出など)
+	void SetColorOverlay(const Math::Vector3& color, float rate)
+	{
+		m_cb0_Obj.Work().OverlayColor = color;
+		m_cb0_Obj.Work().OverlayRate = rate;
+
+		m_dirtyCBObj = true;
+	}
+
 
 
 	// ディゾルブ設定

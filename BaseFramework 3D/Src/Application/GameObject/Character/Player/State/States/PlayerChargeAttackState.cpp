@@ -7,22 +7,36 @@
 #include"PlayerSpecialMoveState.h"
 
 
+namespace
+{
+	// 移動方向に合わせたチャージ中のアニメーションを返す
+	PlayerAnimationType GetChargeAnimation(Player* owner)
+	{
+		return owner->GetAttack().GetChargeMoveAnimation(owner->GetInput().GetMoveType());
+	}
+}
+
 void PlayerChargeAttackState::OnStart(Player* owner)
 {
-	owner->SetStateType(PlayerStateType::ChargeAttackState);
-	owner->StartCharge();
-	owner->PlayAnimation(owner->GetChargeMoveAnimation());
+	PlayerAttack& attack = owner->GetAttack();
+
+	attack.ResetCombo();
+	attack.StartCharge();
+
+	owner->PlayAnimation(GetChargeAnimation(owner));
 }
 
 void PlayerChargeAttackState::OnUpdate(Player * owner)
 {
+	PlayerAttack& attack = owner->GetAttack();
+
 	owner->UpdateAttackMove();
 
-	owner->PlayAnimation(owner->GetChargeMoveAnimation());
+	owner->PlayAnimation(GetChargeAnimation(owner));
 
-	owner->UpdateChargeTime();
+	attack.UpdateChargeTime(owner->GetDeltaTime());
 
-	if (owner->IsChargeComplete())
+	if (attack.IsChargeComplete())
 	{
 
 		auto spEffekseerObj = m_wpEffekseerObj.lock();
@@ -36,9 +50,9 @@ void PlayerChargeAttackState::OnUpdate(Player * owner)
 
 	EffectUpdate(owner);
 
-	if (!owner->IsAttackDown())
+	if (!owner->GetInput().IsAttackDown())
 	{
-		if (owner->IsChargeComplete())
+		if (attack.IsChargeComplete())
 		{
 			m_pMachine->ChangeState<PlayerSpecialMoveState>();
 		}
@@ -52,8 +66,8 @@ void PlayerChargeAttackState::OnUpdate(Player * owner)
 void PlayerChargeAttackState::OnExit(Player * owner)
 {
 
-	owner->EndCharge();
-	owner->ResetCombo();
+	owner->GetAttack().EndCharge();
+	owner->GetAttack().ResetCombo();
 
 	auto spEffekseerObj = m_wpEffekseerObj.lock();
 

@@ -1,43 +1,24 @@
 ﻿#include "PlayerAttack.h"
 
-#include"../Player.h"
-
-#include"../../../../System/TimeManager/TimeManager.h"
-
-void PlayerAttack::UpdateAttackInput()
+namespace
 {
-	bool currentAttackButton = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
-
-	m_isAttackTrigger = currentAttackButton&&!m_preAttackPressed;
-
-	m_preAttackPressed = currentAttackButton;
-	UpdateChargeAttackInput();
+	// コンボ段ごとのデータ表(AttackComboの並び順と同じにする)
+	// 段を増やす時は、AttackComboに追加してここに1行足す
+	//   { アニメーション, { hitStart, hitEnd, trailStart, trailEnd }, 次のコンボ入力を受け付け始めるフレーム }
+	const PlayerAttack::AttackData kAttackTable[] =
+	{
+		// Attack1
+		{ PlayerAnimationType::Attack1, {  8.0f, 13.0f, 0.0f, 18.0f }, 18.0f },
+		// Attack2
+		{ PlayerAnimationType::Attack2, {  8.0f, 13.0f, 0.0f, 18.0f }, 18.0f },
+		// Attack3(最後の段なので、次のコンボ入力は受け付けない)
+		{ PlayerAnimationType::Attack3, { 20.0f, 25.0f, 0.0f, 30.0f },  0.0f },
+	};
 }
 
-void PlayerAttack::UpdateAttackMove(Player& player)
+const PlayerAttack::AttackData& PlayerAttack::GetCurrentAttackData() const
 {
-	player.ApplyCameraRelativeMove(player.GetAttackMoveSpeed());
-
-	player.FacingDirectionToCamera();
-}
-
-void PlayerAttack::SetAttackTiming(float &hitStart,float &hitEnd)
-{	
-	if (m_currentAttackCombo == AttackCombo::Attack1)
-	{
-		hitStart = 8;
-		hitEnd = 13;
-	}
-	if (m_currentAttackCombo == AttackCombo::Attack2)
-	{
-		hitStart = 8;
-		hitEnd = 13;
-	}
-	if (m_currentAttackCombo == AttackCombo::Attack3)
-	{
-		hitStart = 20;
-		hitEnd = 25;
-	}
+	return kAttackTable[static_cast<int>(m_currentAttackCombo)];
 }
 
 void PlayerAttack::StartAttack()
@@ -46,6 +27,8 @@ void PlayerAttack::StartAttack()
 	m_comboGraceTime = 0.0f;
 	m_nextAttack = false;
 	m_canCombo = false;
+
+	m_comboInputStartFrame = GetCurrentAttackData().comboInputStartFrame;
 }
 
 void PlayerAttack::StartComboGrace()
@@ -54,7 +37,7 @@ void PlayerAttack::StartComboGrace()
 	m_comboGraceActive = true;
 }
 
-void PlayerAttack::UpdateComboReception(const float animFrameCount)
+void PlayerAttack::UpdateComboReception(const PlayerInput& input, const float animFrameCount)
 {
 
 	// 3段目はこれ以上コンボを繋げない
@@ -79,14 +62,14 @@ void PlayerAttack::UpdateComboReception(const float animFrameCount)
 		return;
 	}
 
-	if (m_isAttackTrigger)
+	if (input.IsAttackTrigger())
 	{
 		m_nextAttack = true;
 		m_canCombo = false;
 	}
 }
 
-void PlayerAttack::UpdateComboGrace()
+void PlayerAttack::UpdateComboGrace(const PlayerInput& input, const float deltaTime)
 {
 
 	if (!m_comboGraceActive)
@@ -94,13 +77,11 @@ void PlayerAttack::UpdateComboGrace()
 		return;
 	}
 
-	float deltaTime = TimeManager::Instance().GetDeltaTime();
-
 	m_comboGraceTime += deltaTime;
 
-	if (m_isAttackTrigger)
+	if (input.IsAttackTrigger())
 	{
-		UpdateComboState();
+		NextCombo();
 		m_comboGraceActive = false;
 		return;
 	}
@@ -109,19 +90,6 @@ void PlayerAttack::UpdateComboGrace()
 	{
 		m_comboGraceActive = false;
 		ResetCombo();
-	}
-}
-
-void PlayerAttack::ComboInputStartFrame()
-{
-
-	if (m_currentAttackCombo == AttackCombo::Attack1)
-	{
-		m_comboInputStartFrame = 18.0f;
-	}
-	if (m_currentAttackCombo == AttackCombo::Attack2)
-	{
-		m_comboInputStartFrame = 18.0f;
 	}
 }
 
@@ -135,7 +103,7 @@ void PlayerAttack::ResetCombo()
 	m_comboInputStartFrame = 0.0f;
 }
 
-void PlayerAttack::UpdateComboState()
+void PlayerAttack::NextCombo()
 {
 	switch (m_currentAttackCombo)
 	{
@@ -151,55 +119,14 @@ void PlayerAttack::UpdateComboState()
 	}
 }
 
-PlayerAnimationType PlayerAttack::GetAttackAnimation() const
-{
-	switch (m_currentAttackCombo)
-	{
-	case AttackCombo::Attack1:
-		return PlayerAnimationType::Attack1;
-
-	case AttackCombo::Attack2:
-		return PlayerAnimationType::Attack2;
-
-	case AttackCombo::Attack3:
-		return PlayerAnimationType::Attack3;
-
-	default:
-		return PlayerAnimationType::Attack1;
-	}
-}
-
-void PlayerAttack::UpdateChargeAttackInput()
-{
-	float deltaTime = TimeManager::Instance().GetDeltaTime();
-
-	if (m_preAttackPressed)
-	{
-		m_attackHeldSeconds+=deltaTime;
-
-		if (m_attackHeldSeconds >= m_longPressSeconds)
-		{
-			m_isAttackLongPressed = true;
-		}
-	}
-	else
-	{
-		m_isAttackLongPressed = false;
-		m_attackHeldSeconds = 0.0f;
-	}
-
-}
-
 void PlayerAttack::StartCharge()
 {
 	m_chargeSeconds = 0.0f;
 	m_isChargeComplete = false;
 }
 
-void PlayerAttack::UpdateChargeTime()
+void PlayerAttack::UpdateChargeTime(const float deltaTime)
 {
-
-	float deltaTime = TimeManager::Instance().GetDeltaTime();
 	m_chargeSeconds += deltaTime;
 
 	if (m_chargeSeconds >= m_maxChargeSeconds)
@@ -216,19 +143,19 @@ void PlayerAttack::EndCharge()
 }
 
 
-PlayerAnimationType PlayerAttack::GetChargeMoveAnimation(const Player& player)const
+PlayerAnimationType PlayerAttack::GetChargeMoveAnimation(const PlayerInput::MoveType moveType) const
 {
-	switch (player.GetMoveType())
+	switch (moveType)
 	{
-	case Player::MoveType::IDLE:
+	case PlayerInput::MoveType::IDLE:
 		return PlayerAnimationType::ChargeAttackIDLE;
-	case Player::MoveType::BWD:
+	case PlayerInput::MoveType::BWD:
 		return PlayerAnimationType::ChargeAttackBWD;
-	case Player::MoveType::FWD:
+	case PlayerInput::MoveType::FWD:
 		return PlayerAnimationType::ChargeAttackFWD;
-	case Player::MoveType::LFT:
+	case PlayerInput::MoveType::LFT:
 		return PlayerAnimationType::ChargeAttackLFT;
-	case Player::MoveType::RGT:
+	case PlayerInput::MoveType::RGT:
 		return PlayerAnimationType::ChargeAttackRGT;
 	default:
 		return PlayerAnimationType::ChargeAttackIDLE;

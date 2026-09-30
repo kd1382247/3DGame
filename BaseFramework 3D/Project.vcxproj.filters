@@ -298,12 +298,6 @@
     <Filter Include="Src\Application\GameObject\Character\Player\Attack">
       <UniqueIdentifier>{28f491f5-4008-4c93-9c0f-0c5a45db63b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Player\Jump">
-      <UniqueIdentifier>{b89f9534-89da-49d3-a276-413b16fff52a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Player\Move">
-      <UniqueIdentifier>{2af5e56c-1595-435d-86ed-9205e4749f5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Character\Player\Guard">
       <UniqueIdentifier>{ae66ad89-0cf3-4d45-83fd-c11ac32f5073}</UniqueIdentifier>
     </Filter>
@@ -408,6 +402,12 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\MageBeam">
       <UniqueIdentifier>{3ee0f68e-da6e-4764-8c82-1abb93037ba5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\SwordTrail">
+      <UniqueIdentifier>{b7c5694c-c365-4225-b704-34d1c26b14c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\HPBar\BossHPBar">
+      <UniqueIdentifier>{c634e021-8094-431b-b418-2d8621b67969}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -894,12 +894,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\Guard\PlayerGuard.h">
       <Filter>Src\Application\GameObject\Character\Player\Guard</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Player\Move\PlayerMove.h">
-      <Filter>Src\Application\GameObject\Character\Player\Move</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Player\Jump\PlayerJump.h">
-      <Filter>Src\Application\GameObject\Character\Player\Jump</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.h">
       <Filter>Src\Application\GameObject\Character\Player\SpecialMove</Filter>
     </ClInclude>
@@ -917,9 +911,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.h">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Player\State\PlayerStateType.h">
-      <Filter>Src\Application\GameObject\Character\Player\State</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\StateMachine\StateMachine.h">
       <Filter>Src\Application\GameObject\Character\StateMachine</Filter>
@@ -1079,6 +1070,21 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\MageBeam\MageBeam.h">
       <Filter>Src\Application\GameObject\MageBeam</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\SwordTrail\PlayerSwordTrail.h">
+      <Filter>Src\Application\GameObject\Character\Player\SwordTrail</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\HPBar\BossHPBar\BossHPBar.h">
+      <Filter>Src\Application\GameObject\HPBar\BossHPBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\PlayerActionTiming.h">
+      <Filter>Src\Application\GameObject\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\PlayerInput.h">
+      <Filter>Src\Application\GameObject\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Attack\PlayerHitChecker.h">
+      <Filter>Src\Application\GameObject\Character\Player\Attack</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1505,12 +1511,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\Guard\PlayerGuard.cpp">
       <Filter>Src\Application\GameObject\Character\Player\Guard</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Player\Move\PlayerMove.cpp">
-      <Filter>Src\Application\GameObject\Character\Player\Move</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Player\Jump\PlayerJump.cpp">
-      <Filter>Src\Application\GameObject\Character\Player\Jump</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.cpp">
       <Filter>Src\Application\GameObject\Character\Player\SpecialMove</Filter>
     </ClCompile>
@@ -1672,6 +1672,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\MageBeam\MageBeam.cpp">
       <Filter>Src\Application\GameObject\MageBeam</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\SwordTrail\PlayerSwordTrail.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\SwordTrail</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\HPBar\BossHPBar\BossHPBar.cpp">
+      <Filter>Src\Application\GameObject\HPBar\BossHPBar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

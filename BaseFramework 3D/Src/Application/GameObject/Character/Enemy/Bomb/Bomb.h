@@ -40,6 +40,7 @@ public:
 
 	void OnHit(const AttackInfo attackInfo)override;
 
+
 	// ためモーション(AttackCharge)の開始・更新・終了判定
 	// (プレイヤーに到達してもすぐ爆発せず、少し猶予を持たせるための処理)
 	void StartCharge();

@@ -1,0 +1,53 @@
+﻿#pragma once
+
+class BossBase;
+
+class BossHPBar :public KdGameObject
+{
+public:
+
+	BossHPBar(){}
+	~BossHPBar(){}
+
+	void Init()override;
+	void Update()override;
+	void DrawSprite()override;
+
+	void SetBoss(const std::shared_ptr<BossBase>&boss){m_wpBoss=boss;}
+
+private:
+
+	void InitTexture(std::shared_ptr<KdTexture>& tex, const std::string& filePath);
+
+	void DrawFrame();
+	void DrawFrameBackGround();
+	void DrawBarRed();
+	void DrawBarGreen();
+
+	void DrawBar(const std::shared_ptr<KdTexture>& tex, const float rate = 1.0f);
+
+
+	std::weak_ptr<BossBase>m_wpBoss;
+
+	std::shared_ptr<KdTexture>m_spFrameTex = nullptr;
+	std::shared_ptr<KdTexture>m_spFrameBackGroundTex = nullptr;
+	std::shared_ptr<KdTexture>m_spBarRedTex = nullptr;
+	std::shared_ptr<KdTexture>m_spBarGreenTex = nullptr;
+
+
+	const float m_barWidth = 800.0f;
+	const float m_barHeight = 50.0f;
+
+	float m_hpRate = 1.0f;
+	float m_damageRate = 1.0f;
+
+	// Texture描画の基準点
+	const Math::Vector2 pivot = { 0.0f,0.5f };
+
+	// Barの位置
+	Math::Vector2 m_barOffset = { -400.0f,280.0f };
+
+	const std::string MaterialPath = "Asset/Textures/HP/Boss/";
+
+
+};

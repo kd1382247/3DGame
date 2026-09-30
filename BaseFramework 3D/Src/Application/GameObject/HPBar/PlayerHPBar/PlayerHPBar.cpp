@@ -4,23 +4,13 @@
 
 void PlayerHPBar::Init()
 {
-	if (!m_spBackground)
-	{
-		m_spBackground = std::make_shared<KdTexture>();
-		m_spBackground->Load("Asset/Textures/HP/Background.png");
-	}
 
-	if (!m_spDamageBar)
-	{
-		m_spDamageBar = std::make_shared<KdTexture>();
-		m_spDamageBar->Load("Asset/Textures/HP/DamageBar.png");
-	}
+	// 各テクスチャを初期化
+	InitTexture(m_spFrameTex, "Frame.png");
+	InitTexture(m_spFrameBackGroundTex, "Frame_bg.png");
+	InitTexture(m_spBarGreenTex, "Bar_green.png");
+	InitTexture(m_spBarRedTex, "Bar_red.png");
 
-	if (!m_spHPBar)
-	{
-		m_spHPBar = std::make_shared<KdTexture>();
-		m_spHPBar->Load("Asset/Textures/HP/HPBar.png");
-	}
 }
 
 void PlayerHPBar::Update()
@@ -53,7 +43,10 @@ void PlayerHPBar::Update()
 			m_damageRate = m_hpRate;
 		}
 	}
-
+	else
+	{
+		m_damageRate = m_hpRate;
+	}
 }
 
 void PlayerHPBar::DrawSprite()
@@ -65,37 +58,57 @@ void PlayerHPBar::DrawSprite()
 		return;
 	}
 
-	DrawBackground();
-	DrawDamageBar();
-	DrawHPBar();
-
+	
+	DrawFrameBackGround();
+	DrawBarRed();
+	DrawBarGreen();
+	DrawFrame();
 }
 
-void PlayerHPBar::DrawBackground()
+void PlayerHPBar::InitTexture(std::shared_ptr<KdTexture>& tex, const std::string& filePath)
 {
-	DrawBar(m_spBackground);
+	if (tex)
+	{
+		return;
+	}
+
+	tex = std::make_shared<KdTexture>();
+	tex->Load(MaterialPath + filePath);
 }
 
-void PlayerHPBar::DrawDamageBar()
+void PlayerHPBar::DrawFrame()
 {
-	DrawBar(m_spDamageBar,m_damageRate);
+	DrawBar(m_spFrameTex);
 }
 
-void PlayerHPBar::DrawHPBar()
+void PlayerHPBar::DrawFrameBackGround()
 {
-	DrawBar(m_spHPBar, m_hpRate);
+	DrawBar(m_spFrameBackGroundTex);
+}
+
+void PlayerHPBar::DrawBarRed()
+{
+	DrawBar(m_spBarRedTex,m_damageRate);
+}
+
+void PlayerHPBar::DrawBarGreen()
+{
+	DrawBar(m_spBarGreenTex, m_hpRate);
 }
 
 void PlayerHPBar::DrawBar(const std::shared_ptr<KdTexture>&tex, const float rate)
 {
-	Math::Rectangle rc = { 0,0,static_cast<long>(m_barWidth),static_cast<long>(m_barHeight) };
+	const long w = static_cast<long>(m_barWidth * rate);
+	const long h = static_cast<long>(m_barHeight);
+
+	Math::Rectangle rc = { 0,0,w,h };
 	Math::Color color = { 1.0f,1.0f,1.0f };
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(
-		tex, 
+		tex,
 		static_cast<int>(m_barOffset.x),
 		static_cast<int>(m_barOffset.y),
-		static_cast<int>(m_barWidth * rate),
-		static_cast<int>(m_barHeight),
+		static_cast<int>(w),
+		static_cast<int>(h),
 		&rc, &color, pivot);
 }

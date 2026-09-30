@@ -1,17 +1,9 @@
 ﻿#include "PlayerGuard.h"
 
-#include"../Player.h"
-
-void PlayerGuard::UpdateGuardInput()
+void PlayerGuard::Update(const PlayerInput& input)
 {
-	bool currentGuardPressed = (GetAsyncKeyState(VK_RBUTTON) & 0x8000) != 0;
-
-	m_guardTrigger = currentGuardPressed && !m_prevGuardPressed;
-
-	m_prevGuardPressed = currentGuardPressed;
-
 	// ガードの状態を変更
-	if (m_guardTrigger)
+	if (input.IsGuardTrigger())
 	{
 		// ガード解除
 		if (m_guardState == GuardState::Guard)
@@ -25,9 +17,9 @@ void PlayerGuard::UpdateGuardInput()
 	}
 }
 
-void PlayerGuard::UpdateParryInput()
+void PlayerGuard::UpdateParry(const PlayerInput& input)
 {
-	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+	if (input.IsAttackDown())
 	{
 		m_guardState = GuardState::Parry;
 	}

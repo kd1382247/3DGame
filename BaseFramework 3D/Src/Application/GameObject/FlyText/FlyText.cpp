@@ -34,7 +34,7 @@ void FlyText::Update()
 
 	SetPos(pos);
 
-	m_alpha -= 0.023;
+	m_alpha -= 0.013;
 
 	m_lifeTime--;
 

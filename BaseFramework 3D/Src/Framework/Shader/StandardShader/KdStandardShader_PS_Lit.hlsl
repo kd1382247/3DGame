@@ -396,6 +396,10 @@ float4 main(VSOutput In) : SV_Target0
 	outColor *= totalBrightness;
 
 
+	//------------------------------------------
+	// 指定色への色寄せ(被ダメージ演出など)
+	//------------------------------------------
+	outColor = lerp(outColor, g_OverlayColor, g_OverlayRate);
 
 	
 	//------------------------------------------

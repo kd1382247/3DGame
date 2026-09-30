@@ -1,53 +1,14 @@
 ﻿#include "PlayerSpecialMove.h"
 
-#include"../Player.h"
-
-#include"../../../Camera/CameraBase.h"
-
-void PlayerSpecialMove::UpdateSpecialMoveInput()
+Math::Vector3 PlayerSpecialMove::CalcMoveVector(const float deltaTime) const
 {
-	bool currentSpecialButton = (GetAsyncKeyState('E') & 0x8000);
-	m_isSpecialMovePressed = currentSpecialButton;
+	return m_specialMoveDir * (m_pParam->m_moveSpeed * 60.0f) * deltaTime;
 }
 
-void PlayerSpecialMove::UpdateSpecialMove(Player& player)
+const PlayerActionTiming& PlayerSpecialMove::GetTiming() const
 {
-	float moveSpeed = player.GetSpecialMoveSpeed();
+	// ここの数値を変えると、攻撃判定やトレイルが出るフレームを調整できる
+	static const PlayerActionTiming timing = { 10.0f, 30.0f, 0.0f, 40.0f };
 
-	Math::Vector3 move = m_specialMoveDir * (moveSpeed * 60.0f) * player.GetDeltaTime();
-	player.AddPendingMove(move);
-}
-
-void PlayerSpecialMove::SetSpecialMoveTiming(float& hitStart, float& hitEnd)
-{
-	hitStart = 10.0f;
-	hitEnd = 30.0f;
-}
-
-void PlayerSpecialMove::CreateSpecialMoveDir(Player& player)
-{
-	// Do not reuse the previous attack direction when the camera is unavailable.
-	m_specialMoveDir = {};
-
-	Math::Matrix camRotYMat = Math::Matrix::Identity;
-
-	auto spCamera = player.GetCamera().lock();
-	if (!spCamera)
-	{
-		return;
-	}
-
-	camRotYMat = spCamera->GetRotationYMatrix();
-
-	// カメラから見て前方向に向かせたい
-	Math::Vector3 toDir = Math::Vector3::TransformNormal(Math::Vector3::Backward, camRotYMat);
-
-	toDir.y = 0;
-	if (toDir.LengthSquared() <= 0.000001f)
-	{
-		return;
-	}
-	toDir.Normalize();
-
-	m_specialMoveDir = toDir;
+	return timing;
 }

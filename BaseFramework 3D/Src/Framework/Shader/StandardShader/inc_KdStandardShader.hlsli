@@ -15,6 +15,9 @@ cbuffer cbObject : register(b0)
 	int   g_IsSelected;
 
 	int   g_ColorSphereEnable;
+
+	float3 g_OverlayColor;
+	float    g_OverlayRate;
 	
 };
 

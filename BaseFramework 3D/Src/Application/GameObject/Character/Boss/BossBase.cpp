@@ -46,6 +46,101 @@ void BossBase::OnHit(const AttackInfo attackInfo)
 		Play("Hit/Hit2.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, 1.0f, false);
 }
 
+void BossBase::UpdateMove()
+{
+	
+	auto spPlayer = m_wpPlayer.lock();
+
+	if (!spPlayer)
+	{
+		return;
+	}
+
+	Math::Vector3 targetDir = spPlayer->GetPos() - GetPos();
+
+	// X・Z平面だけで移動・到着判定する
+	targetDir.y = 0.0f;
+
+	SetMoveDir(targetDir);
+
+	float distance = targetDir.Length();
+
+
+	if (m_hasReachedTarget)
+	{
+		if (distance > m_reachDistanceMargin)
+		{
+			m_hasReachedTarget = false;
+			PlayWalkAnimation();
+		}
+		else
+		{
+			PlayIdleAnimation();
+			return;
+		}
+	}
+	else
+	{
+		if (distance < m_reachDistance)
+		{
+			m_hasReachedTarget = true;
+			PlayIdleAnimation();
+			return;
+		}
+		else
+		{
+			PlayWalkAnimation();
+		}
+	}
+	
+
+	float         moveSpeed = GetMoveSpeed();
+
+	if (distance < moveSpeed)
+	{
+		moveSpeed = distance;
+	}
+
+	targetDir.Normalize();
+
+
+	Math::Vector3 move = targetDir * (moveSpeed * 60.0f) * m_deltaTime;
+
+	AddPendingMove(move);
+}
+
+void BossBase::SetTargetDir()
+{
+
+	auto spPlayer = m_wpPlayer.lock();
+
+	if (!spPlayer)
+	{
+		return;
+	}
+
+	Math::Vector3 targetDir = spPlayer->GetPos() - GetPos();
+
+	// X・Z平面だけで移動・到着判定する
+	targetDir.y = 0.0f;
+
+	SetMoveDir(targetDir);
+}
+
+
+void BossBase::UpdateGravity()
+{
+
+	constexpr float gravityAcceleration = 72.0f;
+
+	m_gravity += gravityAcceleration * m_deltaTime;
+
+	Math::Vector3 gravityMove = { 0.0f,-m_gravity * m_deltaTime ,0.0f };
+
+	AddPendingMove(gravityMove);
+
+}
+
 bool BossBase::IsSecondPhase()const
 {
 	return GetCurrentHP() <= GetMaxHP() / 2;

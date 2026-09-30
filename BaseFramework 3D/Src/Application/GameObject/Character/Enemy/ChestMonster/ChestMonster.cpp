@@ -48,6 +48,7 @@ void ChestMonster::Init()
 
 void ChestMonster::Update()
 {
+	UpdateGravity();
 
 	m_stateMachine.Update();
 
@@ -182,12 +183,15 @@ void ChestMonster::OnHit(const AttackInfo attackInfo)
 
 	TimeManager::Instance().StartHitStop(0.1);
 
+	StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
+
 	PlayHitEffect();
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(), m_flyTextPath);
 
 	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }
+
 
 
 void ChestMonster::CreateEnemy(const std::string& enemyName)

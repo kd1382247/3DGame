@@ -45,6 +45,7 @@ public:
 
 	void OnHit(const AttackInfo attackInfo) override;
 
+
 private:
 
 	enum class Enemes

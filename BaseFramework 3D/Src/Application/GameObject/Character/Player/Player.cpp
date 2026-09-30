@@ -1,10 +1,6 @@
 ﻿#include "Player.h"
 
 #include"../../Camera/CameraBase.h"
-#include"../Enemy/EnemyBase.h"
-
-#include"../../Stage/Collision/OBBCollision/OBBCollisionManager.h"
-#include"../../Stage/Collision/AABBCollision/AABBCollisionManager.h"
 
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../../System/CollisionManager/CollisionManager.h"
@@ -16,6 +12,8 @@
 #include"../../HPBar/PlayerHPBar/PlayerHPBar.h"
 
 #include"State/States/PlayerNormalState.h"
+#include"State/States/PlayerAttackState.h"
+#include"State/States/PlayerSpecialMoveState.h"
 #include"State/States/PlayerDamageState.h"
 #include"State/States/PlayerDieState.h"
 
@@ -30,19 +28,24 @@ void Player::Init()
 		// オブジェクト名セット
 		SetObjectName("Player");
 
-		
+
 		// カテゴリーをセット
 		SetObjectCategory(ObjectCategory::Character);
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 
+		// 剣の軌跡クラス初期化
+		m_playerSwordTrail.Init();
+
 		// パラメータークラス初期化
-
 		m_parameter.Init();
-		const auto& param = m_parameter.GetParam();
 
-		m_hp = param.m_maxHP;
+		// 各アクションクラスには、自分に必要なパラメータだけを渡す
+		m_playerAttack.Init(m_parameter.GetAttack());
+		m_playerSpecialMove.Init(m_parameter.GetSpecialMove());
+
+		m_hp = m_parameter.GetBody().m_maxHP;
 		m_bumpPushRate = 0.1f;
 
 		// ステートマシンに持ち主をセット
@@ -59,13 +62,19 @@ void Player::Init()
 
 void Player::Update()
 {
+	UpdateDebugCommand();
+
 	// 操作入力
 	UpdateInput();
 
-	UpdateComboGrace();
-
 	// 各ステートの更新
 	m_stateMachine.Update();
+
+	// コンボ猶予(受付)の更新(通常状態の間だけ進める)
+	if (m_stateMachine.IsState<PlayerNormalState>())
+	{
+		m_playerAttack.UpdateComboGrace(m_input, m_deltaTime);
+	}
 
 	UpdateGravity();
 
@@ -80,8 +89,10 @@ void Player::PostUpdate()
 
 	//アニメーション更新
 	UpdateAnimation();
-	
+
 	CharacterBase::PostUpdate();
+
+	m_playerSwordTrail.UpdateTrail(*this);
 }
 
 void Player::SetUpReference()
@@ -102,9 +113,20 @@ void Player::DrawLit()
 	CharacterBase::DrawLit();
 }
 
+void Player::DrawEffect()
+{
+	auto spTrailPoly = m_playerSwordTrail.GetTrailPolygon();
+
+	if (!spTrailPoly)
+	{
+		return;
+	}
+
+	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*spTrailPoly, Math::Matrix::Identity);
+}
+
 void Player::UpdateAttackFrame()
 {
-	// Attack timings use elapsed 60 Hz frames, not animation clip frames.
 	m_animFrame += 60.0f * m_deltaTime;
 }
 
@@ -123,18 +145,21 @@ void Player::DrawInspector()
 	m_parameter.DrawInspecter();
 }
 
-
-void Player::ClearHitTargets()
+void Player::UpdateDebugCommand()
 {
-	m_hitCooldownTimer -= 60.0f * m_deltaTime;
-
-	if (m_hitCooldownTimer <= 0)
+	if (GetAsyncKeyState('T') & 0x8000)
 	{
-		m_hitTargets.clear();
-		const auto& param = m_parameter.GetParam();
-		m_hitCooldownTimer = param.m_hitCooldownDuration;
+		m_hp += 10;
+		if (m_hp > GetMaxHP())
+		{
+			m_hp = static_cast<float>(GetMaxHP());
+		}
 	}
 }
+
+//================================
+// 攻撃判定
+//================================
 
 void Player::UpdateAttackCollision(const AttackType type)
 {
@@ -148,313 +173,28 @@ void Player::UpdateAttackCollision(const AttackType type)
 		return;
 	}
 
-	// スフィアを作る
+	// スフィアとダメージを決める
 	DirectX::BoundingSphere sphere;
 	float damage = 0.0f;
 
 	if(type==AttackType::NormalAttack)
 	{
 		sphere = CreateAttackSphere();
-		damage = m_parameter.GetParam().m_attackPower;
+		damage = m_playerAttack.GetCurrentAttackPower();
 	}
-	else if (type == AttackType::SpecialMove)
+	else
 	{
 		sphere = CreateSpecialMoveSphere();
-		damage = m_parameter.GetParam().m_specialAttackPower;
+		damage = m_playerSpecialMove.GetAttackPower();
 	}
 
-	const auto& characters =
-		CollisionManager::Instance().GetObjects(CollisionLayer::CharacterBump);
-
-	for (const auto& weakObj : characters)
-	{
-		auto obj = weakObj.lock();
-
-		if (!obj)
-		{
-			continue;
-		}
-		// 自分自身は攻撃しない
-		if (obj == shared_from_this())
-		{
-			continue;
-		}
-
-		// キャラクター(Enemy・Boss)だけ取得
-		auto enemy = std::dynamic_pointer_cast<CharacterBase>(obj);
-
-		if (!enemy)
-		{
-			continue;
-		}
-
-		if (enemy->IsInOutro())
-		{
-			continue;
-		}
-
-		// 一度当たった敵はスキップ
-		if (IsAlreadyHit(enemy))
-		{
-			continue;
-		}
-
-		KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
-
-		std::list < KdCollider::CollisionResult>result;
-
-		if (enemy->Intersects(sphereInfo, &result) && !result.empty())
-		{
-
-			// ノックバック方向を作る
-			Math::Vector3 knockBackDir = enemy->GetPos() - GetPos();
-			knockBackDir.y = 0.0f;
-
-			if (knockBackDir.LengthSquared() > 0.000001f)
-			{
-				knockBackDir.Normalize();
-			}
-
-			AttackInfo attackInfo;
-			attackInfo.damage = damage;
-			attackInfo.knockBackDir = knockBackDir;
-			attackInfo.knockBackPower = 0.1f;
-
-			enemy->OnHit(attackInfo);
-			m_hitTargets.emplace_back(enemy);
-		}
-	}
+	// 当たった相手へダメージを与える
+	constexpr float knockBackPower = 0.1f;
+	m_hitChecker.Check(*this, sphere, damage, knockBackPower);
 
 	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
 
 }
-
-void Player::UpdateInput()
-{
-
-	m_playerMove.UpdateMoveInput(*this);
-	m_playerAttack.UpdateAttackInput();
-	m_playerJump.UpdateJumpInput(*this);
-	m_playerGuard.UpdateGuardInput();
-	m_playerSpecialMove.UpdateSpecialMoveInput();
-}
-
-void Player::UpdateParryInput()
-{
-	m_playerGuard.UpdateParryInput();
-}
-
-
-void Player::UpdateMove()
-{
-	m_playerMove.UpdateMove(*this);
-}
-
-void Player::UpdateAttackMove()
-{
-	m_playerAttack.UpdateAttackMove(*this);
-}
-
-void Player::UpdateGravity()
-{
-	const float gravityAcceleration = m_parameter.GetParam().m_gravityAcceleration;
-
-	m_gravity += gravityAcceleration * m_deltaTime;
-
-	Math::Vector3 gravityMove = { 0.0f,-m_gravity * m_deltaTime ,0.0f };
-
-	AddPendingMove(gravityMove);
-
-	//m_pDebugWire->AddDebugLine(GetPos(),Math::Vector3::Down,m_gravity*deltaTime,kBlackColor);
-
-}
-
-void Player::UpdateSpecialMove()
-{
-	
-	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
-	{
-		return;
-	}
-
-	m_playerSpecialMove.UpdateSpecialMove(*this);
-
-	ClearHitTargets();
-}
-
-void Player::FacingDirectionToCamera()
-{
-	Math::Matrix camRotYMat = Math::Matrix::Identity;
-
-	auto spCamera = m_wpCamera.lock();
-	if (!spCamera)
-	{
-		return;
-	}
-
-	camRotYMat = spCamera->GetRotationYMatrix();
-	
-	// 現在向いている方向
-	Math::Vector3 nowDir = m_mWorld.Backward();
-
-	nowDir.y = 0;
-
-	if (nowDir.LengthSquared() <= 0.000001f)
-	{
-		return;
-	}
-	nowDir.Normalize();
-
-    // カメラから見て前方向に向かせたい
-	Math::Vector3 toDir = Math::Vector3::TransformNormal(Math::Vector3::Backward, camRotYMat);
-
-	toDir.y = 0;
-	if (toDir.LengthSquared() <= 0.000001f)
-	{
-		return;
-	}
-
-	toDir.Normalize();
-
-	// 内積を求める
-	float dot = nowDir.Dot(toDir);
-	dot = std::clamp(dot, -1.0f,1.0f);
-	// 角度に変換
-	float angle = DirectX::XMConvertToDegrees(acos(dot));
-
-	float rotationY = GetRotation().y;
-
-	// 少しでも回転する必要があったら
-	if (angle >= 0.1f)
-	{
-		// 外積を求める
-		Math::Vector3 cross = nowDir.Cross(toDir);
-		if (cross.y >= 0)
-		{
-			// 右回転
-			rotationY += angle;
-		}
-		else
-		{
-			// 左回転
-			rotationY -= angle;
-		}
-	}
-
-	SetRotation(Math::Vector3(0.0f, rotationY, 0.0f));
-}
-
-void Player::ApplyCameraRelativeMove(float speed)
-{
-	auto spCamera = m_wpCamera.lock();
-
-	if (!spCamera)
-	{
-		return;
-	}
-
-	Math::Matrix camRotYMat = spCamera->GetRotationYMatrix();
-
-	// 入力方向をカメラの向きに合わせて回転させる
-	SetMoveDir(Math::Vector3::TransformNormal(GetMoveDir(), camRotYMat));
-
-	Math::Vector3 dir = GetMoveDir();
-
-	if (dir.LengthSquared() > 0.0f)
-	{
-		dir.Normalize();
-	}
-
-	Math::Vector3 move = dir * (speed * 60.0f) * m_deltaTime;
-
-	AddPendingMove(move);
-}
-
-void Player::UpdateAnimation()
-{
-	m_animation.Update(m_deltaTime);
-}
-
-void Player::UpdateGroundPosY()
-{
-	KdCollider::RayInfo rayInfo;
-	// レイの発射位置を設定
-	rayInfo.m_pos = GetPos();
-
-	// 少し高いところから飛ばす(段差の許容範囲)
-	static float enableStepHigh = 0.2f;
-	rayInfo.m_pos.y += enableStepHigh;
-
-	// レイの発射方向を設定
-	rayInfo.m_dir = Math::Vector3::Down;
-	// レイの長さを設定
-	rayInfo.m_range = 100.f;
-
-	// 当たり判定をしたいタイプを設定
-	rayInfo.m_type = KdCollider::TypeGround | KdCollider::TypeBump;
-
-	std::vector<const std::vector< std::weak_ptr<KdGameObject>>*>lists;
-
-	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::Ground));
-	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::AABB));
-
-
-	for (const auto& objList : lists)
-	{
-		for (const auto wpGameObj : *objList)
-		{
-			std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
-			if (spGameObj)
-			{
-				std::list<KdCollider::CollisionResult> retRayList;
-				spGameObj->Intersects(rayInfo, &retRayList);
-
-				// レイに当たったリストから一番近いオブジェクトを検出
-				float maxOverLap = 0;
-				Math::Vector3 hitPos = {};
-				for (auto& ret : retRayList)
-				{
-					// レイを遮断しオーバーした長さが
-					// 一番長いものを探す
-					if (maxOverLap < ret.m_overlapDistance)
-					{
-						maxOverLap = ret.m_overlapDistance;
-						SetGroundYPos(ret.m_hitPos.y);
-					}
-				}
-			}
-		}
-	}
-}
-
-
-void Player::StartComboGrace()
-{
-	m_playerAttack.StartComboGrace();
-}
-
-bool Player::IsAlreadyHit(const std::shared_ptr<CharacterBase>& enemy) const
-{
-
-	for (const auto& weakEnemy : m_hitTargets)
-	{
-		auto hitEnemy = weakEnemy.lock();
-
-		if (!hitEnemy)
-		{
-			continue;
-		}
-
-		if (hitEnemy == enemy)
-		{
-			return true;
-		}
-
-	}
-
-	return false;
-}
-
 
 DirectX::BoundingSphere Player::CreateAttackSphere() const
 {
@@ -495,6 +235,203 @@ DirectX::BoundingSphere Player::CreateSpecialMoveSphere() const
 
 }
 
+//================================
+// 入力・移動
+//================================
+
+void Player::UpdateInput()
+{
+	m_input.Update(m_deltaTime);
+	m_playerGuard.Update(m_input);
+}
+
+void Player::UpdateMove()
+{
+	ApplyCameraRelativeMove(GetMoveSpeed());
+
+	UpdateFacingDirection();
+}
+
+void Player::UpdateAttackMove()
+{
+	ApplyCameraRelativeMove(m_playerAttack.GetMoveSpeed());
+
+	FacingDirectionToCamera();
+}
+
+void Player::UpdateGravity()
+{
+	const float gravityAcceleration = m_parameter.GetBody().m_gravityAcceleration;
+
+	m_gravity += gravityAcceleration * m_deltaTime;
+
+	Math::Vector3 gravityMove = { 0.0f,-m_gravity * m_deltaTime ,0.0f };
+
+	AddPendingMove(gravityMove);
+}
+
+bool Player::GetCameraForward(Math::Vector3& outDir) const
+{
+	auto spCamera = m_wpCamera.lock();
+	if (!spCamera)
+	{
+		return false;
+	}
+
+	Math::Matrix camRotYMat = spCamera->GetRotationYMatrix();
+
+	// カメラから見て前方向
+	Math::Vector3 forward = Math::Vector3::TransformNormal(Math::Vector3::Backward, camRotYMat);
+
+	forward.y = 0;
+	if (forward.LengthSquared() <= 0.000001f)
+	{
+		return false;
+	}
+
+	forward.Normalize();
+
+	outDir = forward;
+
+	return true;
+}
+
+void Player::FacingDirectionToCamera()
+{
+	// カメラから見て前方向に向かせたい
+	Math::Vector3 toDir;
+	if (!GetCameraForward(toDir))
+	{
+		return;
+	}
+
+	// 現在向いている方向
+	Math::Vector3 nowDir = m_mWorld.Backward();
+
+	nowDir.y = 0;
+
+	if (nowDir.LengthSquared() <= 0.000001f)
+	{
+		return;
+	}
+	nowDir.Normalize();
+
+	// 内積を求める
+	float dot = nowDir.Dot(toDir);
+	dot = std::clamp(dot, -1.0f,1.0f);
+	// 角度に変換
+	float angle = DirectX::XMConvertToDegrees(acos(dot));
+
+	float rotationY = GetRotation().y;
+
+	// 少しでも回転する必要があったら
+	if (angle >= 0.1f)
+	{
+		// 外積を求める
+		Math::Vector3 cross = nowDir.Cross(toDir);
+		if (cross.y >= 0)
+		{
+			// 右回転
+			rotationY += angle;
+		}
+		else
+		{
+			// 左回転
+			rotationY -= angle;
+		}
+	}
+
+	SetRotation(Math::Vector3(0.0f, rotationY, 0.0f));
+}
+
+void Player::ApplyCameraRelativeMove(const float speed)
+{
+	auto spCamera = m_wpCamera.lock();
+
+	if (!spCamera)
+	{
+		return;
+	}
+
+	Math::Matrix camRotYMat = spCamera->GetRotationYMatrix();
+
+	// 入力方向(生の向き)を、カメラの向きに合わせて回転させる
+	// ※入力そのものは書き換えないので、同じフレームに何度呼んでも結果は変わらない
+	Math::Vector3 dir = Math::Vector3::TransformNormal(m_input.GetMoveDir(), camRotYMat);
+
+	// キャラを進む向きへ向けるために、CharacterBase側へ渡しておく(UpdateFacingDirectionが使う)
+	SetMoveDir(dir);
+
+	if (dir.LengthSquared() > 0.0f)
+	{
+		dir.Normalize();
+	}
+
+	Math::Vector3 move = dir * (speed * 60.0f) * m_deltaTime;
+
+	AddPendingMove(move);
+}
+
+void Player::UpdateAnimation()
+{
+	m_animation.Update(m_deltaTime);
+}
+
+void Player::UpdateGroundPosY()
+{
+	KdCollider::RayInfo rayInfo;
+	// レイの発射位置を設定
+	rayInfo.m_pos = GetPos();
+
+	// 少し高いところから飛ばす(段差の許容範囲)
+	static float enableStepHigh = 0.2f;
+	rayInfo.m_pos.y += enableStepHigh;
+
+	// レイの発射方向を設定
+	rayInfo.m_dir = Math::Vector3::Down;
+	// レイの長さを設定
+	rayInfo.m_range = 100.f;
+
+	// 当たり判定をしたいタイプを設定
+	rayInfo.m_type = KdCollider::TypeGround | KdCollider::TypeBump;
+
+	std::vector<const std::vector< std::weak_ptr<KdGameObject>>*>lists;
+
+	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::Ground));
+	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::AABB));
+
+	for (const auto& objList : lists)
+	{
+		for (const auto wpGameObj : *objList)
+		{
+			std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
+			if (spGameObj)
+			{
+				std::list<KdCollider::CollisionResult> retRayList;
+				spGameObj->Intersects(rayInfo, &retRayList);
+
+				// レイに当たったリストから一番近いオブジェクトを検出
+				float maxOverLap = 0;
+				Math::Vector3 hitPos = {};
+				for (auto& ret : retRayList)
+				{
+					// レイを遮断しオーバーした長さが
+					// 一番長いものを探す
+					if (maxOverLap < ret.m_overlapDistance)
+					{
+						maxOverLap = ret.m_overlapDistance;
+						SetGroundYPos(ret.m_hitPos.y);
+					}
+				}
+			}
+		}
+	}
+}
+
+//================================
+// 被弾
+//================================
+
 void Player::OnHit(const AttackInfo attackInfo)
 {
 	m_hp -= attackInfo.damage;
@@ -507,100 +444,109 @@ void Player::OnHit(const AttackInfo attackInfo)
 	}
 	else
 	{
-		if (GetStateType() != PlayerStateType::AttackState)
+		// 攻撃中・必殺技中は怯まない
+		if (!m_stateMachine.IsState<PlayerAttackState>() &&
+		    !m_stateMachine.IsState<PlayerSpecialMoveState>())
 		{
 			m_stateMachine.ChangeState<PlayerDamageState>();
 		}
 	}
+
+	StartOverlay({ 1,0,0 }, 0.8f,m_overlayDuration);
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage,GetPos(), m_flyTextPath);
 
 	AddKnockBack(attackInfo.knockBackDir,attackInfo.knockBackPower);
 }
 
-PlayerAnimationType Player::GetChargeMoveAnimation() const
-{
-	return m_playerAttack.GetChargeMoveAnimation(*this);
-}
-
-void Player::StartJump()
-{
-	m_playerJump.StartJump(*this);
-}
-
-void Player::StartSpecialMove()
-{
-	// 攻撃がHitした敵リストをクリア
-	m_hitTargets.clear();
-
-	const auto& param = m_parameter.GetParam();
-	m_hitCooldownTimer = param.m_hitCooldownDuration;
-
-	// 移動する方向を決める
-	m_playerSpecialMove.CreateSpecialMoveDir(*this);
-
-	FacingDirectionToCamera();
-
-	m_playerSpecialMove.SetSpecialMoveTiming(m_attackTiming.hitStart,m_attackTiming.hitEnd);
-
-	m_animFrame = 0.0f;
-}
-
-void Player::EndSpecialMove()
-{
-	ResetCombo();
-}
+//================================
+// アクション
+//================================
 
 void Player::PlayAnimation(PlayerAnimationType type)
 {
 	m_animation.Play(type);
 }
 
+void Player::ApplyActionTiming(const PlayerActionTiming& timing)
+{
+	m_attackTiming.hitStart = timing.hitStart;
+	m_attackTiming.hitEnd = timing.hitEnd;
+
+	m_playerSwordTrail.SetTrailTiming(timing.trailStart, timing.trailEnd);
+}
+
+void Player::StartJump()
+{
+	m_playerAttack.ResetCombo();
+
+	SetIsGrounded(false);
+
+	// 重力をジャンプ力ぶん減らして、上向きに飛び出させる
+	const float jumpPower = m_parameter.GetJump().m_jumpPow;
+
+	SetGravity(GetGravity() - (jumpPower * 60.0f));
+}
 
 void Player::StartCurrentAttack()
 {
-	m_hitTargets.clear();
+	// 前の攻撃で当たった相手の記録を消す
+	m_hitChecker.Clear();
 
 	m_playerAttack.StartAttack();
-	m_playerAttack.SetAttackTiming(m_attackTiming.hitStart, m_attackTiming.hitEnd);
-	m_playerAttack.ComboInputStartFrame();
 
-	PlayAnimation(GetAttackAnimation());
+	const PlayerAttack::AttackData& attackData = m_playerAttack.GetCurrentAttackData();
+
+	m_playerSwordTrail.StartTrail();
+	ApplyActionTiming(attackData.timing);
+
+	PlayAnimation(attackData.animation);
 
 	// フレームを0に
 	m_animFrame = 0.0f;
 }
 
-void Player::NextCombo()
+void Player::EndAttack()
 {
-	m_playerAttack.UpdateComboState();
+	m_playerSwordTrail.EndTrail();
 }
 
-void Player::UpdateComboReception()
-{
-	m_playerAttack.UpdateComboReception(m_animFrame);
-}
-
-void Player::UpdateComboGrace()
-{
-	if (GetStateType() == PlayerStateType::NormalState)
-	{
-		m_playerAttack.UpdateComboGrace();
-	}
-}
-
-void Player::SetStateType(PlayerStateType type)
-{
-	m_playerStateType = type;
-	if (type != PlayerStateType::NormalState && type != PlayerStateType::AttackState)
-	{
-		ResetCombo();
-	}
-}
-
-
-void Player::ResetCombo()
+void Player::StartSpecialMove()
 {
 	m_playerAttack.ResetCombo();
+
+	// 攻撃がHitした敵リストをクリア
+	m_hitChecker.Clear();
+	m_hitChecker.ResetRehitTimer(m_playerSpecialMove.GetHitCooldownDuration());
+
+	// 移動する方向を決める(カメラの前方向)
+	Math::Vector3 moveDir = Math::Vector3::Zero;
+	GetCameraForward(moveDir);
+	m_playerSpecialMove.SetMoveDir(moveDir);
+
+	FacingDirectionToCamera();
+
+	m_playerSwordTrail.StartTrail();
+	ApplyActionTiming(m_playerSpecialMove.GetTiming());
+
+	m_animFrame = 0.0f;
 }
 
+void Player::UpdateSpecialMove()
+{
+
+	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
+	{
+		return;
+	}
+
+	AddPendingMove(m_playerSpecialMove.CalcMoveVector(m_deltaTime));
+
+	m_hitChecker.UpdateRehit(m_deltaTime, m_playerSpecialMove.GetHitCooldownDuration());
+}
+
+void Player::EndSpecialMove()
+{
+	m_playerAttack.ResetCombo();
+	m_playerSwordTrail.EndTrail();
+}

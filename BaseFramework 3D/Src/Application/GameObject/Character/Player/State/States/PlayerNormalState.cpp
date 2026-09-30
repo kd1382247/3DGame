@@ -10,15 +10,17 @@
 
 void PlayerNormalState::OnStart(Player* owner)
 {
-	owner->SetStateType(PlayerStateType::NormalState);
+
 }
 
 void PlayerNormalState::OnUpdate(Player* owner)
 {
+	const PlayerInput& input = owner->GetInput();
+
 	owner->UpdateMove();
 
 	// 移動アニメーション
-	if (owner->IsMovePressed())
+	if (input.IsMovePressed())
 	{
 		owner->PlayAnimation(PlayerAnimationType::MoveFWD);
 	}
@@ -28,30 +30,28 @@ void PlayerNormalState::OnUpdate(Player* owner)
 	}
 
 
-	if (owner->IsGuardTrigger())
+	if (input.IsGuardTrigger())
 	{
 		m_pMachine->ChangeState<PlayerGuardState>();
 		return;
 	}
 
-	if (owner->IsJumpPressed())
+	// ジャンプは地面にいる時だけ
+	if (input.IsJumpDown() && owner->IsGrounded())
 	{
 		m_pMachine->ChangeState<PlayerJumpStartState>();
 		return;
 	}
 
-	if (owner->IsAttackPressed())
+	if (input.IsAttackTrigger())
 	{
 		m_pMachine->ChangeState<PlayerAttackState>();
 		return;
 	}
 
-	if (owner->GetStateType() != PlayerStateType::AttackState)
+	if (input.IsAttackLongPressed())
 	{
-		if (owner->IsAttackLongPressed())
-		{
-			m_pMachine->ChangeState<PlayerChargeAttackState>();
-		}
+		m_pMachine->ChangeState<PlayerChargeAttackState>();
 	}
 }
 

@@ -92,13 +92,6 @@ public:
 	void SetDeltaTime(const float deltaTime) { m_deltaTime = deltaTime; }
 	float GetDeltaTime()       const         { return m_deltaTime; }
 
-	//
-	void UpdateHitShake();
-
-	//
-	bool GetIsHitShake() const { return m_isHitShake; }
-	void SetIsHitShake(const bool isHitShake) { m_isHitShake = isHitShake; }
-
 	// 移動方向
 	void SetMoveDir(const Math::Vector3& moveDir) { m_moveDir = moveDir; }
 	Math::Vector3 GetMoveDir() { return m_moveDir; }
@@ -106,6 +99,21 @@ public:
 
 	void  UpdateFacingDirection();
 	void  UpdateMatrix();
+
+	// 現在のアニメーション経過フレーム数(攻撃判定・トレイル表示区間などのフレーム指定に使う)
+	float GetAnimFrame()const { return m_animFrame; }
+
+	void StartOverlay(const Math::Vector3& color, const float rate, const float duration)
+	{
+		m_overlayColor = color;
+		m_maxOverlayRate = rate;
+		m_overlayTime = duration;
+	}
+
+	float GetOverlayRate();
+
+	void UpdateOverlay();
+
 
 private:
 
@@ -168,21 +176,13 @@ protected:
 	// デルタタイム
 	float m_deltaTime = 0.0f;
 
-	// ヒットストップ
-	bool m_isHitShake = false;
-
-	float m_hitShakeTime = 0.0f;
-	float m_hitShakeDuration = 0.0f;
-	float m_hitShakePower = 0.0f;
-
-	Math::Vector3 m_visualOffset = {};
-
-
-	float m_hitShakeInterval = 0.03f;
-	float m_hitShakeIntervalTimer = 0.0f;
-
 	// 当たり判定(押し戻し)球の半径
 	float m_bumpSphereRadius = 0.5f;
 
+	// キャラの点滅
+	float m_overlayTime          = 0.0f;
+	float m_overlayDuration      = 1.0f;
+	float m_maxOverlayRate       = 0.0f;
+	Math::Vector3 m_overlayColor = {};
 
 };

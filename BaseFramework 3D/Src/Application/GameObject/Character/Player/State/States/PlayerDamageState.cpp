@@ -7,14 +7,15 @@
 
 void PlayerDamageState::OnStart(Player* owner)
 {
-	owner->SetStateType(PlayerStateType::DamageState);
+	owner->GetAttack().ResetCombo();
+
 	owner->PlayAnimation(PlayerAnimationType::GetHit);
 }
 
 void PlayerDamageState::OnUpdate(Player * owner)
 {
 
-	if (owner->IsAttackPressed())
+	if (owner->GetInput().IsAttackTrigger())
 	{
 		m_pMachine->ChangeState<PlayerAttackState>();
 		return;

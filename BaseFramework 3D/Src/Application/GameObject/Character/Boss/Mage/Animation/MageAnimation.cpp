@@ -41,6 +41,18 @@ void MageAnimation::Animations(MageAnimationType animType)
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack2"), false);
 		m_animSpeed = 1.0f;
 		break;
+	case MageAnimationType::BeamST:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("BeamST"), false);
+		m_animSpeed = 1.0f;
+		break;
+	case MageAnimationType::BeamRPT:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("BeamRPT"), true);
+		m_animSpeed = 1.0f;
+		break;
+	case MageAnimationType::BeamEND:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("BeamEND"), false);
+		m_animSpeed = 1.0f;
+		break;
 	case MageAnimationType::GetHit:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), true);
 		m_animSpeed = 1.0f;

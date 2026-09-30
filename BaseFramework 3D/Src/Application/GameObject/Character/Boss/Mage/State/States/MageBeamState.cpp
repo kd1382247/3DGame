@@ -8,7 +8,7 @@
 namespace
 {
 	// 詠唱開始からビームが発生するまでの時間(秒)
-	constexpr float kCastDelay = 0.8f;
+	constexpr float kCastDelay = 0.6f;
 
 	// ビームの長さ・幅(仮値。後で調整する)
 	constexpr float kBeamLength = 19.0f;
@@ -21,20 +21,20 @@ namespace
 
 void MageBeamState::OnStart(Mage* mage)
 {
-	mage->PlayAnimation(MageAnimationType::Attack1);
+	mage->PlayAnimation(MageAnimationType::BeamST);
 
 	// 詠唱開始時点で座標・方向を確定させる(テレグラフ表示とBeam生成で同じ値を使うため)
 	m_beamDir = mage->GetMatrix().Backward();
 	m_beamPos = mage->GetPos() + m_beamDir * kBeamForwardOffset;
 
-	m_effectPos = (mage->GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f)) + m_beamDir * 1.8f;
+	m_effectPos = (mage->GetPos() + Math::Vector3(0.0f, 1.5f, 0.0f)) + m_beamDir * 1.8f;
 
 	// 予告範囲(矩形)の表示を開始
 	CreateBeamRange();
 	CreateTelegraphIndicator();
 	// 詠唱中の予告(windup)エフェクトを再生
 	m_wpEffekseerObj = KdEffekseerManager::GetInstance().Play(
-		"Beam/Beam.efkefc", m_effectPos , 1.0f, 1.0f, false, 0, 120, mage->GetBeamEffectRotation());
+		"Beam/Beam.efkefc", m_effectPos , 1.0f, 1.0f, false, 0, 120, mage->GetEffectRotation(180));
 
 	m_castTimer = 0.0f;
 	m_hasCast = false;
@@ -45,6 +45,12 @@ void MageBeamState::OnUpdate(Mage* mage)
 	// 詠唱中・Beam生成後を通して、予告範囲(矩形)を表示し続ける
 	UpdateBeamRange();
 	UpdateTelegraphIndicator();
+
+	if (mage->IsAnimationFinished())
+	{
+		mage->PlayAnimation(MageAnimationType::BeamRPT);
+	}
+
 	if (!m_hasCast)
 	{
 		m_castTimer += mage->GetDeltaTime();
@@ -62,6 +68,7 @@ void MageBeamState::OnUpdate(Mage* mage)
 		HideTelegraphIndicator();
 	}
 
+	
 	// Beam本体が無くなった(=攻撃終了した)らNormalStateへ戻る
 	auto spMageBeam = m_wpMageBeam.lock();
 

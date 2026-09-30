@@ -13,6 +13,7 @@
 #include"../../../MageMagicSector/MageMagicSectorManager.h"
 #include"../../../MageBeam/MageBeamManager.h"
 
+#include"../../../HPBar/BossHPBar/BossHPBar.h"
 
 #include"State/States/MageNormalState.h"
 
@@ -30,6 +31,8 @@ void Mage::Init()
 
 		m_hp = m_parameter.GetParam().m_maxHP;
 
+		m_attackCooldown = m_attackCooldownDuration;
+
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<MageNormalState>();
 	}
@@ -44,6 +47,8 @@ void Mage::Init()
 
 void Mage::Update()
 {
+	UpdateGravity();
+
 	UpdateAttack();
 
 	m_stateMachine.Update();
@@ -59,9 +64,29 @@ void Mage::PostUpdate()
 
 }
 
+void Mage::SetUpReference()
+{
+	BossBase::SetUpReference();
+
+	std::shared_ptr<BossHPBar>hpBar = std::make_shared<BossHPBar>();
+	hpBar->Init();
+	hpBar->SetBoss(std::dynamic_pointer_cast<BossBase>(shared_from_this()));
+	SceneManager::Instance().AddObject(hpBar);
+}
+
 void Mage::DrawParameterInspector()
 {
 	m_parameter.DrawInspecter();
+}
+
+void Mage::PlayWalkAnimation()
+{
+	PlayAnimation(MageAnimationType::Walk);
+}
+
+void Mage::PlayIdleAnimation()
+{
+	PlayAnimation(MageAnimationType::Idle);
 }
 
 void Mage::UpdateAnimation()
@@ -108,6 +133,18 @@ MageAttackPattern Mage::SelectAttackPattern()
 	if (!IsSecondPhase())
 	{
 		weights[static_cast<size_t>(MageAttackPattern::NovaCircle)] = 0.0f;
+		weights[static_cast<size_t>(MageAttackPattern::Beam)] = 0.0f;
+	}
+
+	// プレイヤーに到達していない場合は近接系の攻撃は抽選されない
+	if (!HasReachedTarget())
+	{
+		weights[static_cast<size_t>(MageAttackPattern::ForwardSector)] = 0.0f;
+		weights[static_cast<size_t>(MageAttackPattern::NovaCircle)] = 0.0f;
+	}
+	else
+	{
+		weights[static_cast<size_t>(MageAttackPattern::Bolt)] = 0.0f;
 	}
 
 	int index = LotteryPattern(weights);
@@ -211,21 +248,21 @@ void Mage::CastTargetCircle()
 		90);
 }
 
-void Mage::CastForwardSector()
+std::shared_ptr<MageMagicSector> Mage::CastForwardSector()
 {
-	MageMagicSectorManager::Instance().CreateMagicSector(
+	return MageMagicSectorManager::Instance().CreateMagicSector(
 		GetPos(),
 		m_mWorld.Backward(),
 		100,
 		6.5f,
 		0.8f,
 		10,
-		"Sword/Sword.efkefc",
-		0.8f,
-		1.5f,
+		"Sword/Sword2.efkefc",
+		2.5f,
+		1.2f,
 		0,
-		80
-	);
+		80,
+		GetEffectRotation(-60));
 }
 
 void Mage::FireBolt()
@@ -265,11 +302,11 @@ void Mage::CastNovaCircle()
 		45);
 }
 
-Math::Vector3 Mage::GetBeamEffectRotation()const
+Math::Vector3 Mage::GetEffectRotation(const float value)const
 {
 	// エフェクト側の初期正面とキャラクターの正面が180度ズレているため補正
 	Math::Vector3 rotation = GetRotation();
-	rotation.y += 180.0f;
+	rotation.y += value;
 
 	return rotation;
 }
@@ -289,6 +326,6 @@ std::shared_ptr<MageBeam> Mage::FireBeam(const Math::Vector3& pos, const Math::V
 		1.0f,
 		130,
 		250,
-		GetBeamEffectRotation(),
+		GetEffectRotation(180.0f),
 		effectPos);
 }

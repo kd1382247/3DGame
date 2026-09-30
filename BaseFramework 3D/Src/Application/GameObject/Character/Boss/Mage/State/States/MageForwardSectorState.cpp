@@ -2,6 +2,7 @@
 
 #include"../../Mage.h"
 #include"MageNormalState.h"
+#include"../../../../../MageMagicSector/MageMagicSector.h"
 
 namespace
 {
@@ -11,7 +12,7 @@ namespace
 
 void MageForwardSectorState::OnStart(Mage* mage)
 {
-	mage->PlayAnimation(MageAnimationType::Attack1);
+	mage->PlayAnimation(MageAnimationType::Attack2);
 	m_castTimer = 0.0f;
 	m_hasCast = false;
 }
@@ -22,14 +23,21 @@ void MageForwardSectorState::OnUpdate(Mage* mage)
 
 	if (!m_hasCast && m_castTimer >= kCastDelay)
 	{
-		mage->CastForwardSector();
+		m_wpMageMagicSector=mage->CastForwardSector();
 		m_hasCast = true;
 	}
 
-	if (mage->IsAnimationFinished())
+	if (m_hasCast)
 	{
-		m_pMachine->ChangeState<MageNormalState>();
+		// Beam本体が無くなった(=攻撃終了した)らNormalStateへ戻る
+		auto spMageMagicSector = m_wpMageMagicSector.lock();
+
+		if (!spMageMagicSector || spMageMagicSector->IsFinished())
+		{
+			m_pMachine->ChangeState<MageNormalState>();
+		}
 	}
+
 }
 
 void MageForwardSectorState::OnExit(Mage* mage)

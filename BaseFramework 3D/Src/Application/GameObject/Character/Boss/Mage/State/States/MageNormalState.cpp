@@ -16,13 +16,17 @@ void MageNormalState::OnStart(Mage* mage)
 
 void MageNormalState::OnUpdate(Mage* mage)
 {
+
+	mage->UpdateFacingDirection();
+	mage->UpdateMove();
+
 	if (!mage->IsAttack())
 	{
 		return;
 	}
 
-	//switch (mage->SelectAttackPattern())
-	switch (MageAttackPattern::ForwardSector)
+	switch (mage->SelectAttackPattern())
+	//switch (MageAttackPattern::Beam)
 	{
 	case MageAttackPattern::Summon:
 		m_pMachine->ChangeState<MageSummonState>();

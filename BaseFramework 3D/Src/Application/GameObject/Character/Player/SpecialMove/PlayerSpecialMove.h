@@ -1,25 +1,35 @@
 ﻿#pragma once
 
-class Player;
+#include"../Parameter/PlayerParameter.h"
+#include"../PlayerActionTiming.h"
 
+// 必殺技(突進)の状態を持つクラス
+// Playerのことは知らない。カメラの向きなど必要な情報は引数で受け取る
 class PlayerSpecialMove
 {
 public:
 
-	void UpdateSpecialMoveInput();
+	// パラメータの参照を受け取る(使う側が持つ)
+	void Init(const PlayerParameter::SpecialMoveParam& param) { m_pParam = &param; }
 
-	void UpdateSpecialMove(Player& player);
+	// 突進する方向をセットする(必殺技の開始時に、カメラの前方向などを渡す)
+	void SetMoveDir(const Math::Vector3& dir) { m_specialMoveDir = dir; }
 
-	bool IsSpecialMovePressed() const { return m_isSpecialMovePressed; }
+	// 突進の1フレームぶんの移動量
+	Math::Vector3 CalcMoveVector(const float deltaTime) const;
 
-	void SetSpecialMoveTiming(float& hitStart, float& hitEnd);
+	// 攻撃判定・トレイルのフレーム区間
+	const PlayerActionTiming& GetTiming() const;
 
-	void CreateSpecialMoveDir(Player& player);
+	float GetAttackPower() const { return m_pParam->m_attackPower; }
+
+	// 多段ヒットの間隔(フレーム数)
+	float GetHitCooldownDuration() const { return m_pParam->m_hitCooldownDuration; }
 
 private:
 
-	// 必殺技フラグ
-	bool            m_isSpecialMovePressed = false;
+	// パラメータ(Playerが持つPlayerParameterの中身を参照する)
+	const PlayerParameter::SpecialMoveParam* m_pParam = nullptr;
 
 	Math::Vector3   m_specialMoveDir = {};
 

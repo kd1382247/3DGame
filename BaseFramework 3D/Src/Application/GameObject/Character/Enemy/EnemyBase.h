@@ -45,6 +45,9 @@ public:
 
 	void  CreateDeathSmoke();
 
+	// ダメージ量に応じた長さのヒットストップを開始する(強い攻撃ほど長い)
+	void StartDamageHitStop(float damage);
+
 protected:
 
 	std::weak_ptr<Player>m_wpPlayer;
@@ -114,6 +117,7 @@ protected:
 
 	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
 	float m_reachDistance = 1.5f;
+
 
 	// フライテキストのパス
 	const std::string m_flyTextPath = "DamageNumber_Orange.png";

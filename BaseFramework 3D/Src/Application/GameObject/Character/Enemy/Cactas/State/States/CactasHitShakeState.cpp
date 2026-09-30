@@ -1,28 +1,15 @@
 ﻿#include "CactasHitShakeState.h"
 
-#include"../../Cactas.h"
-
-#include"CactasDamageState.h"
+// 未使用のステート(ヒットシェイクは廃止)。プロジェクトから削除して問題ありません
 
 void CactasHitShakeState::OnStart(Cactas* cactas)
 {
-	cactas->StartHitShake();
-	cactas->PlayAnimation(CactasAnimationType::Idle);
 }
 
 void CactasHitShakeState::OnUpdate(Cactas* cactas)
 {
-
-	cactas->UpdateHitShake();
-
-	if (!cactas->GetIsHitShake())
-	{
-		m_pMachine->ChangeState<CactasDamageState>();
-	}
-
 }
 
 void CactasHitShakeState::OnExit(Cactas* cactas)
 {
-	cactas->EndHitShake();
 }

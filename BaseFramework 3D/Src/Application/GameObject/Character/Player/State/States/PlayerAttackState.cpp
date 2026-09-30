@@ -8,44 +8,43 @@
 
 void PlayerAttackState::OnStart(Player* owner)
 {
-
-	owner->SetStateType(PlayerStateType::AttackState);
 	owner->StartCurrentAttack();
 }
 
 void PlayerAttackState::OnUpdate(Player * owner)
 {
+	PlayerAttack& attack = owner->GetAttack();
 
 	owner->UpdateAttackFrame();
 	owner->UpdateAttackMove();
 	// 当たり判定
 	owner->UpdateAttackCollision(Player::AttackType::NormalAttack);
 
-	owner->UpdateComboReception();
+	attack.UpdateComboReception(owner->GetInput(), owner->GetAnimFrame());
 
 	if (owner->IsAnimationFinished())
 	{
 
-		if (owner->IsAttackLongPressed())
+		if (owner->GetInput().IsAttackLongPressed())
 		{
 			m_pMachine->ChangeState<PlayerChargeAttackState>();
 			return;
 		}
 
-		if (owner->HasNextCombo())
+		if (attack.HasNextCombo())
 		{
-			owner->NextCombo();
+			attack.NextCombo();
 			owner->StartCurrentAttack();
 		}
 		else
 		{
-			if (owner->IsLastCombo())
+			if (attack.IsLastCombo())
 			{
-				owner->ResetCombo();
+				attack.ResetCombo();
 			}
 			else
 			{
-				owner->StartComboGrace();
+				attack.StartComboGrace();
 
 			}
 
@@ -59,5 +58,5 @@ void PlayerAttackState::OnUpdate(Player * owner)
 
 void PlayerAttackState::OnExit(Player * owner)
 {
-
+	owner->EndAttack();
 }

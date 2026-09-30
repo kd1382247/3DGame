@@ -58,6 +58,7 @@ public:
 
 	void OnHit(const AttackInfo attackInfo)override;
 
+
 private:
 
 	void UpdateAnimation();

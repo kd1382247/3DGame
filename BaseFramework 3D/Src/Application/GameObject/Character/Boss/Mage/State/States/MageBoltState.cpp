@@ -20,6 +20,9 @@ void MageBoltState::OnUpdate(Mage* mage)
 {
 	m_castTimer += mage->GetDeltaTime();
 
+	mage->SetTargetDir();
+	mage->UpdateFacingDirection();
+
 	if (!m_hasCast && m_castTimer >= kCastDelay)
 	{
 		mage->FireBolt();
