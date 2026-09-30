@@ -1,15 +1,8 @@
 ﻿#include "Cactas.h"
 
-
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
-#include"../../../../System/TimeManager/TimeManager.h"
-
-#include"../../../FlyText/FlyTextManager.h"
-
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
-
-#include"../../Player/Player.h"
 
 #include"State/States/CactasNormalState.h"
 #include"State/States/CactasDamageState.h"
@@ -28,13 +21,24 @@ void Cactas::Init()
 		// パラメータクラス初期化
 		m_parameter.Init();
 
-		m_hp = m_parameter.GetParam().m_maxHP;
+		const auto& param = m_parameter.GetParam();
 
-		m_attackCooldownDuration = 0.5f;
+		m_health.Init(param.m_maxHP);
+
+		m_reachDistance = param.m_reachDistance;
+		m_attackCooldownDuration = param.m_attackCooldown;
 
 
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<CactasNormalState>();
+
+
+		// 近接攻撃パラメータをセット
+		m_meleeAttack.m_attackTiming.hitStart = param.m_hitStartFrame;
+		m_meleeAttack.m_attackTiming.hitEnd = param.m_hitEndFrame;
+		m_meleeAttack.m_sphereRadius = param.m_hitRadius;
+		m_meleeAttack.m_forwardOffset = param.m_hitForwardOffset;
+		m_meleeAttack.m_knockBackPower = param.m_knockBackPower;
 
 	}
 
@@ -94,29 +98,6 @@ void Cactas::RePlayAnimation(CactasAnimationType type)
 	m_animation.RePlay(type);
 }
 
-void Cactas::StartAttack()
-{
-	m_hitTarget = false;
-	SetAttackTiming();
-}
-
-void Cactas::EndAttack()
-{
-	m_attackFlg = false;
-	m_attackCooldown = m_attackCooldownDuration;
-}
-
-void Cactas::UpdateLaunch()
-{
-	if (IsGrounded())
-	{
-		m_launchFlg = false;
-	}
-
-	Math::Vector3 move = m_launchVec * 60.0f * m_deltaTime;
-	AddPendingMove(move);
-}
-
 void Cactas::UpdateAnimation()
 {
 
@@ -133,46 +114,18 @@ void Cactas::PlayIdleAnimation()
 	PlayAnimation(CactasAnimationType::Idle);
 }
 
-void Cactas::SetAttackTiming()
-{
-	m_attackTiming.hitStart=16.0f;
-	m_attackTiming.hitEnd=20.0f;
 
-	// フレームを0に
-	m_animFrame = 0.0f;
-}
-
-void Cactas::UpdateAttackCollision()
-{
-	UpdateMeleeAttackCollision(0.08f);
-}
 
 void Cactas::OnHit(const AttackInfo attackInfo)
 {
-
-	m_hp -= attackInfo.damage;
-
-	if (m_hp <= 0)
+	if (ApplyDamage(attackInfo))
 	{
-		m_hp = 0;
-		m_outroFlg = true;
 		m_stateMachine.ChangeState<CactasDieState>();
 	}
 	else
 	{
-		m_stateMachine.ChangeState<CactasDamageState>();	
+		m_stateMachine.ChangeState<CactasDamageState>();
 		RePlayAnimation(CactasAnimationType::GetHit);
 	}
-
-
-	StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
-
-	StartDamageHitStop(attackInfo.damage);
-
-	PlayHitEffect();
-
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(), m_flyTextPath);
-
-	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }
 

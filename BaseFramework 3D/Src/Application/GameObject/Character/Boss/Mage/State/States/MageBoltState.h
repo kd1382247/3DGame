@@ -17,7 +17,6 @@ private:
 	float     m_castTimer = 0.0f;
 	bool      m_hasCast = false;
 
-	const int maxShotCount = 3;
 	int       m_shotCount = 0.0f;
 
 

@@ -36,18 +36,8 @@ void EnemyHPBar::Update()
 		return;
 	}
 
-	float maxHP = spEnemy->GetMaxHP();
 
-	if (maxHP <= 0)
-	{
-
-		return;
-	}
-
-	float currentHP = spEnemy->GetCurrentHP();
-
-
-	m_hpRate = std::clamp(currentHP / maxHP,0.0f,1.0f);
+	m_hpRate = spEnemy->GetHealth().GetHPRate();
 	
 	// ダメージバーを減少
 	if (m_damageRate > m_hpRate)
@@ -66,6 +56,8 @@ void EnemyHPBar::Update()
 
 	Math::Vector3 displayDistance = spEnemy->GetPos() - spPlayer->GetPos();
 
+	float currentHP = spEnemy->GetHealth().GetCurrentHP();
+	float maxHP = spEnemy->GetHealth().GetMaxHP();
 
 	// HPバーを表示するかを判定
 	if (currentHP < maxHP&&

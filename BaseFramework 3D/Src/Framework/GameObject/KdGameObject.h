@@ -99,7 +99,11 @@ public:
 	// クラスの関連付け用の関数
 	virtual void SetUpReference() {}
 
-	// Inspectorに表示させる
+	// Inspectorの上部に固定表示する内容(名前・位置・回転・大きさなど)
+	// ここはスクロールせず、Deleteボタンも常に見える位置に固定される
+	virtual void DrawInspectorHeader() {}
+
+	// Inspectorのスクロール領域に表示させる内容(パラメータなど項目数が多いもの)
 	virtual void DrawInspector() {}
 
 	// オブジェクトが選択されたか

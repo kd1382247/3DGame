@@ -4,6 +4,7 @@
 #include"../../System/TimeManager/TimeManager.h"
 
 #include"../../Editor/EditorManager.h"
+#include"../../Editor/InspectorWidgets.h"
 
 
 CharacterBase::CharacterBase()
@@ -79,17 +80,20 @@ void CharacterBase::GenerateDepthMapFromLight()
 	}*/
 }
 
+void CharacterBase::DrawInspectorHeader()
+{
+	// 名前・位置・回転・大きさ(スクロールしない部分)
+	DrawBasicInspecter();
+}
+
 void CharacterBase::DrawInspector()
 {
-
-	DrawBasicInspecter();
-
-	ImGui::Separator();
-
-	// 当たり判定(押し戻し)球の半径
-	if (ImGui::DragFloat("BumpSphereRadius", &m_bumpSphereRadius, 0.01f, 0.01f))
+	if (InspectorUI::BeginGroup("Collision"))
 	{
-		EditorManager::Instance().MarkDirty();
+		// 当たり判定(押し戻し)球の半径
+		InspectorUI::Float("BumpSphereRadius", m_bumpSphereRadius, 0.01f, 0.01f, "%.2f m");
+
+		InspectorUI::EndGroup();
 	}
 }
 
@@ -260,3 +264,13 @@ void CharacterBase::AddKnockBack(const Math::Vector3& dir, const float power)
 	}
 	m_knockBack += dir * power;
 }
+
+void CharacterBase::UpdateGravity()
+{
+	m_gravity += GetGravityAcceleration() * m_deltaTime;
+
+	Math::Vector3 gravityMove = { 0.0f,-m_gravity * m_deltaTime ,0.0f };
+
+	AddPendingMove(gravityMove);
+}
+

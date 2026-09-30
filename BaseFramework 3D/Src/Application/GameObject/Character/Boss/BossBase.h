@@ -29,8 +29,6 @@ private:
 
 protected:
 
-	void UpdateGravity();
-
 	// パラメータクラスのインスペクター描画。各Enemyが実装する
 	virtual void DrawParameterInspector() = 0;
 

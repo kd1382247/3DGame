@@ -53,9 +53,9 @@ public:
 	// CharacterBaseが要求するパラメータ
 	//================================
 
-	int   GetMaxHP()     const override { return m_parameter.GetBody().m_maxHP; }
 	float GetTurnSpeed() const override { return m_parameter.GetBody().m_turnSpeed; }
 	float GetMoveSpeed() const override { return m_parameter.GetMove().m_moveSpeed; }
+	float GetGravityAcceleration() const override { return m_parameter.GetBody().m_gravityAcceleration; }
 
 	//================================
 	// 部品へのアクセス(ステートが状態を直接聞くために使う)
@@ -117,9 +117,6 @@ public:
 
 	std::weak_ptr<CameraBase>GetCamera()const { return m_wpCamera; }
 
-	// モデル情報
-	std::shared_ptr<KdModelWork>GetModelWork()const { return m_spModel; }
-
 private:
 
 	// デバッグ用のコマンド(Tキーで回復)
@@ -128,7 +125,6 @@ private:
 	// 入力を受け付ける
 	void UpdateInput();
 
-	void UpdateGravity();
 
 	void UpdateAnimation();
 

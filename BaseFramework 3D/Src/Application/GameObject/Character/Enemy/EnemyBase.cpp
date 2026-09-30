@@ -12,6 +12,8 @@
 
 #include"../Player/Player.h"
 
+#include"../../FlyText/FlyTextManager.h"
+
 void EnemyBase::Init()
 {
 	// カテゴリーをセット
@@ -41,20 +43,28 @@ void EnemyBase::StartDamageHitStop(float damage)
 
 void EnemyBase::DrawInspector()
 {
+	// 共通(当たり判定)
 	CharacterBase::DrawInspector();
 
-	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
-	if (ImGui::DragFloat("ReachDistance", &m_reachDistance, 0.01f, 0.0f))
-	{
-		EditorManager::Instance().MarkDirty();
-	}
-
+	// 各敵のパラメータ(到達距離・攻撃・クールタイムなども各Parameterの中に含まれる)
 	DrawParameterInspector();
 }
 
 void EnemyBase::SetUpReference()
 {
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
+}
+
+void EnemyBase::StartAttack()
+{
+	m_hitTarget = false;
+	m_animFrame = 0.0f;
+
+}
+
+void EnemyBase::UpdateAttackCollision()
+{
+	UpdateMeleeAttackCollision(m_meleeAttack.m_knockBackPower, GetAttackPower(), m_meleeAttack.m_sphereRadius, m_meleeAttack.m_forwardOffset);
 }
 
 void EnemyBase::Launch(const Math::Vector3& dir, float power)
@@ -94,19 +104,6 @@ void EnemyBase::PlayHitEffect()
 
 	KdEffekseerManager::GetInstance().
 		Play("Hit/Hit.efkefc", GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f), 0.4f, 0.6f, false);
-}
-
-void EnemyBase::UpdateGravity()
-{
-
-	constexpr float gravityAcceleration = 72.0f;
-
-	m_gravity += gravityAcceleration * m_deltaTime;
-
-	Math::Vector3 gravityMove = { 0.0f,-m_gravity * m_deltaTime ,0.0f };
-
-	AddPendingMove(gravityMove);
-
 }
 
 void EnemyBase::UpdateDirectChase()
@@ -469,7 +466,8 @@ bool EnemyBase::UpdateMeleeAttackCollision(float knockBackPower, float damage, f
 
 	m_animFrame += 60.0f * m_deltaTime;
 
-	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
+	if (m_animFrame <= m_meleeAttack.m_attackTiming.hitStart ||
+		m_animFrame >= m_meleeAttack.m_attackTiming.hitEnd)
 	{
 		return false;
 	}
@@ -500,21 +498,7 @@ bool EnemyBase::UpdateMeleeAttackCollision(float knockBackPower, float damage, f
 
 	if (spPlayer->Intersects(sphereInfo, nullptr))
 	{
-		// ノックバックの方向を作る
-		Math::Vector3 knockBackDir = spPlayer->GetPos() - GetPos();
-		knockBackDir.y = 0;
-		if (knockBackDir.LengthSquared() > 0.000001f)
-		{
-			knockBackDir.Normalize();
-		}
-
-		AttackInfo attackInfo;
-
-		attackInfo.knockBackDir = knockBackDir;
-		attackInfo.knockBackPower = knockBackPower;
-		attackInfo.damage = damage;
-
-		spPlayer->OnHit(attackInfo);
+		AttackPlayer(spPlayer, knockBackPower, damage);
 
 		m_hitTarget = true;
 		hit = true;
@@ -525,4 +509,64 @@ bool EnemyBase::UpdateMeleeAttackCollision(float knockBackPower, float damage, f
 	return hit;
 }
 
+void EnemyBase::UpdateLaunch()
+{
+	// 着地したら飛び出し終了
+	if (IsGrounded())
+	{
+		m_launchFlg = false;
+	}
 
+	Math::Vector3 move = m_launchVec * 60.0f * m_deltaTime;
+
+	AddPendingMove(move);
+}
+
+void EnemyBase::EndAttack()
+{
+	m_attackFlg = false;
+	m_attackCooldown = m_attackCooldownDuration;
+}
+
+bool EnemyBase::ApplyDamage(const AttackInfo& attackInfo, const float hitStopDuration)
+{
+	const bool isDead = m_health.TakeDamage(attackInfo.damage);
+
+	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(), m_flyTextPath);
+
+	StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
+
+	if (hitStopDuration >= 0.0f)
+	{
+		TimeManager::Instance().StartHitStop(hitStopDuration);
+	}
+	else
+	{
+		StartDamageHitStop(attackInfo.damage);
+	}
+
+	PlayHitEffect();
+
+	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
+
+	return isDead;
+}
+
+void EnemyBase::AttackPlayer(const std::shared_ptr<Player>& spPlayer, const float knockBackPower, const float damage)
+{
+	// ノックバックの方向を作る
+	Math::Vector3 knockBackDir = spPlayer->GetPos() - GetPos();
+	knockBackDir.y = 0;
+	if (knockBackDir.LengthSquared() > 0.000001f)
+	{
+		knockBackDir.Normalize();
+	}
+
+	AttackInfo attackInfo;
+
+	attackInfo.knockBackDir = knockBackDir;
+	attackInfo.knockBackPower = knockBackPower;
+	attackInfo.damage = static_cast<int>(damage);
+
+	spPlayer->OnHit(attackInfo);
+}

@@ -850,8 +850,8 @@ void CollisionManager::ResolveCharacterCollision(const std::vector<std::shared_p
 				auto& charaA = characters[i];
 				auto& charaB = characters[j];
 
-				if (charaA->IsInOutro() ||
-					charaB->IsInOutro())
+				if (charaA->GetHealth().IsDead() ||
+					charaB->GetHealth().IsDead())
 				{
 					continue;
 				}

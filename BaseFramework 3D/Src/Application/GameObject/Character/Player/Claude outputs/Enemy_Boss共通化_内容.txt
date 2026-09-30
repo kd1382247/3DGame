@@ -1,0 +1,140 @@
+﻿■ Enemy / Boss 共通化(2026-09-30)
+============================================================
+
+【やったこと】
+Player・Enemy・Boss に同じ内容でコピーされていた処理を、1か所にまとめました。
+  ・重力の計算(Player / EnemyBase / BossBase の3か所 → CharacterBase の1か所)
+  ・「HPを減らす → 0以下なら死亡フラグ」(Player / 敵7種 / BossBase → CharacterBase の1か所)
+  ・敵の被弾時の共通処理(ダメージ表示・点滅・ヒットストップ・エフェクト・ノックバック)
+      敵7種のOnHitに、ほぼ同じ約15行が並んでいた → EnemyBase::ApplyDamage の1か所
+  ・飛び出し中の移動 UpdateLaunch(6種にコピー → EnemyBase の1か所)
+  ・攻撃の終了 EndAttack(4種にコピー → EnemyBase の1か所)
+  ・プレイヤーへ攻撃を当てる処理(ノックバック方向 + AttackInfo作成 + OnHit呼び出し)
+      EnemyBase と TurtleShell に同じ内容があった → EnemyBase::AttackPlayer の1か所
+
+※ Windows側でのビルドは私の環境では行えていません。
+  ビルドして、エラーが出たらそのメッセージを教えてください。
+  (新しく追加した関数と、Slime / Bomb / TurtleShell / ChestMonster のOnHitは、
+   ダミーの型を使った構文チェックを通しています。Cactas / Mushroom / StarFish はSlimeと同じ形です)
+※ 変更前のファイルは、この「Claude outputs」フォルダの
+  Character_before_refactor_20260930.zip に入れてあります(戻したい時はこれを展開)。
+※ Player.h / Player.cpp は、SwordTrailの整理をされた「あなたの最新版」を元に、
+  必要な数行だけを変更しています(あなたの変更はそのまま残っています)。
+
+
+------------------------------------------------------------
+1. どこに置いたか(なぜ CharacterBase なのか)
+------------------------------------------------------------
+  「全員が持っている本質」だけを、継承元の CharacterBase に置きました。
+    ・重力 … Player も敵もボスも受ける
+    ・HPが減って、0で死ぬ … 全員に共通
+
+  逆に「一部の敵だけが持つもの」は、親(EnemyBase)には置いていますが、
+  Playerには持たせていません。
+    ・飛び出し(Launch)、追跡、近接攻撃 … 敵だけ
+
+  先ほどの「毒状態」の話と同じ考え方です。
+  全員に必要か? → CharacterBase / 一部だけ? → 部品にする(今回は該当なし)
+
+
+------------------------------------------------------------
+2. 追加した関数
+------------------------------------------------------------
+  CharacterBase
+    virtual float GetGravityAcceleration() const   … 既定値72。キャラごとに変えたい時はoverride
+    void UpdateGravity()  [protected]              … 重力を加算して、落下分の移動量を追加
+    bool TakeDamage(int damage)  [protected]       … HPを減らす。死亡したら true を返す
+
+  EnemyBase
+    void UpdateLaunch()   [public]     … 飛び出し中の移動(接地したら終了)
+    void EndAttack()      [public]     … 攻撃フラグを下ろして、クールダウン開始
+    bool ApplyDamage(const AttackInfo&, float hitStopDuration = -1)  [protected]
+                                       … 被弾の共通処理。死亡したら true を返す
+                                         hitStopDuration を省略するとダメージ量に応じた長さ
+    void AttackPlayer(spPlayer, knockBackPower, damage)  [protected]
+                                       … プレイヤーへ攻撃を当てる
+
+
+------------------------------------------------------------
+3. 消した関数
+------------------------------------------------------------
+  EnemyBase::UpdateGravity / BossBase::UpdateGravity / Player::UpdateGravity
+      → CharacterBase::UpdateGravity に統合(呼び出し側の「UpdateGravity();」はそのまま)
+      → Player は GetGravityAcceleration() で、自分のパラメータの値を返す
+  EnemyBase の OnHit の空の再宣言(CharacterBase にすでにあるため不要でした)
+  Slime / Cactas / Mushroom / StarFish / TurtleShell / Bomb の UpdateLaunch
+  Slime / Cactas / Mushroom / StarFish の EndAttack
+      → ステートから owner->UpdateLaunch() / owner->EndAttack() と呼んでいる所は変更不要です
+
+
+------------------------------------------------------------
+4. 各敵のOnHitが、こう変わりました
+------------------------------------------------------------
+  (例:Slime)
+    void Slime::OnHit(const AttackInfo attackInfo)
+    {
+        if (ApplyDamage(attackInfo))           // 共通処理 → 死亡したか
+        {
+            m_stateMachine.ChangeState<SlimeDieState>();
+        }
+        else
+        {
+            m_stateMachine.ChangeState<SlimeDamageState>();
+            RePlayAnimation(SlimeAnimationType::GetHit);
+        }
+    }
+
+  敵ごとに違う所(怯むかどうか・どのステートへ行くか)だけが、OnHitに残っています。
+    ・TurtleShell … 攻撃中(IsAttack)は怯まない
+    ・Bomb        … 攻撃中(爆発中)は怯まない
+    ・ChestMonster… 敵を出している間は怯まない / ヒットストップは固定 0.1秒
+    ・BossBase    … 共通処理のうち、HPを減らす部分(TakeDamage)だけを使う
+                    (ボスは点滅・ヒットストップ・ノックバックをしない仕様のため)
+    ・Player      … 同上(TakeDamage を使うだけ)
+
+
+------------------------------------------------------------
+5. 挙動が変わった/変わりうる所(小さいもの)
+------------------------------------------------------------
+  ・OnHit内の処理の順番が変わりました(先に共通処理、後でステート切り替え)
+      ChangeState は次のUpdateで反映される仕組みなので、見た目の動きは同じです。
+  ・AttackInfo.damage への代入に static_cast<int> を付けました(切り捨ては今までと同じ)
+  ・上記以外の数値・タイミングは変えていません
+      (重力加速度72、ヒットストップの長さ、点滅の強さなど、すべて元の値)
+
+
+------------------------------------------------------------
+6. 動作確認のお願い
+------------------------------------------------------------
+  □ ビルドが通ること(通らなければエラーメッセージを教えてください)
+  □ 敵を攻撃した時に、ダメージ表示・点滅・ヒットストップ・ノックバック・エフェクトが出る
+  □ 敵のHPが0になったら、死亡ステートへ行く(7種類とも)
+  □ TurtleShell / Bomb の攻撃中は怯まない
+  □ ChestMonster が敵を出している間は怯まない
+  □ ボス(Mage)を攻撃してダメージ表示が出る / HP0で倒れる
+  □ 敵・Mage が地面に立つ(重力が効いている)
+  □ ChestMonster / Slime の分裂 / Mage の召喚で出た敵が、飛び出して着地する
+  □ プレイヤーが被弾して怯む / HP0で死亡する / ジャンプの重力が今までと同じ
+
+
+------------------------------------------------------------
+7. 気づいたこと(今回は変えていません)
+------------------------------------------------------------
+  ・Golem と Beholder は、Update() の中で UpdateGravity() を呼んでいません。
+      → 重力が効かず、空中にいたら落ちません。
+        (Beholderは浮遊させる意図かもしれませんが、Golemは意図的ですか?)
+  ・EnemyBase::UpdateMeleeAttackCollision が、判定の中で m_animFrame を進めている
+      (命中後は進まなくなる)。他の処理と混ざっているため、直す時は影響範囲の確認が必要です。
+  ・m_flyTextPath(ダメージ数字の画像名)が Player / EnemyBase / BossBase に1つずつあります。
+  ・EnemyBase::UpdateDirectChase と BossBase::UpdateMove(追跡+到達判定)は似ていますが、
+      ボスは到達時にアニメーションを切り替えるなど違いがあり、今回は共通化していません。
+
+
+------------------------------------------------------------
+8. 次の候補
+------------------------------------------------------------
+  ・HP(m_hp / 最大HP / 死亡フラグ / TakeDamage)を「Health」部品に切り出す
+      HPが CharacterBase に直接あるより、部品にしたほうが差し替えやすくなります。
+      (HPバーやエディタなど、GetCurrentHP を使っている所に影響が出るため、別の作業にしました)
+  ・StartAttack / SetAttackTiming(敵ごとに似た形で存在)を、データ表にする
+      (Playerの kAttackTable と同じ考え方です)

@@ -56,10 +56,13 @@ void EnemySpawner::DrawLit()
 	}
 }
 
-void EnemySpawner::DrawInspector()
+void EnemySpawner::DrawInspectorHeader()
 {
 	KdGameObject::DrawBasicInspecter();
+}
 
+void EnemySpawner::DrawInspector()
+{
 	m_parameter.DrawInspector();
 }
 

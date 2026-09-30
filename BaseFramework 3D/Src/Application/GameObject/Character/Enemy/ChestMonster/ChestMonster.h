@@ -31,7 +31,7 @@ public:
 	void StartSpawnEnemy();
 	void EndSpawnEnemy();
 
-	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
+
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 
@@ -86,9 +86,9 @@ private:
 
 	bool  m_isSpawnEnemy = false;
 
-	// スポーンの間隔
+	// スポーンの間隔(秒)。間隔はParameterの値をInitでセットする
 	float m_spawnCountDown = 0;
-	float m_spawnInterval = 60*2;
+	float m_spawnInterval = 0;
 
 	float m_spawnWait = 0.0f;
 

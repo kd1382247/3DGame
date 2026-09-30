@@ -19,7 +19,6 @@ public:
 	void PostUpdate()override;
 
 
-	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 

@@ -5,27 +5,22 @@
 
 #include"../../../../../MageBeam/MageBeam.h"
 
-namespace
-{
-	// 詠唱開始からビームが発生するまでの時間(秒)
-	constexpr float kCastDelay = 0.6f;
-
-	// ビームの長さ・幅(仮値。後で調整する)
-	constexpr float kBeamLength = 19.0f;
-	constexpr float kBeamWidth = 2.5f;
-
-	// ボス中心ではなく、ボスの前方に押し出す量
-	// (テレグラフ表示・当たり判定・エフェクトの基準座標をすべてこの位置に揃える)
-	constexpr float kBeamForwardOffset = 7.0;
-}
-
 void MageBeamState::OnStart(Mage* mage)
 {
 	mage->PlayAnimation(MageAnimationType::BeamST);
 
+	// ビームの設定をParameterから受け取る(詠唱中は同じ値を使い続ける)
+	const auto& param = mage->GetParam();
+
+	m_castDelay = param.m_beamCastDelay;
+	m_beamLength = param.m_beamLength;
+	m_beamWidth = param.m_beamWidth;
+
 	// 詠唱開始時点で座標・方向を確定させる(テレグラフ表示とBeam生成で同じ値を使うため)
+	// ボス中心ではなく、ボスの前方に押し出した位置を基準にする
+	// (テレグラフ表示・当たり判定・エフェクトの基準座標をすべてこの位置に揃える)
 	m_beamDir = mage->GetMatrix().Backward();
-	m_beamPos = mage->GetPos() + m_beamDir * kBeamForwardOffset;
+	m_beamPos = mage->GetPos() + m_beamDir * param.m_beamForwardOffset;
 
 	m_effectPos = (mage->GetPos() + Math::Vector3(0.0f, 1.5f, 0.0f)) + m_beamDir * 1.8f;
 
@@ -55,9 +50,9 @@ void MageBeamState::OnUpdate(Mage* mage)
 	{
 		m_castTimer += mage->GetDeltaTime();
 
-		if (m_castTimer >= kCastDelay)
+		if (m_castTimer >= m_castDelay)
 		{
-			m_wpMageBeam = mage->FireBeam(m_beamPos, m_beamDir, kBeamLength, kBeamWidth,m_effectPos);
+			m_wpMageBeam = mage->FireBeam(m_beamPos, m_beamDir, m_beamLength, m_beamWidth, m_effectPos);
 			m_hasCast = true;
 		}
 
@@ -99,7 +94,7 @@ void MageBeamState::UpdateBeamRange()
 			m_colorSphereHandle,
 			m_beamPos,
 			m_beamDir,
-			Math::Vector2(kBeamWidth, kBeamLength),
+			Math::Vector2(m_beamWidth, m_beamLength),
 			Math::Vector3(2.0f, 0.0f, 0.0f));
 	}
 }
@@ -127,8 +122,9 @@ void MageBeamState::UpdateTelegraphIndicator()
 	if (m_telegraphIndicatorHandle != -1)
 	{
 
-		float progress = m_castTimer / kCastDelay;
-		Math::Vector2 currentRect = Math::Vector2(kBeamWidth, kBeamLength);
+		// 詠唱時間が0の場合は、最初から予告が満ちているものとして扱う
+		float progress = (m_castDelay > 0.0f) ? (m_castTimer / m_castDelay) : 1.0f;
+		Math::Vector2 currentRect = Math::Vector2(m_beamWidth, m_beamLength);
 		currentRect *= progress;
 
 

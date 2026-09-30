@@ -59,10 +59,13 @@ void StageObject::PreDraw()
 	WayPointManager::Instance().SetStageTransform(GetPos(), GetScale());
 }
 
-void StageObject::DrawInspector()
+void StageObject::DrawInspectorHeader()
 {
 	DrawTransformInspector();
+}
 
+void StageObject::DrawInspector()
+{
 	if (ImGui::BeginCombo("StageModelList",m_stageModelName.c_str()))
 	{
 

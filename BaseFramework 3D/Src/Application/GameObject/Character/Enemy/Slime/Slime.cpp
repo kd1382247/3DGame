@@ -4,8 +4,6 @@
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
-#include"../../../FlyText/FlyTextManager.h"
-
 
 #include"../../StateMachine/StateMachine.h"
 #include"State/States/SlimeNormalState.h"
@@ -29,8 +27,19 @@ void Slime::Init()
 		// パラメータクラス初期化
 		m_parameter.Init();
 
-		m_attackCooldownDuration = 0.5f;
-		m_hp = m_parameter.GetParam(m_slimeSize).m_maxHP;
+		const auto& param = m_parameter.GetParam(m_slimeSize);
+
+		m_health.Init(param.m_maxHP);
+
+		m_reachDistance = param.m_reachDistance;
+		m_attackCooldownDuration = param.m_attackCooldown;
+
+		// 近接攻撃パラメータをセット
+		m_meleeAttack.m_attackTiming.hitStart = param.m_hitStartFrame;
+		m_meleeAttack.m_attackTiming.hitEnd = param.m_hitEndFrame;
+		m_meleeAttack.m_sphereRadius = param.m_hitRadius;
+		m_meleeAttack.m_forwardOffset = param.m_hitForwardOffset;
+		m_meleeAttack.m_knockBackPower = param.m_knockBackPower;
 
 	}
 
@@ -102,18 +111,6 @@ void Slime::RePlayAnimation(SlimeAnimationType type)
 	m_animation.RePlay(type);
 }
 
-void Slime::StartAttack()
-{
-	m_hitTarget = false;
-	SetAttackTiming();
-}
-
-void Slime::EndAttack()
-{
-	m_attackFlg = false;
-	m_attackCooldown = m_attackCooldownDuration;
-}
-
 void Slime::Split()
 {
 	if (m_slimeSize != SlimeSize::Large)
@@ -132,23 +129,11 @@ void Slime::Split()
 		slime->SetRotation(GetRotation());
 		slime->SetUpReference();
 
-		slime->Launch(m_launchDir[i]*0.05f, 0.3);
+		// 分裂した小さいスライムを飛び散らせる(速さ・勢いはParameterで調整できる)
+		slime->Launch(m_launchDir[i] * m_parameter.GetSplitLaunchSpeed(), m_parameter.GetSplitLaunchPower());
 
 		SceneManager::Instance().AddObject(slime);
 	}
-}
-
-void Slime::UpdateLaunch()
-{
-
-	if (IsGrounded())
-	{
-		m_launchFlg = false;
-	}
-
-	Math::Vector3 move = m_launchVec * 60.0f * m_deltaTime;
-
-	AddPendingMove(move);
 }
 
 void Slime::UpdateAnimation()
@@ -166,28 +151,10 @@ void Slime::PlayIdleAnimation()
 	PlayAnimation(SlimeAnimationType::Idle);
 }
 
-void Slime::SetAttackTiming()
-{
-	m_attackTiming.hitStart = 16.0f;
-	m_attackTiming.hitEnd = 20.0f;
-
-	// フレームを0に
-	m_animFrame = 0.0f;
-}
-
-void Slime::UpdateAttackCollision()
-{
-	UpdateMeleeAttackCollision(0.05f, m_parameter.GetParam(m_slimeSize).m_attackPower);
-}
-
 void Slime::OnHit(const AttackInfo attackInfo)
 {
-	m_hp -= attackInfo.damage;
-
-	if (m_hp <= 0)
+	if (ApplyDamage(attackInfo))
 	{
-		m_hp = 0;
-		m_outroFlg = true;
 		m_stateMachine.ChangeState<SlimeDieState>();
 	}
 	else
@@ -195,15 +162,5 @@ void Slime::OnHit(const AttackInfo attackInfo)
 		m_stateMachine.ChangeState<SlimeDamageState>();
 		RePlayAnimation(SlimeAnimationType::GetHit);
 	}
-
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(), m_flyTextPath);
-
-	StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
-
-	StartDamageHitStop(attackInfo.damage);
-
-	PlayHitEffect();
-
-	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }
 

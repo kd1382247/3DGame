@@ -54,7 +54,7 @@ DirectX::BoundingBox AABBCollision::GetBox() const
 	return box;
 }
 
-void AABBCollision::DrawInspector()
+void AABBCollision::DrawInspectorHeader()
 {
 	// 座標変更(Stageからのローカル位置)
 	Math::Vector3 pos = GetLocalPos();

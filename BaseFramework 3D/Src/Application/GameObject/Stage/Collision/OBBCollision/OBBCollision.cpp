@@ -72,7 +72,7 @@ DirectX::BoundingOrientedBox OBBCollision::GetBox() const
 	return box;
 }
 
-void OBBCollision::DrawInspector()
+void OBBCollision::DrawInspectorHeader()
 {
 	// 座標変更(Stageからのローカル位置)
 	Math::Vector3 pos = GetLocalPos();

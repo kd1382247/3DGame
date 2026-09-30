@@ -25,18 +25,14 @@ public:
 	bool IsAttack()const { return m_attackFlg; }
 	bool IsLaunch()const { return m_launchFlg; }
 
-	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
 
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
-
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 
 	void PlayAnimation(BombAnimationType type);
 	void RePlayAnimation(BombAnimationType type);
 
 	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
-
-	void UpdateLaunch();
 
 	void OnHit(const AttackInfo attackInfo)override;
 
@@ -76,14 +72,14 @@ private:
 	// ステートマシン
 	StateMachine<Bomb> m_stateMachine;
 
-	// 爆発の半径
-	float m_explosionRadius = 3.0f;
+	// 爆発の半径(Parameterの値をInitでセットする)
+	float m_explosionRadius = 0.0f;
 
 	// ためモーションの残り時間(秒)
 	float m_chargeTimer = 0.0f;
 
-	// ためモーションの長さ(秒)
-	const float m_chargeDuration = 1.5f;
+	// ためモーションの長さ(秒)(Parameterの値をInitでセットする)
+	float m_chargeDuration = 0.0f;
 
 	// カラースフィアのスロット番号保存用
 	int m_colorSphereHandle = -1;

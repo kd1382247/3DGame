@@ -1,0 +1,298 @@
+﻿マジックナンバーのParameter化 と Inspector整理(内容メモ)
+作成日: 2026-10-01
+============================================================
+
+■ 1. 何をしたか
+  (1) コードの中に直接書いてあった数値(マジックナンバー)を、各キャラのParameterクラスの変数にした
+  (2) Inspectorの項目を増やし、グループ(Status / Move / Attack など)ごとに分けて、値の右に単位を表示した
+  (3) Inspectorで「名前・位置・回転・大きさ・Delete」は固定、Parameterの部分だけスクロールするようにした
+
+■ 2. Inspectorの見え方
+  上部(固定): ObjectName / 位置・回転・大きさ
+  中央(スクロール): Collision、Parameter(Status / Move / Attack ... のグループ)
+  下部(固定): Deleteボタン
+
+  単位の見方(値の右に表示される)
+    m     … メートル(距離・半径・長さ)
+    s     … 秒
+    F     … フレーム(60F = 1秒)。アニメーションの「何コマ目か」など
+    °     … 度(角度)
+    m/F   … 1フレームあたりの移動量(実際の速さは 値 x 60 m/秒)
+    °/F   … 1フレームあたりの回転量
+    m/s^2 … 加速度(重力)
+    x     … 倍率(大きさ)   HP … 体力   %  … 百分率
+    単位なし … ダメージ量・ノックバックの強さ・ジャンプ力(数値そのもの)
+  ※「°」が「?」と表示される場合は、InspectorWidgets.h の kFormatDegree / kFormatDegreePerFrame を
+    "%.1f deg" のように書き換えれば直る(1か所だけ)
+
+■ 3. 新しく作ったファイル
+  Application\Editor\InspectorWidgets.h
+      単位つきの入力欄(Meter / Seconds / Frame / Degree ... )とグループ見出し(BeginGroup / EndGroup)の部品
+  Application\GameObject\Character\ParameterJson.h
+      jsonに項目があるときだけ読み込む部品(古いjsonでも壊れない)
+
+■ 4. 変更した仕組み
+  KdGameObject に DrawInspectorHeader() を追加
+    DrawInspectorHeader() … 固定表示する部分(名前・位置など)
+    DrawInspector()       … スクロールする部分(パラメータなど)
+  Inspector::Draw() で上記を分けて描画(Deleteは下に固定)
+  CharacterBase / EnemySpawner / StageObject / WayPoint / AABBCollision / OBBCollision を上記に合わせて分割
+  Enemy / Boss の「到達距離(ReachDistance)」は各キャラのParameterへ移動(Inspectorの場所も変わった)
+
+■ 5. 追加したParameter一覧(グループ / 項目 / 単位 / 初期値)
+  初期値は「今までコードに書いてあった値」と同じ。jsonに項目が無い場合はこの初期値で動く
+  (jsonが既にある項目=MaxHP/MoveSpeedなどは、今までのjsonの値がそのまま使われる)
+
+  [SlimeParameter]  Enemy/Slime
+     ※Large / Small のそれぞれに同じ項目を持つ
+     - Status
+         MaxHP                  HP       初期値 100
+         Scale                  x        初期値 1.0
+     - Move
+         MoveSpeed              m/F      初期値 0.15
+         TurnSpeed              °/F      初期値 12.0
+         ReachDistance          m        初期値 1.5
+         JumpPower                       初期値 0.4
+     - Attack
+         AttackPower                     初期値 10.0
+         AttackCooldown         s        初期値 0.5
+         KnockBackPower                  初期値 0.05
+     - Attack Hit
+         HitStartFrame          F        初期値 16.0
+         HitEndFrame            F        初期値 20.0
+         HitRadius              m        初期値 0.6
+         HitForwardOffset       m        初期値 0.8
+     - Split (クラス全体で共通)
+         SplitLaunchSpeed       m/F      初期値 0.05
+         SplitLaunchPower                初期値 0.3
+
+  [CactasParameter]  Enemy/Cactas
+     - Status
+         MaxHP                  HP       初期値 100
+     - Move
+         MoveSpeed              m/F      初期値 0.15
+         TurnSpeed              °/F      初期値 12.0
+         ReachDistance          m        初期値 1.5
+         JumpPower                       初期値 0.4
+     - Attack
+         AttackPower                     初期値 10.0
+         AttackCooldown         s        初期値 0.5
+         KnockBackPower                  初期値 0.08
+     - Attack Hit
+         HitStartFrame          F        初期値 16.0
+         HitEndFrame            F        初期値 20.0
+         HitRadius              m        初期値 0.6
+         HitForwardOffset       m        初期値 0.8
+
+  [MushroomParameter]  Enemy/Mushroom
+     ※Smile / Angry のそれぞれに同じ項目を持つ
+     - Status
+         MaxHP                  HP       初期値 100
+     - Move
+         MoveSpeed              m/F      初期値 0.15
+         TurnSpeed              °/F      初期値 12.0
+         ReachDistance          m        初期値 1.5
+         JumpPower                       初期値 0.4
+     - Attack
+         AttackPower                     初期値 10.0
+         AttackCooldown         s        初期値 1.0
+         KnockBackPower                  初期値 0.05
+     - Attack Hit
+         HitStartFrame          F        初期値 24.0
+         HitEndFrame            F        初期値 28.0
+         HitRadius              m        初期値 0.6
+         HitForwardOffset       m        初期値 0.8
+     - Spawn (クラス全体で共通)
+         AngryRate              %        初期値 30.0
+
+  [StarFishParameter]  Enemy/StarFish
+     - Status
+         MaxHP                  HP       初期値 100
+     - Move
+         MoveSpeed              m/F      初期値 0.15
+         TurnSpeed              °/F      初期値 12.0
+         ReachDistance          m        初期値 5.0
+         JumpPower                       初期値 0.4
+     - Attack
+         AttackPower                     初期値 10.0
+         AttackCooldown         s        初期値 1.0
+     - Bullet
+         FireFrame              F        初期値 16.0
+         Speed                  m/F      初期値 0.08
+         Radius                 m        初期値 0.05
+         KnockBack                       初期値 0.08
+         LifeTime               s        初期値 4.0
+         SpawnHeight            m        初期値 0.8
+         SpawnForward           m        初期値 0.3
+         AimHeight              m        初期値 0.8
+
+  [TurtleShellParameter]  Enemy/TurtleShell
+     - Status
+         MaxHP                  HP       初期値 100
+     - Move
+         MoveSpeed              m/F      初期値 0.15
+         TurnSpeed              °/F      初期値 12.0
+         ReachDistance          m        初期値 1.5
+         JumpPower                       初期値 0.4
+     - Attack
+         AttackPower                     初期値 10.0
+         AttackCooldown         s        初期値 1.0
+         KnockBackPower                  初期値 0.3
+     - Spin Attack
+         Duration               s        初期値 5.0
+         SpeedBonus             m/F      初期値 0.07
+         HitRadius              m        初期値 0.5
+         HitCooldown            s        初期値 0.5
+     - Dizzy
+         Duration               s        初期値 3.0
+
+  [BombParameter]  Enemy/Bomb
+     - Status
+         MaxHP                  HP       初期値 100
+     - Move
+         MoveSpeed              m/F      初期値 0.15
+         TurnSpeed              °/F      初期値 12.0
+         ReachDistance          m        初期値 1.5
+         JumpPower                       初期値 0.4
+     - Attack
+         AttackPower                     初期値 10.0
+         AttackCooldown         s        初期値 1.0
+     - Explosion
+         Radius                 m        初期値 3.0
+         ChargeDuration         s        初期値 1.5
+         KnockBack                       初期値 0.5
+
+  [ChestMonsterParameter]  Enemy/ChestMonster
+     - Status
+         MaxHP                  HP       初期値 100
+         Scale                  x        初期値 2.0
+     - Move
+         MoveSpeed              m/F      初期値 0.15
+         TurnSpeed              °/F      初期値 12.0
+         ReachDistance          m        初期値 1.5
+         JumpPower                       初期値 0.4
+     - Attack
+         AttackPower                     初期値 10.0
+     - Spawn
+         Interval               s        初期値 2.0
+         StartFrame             F        初期値 40.0
+         EndFrame               F        初期値 60.0
+         WaitFrame              F        初期値 8.0
+     - Spawned Enemy
+         Height                 m        初期値 2.0
+         LaunchPower                     初期値 0.2
+         LaunchSpeed            m/F      初期値 0.04
+
+  [GolemParameter]  Boss/Golem
+     - Status
+         MaxHP                  HP       初期値 100
+         Scale                  x        初期値 2.0
+     - Move
+         MoveSpeed              m/F      初期値 0.15
+         TurnSpeed              °/F      初期値 12.0
+         ReachDistance          m        初期値 5.0
+         ReachDistanceMargin    m        初期値 6.0
+         JumpPower                       初期値 0.4
+     - Attack
+         AttackPower                     初期値 10.0
+
+  [BeholderParameter]  Boss/Beholder
+     - Status
+         MaxHP                  HP       初期値 100
+     - Move
+         MoveSpeed              m/F      初期値 0.15
+         TurnSpeed              °/F      初期値 12.0
+         ReachDistance          m        初期値 5.0
+         ReachDistanceMargin    m        初期値 6.0
+         JumpPower                       初期値 0.4
+     - Attack
+         AttackPower                     初期値 10.0
+
+  [MageParameter]  Boss/Mage
+     - Status
+         MaxHP                  HP       初期値 100
+         Scale                  x        初期値 1.5
+     - Move
+         MoveSpeed              m/F      初期値 0.15
+         TurnSpeed              °/F      初期値 12.0
+         ReachDistance          m        初期値 5.0
+         ReachDistanceMargin    m        初期値 6.0
+         JumpPower                       初期値 0.4
+     - Attack
+         AttackPower                     初期値 10.0
+         AttackCooldown         s        初期値 2.0
+     - TargetCircle
+         CastDelay              s        初期値 0.4
+         Radius                 m        初期値 2.5
+         Telegraph              s        初期値 0.8
+         ShotCount                       初期値 5
+     - ForwardSector
+         CastDelay              s        初期値 0.35
+         Angle                  °        初期値 100.0
+         Radius                 m        初期値 6.5
+         Telegraph              s        初期値 0.8
+         Damage                          初期値 10.0
+     - Bolt
+         CastDelay              s        初期値 0.4
+         ShotCount                       初期値 3
+         Speed                  m/F      初期値 0.12
+         Radius                 m        初期値 0.2
+         KnockBack                       初期値 0.15
+         LifeTime               s        初期値 4.0
+         SpawnHeight            m        初期値 0.8
+         AimHeight              m        初期値 0.8
+     - NovaCircle
+         CastDelay              s        初期値 0.6
+         Radius                 m        初期値 6.0
+         Telegraph              s        初期値 1.2
+     - Beam
+         CastDelay              s        初期値 0.6
+         Length                 m        初期値 19.0
+         Width                  m        初期値 2.5
+         ForwardOffset          m        初期値 7.0
+         Duration               s        初期値 3.0
+     - Summon
+         CastDelay              s        初期値 0.4
+         SpawnDelay             s        初期値 0.6
+         Count                           初期値 5
+         Radius                 m        初期値 4.0
+
+  [PlayerParameter]  Player
+     - Body           MaxHP / TurnSpeed / GravityAccel / BumpPushRate(0.1) / MaxSlopeAngle(45 °)
+                      StepHeight(0.2 m) / GroundRayLength(100 m)   ← 後ろの4つを今回追加
+     - Move           MoveSpeed
+     - Jump           JumpPower
+     - Attack         AttackPower / AttackMoveSpeed / HitRadius(0.7 m) / HitForwardOffset(0.8 m) / KnockBackPower(0.1)
+     - Special Move   AttackPower / MoveSpeed / HitCooldown(F) / HitRadius(1.5 m) / KnockBackPower(0.1)
+
+■ 6. 今回Parameter化していないもの(理由つき)
+  ・Playerの攻撃テーブル(kAttackTable)とコンボ関連の数値 … 「対象外」と決めたため
+  ・エフェクト再生の設定(エフェクト名・大きさ・再生速度・開始/終了フレーム) … 見た目の調整であり、ゲームの数値ではないため
+  ・被弾時の「手触り」の数値(ヒットストップ時間・ヒット時の白点滅の強さ・ノックバックの上限0.6 など)
+  ・当たり判定球/HPバー/モデルの位置オフセット(0.4 / (-0.7,1.5,0) など)
+  ・EnemySpawnerParameter(スポナー側。今のまま)
+  ・0.000001f などの「ほぼ0」の判定用の値
+
+■ 7. 動きが変わる可能性があるところ(要確認)
+  ・TurtleShellの回転攻撃のダメージ: 今までは固定の10。今回から TurtleShellParameter の AttackPower を使う
+    (jsonのAttackPowerが10以外なら、ダメージが変わる)
+  ・ChestMonsterの敵呼び出し間隔: 内部を「フレーム(120)」から「秒(2.0)」に変えた。動きは同じ
+  ・Player の BumpPushRate / MaxWalkableSlopeAngle: 今まではコード固定。今回からjsonにも保存される(初期値は同じ)
+  ・Mushroom: タイプ抽選(Angry確率)の前にParameterを読み込むよう順番を変えた(Angry確率をParameterで持つため)
+
+■ 8. 確認してほしいこと(チェックリスト)
+  1. ビルドが通るか(自分の環境ではビルドしていないため、コンパイルエラーが出たら教えてほしい)
+  2. Editorで敵/Player/ステージなどを選んだとき、名前・位置・大きさ・Deleteが固定で、パラメータ部分だけスクロールするか
+  3. 各Parameterに単位(m / s / F / ° など)が表示されているか、グループ分けされているか
+  4. Play時、Slime / Cactas / Mushroom / StarFish / TurtleShell / Bomb / ChestMonster / Mage の動きが今までと同じか
+  5. Inspectorで値を変えて「SaveParameter」→ 再度Playで反映されるか(反映は「次にオブジェクトが生成されたとき」)
+
+■ 9. 新しい項目を足したくなったとき(手順)
+  1. XxxParameter.h の Parameter 構造体に変数を1行足す(初期値 = 今までの値)
+  2. XxxParameter.cpp の ToJson / FromJson / DrawParameter(または DrawInspecter)に1行ずつ足す
+  3. コード側の数値を param.m_xxx に置き換える
+  入力欄の関数: InspectorUI::Meter / MeterPerFrame / Seconds / Frame / Degree / DegreePerFrame / Damage / Power / Scale / Rate / Percent / HP / Count
+
+■ 10. 元に戻したいとき
+  Parameter_before_refactor_20261001.zip に、変更前のファイルを入れてある(フォルダ構成は Src からの相対)
+  新規の2ファイル(InspectorWidgets.h / ParameterJson.h)は、元に戻す場合は削除してよい

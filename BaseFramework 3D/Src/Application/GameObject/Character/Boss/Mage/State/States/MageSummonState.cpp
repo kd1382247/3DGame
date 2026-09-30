@@ -3,15 +3,6 @@
 #include"../../Mage.h"
 #include"MageNormalState.h"
 
-namespace
-{
-	// 詠唱開始から煙演出が始まるまでの時間(秒)
-	constexpr float kCastDelay = 0.4f;
-
-	// 煙演出が始まってから敵が出現するまでの時間(秒)
-	constexpr float kSummonDelay = 0.6f;
-}
-
 void MageSummonState::OnStart(Mage* mage)
 {
 	mage->PlayAnimation(MageAnimationType::Attack1);
@@ -27,7 +18,7 @@ void MageSummonState::OnUpdate(Mage* mage)
 	{
 		m_castTimer += mage->GetDeltaTime();
 
-		if (m_castTimer >= kCastDelay)
+		if (m_castTimer >= mage->GetParam().m_summonCastDelay)
 		{
 			// 出現座標を決めて、煙エフェクトを再生する
 			mage->PrepareSummonPositions();
@@ -41,7 +32,7 @@ void MageSummonState::OnUpdate(Mage* mage)
 	{
 		m_summonTimer += mage->GetDeltaTime();
 
-		if (m_summonTimer >= kSummonDelay)
+		if (m_summonTimer >= mage->GetParam().m_summonDelay)
 		{
 			// 用意しておいた座標に敵を生成する
 			mage->SpawnEnemies();

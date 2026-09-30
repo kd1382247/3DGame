@@ -375,6 +375,7 @@
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellNormalState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\State\States\TurtleShellSpinAttackStartState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Enemy\TurtleShell\TurtleShell.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Health.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimation.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Animation\PlayerAnimationType.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\Attack\PlayerAttack.h" />

@@ -3,12 +3,6 @@
 #include"../../Mage.h"
 #include"MageNormalState.h"
 
-namespace
-{
-	// 詠唱開始から魔法円が発生するまでの時間(秒)
-	constexpr float kCastDelay = 0.4f;
-}
-
 void MageTargetCircleState::OnStart(Mage* mage)
 {
 	mage->PlayAnimation(MageAnimationType::Attack1);
@@ -20,7 +14,7 @@ void MageTargetCircleState::OnUpdate(Mage* mage)
 {
 	m_castTimer += mage->GetDeltaTime();
 
-	if (!m_hasCast && m_castTimer >= kCastDelay)
+	if (!m_hasCast && m_castTimer >= mage->GetParam().m_targetCircleCastDelay)
 	{
 		mage->CastTargetCircle();
 		m_hasCast = true;
@@ -30,7 +24,7 @@ void MageTargetCircleState::OnUpdate(Mage* mage)
 	if (mage->IsAnimationFinished())
 	{
 
-		if (m_shotCount < maxShot)
+		if (m_shotCount < mage->GetParam().m_targetCircleShotCount)
 		{
 			OnStart(mage);
 			mage->RePlayAnimation(MageAnimationType::Attack1);

@@ -31,7 +31,6 @@ public:
 
 
 	// パラメータのゲッター
-	int GetMaxHP()const override { return m_parameter.GetParam(m_mushroomType).m_maxHP; }
 	float GetTurnSpeed()const override { return m_parameter.GetParam(m_mushroomType).m_turnSpeed; }
 	float GetMoveSpeed()const override { return m_parameter.GetParam(m_mushroomType).m_moveSpeed; }
 
@@ -41,19 +40,12 @@ public:
 	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
 
 
-	void StartAttack();
-	void EndAttack();
-
-	void UpdateLaunch();
-
 	// 抽選で決まったタイプ(Smile/Angry)を取得
 	MushroomType GetMushroomType()const { return m_mushroomType; }
 
 	void OnHit(const AttackInfo attackInfo)override;
 
-
-	// 攻撃判定
-	void UpdateAttackCollision();
+	int GetAttackPower()const override { return m_parameter.GetParam(m_mushroomType).m_attackPower; }
 
 private:
 
@@ -63,8 +55,6 @@ private:
 	void PlayIdleAnimation() override;
 
 	void DrawParameterInspector() override;
-
-	void SetAttackTiming();
 
 	// 一定確率でAngryタイプを抽選する
 	void LotteryMushroomType();

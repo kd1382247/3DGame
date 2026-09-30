@@ -1,7 +1,5 @@
 ﻿#include "PlayerSwordTrail.h"
 
-#include "../Player.h"
-
 void PlayerSwordTrail::Init()
 {
 	m_spTrailPolygon = std::make_shared<KdTrailPolygon>();
@@ -21,7 +19,7 @@ void PlayerSwordTrail::StartTrail()
 	m_historyCount = 0;
 }
 
-void PlayerSwordTrail::UpdateTrail(Player& player)
+void PlayerSwordTrail::UpdateTrail(const std::shared_ptr<KdModelWork>& model,const Math::Matrix& worldMat, float animFrame)
 {
 	if (!m_isTracking)
 	{
@@ -37,7 +35,6 @@ void PlayerSwordTrail::UpdateTrail(Player& player)
 
 	// 剣を振っている区間(m_trailStartFrame〜m_trailEndFrame)の外では、
 	// トレイルを伸ばさずに縮めていく(振りかぶり中・振った後の戻りでは表示しない)
-	float animFrame = player.GetAnimFrame();
 	bool inTrailRange = (animFrame >= m_trailStartFrame && animFrame <= m_trailEndFrame);
 
 	if (!inTrailRange)
@@ -51,7 +48,7 @@ void PlayerSwordTrail::UpdateTrail(Player& player)
 		return;
 	}
 
-	std::shared_ptr<KdModelWork> spModel = player.GetModelWork();
+	std::shared_ptr<KdModelWork> spModel = model;
 	if (!spModel) { return; }
 
 	const KdModelData::Node* pDataNode = spModel->FindDataNode("weapon_r");
@@ -59,8 +56,10 @@ void PlayerSwordTrail::UpdateTrail(Player& player)
 
 	if (!pDataNode || !pWorkNode) { return; }
 
+	Math::Matrix playerMat = worldMat;
+
 	// 逆バインド行列 × 今の姿勢行列 × プレイヤーのワールド行列
-	Math::Matrix skinMat = pDataNode->m_boneInverseWorldMatrix * pWorkNode->m_worldTransform * player.GetMatrix();
+	Math::Matrix skinMat = pDataNode->m_boneInverseWorldMatrix * pWorkNode->m_worldTransform * playerMat;
 
 	Math::Vector3 tipWorld = Math::Vector3::Transform(m_tipLocalPos, skinMat);
 	Math::Vector3 baseWorld = Math::Vector3::Transform(m_baseLocalPos, skinMat);

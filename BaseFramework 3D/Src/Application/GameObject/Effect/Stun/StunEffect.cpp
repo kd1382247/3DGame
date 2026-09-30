@@ -31,7 +31,7 @@ void StunEffect::Update()
 	// キャラベースに変換
 	auto spTarget= std::dynamic_pointer_cast<CharacterBase>(m_wpTarget.lock());
 
-	if (!spTarget||spTarget->IsInOutro())
+	if (!spTarget||spTarget->GetHealth().IsDead())
 	{
 		Destroy();
 		return;

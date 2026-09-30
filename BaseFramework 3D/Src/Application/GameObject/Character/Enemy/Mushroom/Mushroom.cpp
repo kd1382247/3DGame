@@ -2,7 +2,6 @@
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
-#include"../../../FlyText/FlyTextManager.h"
 
 #include"State/States/MushroomNormalState.h"
 #include"State/States/MushroomDamageState.h"
@@ -12,6 +11,9 @@ void Mushroom::Init()
 {
 	if (!m_spModel)
 	{
+		// パラメータクラス初期化(Angryになる確率を使うため、タイプの抽選より先に行う)
+		m_parameter.Init();
+
 		// 一定確率でAngryタイプを抽選する
 		LotteryMushroomType();
 
@@ -25,15 +27,22 @@ void Mushroom::Init()
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 
-		// パラメータクラス初期化
-		m_parameter.Init();
+		const auto& param = m_parameter.GetParam(m_mushroomType);
 
-		m_hp = m_parameter.GetParam(m_mushroomType).m_maxHP;
+		m_health.Init(param.m_maxHP);
 
-		m_attackCooldownDuration = 1.0f;
+		m_reachDistance = param.m_reachDistance;
+		m_attackCooldownDuration = param.m_attackCooldown;
 
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<MushroomNormalState>();
+
+		// 近接攻撃パラメータをセット
+		m_meleeAttack.m_attackTiming.hitStart = param.m_hitStartFrame;
+		m_meleeAttack.m_attackTiming.hitEnd = param.m_hitEndFrame;
+		m_meleeAttack.m_sphereRadius = param.m_hitRadius;
+		m_meleeAttack.m_forwardOffset = param.m_hitForwardOffset;
+		m_meleeAttack.m_knockBackPower = param.m_knockBackPower;
 
 	}
 
@@ -86,12 +95,8 @@ void Mushroom::SetUpReference()
 
 void Mushroom::OnHit(const AttackInfo attackInfo)
 {
-	m_hp -= attackInfo.damage;
-
-	if (m_hp <= 0)
+	if (ApplyDamage(attackInfo))
 	{
-		m_hp = 0;
-		m_outroFlg = true;
 		m_stateMachine.ChangeState<MushroomDieState>();
 	}
 	else
@@ -99,16 +104,6 @@ void Mushroom::OnHit(const AttackInfo attackInfo)
 		m_stateMachine.ChangeState<MushroomDamageState>();
 		RePlayAnimation(MushroomAnimationType::GetHit);
 	}
-
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(), m_flyTextPath);
-
-	StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
-
-	StartDamageHitStop(attackInfo.damage);
-
-	PlayHitEffect();
-
-	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }
 
 
@@ -122,29 +117,6 @@ void Mushroom::RePlayAnimation(MushroomAnimationType type)
 	m_animation.RePlay(type);
 }
 
-void Mushroom::StartAttack()
-{
-	m_hitTarget = false;
-	SetAttackTiming();
-}
-
-void Mushroom::EndAttack()
-{
-	m_attackFlg = false;
-	m_attackCooldown = m_attackCooldownDuration;
-}
-
-void Mushroom::UpdateLaunch()
-{
-	if (IsGrounded())
-	{
-		m_launchFlg = false;
-	}
-
-	Math::Vector3 move = m_launchVec * 60.0f * m_deltaTime;
-
-	AddPendingMove(move);
-}
 
 void Mushroom::UpdateAnimation()
 {
@@ -161,25 +133,12 @@ void Mushroom::PlayIdleAnimation()
 	PlayAnimation(MushroomAnimationType::Idle);
 }
 
-void Mushroom::SetAttackTiming()
-{
-	m_attackTiming.hitStart = 24.0f;
-	m_attackTiming.hitEnd = 28.0f;
-
-	// フレームを0に
-	m_animFrame = 0.0f;
-}
-
-void Mushroom::UpdateAttackCollision()
-{
-	UpdateMeleeAttackCollision(0.05f, m_parameter.GetParam(m_mushroomType).m_attackPower);
-}
 
 void Mushroom::LotteryMushroomType()
 {
-	// Angryタイプになる確率(%)
-	constexpr float kAngryRate = 30.0f;
+	// Angryタイプになる確率(%)。Parameterで調整できる
+	const float angryRate = m_parameter.GetAngryRate();
 
-	m_mushroomType = (KdRandom::GetFloat(0.0f, 100.0f) < kAngryRate) ?
+	m_mushroomType = (KdRandom::GetFloat(0.0f, 100.0f) < angryRate) ?
 		MushroomType::Angry : MushroomType::Smile;
 }

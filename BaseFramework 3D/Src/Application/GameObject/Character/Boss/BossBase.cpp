@@ -25,20 +25,12 @@ void BossBase::SetUpReference()
 
 void BossBase::DrawInspector()
 {
-	DrawBasicInspecter();
-
 	DrawParameterInspector();
 }
 
 void BossBase::OnHit(const AttackInfo attackInfo)
 {
-	m_hp -= attackInfo.damage;
-
-	if (m_hp <= 0)
-	{
-		m_hp = 0;
-		m_outroFlg = true;
-	}
+	m_health.TakeDamage(attackInfo.damage);
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(),m_flyTextPath);
 
@@ -128,22 +120,9 @@ void BossBase::SetTargetDir()
 }
 
 
-void BossBase::UpdateGravity()
-{
-
-	constexpr float gravityAcceleration = 72.0f;
-
-	m_gravity += gravityAcceleration * m_deltaTime;
-
-	Math::Vector3 gravityMove = { 0.0f,-m_gravity * m_deltaTime ,0.0f };
-
-	AddPendingMove(gravityMove);
-
-}
-
 bool BossBase::IsSecondPhase()const
 {
-	return GetCurrentHP() <= GetMaxHP() / 2;
+	return m_health.GetCurrentHP() <= m_health.GetMaxHP() / 2;
 }
 
 int BossBase::LotteryPattern(const std::vector<float>& weights)const

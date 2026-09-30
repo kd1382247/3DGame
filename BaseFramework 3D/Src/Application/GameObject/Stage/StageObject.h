@@ -12,6 +12,10 @@ public:
 
 	void Init()override;
 	void PreDraw()override;
+	// 固定表示(スクロールしない):位置・回転・大きさ
+	void DrawInspectorHeader()override;
+
+	// スクロール側:ステージモデルの選択
 	void DrawInspector()override;
 	void DrawLit()override;
 

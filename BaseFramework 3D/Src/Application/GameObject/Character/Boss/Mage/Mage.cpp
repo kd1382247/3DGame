@@ -29,8 +29,14 @@ void Mage::Init()
 		// パラメータークラス初期化
 		m_parameter.Init();
 
-		m_hp = m_parameter.GetParam().m_maxHP;
+		const auto& param = m_parameter.GetParam();
 
+		m_health.Init(param.m_maxHP);
+
+		m_reachDistance = param.m_reachDistance;
+		m_reachDistanceMargin = param.m_reachDistanceMargin;
+
+		m_attackCooldownDuration = param.m_attackCooldown;
 		m_attackCooldown = m_attackCooldownDuration;
 
 		m_stateMachine.Start(this);
@@ -42,7 +48,7 @@ void Mage::Init()
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
 
 	SetPos({ 0.0f,0.0f,0.0f });
-	SetScale(1.5f);
+	SetScale(m_parameter.GetParam().m_scale);
 }
 
 void Mage::Update()
@@ -159,8 +165,9 @@ MageAttackPattern Mage::SelectAttackPattern()
 
 void Mage::PrepareSummonPositions()
 {
-	constexpr int enemyCount = 5;
-	constexpr float offsetRadius = 4.0f;
+	// 呼び出す敵の数と、ボスを囲む円の半径(Parameterで調整できる)
+	const int enemyCount = m_parameter.GetParam().m_summonCount;
+	const float offsetRadius = m_parameter.GetParam().m_summonRadius;
 
 	m_summonPositions.clear();
 
@@ -236,11 +243,13 @@ void Mage::CastTargetCircle()
 		targetPos.y = spPlayer->GetGroundYPos();
 	}
 
+	const auto& param = m_parameter.GetParam();
+
 	MageMagicCircleManager::Instance().CreateMagicCircle(
 		targetPos,
-		/*radius=*/2.5f,
-		/*telegraphTime=*/0.8f,
-		/*damage=*/m_parameter.GetParam().m_attackPow,
+		param.m_targetCircleRadius,
+		param.m_targetCircleTelegraph,
+		param.m_attackPow,
 		"Tornado/Tornado.efkefc",
 		0.4,
 		1.0f,
@@ -250,13 +259,15 @@ void Mage::CastTargetCircle()
 
 std::shared_ptr<MageMagicSector> Mage::CastForwardSector()
 {
+	const auto& param = m_parameter.GetParam();
+
 	return MageMagicSectorManager::Instance().CreateMagicSector(
 		GetPos(),
 		m_mWorld.Backward(),
-		100,
-		6.5f,
-		0.8f,
-		10,
+		param.m_forwardSectorAngle,
+		param.m_forwardSectorRadius,
+		param.m_forwardSectorTelegraph,
+		param.m_forwardSectorDamage,
 		"Sword/Sword2.efkefc",
 		2.5f,
 		1.2f,
@@ -274,9 +285,11 @@ void Mage::FireBolt()
 		return;
 	}
 
-	Math::Vector3 spawnPos = GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f);
+	const auto& param = m_parameter.GetParam();
 
-	Math::Vector3 dir = (spPlayer->GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f)) - spawnPos;
+	Math::Vector3 spawnPos = GetPos() + Math::Vector3(0.0f, param.m_boltSpawnHeight, 0.0f);
+
+	Math::Vector3 dir = (spPlayer->GetPos() + Math::Vector3(0.0f, param.m_boltAimHeight, 0.0f)) - spawnPos;
 
 	if (dir.LengthSquared() > 0.000001f)
 	{
@@ -284,17 +297,19 @@ void Mage::FireBolt()
 	}
 
 	EnergyBulletManager::Instance().CreateEnergyBullet(
-		spawnPos, dir, /*speed=*/0.12f, /*radius=*/0.2f,
-		/*damage=*/m_parameter.GetParam().m_attackPow, /*knockBackPower=*/0.15f, /*lifeTime=*/4.0f);
+		spawnPos, dir, param.m_boltSpeed, param.m_boltRadius,
+		param.m_attackPow, param.m_boltKnockBack, param.m_boltLifeTime);
 }
 
 void Mage::CastNovaCircle()
 {
+	const auto& param = m_parameter.GetParam();
+
 	MageMagicCircleManager::Instance().CreateMagicCircle(
 		GetPos(),
-		/*radius=*/6.0f,
-		/*telegraphTime=*/1.2f,
-		/*damage=*/m_parameter.GetParam().m_attackPow,
+		param.m_novaCircleRadius,
+		param.m_novaCircleTelegraph,
+		param.m_attackPow,
 		"Salamander/Salamander.efkefc",
 		1.2f,
 		1.0f,
@@ -318,8 +333,8 @@ std::shared_ptr<MageBeam> Mage::FireBeam(const Math::Vector3& pos, const Math::V
 		dir,
 		length,
 		width,
-		/*damage=*/m_parameter.GetParam().m_attackPow,
-		/*duration=*/3.0f,
+		m_parameter.GetParam().m_attackPow,
+		m_parameter.GetParam().m_beamDuration,
 		// TODO: 実在するレーザー系のエフェクトアセットに差し替える
 		"Beam/Beam.efkefc",
 		0.6f,

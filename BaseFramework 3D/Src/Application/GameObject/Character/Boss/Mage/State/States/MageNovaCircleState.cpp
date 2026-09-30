@@ -3,12 +3,6 @@
 #include"../../Mage.h"
 #include"MageNormalState.h"
 
-namespace
-{
-	// 詠唱開始から全方位魔法が発生するまでの時間(秒)
-	constexpr float kCastDelay = 0.6f;
-}
-
 void MageNovaCircleState::OnStart(Mage* mage)
 {
 	mage->PlayAnimation(MageAnimationType::Attack2);
@@ -20,7 +14,7 @@ void MageNovaCircleState::OnUpdate(Mage* mage)
 {
 	m_castTimer += mage->GetDeltaTime();
 
-	if (!m_hasCast && m_castTimer >= kCastDelay)
+	if (!m_hasCast && m_castTimer >= mage->GetParam().m_novaCircleCastDelay)
 	{
 		mage->CastNovaCircle();
 		m_hasCast = true;

@@ -22,11 +22,12 @@ public:
 
 	void SetUpReference()override;
 
-	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
-
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
 
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
+
+	// 各攻撃ステートが、詠唱時間・ビームの大きさなどを読むために使う
+	const MageParameter::Parameter& GetParam()const { return m_parameter.GetParam(); }
 
 	void OnHit(const AttackInfo attackInfo)override;
 
@@ -92,7 +93,8 @@ private:
 
 	// 攻撃のクールダウン
 	float m_attackCooldown = 0.0f;
-	float m_attackCooldownDuration = 2.0f;
+	// クールダウンの長さ(Parameterの値をInitでセットする)
+	float m_attackCooldownDuration = 0.0f;
 
 	bool m_attackFlg = false;
 

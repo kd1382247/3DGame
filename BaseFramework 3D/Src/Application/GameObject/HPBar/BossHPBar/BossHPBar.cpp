@@ -22,16 +22,7 @@ void BossHPBar::Update()
 		return;
 	}
 
-	float maxHP = spBoss->GetMaxHP();
-
-	if (maxHP <= 0)
-	{
-		return;
-	}
-
-	float currentHP = spBoss->GetCurrentHP();
-
-	m_hpRate = std::clamp(currentHP / maxHP, 0.0f, 1.0f);
+	m_hpRate = spBoss->GetHealth().GetHPRate();
 
 	// ダメージバーを減少
 	if (m_damageRate > m_hpRate)
@@ -57,7 +48,6 @@ void BossHPBar::DrawSprite()
 	{
 		return;
 	}
-
 
 	DrawFrameBackGround();
 	DrawBarRed();

@@ -17,6 +17,14 @@ public:
 		FollowPath
 	};
 
+	struct MeleeAttackData
+	{
+		AttackTiming m_attackTiming    = {};
+		float        m_knockBackPower = 0;
+		float        m_sphereRadius   = 0;
+		float        m_forwardOffset  = 0;
+	};
+
 	EnemyBase(){}
 	~EnemyBase()override {}
 
@@ -28,10 +36,13 @@ public:
 
 	void SetUpReference()override;
 
-	virtual void OnHit(const AttackInfo attackInfo) {}
+	virtual int GetAttackPower()const { return int(); }
 
 	// 飛び出す
 	void Launch(const Math::Vector3& dir, float power);
+
+	// 飛び出し中の移動(接地したら飛び出し終了)
+	void UpdateLaunch();
 
 	// スポーン方向を作る
 	Math::Vector3 CreateSpawnDirection();
@@ -48,13 +59,24 @@ public:
 	// ダメージ量に応じた長さのヒットストップを開始する(強い攻撃ほど長い)
 	void StartDamageHitStop(float damage);
 
+
+	// 攻撃系
+	void StartAttack();
+	void UpdateAttackCollision();
+	void EndAttack();
+
 protected:
 
 	std::weak_ptr<Player>m_wpPlayer;
 
 	void PlayHitEffect();
 
-	void UpdateGravity();
+	// 被弾時の共通処理(HPを減らす・ダメージ表示・点滅・ヒットストップ・ヒットエフェクト・ノックバック)
+	// 戻り値: この攻撃で死亡したかどうか
+	bool ApplyDamage(const AttackInfo& attackInfo, float hitStopDuration = -1.0f);
+
+	// プレイヤーへ攻撃を当てる(自分→プレイヤーの水平方向へノックバックさせる)
+	void AttackPlayer(const std::shared_ptr<Player>& spPlayer, float knockBackPower, float damage);
 
 	// 追跡移動
 	void UpdateDirectChase();
@@ -118,6 +140,8 @@ protected:
 	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
 	float m_reachDistance = 1.5f;
 
+	
+	MeleeAttackData m_meleeAttack = {};
 
 	// フライテキストのパス
 	const std::string m_flyTextPath = "DamageNumber_Orange.png";

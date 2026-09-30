@@ -18,10 +18,8 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
 
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
-
 	float GetMoveSpeed()const { return m_parameter.GetParam().m_moveSpeed; }
 
 	void PlayAnimation(GolemAnimationType type);

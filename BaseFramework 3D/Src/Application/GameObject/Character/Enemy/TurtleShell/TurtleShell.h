@@ -27,7 +27,6 @@ public:
 	bool IsLaunch()const { return m_launchFlg; }
 
 	// パラメータのゲッター
-	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 
@@ -50,8 +49,6 @@ public:
 	void StartDizzy();
 	void EndDizzy();
 
-
-	void UpdateLaunch();
 
 	// 攻撃判定
 	void UpdateAttackCollision();

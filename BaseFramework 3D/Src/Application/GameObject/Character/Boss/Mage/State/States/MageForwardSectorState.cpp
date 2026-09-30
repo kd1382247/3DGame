@@ -4,12 +4,6 @@
 #include"MageNormalState.h"
 #include"../../../../../MageMagicSector/MageMagicSector.h"
 
-namespace
-{
-	// 詠唱開始から前方範囲魔法が発生するまでの時間(秒)
-	constexpr float kCastDelay = 0.35f;
-}
-
 void MageForwardSectorState::OnStart(Mage* mage)
 {
 	mage->PlayAnimation(MageAnimationType::Attack2);
@@ -21,7 +15,7 @@ void MageForwardSectorState::OnUpdate(Mage* mage)
 {
 	m_castTimer += mage->GetDeltaTime();
 
-	if (!m_hasCast && m_castTimer >= kCastDelay)
+	if (!m_hasCast && m_castTimer >= mage->GetParam().m_forwardSectorCastDelay)
 	{
 		m_wpMageMagicSector=mage->CastForwardSector();
 		m_hasCast = true;

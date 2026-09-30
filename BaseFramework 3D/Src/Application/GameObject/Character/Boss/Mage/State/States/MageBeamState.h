@@ -49,4 +49,9 @@ private:
 	float m_castTimer = 0.0f;
 	bool  m_hasCast = false;
 
+	// 詠唱開始時にParameterから受け取る値(詠唱時間[秒]・ビームの長さ[m]・幅[m])
+	float m_castDelay = 0.0f;
+	float m_beamLength = 0.0f;
+	float m_beamWidth = 0.0f;
+
 };

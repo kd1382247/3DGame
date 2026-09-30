@@ -64,7 +64,7 @@ public:
 				continue;
 			}
 
-			if (target->IsInOutro())
+			if (target->GetHealth().IsDead())
 			{
 				continue;
 			}

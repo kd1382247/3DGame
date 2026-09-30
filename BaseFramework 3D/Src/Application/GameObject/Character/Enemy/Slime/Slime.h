@@ -32,7 +32,6 @@ public:
 	bool IsLaunch()const { return m_launchFlg; }
 
 	// パラメータのゲッター
-	int GetMaxHP()const override { return m_parameter.GetParam(m_slimeSize).m_maxHP; }
 	float GetTurnSpeed()const override { return m_parameter.GetParam(m_slimeSize).m_turnSpeed; }
 	float GetMoveSpeed()const override { return m_parameter.GetParam(m_slimeSize).m_moveSpeed; }
 
@@ -43,21 +42,16 @@ public:
 	void PlayAnimation(SlimeAnimationType type);
 	void RePlayAnimation(SlimeAnimationType type);
 
-	void StartAttack();
-	void EndAttack();
 
 	void SetSlimeSize(const SlimeSize size) { m_slimeSize = size; };
 	SlimeSize GetSlimeSize()const { return m_slimeSize; }
 
-	void UpdateLaunch();
-
 	// スライムを分裂
 	void Split();
-	// 攻撃判定
-	void UpdateAttackCollision();
-
+	
 	void OnHit(const AttackInfo attackInfo)override;
 
+	int GetAttackPower()const override { return m_parameter.GetParam(m_slimeSize).m_attackPower; }
 
 private:
 
@@ -68,7 +62,6 @@ private:
 
 	void DrawParameterInspector() override;
 
-	void SetAttackTiming();
 
 private:
 

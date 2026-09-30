@@ -8,7 +8,6 @@
 #include"../../../Effect/EffectManager.h"
 
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
-#include"../../../FlyText/FlyTextManager.h"
 
 #include"../../Player/Player.h"
 
@@ -29,12 +28,15 @@ void TurtleShell::Init()
 		// パラメータクラス初期化
 		m_parameter.Init();
 
-		m_hp = m_parameter.GetParam().m_maxHP;
+		const auto& param = m_parameter.GetParam();
 
-		m_attackCooldownDuration = 1.0f;
-		m_dizzyDuration = 3.0f;
-		m_spinAttackDuration = 5.0f;
-		m_hitCooldownDuration =  0.5f;
+		m_health.Init(param.m_maxHP);
+
+		m_reachDistance = param.m_reachDistance;
+		m_attackCooldownDuration = param.m_attackCooldown;
+		m_dizzyDuration = param.m_dizzyDuration;
+		m_spinAttackDuration = param.m_spinDuration;
+		m_hitCooldownDuration = param.m_spinHitCooldown;
 
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<TurtleShellNormalState>();
@@ -125,17 +127,6 @@ void TurtleShell::EndDizzy()
 	m_attackCooldown = m_attackCooldownDuration;
 }
 
-void TurtleShell::UpdateLaunch()
-{
-	if (IsGrounded())
-	{
-		m_launchFlg = false;
-	}
-
-	Math::Vector3 move = m_launchVec * 60.0f * m_deltaTime;
-	AddPendingMove(move);
-}
-
 void TurtleShell::UpdateAttackCollision()
 {
 
@@ -152,30 +143,18 @@ void TurtleShell::UpdateAttackCollision()
 		return;
 	}
 
+	const auto& param = m_parameter.GetParam();
+
 	DirectX::BoundingSphere sphere;
 
 	sphere.Center = GetPos()+Math::Vector3(0.0f,0.5f,0.0f);
-	sphere.Radius = 0.5;
+	sphere.Radius = param.m_spinHitRadius;
 
 	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
 
 	if (spPlayer->Intersects(sphereInfo, nullptr))
 	{
-		// ノックバックの方向を作成
-		Math::Vector3 knockBackDir = spPlayer->GetPos()-GetPos();
-		knockBackDir.y = 0;
-		if (knockBackDir.LengthSquared() > 0.000001f)
-		{
-			knockBackDir.Normalize();
-		}
-
-		AttackInfo attackInfo;
-
-		attackInfo.knockBackDir = knockBackDir;
-		attackInfo.knockBackPower = 0.3f;
-		attackInfo.damage = 10;
-
-		spPlayer->OnHit(attackInfo);
+		AttackPlayer(spPlayer, param.m_knockBackPower, param.m_attackPow);
 
 		m_hitTarget = true;
 	}
@@ -186,33 +165,15 @@ void TurtleShell::UpdateAttackCollision()
 
 void TurtleShell::OnHit(const AttackInfo attackInfo)
 {
-
-	m_hp -= attackInfo.damage;
-
-	if (m_hp <= 0)
+	if (ApplyDamage(attackInfo))
 	{
-		m_hp = 0;
-		m_outroFlg = true;
 		m_stateMachine.ChangeState<TurtleShellDieState>();
 	}
-	else
+	else if (!IsAttack())
 	{
-		if(!IsAttack())
-		{
-			m_stateMachine.ChangeState<TurtleShellDamageState>();
-			RePlayAnimation(TurtleShellAnimationType::GetHit);
-		}
+		m_stateMachine.ChangeState<TurtleShellDamageState>();
+		RePlayAnimation(TurtleShellAnimationType::GetHit);
 	}
-
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(), m_flyTextPath);
-
-	StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
-
-	StartDamageHitStop(attackInfo.damage);
-
-	PlayHitEffect();
-
-	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }
 
 
@@ -237,8 +198,9 @@ void TurtleShell::UpdateSpinAttackMove()
 	moveDir.Normalize();
 
 
-	const auto& param = m_parameter.GetParam().m_moveSpeed;
-	Math::Vector3 move = moveDir * (param + 0.07f) * 60.0f * m_deltaTime;
+	// 回転中は、通常の移動速度に SpinSpeedBonus を足した速さで動く
+	const float spinSpeed = m_parameter.GetParam().m_moveSpeed + m_parameter.GetParam().m_spinSpeedBonus;
+	Math::Vector3 move = moveDir * spinSpeed * 60.0f * m_deltaTime;
 
 
 	for (auto wall : AABBCollisionManager::Instance().GetAABBCollisionList())
@@ -290,7 +252,7 @@ void TurtleShell::UpdateSpinAttackMove()
 		break;
 	}
 
-	move = moveDir * (param + 0.07f) * 60.0f * m_deltaTime;
+	move = moveDir * spinSpeed * 60.0f * m_deltaTime;
 	AddPendingMove(move);
 }
 

@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-class Player;
-
 class PlayerSwordTrail
 {
 public:
@@ -9,7 +7,7 @@ public:
 	void Init();
 
 	void StartTrail();					// 攻撃開始時に呼ぶ
-	void UpdateTrail(Player& player);	// 毎フレーム呼ぶ
+	void UpdateTrail(const std::shared_ptr<KdModelWork>&model,const Math::Matrix& worldMat,float animFrame);	// 毎フレーム呼ぶ
 	void EndTrail();					// 攻撃終了時に呼ぶ
 
 	// トレイルを表示するフレーム区間をセットする(剣を振っている間だけ表示したい時に調整する)

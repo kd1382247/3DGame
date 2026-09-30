@@ -22,6 +22,10 @@ public:
 	void Update()override;
 	void DrawLit()override;
 
+	// 固定表示(スクロールしない):名前・位置・回転・大きさ
+	void DrawInspectorHeader()override;
+
+	// スクロール側:スポナーのパラメータ
 	void DrawInspector()override;
 
 

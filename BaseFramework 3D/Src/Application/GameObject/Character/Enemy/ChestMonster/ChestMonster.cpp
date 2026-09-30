@@ -3,12 +3,8 @@
 #include"../../../../Scene/SceneManager.h"
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
-#include"../../../../System/TimeManager/TimeManager.h"
-#include"../../../../../Framework/Effekseer/KdEffekseerManager.h"
-
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 
-#include"../../../FlyText/FlyTextManager.h"
 
 #include"State/States/ChestMonsterNormalState.h"
 #include"State/States/ChestMonsterDieState.h"
@@ -26,8 +22,14 @@ void ChestMonster::Init()
 		// パラメータクラス初期化
 		m_parameter.Init();
 
-		m_hp = m_parameter.GetParam().m_maxHP;
+		const auto& param = m_parameter.GetParam();
 
+		m_health.Init(param.m_maxHP);
+
+		m_reachDistance = param.m_reachDistance;
+
+		// 敵を呼び出す間隔(秒)
+		m_spawnInterval = param.m_spawnInterval;
 
 		// ノーマルステートで初期化
 		m_stateMachine.Start(this);
@@ -42,7 +44,7 @@ void ChestMonster::Init()
 
 
 	SetPos({ 0.0f,0.0f,0.0f });
-	SetScale(2.0f);
+	SetScale(m_parameter.GetParam().m_scale);
 	m_bumpPushRate = 0.0f;
 }
 
@@ -54,7 +56,8 @@ void ChestMonster::Update()
 
 	if (!IsSpawnEnemy())
 	{
-		m_spawnCountDown -= 60 * m_deltaTime;
+		// 秒で数える
+		m_spawnCountDown -= m_deltaTime;
 
 		if (m_spawnCountDown <= 0)
 		{
@@ -126,7 +129,8 @@ void ChestMonster::UpdateSpawnEnemy()
 		break;
 	}
 
-	m_spawnWait = 8.0f;
+	// 次の1体までの待ちフレーム
+	m_spawnWait = m_parameter.GetParam().m_spawnWaitFrame;
 
 	m_spawnFlg = false;
 
@@ -163,33 +167,15 @@ void ChestMonster::RePlayAnimation(ChestMonsterAnimationType type)
 
 void ChestMonster::OnHit(const AttackInfo attackInfo)
 {
-
-	m_hp -= attackInfo.damage;
-
-	if (m_hp <= 0)
+	if (ApplyDamage(attackInfo, 0.1f))
 	{
-		m_hp = 0;
-		m_outroFlg = true;
 		m_stateMachine.ChangeState<ChestMonsterDieState>();
 	}
-	else
+	else if (!IsSpawnEnemy())
 	{
-		if(!IsSpawnEnemy())
-		{
-			m_stateMachine.ChangeState<ChestMonsterDamageState>();
-			RePlayAnimation(ChestMonsterAnimationType::GetHit);
-		}
+		m_stateMachine.ChangeState<ChestMonsterDamageState>();
+		RePlayAnimation(ChestMonsterAnimationType::GetHit);
 	}
-
-	TimeManager::Instance().StartHitStop(0.1);
-
-	StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
-
-	PlayHitEffect();
-
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(), m_flyTextPath);
-
-	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }
 
 
@@ -200,17 +186,24 @@ void ChestMonster::CreateEnemy(const std::string& enemyName)
 
 	auto enemy = std::dynamic_pointer_cast<EnemyBase>(obj);
 
+	const auto& param = m_parameter.GetParam();
+
+	// 敵を出す位置(自分の位置から少し上)
+	const Math::Vector3 spawnPos = GetPos() + Math::Vector3(0.0f, param.m_spawnHeight, 0.0f);
+
 	enemy->Init();
-	enemy->SetPos(GetPos()+Math::Vector3(0,2,0));
-	enemy->SetPrevPos(GetPos() + Math::Vector3(0, 2, 0));
+	enemy->SetPos(spawnPos);
+	enemy->SetPrevPos(spawnPos);
 	enemy->SetRotation(GetRotation());
 
 
-	float power = 0.2;
+	// 飛び上がる勢い
+	const float power = param.m_spawnLaunchPower;
 
 	Math::Vector3 launchDir = m_mWorld.Backward();
 
-	launchDir *= 0.04;
+	// 正面へ飛び出す速さ
+	launchDir *= param.m_spawnLaunchSpeed;
 	// 飛び出す方向をセット
 	enemy->Launch(launchDir, power);
 
@@ -229,8 +222,8 @@ void ChestMonster::UpdateAnimation()
 
 void ChestMonster::SetSpawnTiming()
 {
-	m_spawnTiming.spawnStart=40;
-	m_spawnTiming.spawnEnd=60;
+	m_spawnTiming.spawnStart = m_parameter.GetParam().m_spawnStartFrame;
+	m_spawnTiming.spawnEnd = m_parameter.GetParam().m_spawnEndFrame;
 
 	m_animFrameCount = 0.0f;
 }

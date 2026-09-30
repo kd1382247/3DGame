@@ -16,7 +16,13 @@ void Beholder::Init()
 		// パラメータクラス初期化
 		m_parameter.Init();
 
-		m_hp = m_parameter.GetParam().m_maxHP;
+
+		const auto& param = m_parameter.GetParam();
+
+		m_health.Init(param.m_maxHP);
+
+		m_reachDistance = param.m_reachDistance;
+		m_reachDistanceMargin = param.m_reachDistanceMargin;
 
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<BeholderNormalState>();

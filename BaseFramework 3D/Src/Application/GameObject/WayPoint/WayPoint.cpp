@@ -52,9 +52,8 @@ void WayPoint::DrawDebug()
 	//DrawID();
 }
 
-void WayPoint::DrawInspector()
+void WayPoint::DrawInspectorHeader()
 {
-
 	// 座標変更(Stageからのローカル位置)
 	Math::Vector3 pos = GetLocalPos();
 
@@ -63,8 +62,10 @@ void WayPoint::DrawInspector()
 		SetLocalPos(pos);
 		EditorManager::Instance().MarkDirty();
 	}
+}
 
-
+void WayPoint::DrawInspector()
+{
 	// AreaIDをセット
 
 	int areaID = GetAreaID();

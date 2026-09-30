@@ -27,7 +27,6 @@ public:
 	bool IsLaunch()const { return m_launchFlg; }
 
 	// パラメータのゲッター
-	int GetMaxHP()const override { return m_parameter.GetParam().m_maxHP; }
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 
@@ -37,15 +36,9 @@ public:
 
 	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
 
-	void StartAttack();
-	void EndAttack();
-
-	void UpdateLaunch();
-
-	// 攻撃判定
-	void UpdateAttackCollision();
-
 	void OnHit(const AttackInfo attackInfo) override;
+
+	int GetAttackPower()const override{return m_parameter.GetParam().m_attackPower; }
 
 private:
 
@@ -55,8 +48,6 @@ private:
 	void PlayIdleAnimation() override;
 
 	void DrawParameterInspector() override;
-
-	void SetAttackTiming();
 
 private:
 

@@ -31,7 +31,8 @@ public:
 	int GetID() { return m_id; }
 	void SetID(int id) { m_id = id; }
 
-	void DrawInspector()override;
+	// 位置・大きさは固定表示(スクロールしない)側に出す
+	void DrawInspectorHeader()override;
 
 	void Destroy()override;
 

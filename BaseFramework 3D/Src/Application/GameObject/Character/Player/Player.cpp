@@ -45,14 +45,14 @@ void Player::Init()
 		m_playerAttack.Init(m_parameter.GetAttack());
 		m_playerSpecialMove.Init(m_parameter.GetSpecialMove());
 
-		m_hp = m_parameter.GetBody().m_maxHP;
-		m_bumpPushRate = 0.1f;
+		m_health.Init(m_parameter.GetBody().m_maxHP);
+		m_bumpPushRate = m_parameter.GetBody().m_bumpPushRate;
 
 		// ステートマシンに持ち主をセット
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<PlayerNormalState>();
 
-		m_maxWalkableSlopeAngle = 45.0f;
+		m_maxWalkableSlopeAngle = m_parameter.GetBody().m_maxWalkableSlopeAngle;
 	}
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::CharacterBump, shared_from_this());
@@ -92,7 +92,7 @@ void Player::PostUpdate()
 
 	CharacterBase::PostUpdate();
 
-	m_playerSwordTrail.UpdateTrail(*this);
+	m_playerSwordTrail.UpdateTrail(m_spModel,m_mWorld,GetAnimFrame());
 }
 
 void Player::SetUpReference()
@@ -149,11 +149,7 @@ void Player::UpdateDebugCommand()
 {
 	if (GetAsyncKeyState('T') & 0x8000)
 	{
-		m_hp += 10;
-		if (m_hp > GetMaxHP())
-		{
-			m_hp = static_cast<float>(GetMaxHP());
-		}
+		m_health.Heal(10);
 	}
 }
 
@@ -176,20 +172,22 @@ void Player::UpdateAttackCollision(const AttackType type)
 	// スフィアとダメージを決める
 	DirectX::BoundingSphere sphere;
 	float damage = 0.0f;
+	float knockBackPower = 0.0f;
 
 	if(type==AttackType::NormalAttack)
 	{
 		sphere = CreateAttackSphere();
 		damage = m_playerAttack.GetCurrentAttackPower();
+		knockBackPower = m_parameter.GetAttack().m_knockBackPower;
 	}
 	else
 	{
 		sphere = CreateSpecialMoveSphere();
 		damage = m_playerSpecialMove.GetAttackPower();
+		knockBackPower = m_parameter.GetSpecialMove().m_knockBackPower;
 	}
 
 	// 当たった相手へダメージを与える
-	constexpr float knockBackPower = 0.1f;
 	m_hitChecker.Check(*this, sphere, damage, knockBackPower);
 
 	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
@@ -212,12 +210,12 @@ DirectX::BoundingSphere Player::CreateAttackSphere() const
 	attackDir.Normalize();
 
 	// プレイヤーの少し前に出す
-	attackPos += attackDir * 0.8f;
+	attackPos += attackDir * m_parameter.GetAttack().m_hitForwardOffset;
 
 	// 攻撃判定用のスフィアを作成
 	DirectX::BoundingSphere sphere;
 	sphere.Center = attackPos;
-	sphere.Radius = 0.7f;
+	sphere.Radius = m_parameter.GetAttack().m_hitRadius;
 
 	return sphere;
 }
@@ -229,7 +227,7 @@ DirectX::BoundingSphere Player::CreateSpecialMoveSphere() const
 	DirectX::BoundingSphere sphere;
 
 	sphere.Center = spherePos;
-	sphere.Radius = 1.5f;
+	sphere.Radius = m_parameter.GetSpecialMove().m_hitRadius;
 
 	return sphere;
 
@@ -257,17 +255,6 @@ void Player::UpdateAttackMove()
 	ApplyCameraRelativeMove(m_playerAttack.GetMoveSpeed());
 
 	FacingDirectionToCamera();
-}
-
-void Player::UpdateGravity()
-{
-	const float gravityAcceleration = m_parameter.GetBody().m_gravityAcceleration;
-
-	m_gravity += gravityAcceleration * m_deltaTime;
-
-	Math::Vector3 gravityMove = { 0.0f,-m_gravity * m_deltaTime ,0.0f };
-
-	AddPendingMove(gravityMove);
 }
 
 bool Player::GetCameraForward(Math::Vector3& outDir) const
@@ -384,13 +371,12 @@ void Player::UpdateGroundPosY()
 	rayInfo.m_pos = GetPos();
 
 	// 少し高いところから飛ばす(段差の許容範囲)
-	static float enableStepHigh = 0.2f;
-	rayInfo.m_pos.y += enableStepHigh;
+	rayInfo.m_pos.y += m_parameter.GetBody().m_stepHeight;
 
 	// レイの発射方向を設定
 	rayInfo.m_dir = Math::Vector3::Down;
 	// レイの長さを設定
-	rayInfo.m_range = 100.f;
+	rayInfo.m_range = m_parameter.GetBody().m_groundRayLength;
 
 	// 当たり判定をしたいタイプを設定
 	rayInfo.m_type = KdCollider::TypeGround | KdCollider::TypeBump;
@@ -434,12 +420,8 @@ void Player::UpdateGroundPosY()
 
 void Player::OnHit(const AttackInfo attackInfo)
 {
-	m_hp -= attackInfo.damage;
-
-	if (m_hp <= 0)
+	if (m_health.TakeDamage(attackInfo.damage))
 	{
-		m_hp = 0;
-		m_outroFlg = true;
 		m_stateMachine.ChangeState<PlayerDieState>();
 	}
 	else

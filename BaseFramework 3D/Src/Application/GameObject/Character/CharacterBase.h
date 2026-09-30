@@ -2,6 +2,8 @@
 
 #include"AttackInfo.h"
 
+#include"Health.h"
+
 class CharacterBase : public KdGameObject
 {
 public:
@@ -24,6 +26,10 @@ public:
 	void DrawLit()		override;
 	void GenerateDepthMapFromLight()	override;
 
+	// 固定表示(スクロールしない)側:名前・位置・回転・大きさ
+	void DrawInspectorHeader()override;
+
+	// スクロール側:キャラ共通のパラメータ(当たり判定など)
 	void DrawInspector()override;
 
 	void SetRotation(const Math::Vector3& rotation)override;
@@ -66,14 +72,17 @@ public:
 
 	void AddKnockBack(const Math::Vector3& dir, const float power);
 
-	int         GetCurrentHP()const { return m_hp; }
+	//int         GetMaxHP()    const { return m_health.GetMaxHP(); }
+	//int         GetCurrentHP()const { return m_health.GetCurrentHP(); }
 
 	// 被弾時の処理。各キャラクターが必要に応じてoverrideする
 	virtual void OnHit(const AttackInfo attackInfo) {}
 
-	virtual int GetMaxHP()      const = 0;
 	virtual float GetTurnSpeed()const = 0;
 	virtual float GetMoveSpeed()const = 0;
+
+	// 重力加速度(既定値。キャラごとに変えたい時はoverrideする)
+	virtual float GetGravityAcceleration()const { return 72.0f; }
 
 	// キャラの移動量をセット
 	void          ClearPendingMove(const Math::Vector3& move) { m_pendingMove = move; }
@@ -84,9 +93,6 @@ public:
 	// 移動前の位置をセット
 	void  SetPrevPos(const Math::Vector3& pos) { m_prevPos = pos; }
 	Math::Vector3 GetPrevPos()const { return m_prevPos; }
-
-
-	bool IsInOutro()const { return m_outroFlg; }
 
 	// デルタタイム
 	void SetDeltaTime(const float deltaTime) { m_deltaTime = deltaTime; }
@@ -114,6 +120,7 @@ public:
 
 	void UpdateOverlay();
 
+	const Health& GetHealth()const { return m_health; }
 
 private:
 
@@ -131,6 +138,9 @@ protected:
 	// デバッグ用の当たり判定球を描画する
 	void DrawBumpDebugSphere(const Math::Vector3& offset, float radius);
 
+	// 重力を加算して、落下分の移動量を追加する(毎フレーム、ステートの更新より前に呼ぶ)
+	void UpdateGravity();
+
 
 	Math::Vector3                 m_moveDir = Math::Vector3::Zero;
 
@@ -145,7 +155,8 @@ protected:
 	Math::Vector3 m_totalPush = {};
 
 
-	float         m_hp = {};
+
+	Health m_health;
 
 	// エリアID
 	int m_currentAreaID = 0;
@@ -164,9 +175,6 @@ protected:
 
 	// 移動前の位置を保存
 	Math::Vector3 m_prevPos = {};
-
-	// キャラが死亡したときに行う処理
-	bool m_outroFlg = false;
 
 	// キャラが登れる坂の角度
 	float m_maxWalkableSlopeAngle=45;

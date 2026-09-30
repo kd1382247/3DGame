@@ -3,12 +3,6 @@
 #include"../../Mage.h"
 #include"MageNormalState.h"
 
-namespace
-{
-	// 詠唱開始から魔法弾を発射するまでの時間(秒)
-	constexpr float kCastDelay = 0.4f;
-}
-
 void MageBoltState::OnStart(Mage* mage)
 {
 	mage->PlayAnimation(MageAnimationType::Attack1);
@@ -23,7 +17,7 @@ void MageBoltState::OnUpdate(Mage* mage)
 	mage->SetTargetDir();
 	mage->UpdateFacingDirection();
 
-	if (!m_hasCast && m_castTimer >= kCastDelay)
+	if (!m_hasCast && m_castTimer >= mage->GetParam().m_boltCastDelay)
 	{
 		mage->FireBolt();
 		m_hasCast = true;
@@ -32,7 +26,7 @@ void MageBoltState::OnUpdate(Mage* mage)
 
 	if (mage->IsAnimationFinished())
 	{
-		if (m_shotCount < maxShotCount)
+		if (m_shotCount < mage->GetParam().m_boltShotCount)
 		{
 			OnStart(mage);
 			// アニメーションを再再生

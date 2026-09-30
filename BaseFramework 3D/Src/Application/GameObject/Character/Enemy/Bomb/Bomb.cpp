@@ -2,11 +2,7 @@
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
-#include"../../../FlyText/FlyTextManager.h"
-
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
-
-#include"../../Player/Player.h"
 
 #include"../../../Explosion/ExplosionManager.h"
 
@@ -26,9 +22,15 @@ void Bomb::Init()
 		// パラメータ初期化
 		m_parameter.Init();
 
-		m_hp = m_parameter.GetParam().m_maxHP;
+		const auto& param = m_parameter.GetParam();
 
-		m_attackCooldownDuration = 1.0f;
+		m_health.Init(param.m_maxHP);
+
+		m_reachDistance = param.m_reachDistance;
+		m_attackCooldownDuration = param.m_attackCooldown;
+
+		m_explosionRadius = param.m_explosionRadius;
+		m_chargeDuration = param.m_chargeDuration;
 
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<BombNormalState>();
@@ -88,18 +90,6 @@ void Bomb::RePlayAnimation(BombAnimationType type)
 	m_animation.RePlay(type);
 }
 
-void Bomb::UpdateLaunch()
-{
-	if (IsGrounded())
-	{
-		m_launchFlg = false;
-	}
-
-	Math::Vector3 move = m_launchVec * 60.0f * m_deltaTime;
-
-	AddPendingMove(move);
-}
-
 void Bomb::UpdateAnimation()
 {
 	m_animation.Update(m_deltaTime);
@@ -138,7 +128,7 @@ void Bomb::Explode()
 	// 当たり判定は専用のExplosionオブジェクトに任せる
 	// (自分はこの直後に消えてしまうため、自分自身では当たり判定を持てない)
 	ExplosionManager::Instance().CreateExplosion(
-		explosionPos, m_explosionRadius, m_parameter.GetParam().m_attackPow, 0.5f);
+		explosionPos, m_explosionRadius, m_parameter.GetParam().m_attackPow, m_parameter.GetParam().m_explosionKnockBack);
 
 	// 爆発エフェクト
 	KdEffekseerManager::GetInstance().
@@ -172,12 +162,8 @@ void Bomb::HideExplosionRange()
 
 void Bomb::OnHit(const AttackInfo attackInfo)
 {
-	m_hp -= attackInfo.damage;
-
-	if (m_hp <= 0)
+	if (ApplyDamage(attackInfo))
 	{
-		m_hp = 0;
-		m_outroFlg = true;
 		m_stateMachine.ChangeState<BombDieState>();
 	}
 	else if (!IsAttack())
@@ -186,16 +172,5 @@ void Bomb::OnHit(const AttackInfo attackInfo)
 		m_stateMachine.ChangeState<BombDamageState>();
 		RePlayAnimation(BombAnimationType::GetHit);
 	}
-
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(),m_flyTextPath);
-
-
-	StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
-
-	StartDamageHitStop(attackInfo.damage);
-
-	PlayHitEffect();
-
-	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
 }
 
