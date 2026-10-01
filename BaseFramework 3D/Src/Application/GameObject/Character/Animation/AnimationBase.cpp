@@ -1,7 +1,5 @@
 ﻿#include "AnimationBase.h"
 
-#include"../../../System/TimeManager/TimeManager.h"
-
 void AnimationBase::Init()
 {}
 

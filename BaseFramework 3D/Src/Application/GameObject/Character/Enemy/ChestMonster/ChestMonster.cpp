@@ -167,7 +167,7 @@ void ChestMonster::RePlayAnimation(ChestMonsterAnimationType type)
 
 void ChestMonster::OnHit(const AttackInfo attackInfo)
 {
-	if (ApplyDamage(attackInfo, 0.1f))
+	if (ApplyDamage(attackInfo))
 	{
 		m_stateMachine.ChangeState<ChestMonsterDieState>();
 	}

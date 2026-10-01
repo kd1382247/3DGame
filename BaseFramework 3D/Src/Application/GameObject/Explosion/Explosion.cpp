@@ -53,9 +53,9 @@ void Explosion::Update()
 
 				AttackInfo attackInfo;
 
-				attackInfo.knockBackDir = knockBackDir;
-				attackInfo.knockBackPower = m_knockBackPower;
-				attackInfo.damage = m_damage;
+				attackInfo.m_knockBackDir = knockBackDir;
+				attackInfo.m_knockBackPower = m_knockBackPower;
+				attackInfo.m_damage = m_damage;
 
 				spPlayer->OnHit(attackInfo);
 			}

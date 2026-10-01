@@ -32,15 +32,6 @@ void EnemyBase::PostUpdate()
 	CharacterBase::PostUpdate();
 }
 
-void EnemyBase::StartDamageHitStop(float damage)
-{
-	float damageRate = std::clamp(damage / 50.0f, 0.0f, 1.0f);
-
-	float hitStopDuration = std::lerp(0.04f, 0.09f, damageRate);
-
-	TimeManager::Instance().StartHitStop(hitStopDuration);
-}
-
 void EnemyBase::DrawInspector()
 {
 	// 共通(当たり判定)
@@ -528,26 +519,30 @@ void EnemyBase::EndAttack()
 	m_attackCooldown = m_attackCooldownDuration;
 }
 
-bool EnemyBase::ApplyDamage(const AttackInfo& attackInfo, const float hitStopDuration)
+bool EnemyBase::ApplyDamage(const AttackInfo& attackInfo)
 {
-	const bool isDead = m_health.TakeDamage(attackInfo.damage);
+	const bool isDead = m_health.TakeDamage(attackInfo.m_damage);
 
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(), m_flyTextPath);
+	FlyTextManager::Instance().CreateDamateText(attackInfo.m_damage, GetPos(), m_flyTextPath);
 
 	StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
 
-	if (hitStopDuration >= 0.0f)
+	// 敵が生きているかでヒットストップ変更
+	if (!isDead)
 	{
-		TimeManager::Instance().StartHitStop(hitStopDuration);
+		TimeManager::Instance().StartHitStop(attackInfo.m_hitStopDuration);
 	}
 	else
 	{
-		StartDamageHitStop(attackInfo.damage);
+		// ヒットストップとスロー演出をする
+		TimeManager::Instance().StartHitStop(attackInfo.m_killHitStopDuration);
+		TimeManager::Instance().StartSlowMotion(attackInfo.m_killSlowScale, attackInfo.m_killSlowDuration);
 	}
+
 
 	PlayHitEffect();
 
-	AddKnockBack(attackInfo.knockBackDir, attackInfo.knockBackPower);
+	AddKnockBack(attackInfo.m_knockBackDir, attackInfo.m_knockBackPower);
 
 	return isDead;
 }
@@ -564,9 +559,9 @@ void EnemyBase::AttackPlayer(const std::shared_ptr<Player>& spPlayer, const floa
 
 	AttackInfo attackInfo;
 
-	attackInfo.knockBackDir = knockBackDir;
-	attackInfo.knockBackPower = knockBackPower;
-	attackInfo.damage = static_cast<int>(damage);
+	attackInfo.m_knockBackDir = knockBackDir;
+	attackInfo.m_knockBackPower = knockBackPower;
+	attackInfo.m_damage = static_cast<int>(damage);
 
 	spPlayer->OnHit(attackInfo);
 }

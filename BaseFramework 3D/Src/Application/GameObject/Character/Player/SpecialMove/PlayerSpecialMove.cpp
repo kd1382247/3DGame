@@ -12,3 +12,4 @@ const PlayerActionTiming& PlayerSpecialMove::GetTiming() const
 
 	return timing;
 }
+

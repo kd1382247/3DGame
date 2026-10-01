@@ -21,10 +21,11 @@ public:
 	// 攻撃判定・トレイルのフレーム区間
 	const PlayerActionTiming& GetTiming() const;
 
-	float GetAttackPower() const { return m_pParam->m_attackPower; }
+	const PlayerParameter::HitParam& GetHitParam()const { return m_pParam->m_hitParam; }
 
 	// 多段ヒットの間隔(フレーム数)
 	float GetHitCooldownDuration() const { return m_pParam->m_hitCooldownDuration; }
+
 
 private:
 

@@ -3,6 +3,8 @@
 #include"../../CharacterBase.h"
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
+#include"../Parameter/PlayerParameter.h"
+
 // 攻撃が「誰に当たったか」の記録と、球による攻撃判定をまとめたクラス
 // Playerのことは知らない(攻撃する側はCharacterBaseとして受け取る)
 class PlayerHitChecker
@@ -36,7 +38,7 @@ public:
 	// 球の範囲にいるキャラクターへダメージを与える
 	// 自分自身・退場中のキャラ・すでに当たった相手は対象外
 	void Check(const CharacterBase& attacker, const DirectX::BoundingSphere& sphere,
-		const float damage, const float knockBackPower)
+		const PlayerParameter::HitParam& hitParam)
 	{
 		const auto& characters =
 			CollisionManager::Instance().GetObjects(CollisionLayer::CharacterBump);
@@ -91,9 +93,14 @@ public:
 				}
 
 				AttackInfo attackInfo;
-				attackInfo.damage = damage;
-				attackInfo.knockBackDir = knockBackDir;
-				attackInfo.knockBackPower = knockBackPower;
+				attackInfo.m_knockBackDir        = knockBackDir;
+				attackInfo.m_damage              = hitParam.m_attackPower;
+				attackInfo.m_knockBackPower      = hitParam.m_knockBackPower;
+				attackInfo.m_hitStopDuration     = hitParam.m_hitStop;
+				attackInfo.m_killHitStopDuration = hitParam.m_killHitStop;
+				attackInfo.m_killSlowScale       = hitParam.m_killSlowScale;
+				attackInfo.m_killSlowDuration    = hitParam.m_killSlowDuration;
+
 
 				target->OnHit(attackInfo);
 				m_hitTargets.emplace_back(target);

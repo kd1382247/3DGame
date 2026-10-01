@@ -156,7 +156,7 @@ void MageMagicCircle::Update()
 			{
 
 				AttackInfo attackInfo;
-				attackInfo.damage = m_damage;
+				attackInfo.m_damage = m_damage;
 
 				spPlayer->OnHit(attackInfo);
 

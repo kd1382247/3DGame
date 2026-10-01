@@ -17,6 +17,8 @@
 #include"State/States/PlayerDamageState.h"
 #include"State/States/PlayerDieState.h"
 
+#include"../../../System/TimeManager/TimeManager.h"
+
 void Player::Init()
 {
 	if (!m_spModel)
@@ -147,9 +149,20 @@ void Player::DrawInspector()
 
 void Player::UpdateDebugCommand()
 {
+	static bool key = false;
+
 	if (GetAsyncKeyState('T') & 0x8000)
 	{
-		m_health.Heal(10);
+		if(!key)
+		{
+			TimeManager::Instance().StartSlowMotion(0.3, 1.0f);
+			m_health.Heal(10);
+			key = true;
+		}
+	}
+	else
+	{
+		key = false;
 	}
 }
 
@@ -171,24 +184,25 @@ void Player::UpdateAttackCollision(const AttackType type)
 
 	// スフィアとダメージを決める
 	DirectX::BoundingSphere sphere;
-	float damage = 0.0f;
-	float knockBackPower = 0.0f;
+	
+	const PlayerParameter::HitParam* hitParam = nullptr;
 
 	if(type==AttackType::NormalAttack)
 	{
 		sphere = CreateAttackSphere();
-		damage = m_playerAttack.GetCurrentAttackPower();
-		knockBackPower = m_parameter.GetAttack().m_knockBackPower;
+		hitParam = &m_playerAttack.GetHitParam();
 	}
 	else
 	{
 		sphere = CreateSpecialMoveSphere();
-		damage = m_playerSpecialMove.GetAttackPower();
-		knockBackPower = m_parameter.GetSpecialMove().m_knockBackPower;
+		hitParam = &m_playerSpecialMove.GetHitParam();
 	}
 
-	// 当たった相手へダメージを与える
-	m_hitChecker.Check(*this, sphere, damage, knockBackPower);
+
+		// 当たった相手へダメージを与える
+	m_hitChecker.Check(*this, sphere,*hitParam);
+	
+
 
 	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
 
@@ -420,7 +434,7 @@ void Player::UpdateGroundPosY()
 
 void Player::OnHit(const AttackInfo attackInfo)
 {
-	if (m_health.TakeDamage(attackInfo.damage))
+	if (m_health.TakeDamage(attackInfo.m_damage))
 	{
 		m_stateMachine.ChangeState<PlayerDieState>();
 	}
@@ -436,9 +450,9 @@ void Player::OnHit(const AttackInfo attackInfo)
 
 	StartOverlay({ 1,0,0 }, 0.8f,m_overlayDuration);
 
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage,GetPos(), m_flyTextPath);
+	FlyTextManager::Instance().CreateDamateText(attackInfo.m_damage,GetPos(), m_flyTextPath);
 
-	AddKnockBack(attackInfo.knockBackDir,attackInfo.knockBackPower);
+	AddKnockBack(attackInfo.m_knockBackDir,attackInfo.m_knockBackPower);
 }
 
 //================================

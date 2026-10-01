@@ -30,9 +30,9 @@ void BossBase::DrawInspector()
 
 void BossBase::OnHit(const AttackInfo attackInfo)
 {
-	m_health.TakeDamage(attackInfo.damage);
+	m_health.TakeDamage(attackInfo.m_damage);
 
-	FlyTextManager::Instance().CreateDamateText(attackInfo.damage, GetPos(),m_flyTextPath);
+	FlyTextManager::Instance().CreateDamateText(attackInfo.m_damage, GetPos(),m_flyTextPath);
 
 	KdEffekseerManager::GetInstance().
 		Play("Hit/Hit2.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, 1.0f, false);

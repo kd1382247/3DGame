@@ -116,7 +116,7 @@ void MageBeam::Update()
 		if (inLength && inWidth)
 		{
 			AttackInfo attackInfo;
-			attackInfo.damage = m_damage;
+			attackInfo.m_damage = m_damage;
 
 			spPlayer->OnHit(attackInfo);
 

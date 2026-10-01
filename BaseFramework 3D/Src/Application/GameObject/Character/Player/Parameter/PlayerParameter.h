@@ -9,6 +9,9 @@ public:
 	//
 	// 値の単位は Inspector に表示される。m=メートル s=秒 F=フレーム(60F=1秒) °=度 m/F=1フレームの移動量
 
+	// コンボの最大数
+	static constexpr int kComboCount = 3;
+
 	// 体そのもののパラメータ(CharacterBaseが要求するもの・重力・地面との当たり)
 	struct BodyParam
 	{
@@ -35,28 +38,41 @@ public:
 		float m_jumpPow = 0.4f;                     // ジャンプ力(飛び出しの勢い)
 	};
 
+
+	struct HitParam
+	{
+		float m_attackPower      = 10.0f;           // 攻撃力
+		float m_knockBackPower   = 0.1f;            // ノックバックの強さ
+		float m_hitStop          = 0.05f;           // [s] ヒットストップ
+		float m_killHitStop      = 0.12f;           // [s] 撃破時のヒットストップ
+		float m_killSlowScale    = 0.5f;            // 撃破時のスロー演出の倍率
+		float m_killSlowDuration = 0.5f;            // [s]撃破時のスロー演出の時間
+	};
+
 	// 通常攻撃
 	struct AttackParam
 	{
-		float m_attackPower = 10.0f;                // 攻撃力
-		float m_attackMoveSpeed = 0.08f;            // [m/F] 攻撃中の移動速度
+		HitParam m_hitParam[kComboCount];
 
+		float m_attackMoveSpeed = 0.08f;            // [m/F] 攻撃中の移動速度
 		float m_hitRadius = 0.7f;                   // [m]  攻撃判定の球の半径
 		float m_hitForwardOffset = 0.8f;            // [m]  攻撃判定の球を、正面へどれだけ前に出すか
-		float m_knockBackPower = 0.1f;              // ノックバックの強さ
+		
 	};
+
 
 	// 必殺技
 	struct SpecialMoveParam
 	{
-		float m_attackPower = 20.0f;                // 攻撃力
+		HitParam m_hitParam =
+		{ {20},{0.1f},{0.08f} };
+
 		float m_moveSpeed = 0.3f;                   // [m/F] 必殺技中の移動速度
 
 		// 多段ヒットの間隔
 		float m_hitCooldownDuration = 5.0f;         // [F]  (フレーム数。60fps換算)
 
 		float m_hitRadius = 1.5f;                   // [m]  攻撃判定の球の半径(自分を中心にした球)
-		float m_knockBackPower = 0.1f;              // ノックバックの強さ
 	};
 
 	const BodyParam&        GetBody()        const { return m_body; }
@@ -70,10 +86,14 @@ public:
 	void DrawInspecter();
 
 
+
+	
 private:
 
 	void SaveToJson();
 	void LoadFromJson();
+
+
 
 	BodyParam        m_body = {};
 	MoveParam        m_move = {};

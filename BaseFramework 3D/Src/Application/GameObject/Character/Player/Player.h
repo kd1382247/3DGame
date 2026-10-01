@@ -157,7 +157,6 @@ private:
 	// 必殺技判定のスフィアを作る
 	DirectX::BoundingSphere CreateSpecialMoveSphere()        const;
 
-
 private:
 
 	// 入力

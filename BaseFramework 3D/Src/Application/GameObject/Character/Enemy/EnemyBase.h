@@ -56,9 +56,6 @@ public:
 
 	void  CreateDeathSmoke();
 
-	// ダメージ量に応じた長さのヒットストップを開始する(強い攻撃ほど長い)
-	void StartDamageHitStop(float damage);
-
 
 	// 攻撃系
 	void StartAttack();
@@ -73,7 +70,7 @@ protected:
 
 	// 被弾時の共通処理(HPを減らす・ダメージ表示・点滅・ヒットストップ・ヒットエフェクト・ノックバック)
 	// 戻り値: この攻撃で死亡したかどうか
-	bool ApplyDamage(const AttackInfo& attackInfo, float hitStopDuration = -1.0f);
+	bool ApplyDamage(const AttackInfo& attackInfo);
 
 	// プレイヤーへ攻撃を当てる(自分→プレイヤーの水平方向へノックバックさせる)
 	void AttackPlayer(const std::shared_ptr<Player>& spPlayer, float knockBackPower, float damage);

@@ -48,12 +48,12 @@ public:
 	// 現在のコンボ段のデータ
 	const AttackData& GetCurrentAttackData() const;
 
-	// 現在のコンボ段の攻撃力
-	// (コンボ段ごとに攻撃力を変えたい時は、ここで段ごとの倍率を掛ける)
-	float GetCurrentAttackPower() const { return m_pParam->m_attackPower; }
+	// 現在のコンボ段の攻撃ヒット時のパラメータ
+	const PlayerParameter::HitParam& GetHitParam()const { return m_pParam->m_hitParam[static_cast<int>(m_currentAttackCombo)]; }
 
 	// 攻撃中の移動スピード
 	float GetMoveSpeed() const { return m_pParam->m_attackMoveSpeed; }
+
 
 	//=================================
 	// 攻撃コンボ関連
@@ -61,9 +61,6 @@ public:
 
 	bool IsLastCombo() const { return m_currentAttackCombo == AttackCombo::Attack3; }
 	bool HasNextCombo() const { return m_nextAttack; }
-
-	// コンボ状態を返す
-	AttackCombo GetCurrentAttackCombo() const { return m_currentAttackCombo; }
 
 	// 攻撃後の、次のコンボを受け付ける猶予時間を開始する
 	void StartComboGrace();
