@@ -6,6 +6,7 @@
 
 void FlyTextManager::CreateDamateText(const int damage,const Math::Vector3& pos, const std::string filePath)
 {
+
 	Math::Vector3 spawnPos = pos;
 
 	// ランダムな位置にセット

@@ -13,6 +13,7 @@
 #include"Attack/PlayerAttack.h"
 #include"Attack/PlayerHitChecker.h"
 #include"Guard/PlayerGuard.h"
+#include"Parry/PlayerParry.h"
 #include"SpecialMove/PlayerSpecialMove.h"
 #include"SwordTrail/PlayerSwordTrail.h"
 
@@ -64,6 +65,7 @@ public:
 	const PlayerInput& GetInput()  const { return m_input; }
 	PlayerAttack&      GetAttack()       { return m_playerAttack; }
 	PlayerGuard&       GetGuard()        { return m_playerGuard; }
+	PlayerParry&       GetParry()        { return m_playerParry; }
 
 	//================================
 	// アクション(体の操作)
@@ -166,6 +168,7 @@ private:
 	PlayerAttack      m_playerAttack;
 	PlayerSpecialMove m_playerSpecialMove;
 	PlayerGuard       m_playerGuard;
+	PlayerParry       m_playerParry;
 
 	// 攻撃判定(当たった相手の記録もここで持つ)
 	PlayerHitChecker  m_hitChecker;

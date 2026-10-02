@@ -265,7 +265,7 @@ void KdEffekseerManager::UpdateEffekseerEffect()
 	if (m_isPause) { return; }
 
 	const float deltaTime =
-		TimeManager::Instance().GetDeltaTime();
+		TimeManager::Instance().GetUnscaleeDeltaTime();
 
 	const float deltaFrames = deltaTime * 60.0f;
 

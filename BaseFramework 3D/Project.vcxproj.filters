@@ -409,6 +409,9 @@
     <Filter Include="Src\Application\GameObject\HPBar\BossHPBar">
       <UniqueIdentifier>{c634e021-8094-431b-b418-2d8621b67969}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\Parry">
+      <UniqueIdentifier>{cdda3e1b-3a01-4f70-9801-cda75fdffefc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1089,6 +1092,12 @@
     <ClInclude Include="Src\Application\GameObject\Character\Health.h">
       <Filter>Src\Application\GameObject\Character</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\Parry\PlayerParry.h">
+      <Filter>Src\Application\GameObject\Character\Player\Parry</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerParryState.h">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1681,6 +1690,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\HPBar\BossHPBar\BossHPBar.cpp">
       <Filter>Src\Application\GameObject\HPBar\BossHPBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\Parry\PlayerParry.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\Parry</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerParryState.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

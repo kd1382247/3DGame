@@ -96,6 +96,28 @@ void PlayerParameter::DrawInspecter()
 
 			InspectorUI::EndGroup();
 		}
+
+		if (InspectorUI::BeginGroup("Guard"))
+		{
+			InspectorUI::Seconds("GuardHitResetTime",         m_guard.m_guardHitResetTime);
+			InspectorUI::Count  ("GuardBreakCount",           m_guard.m_guardBreakCount);
+			InspectorUI::Rate   ("GuardKnockBackRate",        m_guard.m_guardKnockBackRate);
+
+			if (InspectorUI::BeginGroup("Parry"))
+			{
+				InspectorUI::Seconds("GuardParryWindow",          m_parry.m_parryWindow);
+				InspectorUI::Seconds("GuardParryHitStop",         m_parry.m_parryHitStop);
+				InspectorUI::Scale  ("GuardParrySlowScale",       m_parry.m_parrySlowScale);
+				InspectorUI::Seconds("GuardParrySlowDuration",    m_parry.m_parrySlowDuration);
+				InspectorUI::Power  ("GuardParryKnockBackPower",  m_parry.m_parryKnockBackPower);
+				InspectorUI::Meter  ("GuardParryKnockBackRadius", m_parry.m_parryKnockBackRadius);
+				
+				InspectorUI::EndGroup();
+			}
+
+			InspectorUI::EndGroup();
+		}
+
 	}
 }
 
@@ -103,6 +125,10 @@ void PlayerParameter::SaveToJson()
 {
 	nlohmann::json paramJson;
 
+
+	//--------------------------------------------------------
+	//  キャラの基本パラメータ
+	//--------------------------------------------------------
 	paramJson["MaxHP"]                 = m_body.m_maxHP;
 	paramJson["TurnSpeed"]             = m_body.m_turnSpeed;
 	paramJson["GravityAcceleration"]   = m_body.m_gravityAcceleration;
@@ -115,10 +141,12 @@ void PlayerParameter::SaveToJson()
 
 	paramJson["JumpPower"]             = m_jump.m_jumpPow;
 
+	//--------------------------------------------------------
+	//  攻撃パラメータ
+	//--------------------------------------------------------
 	for (int i = 0; i < kComboCount; i++)
 	{
 		HitParam& hit = m_attack.m_hitParam[i];
-
 
 		std::string attackNum = "Attack" + std::to_string(i + 1);
 		std::string paramName = attackNum + "Power";
@@ -146,6 +174,10 @@ void PlayerParameter::SaveToJson()
 	paramJson["AttackHitRadius"]         = m_attack.m_hitRadius;
 	paramJson["AttackHitForwardOffset"]  = m_attack.m_hitForwardOffset;
 
+	//--------------------------------------------------------
+	//  必殺技パラメータ
+	//--------------------------------------------------------
+
 	paramJson["SpecialAttackPower"]      = m_specialMove.m_hitParam.m_attackPower;
 	paramJson["SpecialKnockBackPower"]   = m_specialMove.m_hitParam.m_knockBackPower;
 	paramJson["SpecialHitStop"]          = m_specialMove.m_hitParam.m_hitStop;
@@ -155,6 +187,27 @@ void PlayerParameter::SaveToJson()
 	paramJson["SpecialMoveSpeed"]        = m_specialMove.m_moveSpeed;
 	paramJson["SpecialHitCooldown"]      = m_specialMove.m_hitCooldownDuration;
 	paramJson["SpecialHitRadius"]        = m_specialMove.m_hitRadius;
+
+
+	//--------------------------------------------------------
+	//  ガードパラメータ
+	//--------------------------------------------------------
+	paramJson["GuardHitResetTime"]         = m_guard.m_guardHitResetTime;
+	paramJson["GuardBreakCount"]           = m_guard.m_guardBreakCount;
+	paramJson["GuardKnockBackRate"]        = m_guard.m_guardKnockBackRate;
+
+
+	//--------------------------------------------------------
+	//  パリィパラメータ
+	//--------------------------------------------------------
+	paramJson["ParryWindow"]          = m_parry.m_parryWindow;
+	paramJson["ParryHitStop"]         = m_parry.m_parryHitStop;
+	paramJson["ParrySlowScale"]       = m_parry.m_parrySlowScale;
+	paramJson["ParrySlowDuration"]    = m_parry.m_parrySlowDuration;
+	paramJson["ParryKnockBackPower"]  = m_parry.m_parryKnockBackPower;
+	paramJson["ParryKnockBackRadius"] = m_parry.m_parryKnockBackRadius;
+
+
 
 	std::ofstream file("Asset/Data/Player/Parameter/PlayerParameter.json");
 
@@ -192,6 +245,10 @@ void PlayerParameter::LoadFromJson()
 
 		// 新しく追加した項目は、古いセーブデータには無い場合があるため
 		// キーがある項目だけ読み込む(無ければデフォルト値のまま)
+
+		//--------------------------------------------------------
+		//  キャラの基本パラメータ
+		//--------------------------------------------------------
 		ParameterJson::Read(paramJson, "MaxHP",                 m_body.m_maxHP);
 		ParameterJson::Read(paramJson, "TurnSpeed",             m_body.m_turnSpeed);
 		ParameterJson::Read(paramJson, "GravityAcceleration",   m_body.m_gravityAcceleration);
@@ -204,6 +261,10 @@ void PlayerParameter::LoadFromJson()
 
 		ParameterJson::Read(paramJson, "JumpPower",             m_jump.m_jumpPow);
 
+
+		//--------------------------------------------------------
+		//  攻撃パラメータ
+		//--------------------------------------------------------
 		for (int i = 0; i < kComboCount; i++)
 		{
 			HitParam& hit = m_attack.m_hitParam[i];
@@ -232,6 +293,10 @@ void PlayerParameter::LoadFromJson()
 		ParameterJson::Read(paramJson, "AttackHitRadius",         m_attack.m_hitRadius);
 		ParameterJson::Read(paramJson, "AttackHitForwardOffset",  m_attack.m_hitForwardOffset);
 
+
+		//--------------------------------------------------------
+		//  必殺技パラメータ
+		//--------------------------------------------------------
 		ParameterJson::Read(paramJson, "SpecialAttackPower",      m_specialMove.m_hitParam.m_attackPower);
 		ParameterJson::Read(paramJson, "SpecialKnockBackPower",   m_specialMove.m_hitParam.m_knockBackPower);
 		ParameterJson::Read(paramJson, "SpecialHitStop",          m_specialMove.m_hitParam.m_hitStop);
@@ -241,6 +306,26 @@ void PlayerParameter::LoadFromJson()
 		ParameterJson::Read(paramJson, "SpecialMoveSpeed",        m_specialMove.m_moveSpeed);
 		ParameterJson::Read(paramJson, "SpecialHitCooldown",      m_specialMove.m_hitCooldownDuration);
 		ParameterJson::Read(paramJson, "SpecialHitRadius",        m_specialMove.m_hitRadius);
+
+
+		//--------------------------------------------------------
+		//  ガードパラメータ
+		//--------------------------------------------------------
+		ParameterJson::Read(paramJson, "GuardHitResetTime",         m_guard.m_guardHitResetTime);
+		ParameterJson::Read(paramJson, "GuardBreakCount",           m_guard.m_guardBreakCount);
+		ParameterJson::Read(paramJson, "GuardKnockBackRate",        m_guard.m_guardKnockBackRate);
+
+
+		//--------------------------------------------------------
+		//  ガードパラメータ
+		//--------------------------------------------------------
+		ParameterJson::Read(paramJson, "ParryWindow",          m_parry.m_parryWindow);
+		ParameterJson::Read(paramJson, "ParryHitStop",         m_parry.m_parryHitStop);
+		ParameterJson::Read(paramJson, "ParrySlowScale",       m_parry.m_parrySlowScale);
+		ParameterJson::Read(paramJson, "ParrySlowDuration",    m_parry.m_parrySlowDuration);
+		ParameterJson::Read(paramJson, "ParryKnockBackPower",  m_parry.m_parryKnockBackPower);
+		ParameterJson::Read(paramJson, "ParryKnockBackRadius", m_parry.m_parryKnockBackRadius);
+
 	}
 	catch (const nlohmann::json::exception& e)
 	{

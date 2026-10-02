@@ -54,12 +54,31 @@ public:
 	{
 		HitParam m_hitParam[kComboCount];
 
-		float m_attackMoveSpeed = 0.08f;            // [m/F] 攻撃中の移動速度
-		float m_hitRadius = 0.7f;                   // [m]  攻撃判定の球の半径
+		float m_attackMoveSpeed  = 0.08f;           // [m/F] 攻撃中の移動速度
+		float m_hitRadius        = 0.7f;            // [m]  攻撃判定の球の半径
 		float m_hitForwardOffset = 0.8f;            // [m]  攻撃判定の球を、正面へどれだけ前に出すか
 		
 	};
 
+	// ガード
+	struct GuardParam
+	{
+		int   m_guardBreakCount      = 5;           // ガード中に何回攻撃を受けたら解除かの上限
+		float m_guardHitResetTime    = 2.0f;        // [s] 一定時間攻撃を受けないときのリセット時間
+		float m_guardKnockBackRate = 0.3f;          // ガード時に受けるノックバックの割合
+  
+	};
+
+	// パリィ
+	struct ParryParam
+	{
+		float m_parryWindow		     = 0.3f;		// [s] パリィの受付時間
+		float m_parryHitStop		 = 0.1f;		// [s] パリィ成功時のヒットストップ
+		float m_parrySlowScale       = 0.3;			// パリィ成功時のスロー倍率
+		float m_parrySlowDuration    = 0.5f;        // パリィ成功時のスロー時間
+		float m_parryKnockBackPower  = 0.3f;        // ノックバックの威力
+		float m_parryKnockBackRadius = 1.5f;        // [m] パリィ成功時のノックバックの範囲 
+	};
 
 	// 必殺技
 	struct SpecialMoveParam
@@ -80,24 +99,23 @@ public:
 	const JumpParam&        GetJump()        const { return m_jump; }
 	const AttackParam&      GetAttack()      const { return m_attack; }
 	const SpecialMoveParam& GetSpecialMove() const { return m_specialMove; }
-
+	const GuardParam&       GetGuard()       const { return m_guard; }
+	const ParryParam&       GetParry()       const { return m_parry; }
 	void Init();
 
 	void DrawInspecter();
 
 
-
-	
 private:
 
 	void SaveToJson();
 	void LoadFromJson();
 
-
-
-	BodyParam        m_body = {};
-	MoveParam        m_move = {};
-	JumpParam        m_jump = {};
-	AttackParam      m_attack = {};
+	BodyParam        m_body        = {};
+	MoveParam        m_move        = {};
+	JumpParam        m_jump        = {};
+	AttackParam      m_attack      = {};
 	SpecialMoveParam m_specialMove = {};
+	GuardParam       m_guard       = {};
+	ParryParam       m_parry       = {};
 };

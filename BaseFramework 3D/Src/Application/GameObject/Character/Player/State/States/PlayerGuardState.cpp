@@ -3,6 +3,7 @@
 #include"../../Player.h"
 
 #include"PlayerNormalState.h"
+#include"PlayerParryState.h"
 
 void PlayerGuardState::OnStart(Player* owner)
 {
@@ -20,7 +21,13 @@ void PlayerGuardState::OnUpdate(Player * owner)
 
 	owner->UpdateAttackMove();
 
-	guard.UpdateParry(owner->GetInput());
+	// ガード中にパリィの入力を受けたら、ステートを変える
+	if (owner->GetInput().IsParryTrigger())
+	{
+		m_pMachine->ChangeState<PlayerParryState>();
+		return;
+	}
+
 
 	// ガード解除
 	if (guard.IsGuardCancel())
@@ -28,19 +35,19 @@ void PlayerGuardState::OnUpdate(Player * owner)
 		m_pMachine->ChangeState<PlayerNormalState>();
 		return;
 	}
-
-	// Parry / GuardHit終了
-	if (guard.IsGuardHitOrParry())
+	
+	if (guard.IsGuardHit())
 	{
-		owner->PlayAnimation(guard.GetGuardAnimation());
+		owner->PlayAnimation(PlayerAnimationType::DefendHit);
 
 		if (owner->IsAnimationFinished())
 		{
-			// 再度ガード状態に戻す
 			guard.ResetGuardState();
 			owner->PlayAnimation(PlayerAnimationType::Defend);
 		}
 	}
+	
+
 }
 
 void PlayerGuardState::OnExit(Player * owner)

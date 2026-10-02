@@ -14,6 +14,8 @@
 #include"State/States/PlayerNormalState.h"
 #include"State/States/PlayerAttackState.h"
 #include"State/States/PlayerSpecialMoveState.h"
+#include"State/States/PlayerGuardState.h"
+#include"State/States/PlayerParryState.h"
 #include"State/States/PlayerDamageState.h"
 #include"State/States/PlayerDieState.h"
 
@@ -26,10 +28,6 @@ void Player::Init()
 
 		InitCharacterModel("Asset/Models/Player/Player.gltf", "Player"
 			, Math::Vector3(0, 0.5, 0), 0.5, "Player");
-
-		// オブジェクト名セット
-		SetObjectName("Player");
-
 
 		// カテゴリーをセット
 		SetObjectCategory(ObjectCategory::Character);
@@ -44,10 +42,12 @@ void Player::Init()
 		m_parameter.Init();
 
 		// 各アクションクラスには、自分に必要なパラメータだけを渡す
-		m_playerAttack.Init(m_parameter.GetAttack());
+		m_playerAttack.     Init(m_parameter.GetAttack());
 		m_playerSpecialMove.Init(m_parameter.GetSpecialMove());
-
-		m_health.Init(m_parameter.GetBody().m_maxHP);
+		m_playerGuard.      Init(m_parameter.GetGuard());
+		m_playerParry.      Init(m_parameter.GetParry());
+		
+		m_health.           Init(m_parameter.GetBody().m_maxHP);
 		m_bumpPushRate = m_parameter.GetBody().m_bumpPushRate;
 
 		// ステートマシンに持ち主をセット
@@ -77,6 +77,8 @@ void Player::Update()
 	{
 		m_playerAttack.UpdateComboGrace(m_input, m_deltaTime);
 	}
+	
+	m_playerGuard.UpdateTimer(m_deltaTime);
 
 	UpdateGravity();
 
@@ -84,6 +86,8 @@ void Player::Update()
 	{
 		UpdateGroundPosY();
 	}
+
+	
 }
 
 void Player::PostUpdate()
@@ -434,7 +438,27 @@ void Player::UpdateGroundPosY()
 
 void Player::OnHit(const AttackInfo attackInfo)
 {
-	if (m_health.TakeDamage(attackInfo.m_damage))
+	
+	AttackInfo info = attackInfo;
+
+	if(m_stateMachine.IsState<PlayerGuardState>())
+	{
+		// ガード中に攻撃を受けた回数を数える
+		// 上限値をこえたらガードを強制終了
+		m_playerGuard.NotifyGuardHit();
+
+		info.m_knockBackPower *= m_playerGuard.GetParam().m_guardKnockBackRate;
+		info.m_damage = 0;
+	}
+	else if (m_stateMachine.IsState<PlayerParryState>())
+	{
+		if (m_playerParry.IsParryActive())
+		{
+			m_playerParry.SetIsParrySuccess(true);
+
+		}
+	}
+	else if (m_health.TakeDamage(info.m_damage))
 	{
 		m_stateMachine.ChangeState<PlayerDieState>();
 	}
@@ -448,11 +472,19 @@ void Player::OnHit(const AttackInfo attackInfo)
 		}
 	}
 
+
+	AddKnockBack(info.m_knockBackDir, info.m_knockBackPower);
+
+	// ダメージが0以下の場合は以下の処理を飛ばす
+	if (info.m_damage <= 0)
+	{
+		return;
+	}
+
 	StartOverlay({ 1,0,0 }, 0.8f,m_overlayDuration);
 
-	FlyTextManager::Instance().CreateDamateText(attackInfo.m_damage,GetPos(), m_flyTextPath);
-
-	AddKnockBack(attackInfo.m_knockBackDir,attackInfo.m_knockBackPower);
+	FlyTextManager::Instance().CreateDamateText(info.m_damage, GetPos(), m_flyTextPath);
+	
 }
 
 //================================

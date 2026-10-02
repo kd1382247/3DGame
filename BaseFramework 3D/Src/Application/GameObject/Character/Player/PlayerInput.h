@@ -24,6 +24,7 @@ public:
 		UpdateAttackInput(deltaTime);
 		UpdateGuardInput();
 		UpdateJumpInput();
+		UpdateParryInput();
 	}
 
 	//================================
@@ -52,6 +53,14 @@ public:
 
 	// 押した瞬間だけtrue
 	bool IsGuardTrigger() const { return m_guardTrigger; }
+
+
+	//================================
+	// パリィ(左クリック)
+	//================================
+
+	// 押した瞬間だけtrue
+	bool IsParryTrigger() const { return m_parryTrigger; }
 
 	//================================
 	// ジャンプ(スペース)
@@ -127,6 +136,14 @@ private:
 		m_guardDown = currentGuardButton;
 	}
 
+	void UpdateParryInput()
+	{
+		const bool currentParryButton = (GetAsyncKeyState(VK_LEFT) & 0x8000) != 0;
+
+		m_parryTrigger = currentParryButton && !m_parryDown;
+		m_parryDown = currentParryButton;
+	}
+
 	void UpdateJumpInput()
 	{
 		m_jumpDown = (GetAsyncKeyState(VK_SPACE) & 0x8000) != 0;
@@ -149,6 +166,10 @@ private:
 	// ガード
 	bool          m_guardTrigger = false;
 	bool          m_guardDown = false;
+
+	// パリィ
+	bool          m_parryTrigger = false;
+	bool          m_parryDown = false;
 
 	// ジャンプ
 	bool          m_jumpDown = false;
