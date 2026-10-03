@@ -102,6 +102,9 @@ public:
 	void UpdateSpecialMove();
 	void EndSpecialMove();
 
+	// パリィ成功時
+	void OnParrySuccess();
+
 	//================================
 	// アニメーション
 	//================================
@@ -158,6 +161,9 @@ private:
 
 	// 必殺技判定のスフィアを作る
 	DirectX::BoundingSphere CreateSpecialMoveSphere()        const;
+
+	// パリィ成功時の吹き飛ばし範囲のスフィアを作る
+	DirectX::BoundingSphere CreateParrySphere()        const;
 
 private:
 

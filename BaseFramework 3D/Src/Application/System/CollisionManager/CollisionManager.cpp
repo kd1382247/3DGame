@@ -98,12 +98,15 @@ void CollisionManager::ApplyKnockBack(const std::shared_ptr<CharacterBase>& char
 		return;
 	}
 
+
+	const float deltaTime = TimeManager::Instance().GetDeltaTime()*60;
+
 	Math::Vector3 finalPos =
-		ResolveCharacterDisplacement(character, character->GetPos(), knockBack, false);
+		ResolveCharacterDisplacement(character, character->GetPos(), knockBack*deltaTime, false);
 
 
 	// 徐々に減衰
-	knockBack *= 0.88f;
+	knockBack *= std::pow(0.88f, deltaTime);
 
 	if (knockBack.LengthSquared() <= 0.000001f)
 	{

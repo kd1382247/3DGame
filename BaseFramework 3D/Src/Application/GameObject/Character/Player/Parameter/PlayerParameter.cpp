@@ -72,8 +72,8 @@ void PlayerParameter::DrawInspecter()
 					InspectorUI::Power  ("KnockBackPower",   hit.m_knockBackPower);
 					InspectorUI::Seconds("HitStop",          hit.m_hitStop);
 					InspectorUI::Seconds("KillHitStop",      hit.m_killHitStop);
-					InspectorUI::Scale  ("KillSlowScale",    hit.m_killSlowScale);
-					InspectorUI::Seconds("KillSlowDuration", hit.m_killSlowDuration);
+					InspectorUI::Scale  ("SlowScale",        hit.m_SlowScale);
+					InspectorUI::Seconds("SlowDuration",     hit.m_SlowDuration);
 
 					InspectorUI::EndGroup();
 				}
@@ -88,8 +88,8 @@ void PlayerParameter::DrawInspecter()
 			InspectorUI::Power		  ("KnockBackPower",   m_specialMove.m_hitParam.m_knockBackPower);
 			InspectorUI::Seconds	  ("HitStop",          m_specialMove.m_hitParam.m_hitStop);
 			InspectorUI::Seconds	  ("KillHitStop",      m_specialMove.m_hitParam.m_killHitStop);
-			InspectorUI::Scale        ("KillSlowScale",    m_specialMove.m_hitParam.m_killSlowScale);
-			InspectorUI::Seconds      ("KillSlowDuration", m_specialMove.m_hitParam.m_killSlowDuration);
+			InspectorUI::Scale        ("SlowScale",        m_specialMove.m_hitParam.m_SlowScale);
+			InspectorUI::Seconds      ("SlowDuration",     m_specialMove.m_hitParam.m_SlowDuration);
 			InspectorUI::MeterPerFrame("MoveSpeed",        m_specialMove.m_moveSpeed);
 			InspectorUI::Frame		  ("HitCooldown",      m_specialMove.m_hitCooldownDuration);
 			InspectorUI::Meter		  ("HitRadius",        m_specialMove.m_hitRadius);
@@ -99,18 +99,18 @@ void PlayerParameter::DrawInspecter()
 
 		if (InspectorUI::BeginGroup("Guard"))
 		{
-			InspectorUI::Seconds("GuardHitResetTime",         m_guard.m_guardHitResetTime);
-			InspectorUI::Count  ("GuardBreakCount",           m_guard.m_guardBreakCount);
-			InspectorUI::Rate   ("GuardKnockBackRate",        m_guard.m_guardKnockBackRate);
+			InspectorUI::Seconds("HitResetTime",         m_guard.m_guardHitResetTime);
+			InspectorUI::Count  ("BreakCount",           m_guard.m_guardBreakCount);
+			InspectorUI::Rate   ("KnockBackRate",        m_guard.m_guardKnockBackRate);
 
 			if (InspectorUI::BeginGroup("Parry"))
 			{
-				InspectorUI::Seconds("GuardParryWindow",          m_parry.m_parryWindow);
-				InspectorUI::Seconds("GuardParryHitStop",         m_parry.m_parryHitStop);
-				InspectorUI::Scale  ("GuardParrySlowScale",       m_parry.m_parrySlowScale);
-				InspectorUI::Seconds("GuardParrySlowDuration",    m_parry.m_parrySlowDuration);
-				InspectorUI::Power  ("GuardParryKnockBackPower",  m_parry.m_parryKnockBackPower);
-				InspectorUI::Meter  ("GuardParryKnockBackRadius", m_parry.m_parryKnockBackRadius);
+				InspectorUI::Seconds("ParryWindow",     m_parry.m_parryWindow);
+				InspectorUI::Seconds("HitStop",         m_parry.m_parryHitStop);
+				InspectorUI::Scale  ("SlowScale",       m_parry.m_parrySlowScale);
+				InspectorUI::Seconds("SlowDuration",    m_parry.m_parrySlowDuration);
+				InspectorUI::Power  ("KnockBackPower",  m_parry.m_parryKnockBackPower);
+				InspectorUI::Meter  ("KnockBackRadius", m_parry.m_parryKnockBackRadius);
 				
 				InspectorUI::EndGroup();
 			}
@@ -162,11 +162,11 @@ void PlayerParameter::SaveToJson()
 		paramName = attackNum + "KillHitStop";
 		paramJson[paramName] = hit.m_killHitStop;
 
-		paramName = attackNum + "KillSlowScale";
-		paramJson[paramName] = hit.m_killSlowScale;
+		paramName = attackNum + "SlowScale";
+		paramJson[paramName] = hit.m_SlowScale;
 
-		paramName = attackNum + "KillSlowDuration";
-		paramJson[paramName] = hit.m_killSlowDuration;
+		paramName = attackNum + "SlowDuration";
+		paramJson[paramName] = hit.m_SlowDuration;
 
 	}
 
@@ -182,8 +182,8 @@ void PlayerParameter::SaveToJson()
 	paramJson["SpecialKnockBackPower"]   = m_specialMove.m_hitParam.m_knockBackPower;
 	paramJson["SpecialHitStop"]          = m_specialMove.m_hitParam.m_hitStop;
 	paramJson["SpecialKillHitStop"]      = m_specialMove.m_hitParam.m_killHitStop;
-	paramJson["SpecialKillSlowScale"]    = m_specialMove.m_hitParam.m_killSlowScale;
-	paramJson["SpecialKillSlowDuration"] = m_specialMove.m_hitParam.m_killSlowDuration;
+	paramJson["SpecialSlowScale"]    = m_specialMove.m_hitParam.m_SlowScale;
+	paramJson["SpecialSlowDuration"] = m_specialMove.m_hitParam.m_SlowDuration;
 	paramJson["SpecialMoveSpeed"]        = m_specialMove.m_moveSpeed;
 	paramJson["SpecialHitCooldown"]      = m_specialMove.m_hitCooldownDuration;
 	paramJson["SpecialHitRadius"]        = m_specialMove.m_hitRadius;
@@ -282,11 +282,11 @@ void PlayerParameter::LoadFromJson()
 			paramName = attackNum + "KillHitStop";
 			ParameterJson::Read(paramJson, paramName.c_str(), hit.m_killHitStop);
 
-			paramName = attackNum + "KillSlowScale";
-			ParameterJson::Read(paramJson, paramName.c_str(), hit.m_killSlowScale);
+			paramName = attackNum + "SlowScale";
+			ParameterJson::Read(paramJson, paramName.c_str(), hit.m_SlowScale);
 
-			paramName = attackNum + "KillSlowDuration";
-			ParameterJson::Read(paramJson, paramName.c_str(), hit.m_killSlowDuration);
+			paramName = attackNum + "SlowDuration";
+			ParameterJson::Read(paramJson, paramName.c_str(), hit.m_SlowDuration);
 		}
 
 		ParameterJson::Read(paramJson, "AttackMoveSpeed",         m_attack.m_attackMoveSpeed);
@@ -301,8 +301,8 @@ void PlayerParameter::LoadFromJson()
 		ParameterJson::Read(paramJson, "SpecialKnockBackPower",   m_specialMove.m_hitParam.m_knockBackPower);
 		ParameterJson::Read(paramJson, "SpecialHitStop",          m_specialMove.m_hitParam.m_hitStop);
 		ParameterJson::Read(paramJson, "SpecialKillHitStop",      m_specialMove.m_hitParam.m_killHitStop);
-		ParameterJson::Read(paramJson, "SpecialKillSlowScale",    m_specialMove.m_hitParam.m_killSlowScale);
-		ParameterJson::Read(paramJson, "SpecialKillSlowDuration", m_specialMove.m_hitParam.m_killSlowDuration);
+		ParameterJson::Read(paramJson, "SpecialSlowScale",        m_specialMove.m_hitParam.m_SlowScale);
+		ParameterJson::Read(paramJson, "SpecialSlowDuration",     m_specialMove.m_hitParam.m_SlowDuration);
 		ParameterJson::Read(paramJson, "SpecialMoveSpeed",        m_specialMove.m_moveSpeed);
 		ParameterJson::Read(paramJson, "SpecialHitCooldown",      m_specialMove.m_hitCooldownDuration);
 		ParameterJson::Read(paramJson, "SpecialHitRadius",        m_specialMove.m_hitRadius);

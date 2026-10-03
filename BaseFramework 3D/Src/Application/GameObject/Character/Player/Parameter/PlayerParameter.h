@@ -45,10 +45,10 @@ public:
 		float m_knockBackPower   = 0.1f;            // ノックバックの強さ
 		float m_hitStop          = 0.05f;           // [s] ヒットストップ
 		float m_killHitStop      = 0.12f;           // [s] 撃破時のヒットストップ
-		float m_killSlowScale    = 0.5f;            // 撃破時のスロー演出の倍率
-		float m_killSlowDuration = 0.5f;            // [s]撃破時のスロー演出の時間
+		float m_SlowScale    = 0.5f;                // スロー演出の倍率
+		float m_SlowDuration = 0.5f;                // スロー演出の時間
 	};
-
+	
 	// 通常攻撃
 	struct AttackParam
 	{
@@ -73,11 +73,12 @@ public:
 	struct ParryParam
 	{
 		float m_parryWindow		     = 0.3f;		// [s] パリィの受付時間
+		float m_parryKnockBackRadius = 1.5f;        // [m] パリィ成功時のノックバックの範囲 
 		float m_parryHitStop		 = 0.1f;		// [s] パリィ成功時のヒットストップ
 		float m_parrySlowScale       = 0.3;			// パリィ成功時のスロー倍率
 		float m_parrySlowDuration    = 0.5f;        // パリィ成功時のスロー時間
 		float m_parryKnockBackPower  = 0.3f;        // ノックバックの威力
-		float m_parryKnockBackRadius = 1.5f;        // [m] パリィ成功時のノックバックの範囲 
+		
 	};
 
 	// 必殺技

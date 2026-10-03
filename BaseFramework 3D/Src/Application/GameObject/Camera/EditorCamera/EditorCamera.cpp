@@ -11,7 +11,6 @@ void EditorCamera::Init()
 
 void EditorCamera::Update()
 {
-
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
 	{
 		m_isCameraControl = true;
@@ -21,8 +20,6 @@ void EditorCamera::Update()
 		m_isCameraControl = false;
 	}
 
-
-	
 	if (m_isCameraControl)
 	{
 		// カメラの回転

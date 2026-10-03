@@ -11,8 +11,6 @@ public:
 	EditorScene() { Init(); }
 	~EditorScene() {}
 
-	void EditorUpdate()override;
-
 	void PreDraw()override;
 	void DrawDebug()override;
 

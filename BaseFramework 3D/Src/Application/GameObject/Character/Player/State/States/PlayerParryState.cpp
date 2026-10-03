@@ -24,11 +24,11 @@ void PlayerParryState::OnUpdate(Player* owner)
 	// パリィの受付時間更新
 	parry.UpdateParryWindow(owner->GetDeltaTime());
 
-
 	if (owner->IsAnimationFinished())
 	{
 
-		if (parry.GetIsParrySuccess())
+		// ガードのボタンが押されていたら
+		if (owner->GetInput().IsGuardDown())
 		{
 			m_pMachine->ChangeState<PlayerGuardState>();
 		}
@@ -36,6 +36,7 @@ void PlayerParryState::OnUpdate(Player* owner)
 		{
 			m_pMachine->ChangeState<PlayerNormalState>();
 		}
+		
 	}
 	
 
@@ -44,4 +45,6 @@ void PlayerParryState::OnUpdate(Player* owner)
 void PlayerParryState::OnExit(Player* owner)
 {
 	PlayerParry& parry = owner->GetParry();
+
+	parry.SetIsParrySuccess(false);
 }

@@ -15,9 +15,6 @@ public:
 
 	void Init(const PlayerParameter::GuardParam& param) { m_pParam = &param; }
 
-	// ガードボタンを押した瞬間に、ガード/解除を切り替える(毎フレーム呼ぶ)
-	void Update(const PlayerInput& input);
-
 	void UpdateTimer(const float deltaTime);
 
 	const PlayerParameter::GuardParam& GetParam()const { return *m_pParam; }
@@ -26,7 +23,7 @@ public:
 
 	// ガード関連
 	bool IsGuardHit()       const { return m_guardState == GuardState::GuardHit; }
-	bool IsGuardCancel()    const { return m_guardState == GuardState::GuardCancel; }
+	bool IsGuardBreak()    const { return m_guardState == GuardState::GuardBreak; }
 	void ResetGuardState() { m_guardState = GuardState::Guard; }
 
 	void NotifyGuardHit();
@@ -37,7 +34,7 @@ private:
 	{
 		Guard,
 		GuardHit,
-		GuardCancel,
+		GuardBreak,
 	};
 
 	// ガード状態

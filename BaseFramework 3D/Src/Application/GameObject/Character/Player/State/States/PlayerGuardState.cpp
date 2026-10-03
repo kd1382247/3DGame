@@ -30,12 +30,18 @@ void PlayerGuardState::OnUpdate(Player * owner)
 
 
 	// ガード解除
-	if (guard.IsGuardCancel())
+	if (guard.IsGuardBreak())
 	{
 		m_pMachine->ChangeState<PlayerNormalState>();
 		return;
 	}
 	
+
+	if (!guard.IsGuardHit() && !owner->GetInput().IsGuardDown())
+	{
+		m_pMachine->ChangeState<PlayerNormalState>();
+	}
+
 	if (guard.IsGuardHit())
 	{
 		owner->PlayAnimation(PlayerAnimationType::DefendHit);
@@ -46,7 +52,6 @@ void PlayerGuardState::OnUpdate(Player * owner)
 			owner->PlayAnimation(PlayerAnimationType::Defend);
 		}
 	}
-	
 
 }
 

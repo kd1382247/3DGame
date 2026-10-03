@@ -523,26 +523,29 @@ bool EnemyBase::ApplyDamage(const AttackInfo& attackInfo)
 {
 	const bool isDead = m_health.TakeDamage(attackInfo.m_damage);
 
-	FlyTextManager::Instance().CreateDamateText(attackInfo.m_damage, GetPos(), m_flyTextPath);
-
-	StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
-
-	// 敵が生きているかでヒットストップ変更
-	if (!isDead)
-	{
-		TimeManager::Instance().StartHitStop(attackInfo.m_hitStopDuration);
-	}
-	else
-	{
-		// ヒットストップとスロー演出をする
-		TimeManager::Instance().StartHitStop(attackInfo.m_killHitStopDuration);
-		TimeManager::Instance().StartSlowMotion(attackInfo.m_killSlowScale, attackInfo.m_killSlowDuration);
-	}
-
-
-	PlayHitEffect();
-
 	AddKnockBack(attackInfo.m_knockBackDir, attackInfo.m_knockBackPower);
+
+	// ダメージが0より上だけ以下の処理をする
+	if(attackInfo.m_damage>0)
+	{
+		// 敵が生きているかでヒットストップ変更
+		if (!isDead)
+		{
+			TimeManager::Instance().StartHitStop(attackInfo.m_hitStop);
+		}
+		else
+		{
+			// ヒットストップとスロー演出をする
+			TimeManager::Instance().StartHitStop(attackInfo.m_killHitStop);
+			TimeManager::Instance().StartSlowMotion(attackInfo.m_SlowScale, attackInfo.m_SlowDuration);
+		}
+
+		PlayHitEffect();
+		FlyTextManager::Instance().CreateDamateText(attackInfo.m_damage, GetPos(), m_flyTextPath);
+		StartOverlay({ 1,1,1 }, 2.0f, m_overlayDuration);
+	}
+
+
 
 	return isDead;
 }

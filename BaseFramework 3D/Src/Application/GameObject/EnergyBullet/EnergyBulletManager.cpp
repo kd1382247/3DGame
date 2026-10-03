@@ -6,7 +6,7 @@
 #include"../../Scene/SceneManager.h"
 
 
-void EnergyBulletManager::CreateEnergyBullet(const Math::Vector3& pos, const Math::Vector3& dir, float speed, float radius,
+void EnergyBulletManager::CreateEnergyBullet(const std::shared_ptr<CharacterBase>owner,const Math::Vector3& pos, const Math::Vector3& dir, float speed, float radius,
 	float damage, float knockBackPower, float lifeTime)
 {
 	auto obj = KdGameObjectFactory::Instance().CreateGameObject("EnergyBullet");
@@ -20,6 +20,7 @@ void EnergyBulletManager::CreateEnergyBullet(const Math::Vector3& pos, const Mat
 
 	bullet->Init();
 	bullet->Setup(pos, dir, speed, radius, damage, knockBackPower, lifeTime);
+	bullet->SetOwner(owner);
 
 	SceneManager::Instance().AddObject(bullet);
 }

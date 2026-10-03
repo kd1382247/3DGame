@@ -165,8 +165,14 @@ void StarFish::FireEnergyBullet()
 	}
 
 	EnergyBulletManager::Instance().CreateEnergyBullet(
-		spawnPos, dir, param.m_bulletSpeed, param.m_bulletRadius,
-		param.m_attackPow, param.m_bulletKnockBack, param.m_bulletLifeTime);
+		std::dynamic_pointer_cast<CharacterBase>( shared_from_this()),
+		spawnPos,
+		dir,
+		param.m_bulletSpeed,
+		param.m_bulletRadius,
+		param.m_attackPow,
+		param.m_bulletKnockBack,
+		param.m_bulletLifeTime);
 }
 
 void StarFish::UpdateBulletFireTiming()

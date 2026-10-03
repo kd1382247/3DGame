@@ -251,6 +251,20 @@ DirectX::BoundingSphere Player::CreateSpecialMoveSphere() const
 
 }
 
+DirectX::BoundingSphere Player::CreateParrySphere() const
+{
+	Math::Vector3 spherePos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
+
+	DirectX::BoundingSphere sphere;
+
+	const auto& parryParam = m_parameter.GetParry();
+
+	sphere.Center = spherePos;
+	sphere.Radius = parryParam.m_parryKnockBackRadius;
+
+	return sphere;
+}
+
 //================================
 // 入力・移動
 //================================
@@ -258,7 +272,6 @@ DirectX::BoundingSphere Player::CreateSpecialMoveSphere() const
 void Player::UpdateInput()
 {
 	m_input.Update(m_deltaTime);
-	m_playerGuard.Update(m_input);
 }
 
 void Player::UpdateMove()
@@ -441,22 +454,27 @@ void Player::OnHit(const AttackInfo attackInfo)
 	
 	AttackInfo info = attackInfo;
 
-	if(m_stateMachine.IsState<PlayerGuardState>())
+	// パリィ成功時
+	if (m_playerParry.IsParryActive() && m_stateMachine.IsState<PlayerParryState>())
 	{
-		// ガード中に攻撃を受けた回数を数える
-		// 上限値をこえたらガードを強制終了
+		if(!m_playerParry.GetIsParrySuccess())
+		{
+			OnParrySuccess();
+			m_playerParry.SetIsParrySuccess(true);
+		}
+		return;
+	}
+	else if(m_stateMachine.IsState<PlayerGuardState>())
+	{
+		// ガード中に攻撃を受けた回数をカウント、上限値をこえたらガードを強制終了
 		m_playerGuard.NotifyGuardHit();
 
+		// ノックバック量を減らす
 		info.m_knockBackPower *= m_playerGuard.GetParam().m_guardKnockBackRate;
-		info.m_damage = 0;
-	}
-	else if (m_stateMachine.IsState<PlayerParryState>())
-	{
-		if (m_playerParry.IsParryActive())
-		{
-			m_playerParry.SetIsParrySuccess(true);
 
-		}
+		AddKnockBack(info.m_knockBackDir, info.m_knockBackPower);
+		return;
+
 	}
 	else if (m_health.TakeDamage(info.m_damage))
 	{
@@ -474,12 +492,6 @@ void Player::OnHit(const AttackInfo attackInfo)
 
 
 	AddKnockBack(info.m_knockBackDir, info.m_knockBackPower);
-
-	// ダメージが0以下の場合は以下の処理を飛ばす
-	if (info.m_damage <= 0)
-	{
-		return;
-	}
 
 	StartOverlay({ 1,0,0 }, 0.8f,m_overlayDuration);
 
@@ -577,4 +589,34 @@ void Player::EndSpecialMove()
 {
 	m_playerAttack.ResetCombo();
 	m_playerSwordTrail.EndTrail();
+}
+
+void Player::OnParrySuccess()
+{
+	// パリィの効果範囲のスフィアを生成
+	DirectX::BoundingSphere sphere = CreateParrySphere();
+
+	PlayerParameter::HitParam hitParam = {};
+
+	const auto& parryParam = m_parameter.GetParry();
+
+	// HitParamに値をセット
+	hitParam.m_attackPower    = 0;
+	hitParam.m_hitStop        = parryParam.m_parryHitStop;
+	hitParam.m_knockBackPower = parryParam.m_parryKnockBackPower;
+
+	// すでに判定をしている敵がいた場合、判定が飛ばされるため
+	// 一度当たり判定リストをクリア
+	m_hitChecker.Clear();
+
+	// 範囲内の相手にノックバックさせる
+	m_hitChecker.Check(*this, sphere, hitParam);
+
+	
+	TimeManager::Instance().StartHitStop(parryParam.m_parryHitStop);
+
+	// スローモーションにする
+	TimeManager::Instance().StartSlowMotion(parryParam.m_parrySlowScale, parryParam.m_parrySlowDuration);
+
+	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
 }

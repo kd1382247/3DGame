@@ -53,7 +53,7 @@ public:
 
 	// 押した瞬間だけtrue
 	bool IsGuardTrigger() const { return m_guardTrigger; }
-
+	bool IsGuardDown()    const { return m_guardDown; }
 
 	//================================
 	// パリィ(左クリック)
@@ -138,7 +138,7 @@ private:
 
 	void UpdateParryInput()
 	{
-		const bool currentParryButton = (GetAsyncKeyState(VK_LEFT) & 0x8000) != 0;
+		const bool currentParryButton = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
 
 		m_parryTrigger = currentParryButton && !m_parryDown;
 		m_parryDown = currentParryButton;

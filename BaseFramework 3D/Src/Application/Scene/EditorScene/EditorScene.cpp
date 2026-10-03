@@ -8,15 +8,6 @@
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 
-
-void EditorScene::EditorUpdate()
-{
-	if (m_spEditorCamera)
-	{
-		m_spEditorCamera->Update();
-	}
-}
-
 void EditorScene::PreDraw()
 {
 	// EditModeならSceneViewへ描画
@@ -30,6 +21,7 @@ void EditorScene::PreDraw()
 	if (EditorManager::Instance().IsEditMode() && m_spEditorCamera)
 	{
 		m_spEditorCamera->PreDraw();
+		m_spEditorCamera->Update();
 	}
 }
 
@@ -82,7 +74,7 @@ void EditorScene::SetupObjectReferences()
 
 void EditorScene::Event()
 {
-	m_spEditorCamera->Update();
+
 }
 
 void EditorScene::Init()

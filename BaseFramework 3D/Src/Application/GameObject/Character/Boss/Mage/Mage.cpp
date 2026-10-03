@@ -297,8 +297,14 @@ void Mage::FireBolt()
 	}
 
 	EnergyBulletManager::Instance().CreateEnergyBullet(
-		spawnPos, dir, param.m_boltSpeed, param.m_boltRadius,
-		param.m_attackPow, param.m_boltKnockBack, param.m_boltLifeTime);
+		std::dynamic_pointer_cast<CharacterBase>(shared_from_this()),
+		spawnPos,
+		dir,
+		param.m_boltSpeed,
+		param.m_boltRadius,
+		param.m_attackPow,
+		param.m_boltKnockBack,
+		param.m_boltLifeTime);
 }
 
 void Mage::CastNovaCircle()

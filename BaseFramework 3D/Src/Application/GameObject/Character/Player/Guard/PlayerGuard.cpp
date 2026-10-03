@@ -1,22 +1,5 @@
 ﻿#include "PlayerGuard.h"
 
-void PlayerGuard::Update(const PlayerInput& input)
-{
-	// ガードの状態を変更
-	if (input.IsGuardTrigger())
-	{
-		// ガード解除
-		if (m_guardState == GuardState::Guard)
-		{
-			m_guardState = GuardState::GuardCancel;
-		}
-		else
-		{
-			m_guardState = GuardState::Guard;
-		}
-	}
-}
-
 void PlayerGuard::UpdateTimer(const float deltaTime)
 {
 
@@ -49,6 +32,12 @@ PlayerAnimationType PlayerGuard::GetGuardAnimation() const
 
 void PlayerGuard::NotifyGuardHit()
 {
+
+	if (m_guardState == GuardState::GuardBreak)
+	{
+		return;
+	}
+
 	// ガード中に受けた攻撃をカウント
 	m_guardHitCount++;
 
@@ -62,6 +51,6 @@ void PlayerGuard::NotifyGuardHit()
 	if (m_guardHitCount >= m_pParam->m_guardBreakCount)
 	{
 		m_guardHitCount = 0;
-		m_guardState = GuardState::GuardCancel;
+		m_guardState = GuardState::GuardBreak;
 	}
 }
