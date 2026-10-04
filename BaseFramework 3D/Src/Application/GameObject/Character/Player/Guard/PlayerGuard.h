@@ -28,6 +28,11 @@ public:
 
 	void NotifyGuardHit();
 
+	PlayerAnimationType GetGuardMoveAnimation(const PlayerInput::MoveType moveType) const;
+
+	// プレイヤーの正面、敵のノックバックの二つのベクトルで、ガード範囲内か判定
+	bool IsInGuardRange(const Math::Vector3& forward, const Math::Vector3& knockBackDir)const;
+
 private:
 
 	enum class GuardState

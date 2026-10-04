@@ -5,6 +5,15 @@
 #include"PlayerNormalState.h"
 #include"PlayerParryState.h"
 
+namespace
+{
+	// 移動方向に合わせたガード中のアニメーションを返す
+	PlayerAnimationType GetGuardAnimation(Player* owner)
+	{
+		return owner->GetGuard().GetGuardMoveAnimation(owner->GetInput().GetMoveType());
+	}
+}
+
 void PlayerGuardState::OnStart(Player* owner)
 {
 	PlayerGuard& guard = owner->GetGuard();
@@ -21,22 +30,33 @@ void PlayerGuardState::OnUpdate(Player * owner)
 
 	owner->UpdateAttackMove();
 
+	if(!guard.IsGuardBreak()&&!guard.IsGuardHit())
+	{
+		owner->PlayAnimation(GetGuardAnimation(owner));
+	}
+
 	// ガード中にパリィの入力を受けたら、ステートを変える
-	if (owner->GetInput().IsParryTrigger())
+	if (owner->GetInput().IsParryTrigger()&&
+		!guard.IsGuardHit()&&
+		!guard.IsGuardBreak())
 	{
 		m_pMachine->ChangeState<PlayerParryState>();
 		return;
 	}
 
-
 	// ガード解除
 	if (guard.IsGuardBreak())
 	{
-		m_pMachine->ChangeState<PlayerNormalState>();
+		owner->PlayAnimation(PlayerAnimationType::GuardBreak);
+
+		if (owner->IsAnimationFinished())
+		{
+			m_pMachine->ChangeState<PlayerNormalState>();
+		}
+
 		return;
 	}
 	
-
 	if (!guard.IsGuardHit() && !owner->GetInput().IsGuardDown())
 	{
 		m_pMachine->ChangeState<PlayerNormalState>();
@@ -44,12 +64,13 @@ void PlayerGuardState::OnUpdate(Player * owner)
 
 	if (guard.IsGuardHit())
 	{
-		owner->PlayAnimation(PlayerAnimationType::DefendHit);
+
+		owner->PlayAnimation(PlayerAnimationType::GuardHit);
 
 		if (owner->IsAnimationFinished())
 		{
 			guard.ResetGuardState();
-			owner->PlayAnimation(PlayerAnimationType::Defend);
+			owner->PlayAnimation(PlayerAnimationType::GuardIDLE);
 		}
 	}
 

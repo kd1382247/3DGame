@@ -455,7 +455,9 @@ void Player::OnHit(const AttackInfo attackInfo)
 	AttackInfo info = attackInfo;
 
 	// パリィ成功時
-	if (m_playerParry.IsParryActive() && m_stateMachine.IsState<PlayerParryState>())
+	if (m_playerParry.IsParryActive() &&
+		m_stateMachine.IsState<PlayerParryState>()&&
+		m_playerGuard.IsInGuardRange(m_mWorld.Backward(), info.m_knockBackDir))
 	{
 		if(!m_playerParry.GetIsParrySuccess())
 		{
@@ -464,7 +466,8 @@ void Player::OnHit(const AttackInfo attackInfo)
 		}
 		return;
 	}
-	else if(m_stateMachine.IsState<PlayerGuardState>())
+	else if(m_stateMachine.IsState<PlayerGuardState>()&&
+		    m_playerGuard.IsInGuardRange(m_mWorld.Backward(),info.m_knockBackDir))
 	{
 		// ガード中に攻撃を受けた回数をカウント、上限値をこえたらガードを強制終了
 		m_playerGuard.NotifyGuardHit();
@@ -474,7 +477,6 @@ void Player::OnHit(const AttackInfo attackInfo)
 
 		AddKnockBack(info.m_knockBackDir, info.m_knockBackPower);
 		return;
-
 	}
 	else if (m_health.TakeDamage(info.m_damage))
 	{
@@ -612,7 +614,13 @@ void Player::OnParrySuccess()
 	// 範囲内の相手にノックバックさせる
 	m_hitChecker.Check(*this, sphere, hitParam);
 
-	
+
+	Math::Vector3 effectPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
+
+	effectPos += m_mWorld.Backward() * 0.3;
+	// パリィエフェクト
+	KdEffekseerManager::GetInstance().Play("Player/Parry/Parry.efkefc", effectPos, 0.3f, 1.0f, false,0,36,GetRotation());
+
 	TimeManager::Instance().StartHitStop(parryParam.m_parryHitStop);
 
 	// スローモーションにする

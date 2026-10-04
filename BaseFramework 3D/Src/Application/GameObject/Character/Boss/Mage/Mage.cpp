@@ -77,6 +77,8 @@ void Mage::SetUpReference()
 	std::shared_ptr<BossHPBar>hpBar = std::make_shared<BossHPBar>();
 	hpBar->Init();
 	hpBar->SetBoss(std::dynamic_pointer_cast<BossBase>(shared_from_this()));
+	//hpBar->SetBossName("Mage",)
+
 	SceneManager::Instance().AddObject(hpBar);
 }
 
@@ -317,10 +319,10 @@ void Mage::CastNovaCircle()
 		param.m_novaCircleTelegraph,
 		param.m_attackPow,
 		"Salamander/Salamander.efkefc",
-		1.2f,
+		0.8f,
 		1.0f,
 		0,
-		45);
+		140);
 }
 
 Math::Vector3 Mage::GetEffectRotation(const float value)const

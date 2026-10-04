@@ -55,13 +55,33 @@ void PlayerAnimation::Play(PlayerAnimationType _animType)
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("ChargeAttackRGT"), true);
 		m_animSpeed = 1.0f;
 		break;
-	case PlayerAnimationType::Defend:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Defend"), true);
+	case PlayerAnimationType::GuardIDLE:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GuardIDLE"), true);
 		m_animSpeed = 1.4f;
 		break;
-	case PlayerAnimationType::DefendHit:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("DefendHit"), false);
+	case PlayerAnimationType::GuardWalkBWD:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GuardWalkBWD"), true);
 		m_animSpeed = 1.4f;
+		break;
+	case PlayerAnimationType::GuardWalkFWD:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GuardWalkFWD"), true);
+		m_animSpeed = 1.4f;
+		break;
+	case PlayerAnimationType::GuardWalkLFT:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GuardWalkLFT"), true);
+		m_animSpeed = 1.4f;
+		break;
+	case PlayerAnimationType::GuardWalkRGT:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GuardWalkRGT"), true);
+		m_animSpeed = 1.4f;
+		break;
+	case PlayerAnimationType::GuardHit:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GuardHit"), false);
+		m_animSpeed = 1.4f;
+		break;
+	case PlayerAnimationType::GuardBreak:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GuardBreak"), false);
+		m_animSpeed = 1.6f;
 		break;
 	case PlayerAnimationType::Parry:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Parry"), false);

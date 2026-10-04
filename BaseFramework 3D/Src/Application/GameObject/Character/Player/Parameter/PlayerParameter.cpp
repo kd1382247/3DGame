@@ -102,6 +102,7 @@ void PlayerParameter::DrawInspecter()
 			InspectorUI::Seconds("HitResetTime",         m_guard.m_guardHitResetTime);
 			InspectorUI::Count  ("BreakCount",           m_guard.m_guardBreakCount);
 			InspectorUI::Rate   ("KnockBackRate",        m_guard.m_guardKnockBackRate);
+			InspectorUI::Degree ("GuardAngle",           m_guard.m_guardAngle);
 
 			if (InspectorUI::BeginGroup("Parry"))
 			{
@@ -195,7 +196,7 @@ void PlayerParameter::SaveToJson()
 	paramJson["GuardHitResetTime"]         = m_guard.m_guardHitResetTime;
 	paramJson["GuardBreakCount"]           = m_guard.m_guardBreakCount;
 	paramJson["GuardKnockBackRate"]        = m_guard.m_guardKnockBackRate;
-
+	paramJson["GuardAngle"]                = m_guard.m_guardAngle;
 
 	//--------------------------------------------------------
 	//  パリィパラメータ
@@ -314,7 +315,7 @@ void PlayerParameter::LoadFromJson()
 		ParameterJson::Read(paramJson, "GuardHitResetTime",         m_guard.m_guardHitResetTime);
 		ParameterJson::Read(paramJson, "GuardBreakCount",           m_guard.m_guardBreakCount);
 		ParameterJson::Read(paramJson, "GuardKnockBackRate",        m_guard.m_guardKnockBackRate);
-
+		ParameterJson::Read(paramJson, "GuardAngle",                m_guard.m_guardAngle);
 
 		//--------------------------------------------------------
 		//  ガードパラメータ

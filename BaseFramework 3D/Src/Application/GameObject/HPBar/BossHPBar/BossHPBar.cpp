@@ -4,12 +4,14 @@
 
 void BossHPBar::Init()
 {
-
 	// 各テクスチャを初期化
 	InitTexture(m_spFrameTex, "Frame.png");
 	InitTexture(m_spFrameBackGroundTex, "Frame_bg.png");
 	InitTexture(m_spBarGreenTex, "Bar_green.png");
 	InitTexture(m_spBarRedTex, "Bar_red.png");
+
+	m_spNamePrateTex = std::make_shared<KdTexture>();
+	m_spNamePrateTex->Load("BossName/NamePrate"+m_bossName);
 
 }
 
@@ -48,6 +50,8 @@ void BossHPBar::DrawSprite()
 	{
 		return;
 	}
+
+	DrawNamePrate();
 
 	DrawFrameBackGround();
 	DrawBarRed();
@@ -88,6 +92,11 @@ void BossHPBar::DrawBarGreen()
 
 void BossHPBar::DrawBar(const std::shared_ptr<KdTexture>& tex, const float rate)
 {
+	if (!tex)
+	{
+		return;
+	}
+
 	const long w = static_cast<long>(m_barWidth * rate);
 	const long h = static_cast<long>(m_barHeight);
 
@@ -101,4 +110,21 @@ void BossHPBar::DrawBar(const std::shared_ptr<KdTexture>& tex, const float rate)
 		static_cast<int>(w),
 		static_cast<int>(h),
 		&rc, &color, pivot);
+}
+
+void BossHPBar::DrawNamePrate()
+{
+
+	if (!m_spNamePrateTex)
+	{
+		return;
+	}
+
+	KdShaderManager::Instance().m_spriteShader.DrawTex(
+		m_spNamePrateTex,
+		static_cast<int>(m_namePlatePos.x),
+		static_cast<int>(m_namePlatePos.y),
+		static_cast<int>(m_namePrateWidth),
+		static_cast<int>(m_namePrateHeight));
+
 }

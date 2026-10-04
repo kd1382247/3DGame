@@ -65,7 +65,8 @@ public:
 	{
 		int   m_guardBreakCount      = 5;           // ガード中に何回攻撃を受けたら解除かの上限
 		float m_guardHitResetTime    = 2.0f;        // [s] 一定時間攻撃を受けないときのリセット時間
-		float m_guardKnockBackRate = 0.3f;          // ガード時に受けるノックバックの割合
+		float m_guardKnockBackRate   = 0.3f;        // ガード時に受けるノックバックの割合
+		float m_guardAngle           = 140.0f;      // ガードを受けれる範囲(角度)
   
 	};
 
