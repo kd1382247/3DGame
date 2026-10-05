@@ -23,7 +23,7 @@ private:
 
 	void InitPolygon(
 		std::shared_ptr<KdSquarePolygon>& polygon,
-		const std::string& filePath,
+		const std::string& fileName,
 		const KdSquarePolygon::PivotType type,
 		const Math::Vector2& scale={1,1},
 		const Math::Vector2& split={1,1});
@@ -60,5 +60,5 @@ private:
 	static constexpr float DamageBarDepth = -0.0001f;
 	static constexpr float HPBarDepth = -0.0002f;
 
-	const std::string MaterialPath = "Asset/Textures/HP/Enemy/";
+	const std::string FilePath = "Asset/Textures/HP/Enemy/";
 };

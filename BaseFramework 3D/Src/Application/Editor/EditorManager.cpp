@@ -552,3 +552,23 @@ std::string EditorManager::MakeUniqueObjectName(const std::string& className) co
 		++id;
 	}
 }
+
+void EditorManager::ResetState()
+{
+	// Play中はStartPlayModeでカーソルを隠しているので元に戻す
+	// (ShowCursorは呼んだ回数分だけ増減するため、Playでない時に呼ぶと数が合わなくなる)
+	if (IsPlayMode())
+	{
+		ShowCursor(true);
+	}
+
+	SetEditorMode(EditorMode::Edit);
+
+	// 選択中のオブジェクトへの参照を解除
+	SetSelectedObject(nullptr);
+
+	ClearDirty();
+
+	// 編集中のステージ名などを初期状態に戻す
+	m_spStageEditor = std::make_shared<StageEditor>();
+}

@@ -59,7 +59,7 @@ void BossHPBar::DrawSprite()
 	DrawFrame();
 }
 
-void BossHPBar::InitTexture(std::shared_ptr<KdTexture>& tex, const std::string& filePath)
+void BossHPBar::InitTexture(std::shared_ptr<KdTexture>& tex, const std::string& fileName)
 {
 	if (tex)
 	{
@@ -67,7 +67,7 @@ void BossHPBar::InitTexture(std::shared_ptr<KdTexture>& tex, const std::string& 
 	}
 
 	tex = std::make_shared<KdTexture>();
-	tex->Load(MaterialPath + filePath);
+	tex->Load(FilePath + fileName);
 }
 
 void BossHPBar::DrawFrame()

@@ -24,7 +24,7 @@ public:
 
 private:
 
-	void InitTexture(std::shared_ptr<KdTexture>& tex, const std::string& filePath);
+	void InitTexture(std::shared_ptr<KdTexture>& tex, const std::string& fileName);
 
 	void DrawFrame();
 	void DrawFrameBackGround();
@@ -58,7 +58,7 @@ private:
 	// Barの位置
 	Math::Vector2 m_barOffset = { -400.0f,300.0f };
 
-	const std::string MaterialPath = "Asset/Textures/HP/Boss/";
+	const std::string FilePath = "Asset/Textures/HP/Boss/";
 
 	std::string m_bossName = {};
 

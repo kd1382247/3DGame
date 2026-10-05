@@ -14,6 +14,11 @@ void GameScene::SetupObjectReferences()
 }
 void GameScene::Event()
 {
+	if (GetAsyncKeyState('G') & 0x8000)
+	{
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
+	}
+
 
 }
 

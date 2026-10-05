@@ -2,6 +2,8 @@
 
 class BaseScene;
 
+#include"SceneTransition/SceneTransition.h"
+
 class SceneManager
 {
 public:
@@ -23,10 +25,16 @@ public:
 	void DrawSprite();
 	void DrawDebug();
 
-	// 次のシーンをセット (次のフレームから切り替わる)
+	// 次のシーンをセット (暗転しきってから変わる)
 	void SetNextScene(SceneType _nextScene)
 	{
-		m_nextSceneType = _nextScene;
+		if(!m_transition.IsTransitioning())
+		{
+			m_nextSceneType = _nextScene;
+
+			// シーンが変わるときにFadeOutする
+			m_transition.StartFadeOut();
+		}
 	}
 
 	// 現在のシーンのオブジェクトリストを取得
@@ -50,6 +58,8 @@ private:
 	// インスタンス生成(アプリ起動)時にコンストラクタで自動実行
 	void Init()
 	{
+		m_transition.Init();
+
 		// 開始シーンに切り替え
 		ChangeScene(m_currentSceneType);
 	}
@@ -57,15 +67,21 @@ private:
 	// シーン切り替え関数
 	void ChangeScene(SceneType _sceneType);
 
+	// シーン切り替え時に、前のシーンの情報を持ち越さないようリセットする
+	// (シングルトンのマネージャーが持っているデータを空にする)
+	void ResetSystems();
+
 	// 現在のシーンのインスタンスを保持しているポインタ
 	std::shared_ptr<BaseScene> m_currentScene = nullptr;
 
 	// 現在のシーンの種類を保持している変数
-	SceneType m_currentSceneType = SceneType::Editor;
+	SceneType m_currentSceneType = SceneType::Title;
 
 	// 次のシーンの種類を保持している変数
 	SceneType m_nextSceneType = m_currentSceneType;
 
+	// シーン遷移
+	SceneTransition m_transition;
 
 private:
 

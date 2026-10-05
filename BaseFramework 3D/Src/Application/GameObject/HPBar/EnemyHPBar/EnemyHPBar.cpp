@@ -110,7 +110,7 @@ void EnemyHPBar::SetUpReference()
 }
 
 
-void EnemyHPBar::InitPolygon(std::shared_ptr<KdSquarePolygon>& polygon, const std::string& filePath, const KdSquarePolygon::PivotType type, const Math::Vector2& scale, const Math::Vector2& split)
+void EnemyHPBar::InitPolygon(std::shared_ptr<KdSquarePolygon>& polygon, const std::string& fileName, const KdSquarePolygon::PivotType type, const Math::Vector2& scale, const Math::Vector2& split)
 {
 	if (polygon)
 	{
@@ -119,7 +119,7 @@ void EnemyHPBar::InitPolygon(std::shared_ptr<KdSquarePolygon>& polygon, const st
 
 	polygon = std::make_shared<KdSquarePolygon>();
 
-	polygon->SetMaterial(MaterialPath + filePath);
+	polygon->SetMaterial(FilePath + fileName);
 	polygon->SetScale(scale);
 	polygon->SetSplit(split.x,split.y);
 	polygon->SetPivot(type);

@@ -56,7 +56,7 @@ void PlayerHPBar::DrawSprite()
 	DrawFrame();
 }
 
-void PlayerHPBar::InitTexture(std::shared_ptr<KdTexture>& tex, const std::string& filePath)
+void PlayerHPBar::InitTexture(std::shared_ptr<KdTexture>& tex, const std::string& fileName)
 {
 	if (tex)
 	{
@@ -64,7 +64,7 @@ void PlayerHPBar::InitTexture(std::shared_ptr<KdTexture>& tex, const std::string
 	}
 
 	tex = std::make_shared<KdTexture>();
-	tex->Load(MaterialPath + filePath);
+	tex->Load(FilePath + fileName);
 }
 
 void PlayerHPBar::DrawFrame()

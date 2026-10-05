@@ -124,6 +124,9 @@ public:
 private:
 	void GuiRelease();
 
+	// エディタGUI描画
+	void DrawEditor();
+
 	// ImGui
 	std::unique_ptr<ImGuiAppLog> m_uqLog = nullptr;
 

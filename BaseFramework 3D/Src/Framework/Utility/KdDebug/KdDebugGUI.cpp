@@ -2,8 +2,9 @@
 
 #include "KdDebugGUI.h"
 
+#include"../../../Application/Scene/SceneManager.h"
 #include"../../../Application/Editor/EditorManager.h"
-#include"../../Effekseer/KdEffekseerManager.h"
+#include"../../../Application/Scene/EditorScene/EditorScene.h"
 
 
 KdDebugGUI::KdDebugGUI()
@@ -65,20 +66,7 @@ void KdDebugGUI::GuiProcess()
 //	ImGui::End();
 
 
-
-	if(EditorManager::Instance().IsPlayMode())
-	{
-		// ログウィンドウ
-		//m_uqLog->Draw("Log Window");
-	}
-
-	if (EditorManager::Instance().IsEditMode())
-	{
-		// エラーウィンドウ
-		m_uqErrorLog->Draw("Error Window");
-	}
-
-	EditorManager::Instance().Draw();
+	DrawEditor();
 
 
 	//=====================================================
@@ -153,4 +141,29 @@ void KdDebugGUI::GuiRelease()
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+}
+
+void KdDebugGUI::DrawEditor()
+{
+
+	// エディタシーンのみ表示
+	if (!SceneManager::Instance().GetCurrentScene<EditorScene>())
+	{
+		return;
+	}
+
+	if (EditorManager::Instance().IsPlayMode())
+	{
+		// ログウィンドウ
+		//m_uqLog->Draw("Log Window");
+	}
+
+	if (EditorManager::Instance().IsEditMode())
+	{
+		// エラーウィンドウ
+		m_uqErrorLog->Draw("Error Window");
+	}
+
+	EditorManager::Instance().Draw();
+
 }

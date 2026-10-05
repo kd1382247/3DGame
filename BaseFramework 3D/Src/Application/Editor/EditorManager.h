@@ -24,6 +24,9 @@ public:
 	void StartPlayMode();
 	void StopPlayMode();
 
+	// シーン切り替え時に、エディタの状態(モード・選択・編集中のステージ)を初期状態に戻す
+	void ResetState();
+
 	// エディタのモードを変更する
 	void SetEditorMode(EditorMode mode) { m_editorMode = mode; }
 	
