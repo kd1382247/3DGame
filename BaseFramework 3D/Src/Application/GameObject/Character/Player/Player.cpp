@@ -13,6 +13,7 @@
 
 #include"State/States/PlayerNormalState.h"
 #include"State/States/PlayerAttackState.h"
+#include"State/States/PlayerChargeAttackState.h"
 #include"State/States/PlayerSpecialMoveState.h"
 #include"State/States/PlayerGuardState.h"
 #include"State/States/PlayerParryState.h"
@@ -86,8 +87,6 @@ void Player::Update()
 	{
 		UpdateGroundPosY();
 	}
-
-	
 }
 
 void Player::PostUpdate()
@@ -206,8 +205,6 @@ void Player::UpdateAttackCollision(const AttackType type)
 		// 当たった相手へダメージを与える
 	m_hitChecker.Check(*this, sphere,*hitParam);
 	
-
-
 	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
 
 }
@@ -286,6 +283,35 @@ void Player::UpdateAttackMove()
 	ApplyCameraRelativeMove(m_playerAttack.GetMoveSpeed());
 
 	FacingDirectionToCamera();
+}
+
+void Player::UpdateWalkSE(const float footstepInterval)
+{
+	if (!m_input.IsMovePressed())
+	{
+		// SEが鳴っていたら止める
+		auto spSoundInst = m_wpSoundInst.lock();
+		if (spSoundInst)
+		{
+			if(spSoundInst->IsPlaying())
+			{
+				spSoundInst->Stop();
+			}
+		}
+
+		return;
+	}
+
+	m_footStepTimer -= m_deltaTime;
+
+	if (m_footStepTimer <= 0)
+	{
+		// 古い参照を捨てて新たに再生したSEを受け取る
+		m_wpSoundInst.lock().reset();
+		m_wpSoundInst = KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/Walk/Walk.wav");
+
+		m_footStepTimer = footstepInterval;
+	}
 }
 
 bool Player::GetCameraForward(Math::Vector3& outDir) const
@@ -395,6 +421,7 @@ void Player::UpdateAnimation()
 	m_animation.Update(m_deltaTime);
 }
 
+
 void Player::UpdateGroundPosY()
 {
 	KdCollider::RayInfo rayInfo;
@@ -499,6 +526,10 @@ void Player::OnHit(const AttackInfo attackInfo)
 
 	FlyTextManager::Instance().CreateDamateText(info.m_damage, GetPos(), m_flyTextPath);
 	
+	// SEを流す
+	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/Damage/Damage.wav");
+
+
 }
 
 //================================
@@ -625,6 +656,10 @@ void Player::OnParrySuccess()
 
 	// スローモーションにする
 	TimeManager::Instance().StartSlowMotion(parryParam.m_parrySlowScale, parryParam.m_parrySlowDuration);
+
+	// SEを流す
+	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/Parry/Parry.wav");
+
 
 	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, kGreenColor);
 }

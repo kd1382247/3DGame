@@ -77,6 +77,9 @@ public:
 	// 攻撃中・ガード中の移動(カメラ基準で移動して、カメラの向きへ向く)
 	void UpdateAttackMove();
 
+	// プレイヤーの足音再生
+	void UpdateWalkSE(const float footstepInterval);
+
 	// 通常攻撃の開始 / 終了
 	void StartCurrentAttack();
 	void EndAttack();
@@ -130,7 +133,6 @@ private:
 	// 入力を受け付ける
 	void UpdateInput();
 
-
 	void UpdateAnimation();
 
 	void UpdateGroundPosY();
@@ -182,6 +184,7 @@ private:
 	// 剣の軌跡
 	PlayerSwordTrail  m_playerSwordTrail;
 
+	// プレイヤーがいる地面の高さ
 	float           m_groundYPos = 0.0f;
 
 	// カメラ
@@ -197,4 +200,9 @@ private:
 	StateMachine<Player>      m_stateMachine;
 
 	const std::string                    m_flyTextPath = "DamageNumber_Red.png";
+	
+	// 足音を鳴らすまでの経過時間
+	float m_footStepTimer = 0.0f;
+
+	std::weak_ptr<KdSoundInstance>m_wpSoundInst;
 };

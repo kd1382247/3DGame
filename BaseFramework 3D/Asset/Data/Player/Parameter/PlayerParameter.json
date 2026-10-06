@@ -41,10 +41,10 @@
     "SpecialHitCooldown": 5.0,
     "SpecialHitRadius": 1.5,
     "SpecialHitStop": 0.05000000074505806,
-    "SpecialKillHitStop": 0.15000000596046448,
+    "SpecialKillHitStop": 0.20000000298023224,
     "SpecialKnockBackPower": 0.10000000149011612,
     "SpecialMoveSpeed": 0.30000001192092896,
-    "SpecialSlowDuration": 0.5,
+    "SpecialSlowDuration": 0.699999988079071,
     "SpecialSlowScale": 0.30000001192092896,
     "StepHeight": 0.20000000298023224,
     "TurnSpeed": 15.0

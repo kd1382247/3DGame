@@ -19,6 +19,9 @@ void PlayerNormalState::OnUpdate(Player* owner)
 
 	owner->UpdateMove();
 
+	// 足音再生
+	owner->UpdateWalkSE(0.3);
+
 	// 移動アニメーション
 	if (input.IsMovePressed())
 	{

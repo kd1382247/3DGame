@@ -421,6 +421,9 @@
     <Filter Include="Src\Application\Scene\SceneTransition">
       <UniqueIdentifier>{0e910c5e-a914-4bea-af22-5f4415cb7dfe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\Scene\Setting">
+      <UniqueIdentifier>{8f1d8dc7-f55f-4040-8abb-6be7d127ac3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1116,6 +1119,9 @@
     <ClInclude Include="Src\Application\Scene\SceneTransition\SceneTransition.h">
       <Filter>Src\Application\Scene\SceneTransition</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Scene\Setting\Setting.h">
+      <Filter>Src\Application\Scene\Setting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1723,6 +1729,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Scene\SceneTransition\SceneTransition.cpp">
       <Filter>Src\Application\Scene\SceneTransition</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Scene\Setting\Setting.cpp">
+      <Filter>Src\Application\Scene\Setting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -104,6 +104,10 @@ public:
 
 				target->OnHit(attackInfo);
 				m_hitTargets.emplace_back(target);
+
+				// SEを流す
+				KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/Hit/Hit2.wav");
+
 			}
 		}
 	}

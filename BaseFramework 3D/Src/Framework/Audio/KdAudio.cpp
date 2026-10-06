@@ -115,6 +115,93 @@ std::shared_ptr<KdSoundInstance3D> KdAudioManager::Play3D(std::string_view rName
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+// BGMの再生
+// ・鳴っているBGMがあれば止める
+// ・BGM用の音量で再生し、再生中のBGMとして覚えておく
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+std::shared_ptr<KdSoundInstance> KdAudioManager::PlayBGM(std::string_view rName, bool loop)
+{
+	StopBGM();
+
+	m_bgmInstance = PlayWithVolume(rName, loop, m_bgmVolume);
+
+	return m_bgmInstance;
+}
+
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+// SEの再生
+// ・SE用の音量で再生する (SEは短く何度も鳴るので、インスタンスは覚えない)
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+std::shared_ptr<KdSoundInstance> KdAudioManager::PlaySE(std::string_view rName, bool loop)
+{
+	return PlayWithVolume(rName, loop, m_seVolume);
+}
+
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+// BGMの停止
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+void KdAudioManager::StopBGM()
+{
+	if (!m_bgmInstance) { return; }
+
+	m_bgmInstance->Stop();
+	m_bgmInstance = nullptr;
+}
+
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+// BGM音量の設定
+// ・0.0〜1.0に丸める
+// ・再生中のBGMがあれば、その音量もすぐに変更する
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+void KdAudioManager::SetBGMVolume(float vol)
+{
+	m_bgmVolume = std::clamp(vol, 0.0f, 1.0f);
+
+	if (m_bgmInstance)
+	{
+		m_bgmInstance->SetVolume(m_bgmVolume);
+	}
+}
+
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+// SE音量の設定
+// ・0.0〜1.0に丸める
+// ・次に鳴らすSEから反映される
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+void KdAudioManager::SetSEVolume(float vol)
+{
+	m_seVolume = std::clamp(vol, 0.0f, 1.0f);
+}
+
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+// 再生用インスタンスを作り、音量を指定して2Dサウンドを再生する
+// ・Play()と違い、再生前に音量を設定する(一瞬だけ大音量で鳴るのを防ぐ)
+// ・念のため再生後にも設定する(ライブラリ側の挙動に依存しないため)
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+std::shared_ptr<KdSoundInstance> KdAudioManager::PlayWithVolume(std::string_view rName, bool loop, float vol)
+{
+	if (!m_audioEng) { return nullptr; }
+
+	std::shared_ptr<KdSoundEffect> soundData = GetSound(rName);
+
+	if (!soundData) { return nullptr; }
+
+	std::shared_ptr<KdSoundInstance> instance = std::make_shared<KdSoundInstance>(soundData);
+
+	if (!instance->CreateInstance()) { return nullptr; }
+
+	instance->SetVolume(vol);
+
+	instance->Play(loop);
+
+	instance->SetVolume(vol);
+
+	AddPlayList(instance);
+
+	return instance;
+}
+
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // 再生リストの全ての音を停止する
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void KdAudioManager::StopAllSound()
@@ -197,6 +284,9 @@ void KdAudioManager::LoadSoundAssets(std::initializer_list<std::string_view>& fi
 void KdAudioManager::Release()
 {
 	StopAllSound();
+
+	// BGMのインスタンスはエンジンより先に解放する
+	m_bgmInstance = nullptr;
 
 	m_playList.clear();
 

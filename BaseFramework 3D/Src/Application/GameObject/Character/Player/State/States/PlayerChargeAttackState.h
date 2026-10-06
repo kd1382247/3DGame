@@ -18,4 +18,8 @@ private:
 
 	std::weak_ptr<KdEffekseerObject> m_wpEffekseerObj;
 
+	std::weak_ptr<KdSoundInstance>m_wpSoundInst;
+
+	bool m_isPlaySE = false;
+
 };

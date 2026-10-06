@@ -8,7 +8,6 @@ void PlayerSwordTrail::Init()
 
 	m_spTrailPolygon->SetPattern(KdTrailPolygon::Trail_Pattern::eVertices);
 
-	// 1フレームに2点追加するので、残したいフレーム数の2倍を指定する（今は10フレーム分＝20点）
 	m_spTrailPolygon->SetLength(40);
 }
 

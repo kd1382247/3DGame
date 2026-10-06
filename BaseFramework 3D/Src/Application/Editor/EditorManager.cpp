@@ -153,6 +153,9 @@ void EditorManager::StopPlayMode()
 		return;
 	}
 
+	// 音を全て止める
+	KdAudioManager::Instance().StopAllSound();
+
 	// Play中の状態を削除
 	editorScene->BackupObjectList();
 	WayPointManager::Instance().ClearWayPoints();

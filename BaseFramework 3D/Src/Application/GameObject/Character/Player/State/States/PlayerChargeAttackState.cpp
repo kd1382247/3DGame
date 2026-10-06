@@ -24,6 +24,8 @@ void PlayerChargeAttackState::OnStart(Player* owner)
 	attack.StartCharge();
 
 	owner->PlayAnimation(GetChargeAnimation(owner));
+
+	m_isPlaySE = false;
 }
 
 void PlayerChargeAttackState::OnUpdate(Player * owner)
@@ -34,11 +36,20 @@ void PlayerChargeAttackState::OnUpdate(Player * owner)
 
 	owner->PlayAnimation(GetChargeAnimation(owner));
 
+	// 足音再生
+	owner->UpdateWalkSE(0.5);
+
 	attack.UpdateChargeTime(owner->GetDeltaTime());
 
 	if (attack.IsChargeComplete())
 	{
-
+		if(!m_isPlaySE)
+		{
+			m_isPlaySE = true;
+			// SEを流す
+			KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/AttackCharge/AttackCharge.wav");
+			m_wpSoundInst = KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/AttackCharge/ChargeKeep.wav", true);
+		}
 		auto spEffekseerObj = m_wpEffekseerObj.lock();
 
 		if (!spEffekseerObj || !spEffekseerObj->IsPlaying())
@@ -69,6 +80,13 @@ void PlayerChargeAttackState::OnExit(Player * owner)
 	owner->GetAttack().EndCharge();
 	owner->GetAttack().ResetCombo();
 
+	// チャージキープのSEを止める
+	auto spSountInst = m_wpSoundInst.lock();
+	if (spSountInst)
+	{
+		spSountInst->Stop();
+	}
+
 	auto spEffekseerObj = m_wpEffekseerObj.lock();
 
 	if (!spEffekseerObj)
@@ -78,6 +96,8 @@ void PlayerChargeAttackState::OnExit(Player * owner)
 
 	spEffekseerObj->StopEffect();
 	m_wpEffekseerObj.reset();
+
+	
 }
 
 void PlayerChargeAttackState::EffectUpdate(Player* owner)

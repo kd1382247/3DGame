@@ -4,6 +4,8 @@
 
 #include"../../System/Mouse/Mouse.h"
 
+#include"../../Scene/Setting/Setting.h"
+
 
 void Title::Init()
 {
@@ -89,6 +91,19 @@ void Title::UpdateSinCurve()
 
 void Title::UpdateButtonInput()
 {
+	// マウスの左ボタンの状態 (「押した瞬間」を取るため、毎フレーム更新する)
+	const bool isMouseDown    = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+	const bool isMouseTrigger = isMouseDown && !m_isPrevMouseDown;
+	m_isPrevMouseDown = isMouseDown;
+
+	// 設定画面が開いている間は、タイトルのボタンを操作できないようにする
+	std::shared_ptr<Setting> spSetting = m_wpSetting.lock();
+	if (spSetting && spSetting->IsOpen())
+	{
+		m_isHoverStartButton   = false;
+		m_isHoverSettingButton = false;
+		return;
+	}
 
 	POINT mousePos = Mouse::Instance().Get2DMousePos();
 
@@ -104,14 +119,13 @@ void Title::UpdateButtonInput()
 
 		if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 		{
-			SceneManager::Instance().SetNextScene(SceneManager::SceneType::Game);
+			SceneManager::Instance().SetNextScene(SceneManager::SceneType::Editor);
 		}
 	}
 	else
 	{
 		m_isHoverStartButton = false;
 	}
-
 
 	// スタートボタンの幅を算出
 	Math::Vector2 settingButtonMax = m_settingButtonPos + ButtonTexSize / 2;
@@ -122,6 +136,12 @@ void Title::UpdateButtonInput()
 		settingButtonMin.y < mousePos.y && mousePos.y < settingButtonMax.y)
 	{
 		m_isHoverSettingButton = true;
+
+		// クリックした瞬間に設定画面を開く
+		if (isMouseTrigger && spSetting)
+		{
+			spSetting->Open();
+		}
 	}
 	else
 	{

@@ -127,6 +127,9 @@ void SceneManager::ResetSystems()
 	// 攻撃範囲表示(カラースフィア)を消す
 	KdShaderManager::Instance().ClearColorSphere();
 
+	// 音を全て止める
+	KdAudioManager::Instance().StopAllSound();
+
 	// エディタの状態(モード・選択・編集中のステージ)
 	EditorManager::Instance().ResetState();
 }

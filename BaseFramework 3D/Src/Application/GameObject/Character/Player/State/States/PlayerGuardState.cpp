@@ -30,6 +30,9 @@ void PlayerGuardState::OnUpdate(Player * owner)
 
 	owner->UpdateAttackMove();
 
+	// 足音再生
+	owner->UpdateWalkSE(0.5);
+
 	if(!guard.IsGuardBreak()&&!guard.IsGuardHit())
 	{
 		owner->PlayAnimation(GetGuardAnimation(owner));

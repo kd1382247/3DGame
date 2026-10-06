@@ -438,6 +438,7 @@
     <ClInclude Include="Src\Application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="Src\Application\Scene\SceneManager.h" />
     <ClInclude Include="Src\Application\Scene\SceneTransition\SceneTransition.h" />
+    <ClInclude Include="Src\Application\Scene\Setting\Setting.h" />
     <ClInclude Include="Src\Application\Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionLayer\CollisionLayer.h" />
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionManager.h" />
@@ -646,6 +647,7 @@
     <ClCompile Include="Src\Application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="Src\Application\Scene\SceneManager.cpp" />
     <ClCompile Include="Src\Application\Scene\SceneTransition\SceneTransition.cpp" />
+    <ClCompile Include="Src\Application\Scene\Setting\Setting.cpp" />
     <ClCompile Include="Src\Application\Scene\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Src\Application\System\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="Src\Application\System\CollisionManager\CollisionMath\CollisionMath.cpp" />

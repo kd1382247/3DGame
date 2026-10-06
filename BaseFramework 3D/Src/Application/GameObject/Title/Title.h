@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class Setting;
+
 class Title:public KdGameObject
 {
 
@@ -8,6 +10,9 @@ public:
 	void Init()override;
 	void Update()override;
 	void DrawSprite()override;
+
+	// 設定画面をセットする (Settingボタンを押した時に開く)
+	void SetSetting(const std::shared_ptr<Setting>& setting) { m_wpSetting = setting; }
 
 
 private:
@@ -33,6 +38,12 @@ private:
 	bool m_isHoverStartButton = false;
 	// セッティングボタン上にマウスがあるか
 	bool m_isHoverSettingButton = false;
+
+	// 設定画面 (シーン側が所有しているので、こちらはweak_ptrで持つ)
+	std::weak_ptr<Setting> m_wpSetting;
+
+	// 前フレームでマウスの左ボタンが押されていたか (「押した瞬間」を取るため)
+	bool m_isPrevMouseDown = false;
 
 	const Math::Vector2 ButtonTexSize = { 410.0f,70.0f };
 

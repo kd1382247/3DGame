@@ -28,6 +28,24 @@ public:
 	std::shared_ptr<KdSoundInstance>  Play(std::string_view rName, bool loop = false);
 	std::shared_ptr<KdSoundInstance3D> Play3D(std::string_view rName, const Math::Vector3& rPos, bool loop = false);
 
+	// BGM再生 (BGM用の音量が適用される / 同時に鳴らせるBGMは1つ)
+	// すでにBGMが鳴っている場合は、止めてから新しいBGMを再生する
+	std::shared_ptr<KdSoundInstance> PlayBGM(std::string_view rName, bool loop = true);
+
+	// SE再生 (SE用の音量が適用される)
+	std::shared_ptr<KdSoundInstance> PlaySE(std::string_view rName, bool loop = false);
+
+	// BGMを停止する
+	void StopBGM();
+
+	// BGM / SE の音量設定 (0.0〜1.0 に丸められる)
+	// BGMは再生中のものにも即座に反映される
+	void  SetBGMVolume(float vol);
+	void  SetSEVolume(float vol);
+
+	float GetBGMVolume() const { return m_bgmVolume; }
+	float GetSEVolume()  const { return m_seVolume; }
+
 	void AddPlayList(const std::shared_ptr<KdSoundInstance>& rSound)
 	{
 		if (!rSound.get()) { return; }
@@ -60,6 +78,18 @@ private:
 
 	// サウンドデータの取得orロード
 	std::shared_ptr<KdSoundEffect> GetSound(std::string_view fileName);
+
+	// 音量を指定して2Dサウンドを再生する (PlayBGM / PlaySE の共通処理)
+	std::shared_ptr<KdSoundInstance> PlayWithVolume(std::string_view rName, bool loop, float vol);
+
+	// BGM用の音量 (1.0が100%)
+	float m_bgmVolume = 1.0f;
+
+	// SE用の音量 (1.0が100%)
+	float m_seVolume  = 1.0f;
+
+	// 再生中のBGM (音量変更・停止のために覚えておく)
+	std::shared_ptr<KdSoundInstance> m_bgmInstance = nullptr;
 
 	// DirectXのAudioEngine本体
 	std::unique_ptr<DirectX::AudioEngine>	m_audioEng;
