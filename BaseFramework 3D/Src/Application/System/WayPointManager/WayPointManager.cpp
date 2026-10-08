@@ -412,7 +412,7 @@ void WayPointManager::DrawDebug()
 	m_pDebugWire->Draw();
 }
 
-bool WayPointManager::Save(const std::string& filePath)
+bool WayPointManager::Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner)
 {
 
 	nlohmann::json rootJson;
@@ -420,7 +420,8 @@ bool WayPointManager::Save(const std::string& filePath)
 
 	for (const auto& wayPoint : m_spWayPoints)
 	{
-		if (!wayPoint)
+		if (!wayPoint||
+			wayPoint->GetOwner()!=owner)
 		{
 			continue;
 		}
@@ -460,7 +461,7 @@ bool WayPointManager::Save(const std::string& filePath)
 	return true;
 }
 
-bool WayPointManager::Load(const std::string& filePath)
+bool WayPointManager::Load(const std::string& filePath, const std::shared_ptr<StageObject>& owner)
 {
 
 	std::ifstream file(filePath);
@@ -507,8 +508,9 @@ bool WayPointManager::Load(const std::string& filePath)
 	}
 
 
-	// 既存のWayPointを消す
-	ClearWayPoints();
+
+	// ファイルのIDをキー、新たに割り振ったIDを値に入れる
+	std::unordered_map<int, int>idMap;
 
 	// Jsonに保存されてる情報でWayPointを生成
 	for (const auto& wpJson : rootJson["WayPoints"])
@@ -525,15 +527,20 @@ bool WayPointManager::Load(const std::string& filePath)
 
 		wayPoint->Init();
 		// ID
-		wayPoint->SetID(wpJson["ID"].get<int>());
+		wayPoint->SetID(FindAvailableID());
+
+		idMap[wpJson["ID"].get<int>()] = wayPoint->GetID();
+
 		//Name
-		wayPoint->SetObjectName(wpJson["Name"].get<std::string>());
+		wayPoint->SetObjectName("WayPoint_" + std::to_string(wayPoint->GetID()));
 		//Position(Stageからのローカル位置)
 		wayPoint->SetLocalPos({
 			wpJson["Position"]["x"].get<float>(),
 			wpJson["Position"]["y"].get<float>(),
 			wpJson["Position"]["z"].get<float>()
 			});
+
+		wayPoint->SetOwner(owner);
 
 		if (wpJson.contains("AreaID"))
 		{
@@ -543,7 +550,6 @@ bool WayPointManager::Load(const std::string& filePath)
 		// WayPointsに登録
 		if (!RegisterWayPoint(wayPoint))
 		{
-			RestoreWayPoints();
 			return false;
 		}
 
@@ -554,8 +560,13 @@ bool WayPointManager::Load(const std::string& filePath)
 	{
 		int id = wpJson["ID"].get<int>();
 
+		if (!idMap.contains(id))
+		{
+			continue;
+		}
+
 		// IDからWayPointを探す
-		auto wayPoint = FindWayPoint(id);
+		auto wayPoint = FindWayPoint(idMap[id]);
 
 		if (!wayPoint)
 		{
@@ -565,7 +576,13 @@ bool WayPointManager::Load(const std::string& filePath)
 		for (const auto& linkJson : wpJson["Links"])
 		{
 			int linkID = linkJson.get<int>();
-			wayPoint->AddLink(linkID);
+
+			if (!idMap.contains(linkID))
+			{
+				continue;
+			}
+
+			wayPoint->AddLink(idMap[linkID]);
 		}
 	}
 
@@ -614,11 +631,12 @@ std::vector<int> WayPointManager::ReconstructPath(const std::unordered_map<int, 
 	return path;
 }
 
-void WayPointManager::SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale)
+void WayPointManager::SetStageTransform(const StageObject* stageObject,const Math::Vector3& stagePos, const Math::Vector3& stageScale)
 {
 	for (const auto& point : m_spWayPoints)
 	{
-		if (!point)
+		if (!point ||
+			!point->ShouldFollow(stageObject))
 		{
 			continue;
 		}

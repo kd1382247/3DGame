@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class StageObject;
+
 class OBBCollision;
 
 class OBBCollisionManager
@@ -22,9 +24,9 @@ public:
 	void ClearBackup();
 
 
-	bool Save(const std::string& filePath);
+	bool Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner);
 
-	bool Load(const std::string& filePath);
+	bool Load(const std::string& filePath, const std::shared_ptr<StageObject>& owner);
 
 
 	// 現在使われていない最小のIDを返す
@@ -43,7 +45,7 @@ public:
 	void DrawDebug();
 
 	// Stage(親)のワールド位置・大きさを、管理している全OBBに反映する
-	void SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale);
+	void SetStageTransform(const StageObject*stageObject,const Math::Vector3& stagePos, const Math::Vector3& stageScale);
 
 private:
 

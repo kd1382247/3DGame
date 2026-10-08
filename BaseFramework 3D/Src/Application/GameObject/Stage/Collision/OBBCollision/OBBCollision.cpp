@@ -38,6 +38,17 @@ void OBBCollision::DrawDebug()
 
 }
 
+void OBBCollision::SetCollisionType(const std::string typeName)
+{
+	for (int i = 0; i < std::size(m_collisionTypeName); i++)
+	{
+		if (typeName == m_collisionTypeName[i])
+		{
+			m_collisionType = static_cast<OBBCollisionType>(i);
+		}
+	}
+}
+
 DirectX::BoundingOrientedBox OBBCollision::GetBox() const
 {
 	DirectX::BoundingOrientedBox box;
@@ -101,6 +112,30 @@ void OBBCollision::DrawInspectorHeader()
 		EditorManager::Instance().MarkDirty();
 	}
 
+
+
+	std::string collTypeName = m_collisionTypeName[static_cast<int>(GetCollisionType())];
+
+	if (ImGui::BeginCombo("CollisionType", collTypeName.c_str()))
+	{
+		for (int i = 0; i < std::size(m_collisionTypeName); i++)
+		{
+			if (ImGui::Selectable(m_collisionTypeName[i].c_str(),
+				i == static_cast<int>(GetCollisionType())))
+			{
+				if (i != static_cast<int>(GetCollisionType()))
+				{
+
+					SetCollisionType(static_cast<OBBCollisionType>(i));
+
+					EditorManager::Instance().MarkDirty();
+				}
+			}
+
+		}
+
+		ImGui::EndCombo();
+	}
 }
 
 void OBBCollision::SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale)

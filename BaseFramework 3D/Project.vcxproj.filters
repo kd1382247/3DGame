@@ -337,9 +337,6 @@
     <Filter Include="Src\Application\GameObject\Stage\Collision\OBBCollision">
       <UniqueIdentifier>{b2f7fcf4-2bf7-455c-a6b9-bdd280603e6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Stage\Collision\GroundCollision">
-      <UniqueIdentifier>{112993c6-a364-48b5-a21c-8df8d50e3638}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision">
       <UniqueIdentifier>{ffed1a1d-6144-4899-84c8-5809af951ff7}</UniqueIdentifier>
     </Filter>
@@ -984,9 +981,6 @@
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.h">
       <Filter>Src\Application\GameObject\Stage\Collision\AABBCollision</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Stage\Collision\GroundCollision\GroundCollision.h">
-      <Filter>Src\Application\GameObject\Stage\Collision\GroundCollision</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockCollision.h">
       <Filter>Src\Application\GameObject\Stage\Collision\AIBlockCollision</Filter>
     </ClInclude>
@@ -1615,9 +1609,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.cpp">
       <Filter>Src\Application\GameObject\Stage\Collision\AABBCollision</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Stage\Collision\GroundCollision\GroundCollision.cpp">
-      <Filter>Src\Application\GameObject\Stage\Collision\GroundCollision</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockCollision.cpp">
       <Filter>Src\Application\GameObject\Stage\Collision\AIBlockCollision</Filter>

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+class StageObject;
 
 class OBBCollision :public KdGameObject
 {
@@ -22,8 +23,11 @@ public:
 
 	void SetMatrix(const Math::Matrix& mat) { m_mWorld = mat; }
 
-	void SetCollisionType(OBBCollisionType type) { m_collisionType = type; }
+	void SetCollisionType(const OBBCollisionType type) { m_collisionType = type; }
 	OBBCollisionType GetCollisionType()const     { return m_collisionType; }
+
+	void SetCollisionType(const std::string typeName);
+	std::string GetCollitionTypeName()const { return m_collisionTypeName[static_cast<int>(GetCollisionType())]; }
 
 
 	DirectX::BoundingOrientedBox GetBox()const;
@@ -48,6 +52,23 @@ public:
 
 	void Destroy()override;
 
+	// 当たり判定の持ち主(ステージ)のポインタをセット
+	void SetOwner(const std::shared_ptr<StageObject>& owner) { m_wpOwner = owner; }
+	std::shared_ptr<StageObject> GetOwner()const { return m_wpOwner.lock(); }
+
+	// 引数のステージが、持ち主として登録したステージと同じか
+	bool ShouldFollow(const StageObject* stage)const
+	{
+		auto spOwner = m_wpOwner.lock();
+
+		if (spOwner &&
+			spOwner.get() != stage)
+		{
+			return false;
+		}
+
+		return true;
+	}
 
 
 private:
@@ -58,4 +79,10 @@ private:
 
 	Math::Vector3 m_localPos = Math::Vector3::Zero;
 	Math::Vector3 m_localScale = Math::Vector3::One;
+
+
+	std::string m_collisionTypeName[2] = { {"Solid"},{"Walkable"} };
+
+	std::weak_ptr<StageObject>m_wpOwner;
+
 };

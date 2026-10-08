@@ -1,6 +1,5 @@
 ﻿#include "StageObject.h"
 
-#include"Collision/GroundCollision/GroundCollision.h"
 #include"Collision/AIBlockCollision/AIBlockCollision.h"
 #include"Collision/AABBCollision/AABBCollisionManager.h"
 #include"Collision/OBBCollision/OBBCollisionManager.h"
@@ -34,10 +33,6 @@ void StageObject::LoadStageModel(const std::string& modelName)
 	m_model->SetModelData(StageLoder::Instance().GetBackGroundModelPath(modelName).string());
 
 	// ステージの当たり判定クラス生成
-	m_spGroundCollision = std::make_shared<GroundCollision>();
-	m_spGroundCollision->SetModelPath(StageLoder::Instance().GetGroundCollisionPath(modelName));
-	m_spGroundCollision->Init();
-	m_spGroundCollision->SetMatrix(m_mWorld);
 
 	m_spAIBlockCollision = std::make_shared<AIBlockCollision>();
 	m_spAIBlockCollision->SetModelPath(StageLoder::Instance().GetAIBlockCollisionPath(modelName));
@@ -49,14 +44,13 @@ void StageObject::PreDraw()
 {
 	// EditModeではUpdate()が呼ばれない(BaseScene::Update()参照)ため、
 	// EditModeでもPlayModeでも必ず呼ばれるPreDraw()でStageへの追従処理を行う
-	m_spGroundCollision->SetMatrix(m_mWorld);
 	m_spAIBlockCollision->SetMatrix(m_mWorld);
 
 	// AABB/OBB/WayPointは回転を表現できない(またはStage自体は回転させない方針の)ため、
 	// 位置と大きさだけをStageに追従させる
-	AABBCollisionManager::Instance().SetStageTransform(GetPos(), GetScale());
-	OBBCollisionManager::Instance().SetStageTransform(GetPos(), GetScale());
-	WayPointManager::Instance().SetStageTransform(GetPos(), GetScale());
+	AABBCollisionManager::Instance().SetStageTransform(this,GetPos(), GetScale());
+	OBBCollisionManager::Instance().SetStageTransform(this,GetPos(), GetScale());
+	WayPointManager::Instance().SetStageTransform(this,GetPos(), GetScale());
 }
 
 void StageObject::DrawInspectorHeader()

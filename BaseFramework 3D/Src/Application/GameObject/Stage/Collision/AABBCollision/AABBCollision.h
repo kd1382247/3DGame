@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+
+class StageObject;
+
 class AABBCollision :public KdGameObject
 {
 
@@ -36,6 +39,23 @@ public:
 
 	void Destroy()override;
 
+	// 当たり判定の持ち主(ステージ)のポインタをセット
+	void SetOwner(const std::shared_ptr<StageObject>&owner) { m_wpOwner = owner; }
+	std::shared_ptr<StageObject> GetOwner()const { return m_wpOwner.lock(); }
+
+	// 引数のステージが、持ち主として登録したステージと同じか
+	bool ShouldFollow(const StageObject* stage)const
+	{
+		auto spOwner = m_wpOwner.lock();
+
+		if (spOwner && 
+			spOwner.get() != stage)
+		{
+			return false;
+		}
+
+		return true;
+	}
 
 private:
 
@@ -43,4 +63,8 @@ private:
 
 	Math::Vector3 m_localPos = Math::Vector3::Zero;
 	Math::Vector3 m_localScale = Math::Vector3::One;
+
+	// 持ち主となるステージのポインタ
+	std::weak_ptr<StageObject>m_wpOwner;
+
 };

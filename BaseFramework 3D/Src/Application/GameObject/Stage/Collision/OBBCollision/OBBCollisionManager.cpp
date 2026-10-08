@@ -79,17 +79,19 @@ void OBBCollisionManager::ClearBackup()
 	m_spBackupList.clear();
 }
 
-bool OBBCollisionManager::Save(const std::string& filePath)
+bool OBBCollisionManager::Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner)
 {
 	nlohmann::json rootJson;
 	rootJson["OBBCollisions"] = nlohmann::json::array();
 
 	for (const auto& obb : m_spOBBCollisionList)
 	{
-		if (!obb)
+		if (!obb ||
+			obb->GetOwner() != owner)
 		{
 			continue;
 		}
+
 
 		nlohmann::json OBBCollisionJson;
 
@@ -115,6 +117,8 @@ bool OBBCollisionManager::Save(const std::string& filePath)
 		OBBCollisionJson["Rotation"]["y"] = rotation.y;
 		OBBCollisionJson["Rotation"]["z"] = rotation.z;
 
+		const auto& collitionTypeName = obb->GetCollitionTypeName();
+		OBBCollisionJson["CollisionType"] = collitionTypeName;
 
 		rootJson["OBBCollisions"].push_back(OBBCollisionJson);
 	}
@@ -134,7 +138,7 @@ bool OBBCollisionManager::Save(const std::string& filePath)
 	return true;
 }
 
-bool OBBCollisionManager::Load(const std::string& filePath)
+bool OBBCollisionManager::Load(const std::string& filePath, const std::shared_ptr<StageObject>& owner)
 {
 	std::ifstream file(filePath);
 
@@ -179,10 +183,6 @@ bool OBBCollisionManager::Load(const std::string& filePath)
 		return false;
 	}
 
-
-	// 既存のOBBCollisionを消す
-	ClearOBBCollisionList();
-
 	// Jsonに保存されてる情報でOBBCollisionを生成
 	for (const auto& obbJson : rootJson["OBBCollisions"])
 	{
@@ -198,9 +198,9 @@ bool OBBCollisionManager::Load(const std::string& filePath)
 
 		obb->Init();
 		// ID
-		obb->SetID(obbJson["ID"].get<int>());
+		obb->SetID(FindAvailableID());
 		// 名前
-		obb->SetObjectName(obbJson["Name"].get<std::string>());
+		obb->SetObjectName("OBBCollision_" + std::to_string(obb->GetID()));
 		// 座標(Stageからのローカル位置)
 		obb->SetLocalPos({
 			obbJson["Position"]["x"].get<float>(),
@@ -223,6 +223,13 @@ bool OBBCollisionManager::Load(const std::string& filePath)
 			});
 
 
+		// 当たり判定タイプ
+		if (obbJson.contains("CollisionType"))
+		{
+			obb->SetCollisionType(obbJson["CollisionType"].get<std::string>());
+		}
+
+		obb->SetOwner(owner);
 
 		m_spOBBCollisionList.push_back(obb);
 	}
@@ -256,11 +263,12 @@ void OBBCollisionManager::DrawDebug()
 	}
 }
 
-void OBBCollisionManager::SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale)
+void OBBCollisionManager::SetStageTransform(const StageObject* stageObject, const Math::Vector3& stagePos, const Math::Vector3& stageScale)
 {
 	for (const auto& obb : m_spOBBCollisionList)
 	{
-		if (!obb)
+		if (!obb ||
+			!obb->ShouldFollow(stageObject))
 		{
 			continue;
 		}

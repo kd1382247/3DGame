@@ -79,14 +79,15 @@ void AABBCollisionManager::ClearBackup()
 	m_spBackupList.clear();
 }
 
-bool AABBCollisionManager::Save(const std::string& filePath)
+bool AABBCollisionManager::Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner)
 {
 	nlohmann::json rootJson;
 	rootJson["AABBCollisions"] = nlohmann::json::array();
 
 	for (const auto& wall : m_spAABBCollisionList)
 	{
-		if (!wall)
+		if (!wall||
+			wall->GetOwner() != owner)
 		{
 			continue;
 		}
@@ -128,7 +129,7 @@ bool AABBCollisionManager::Save(const std::string& filePath)
 	return true;
 }
 
-bool AABBCollisionManager::Load(const std::string& filePath)
+bool AABBCollisionManager::Load(const std::string& filePath, const std::shared_ptr<StageObject>& owner)
 {
 	std::ifstream file(filePath);
 
@@ -174,9 +175,6 @@ bool AABBCollisionManager::Load(const std::string& filePath)
 	}
 
 
-	// 既存のAABBCollisionを消す
-	ClearAABBCollisionList();
-
 	// Jsonに保存されてる情報でAABBCollisionを生成
 	for (const auto& wallJson : rootJson["AABBCollisions"])
 	{
@@ -192,9 +190,9 @@ bool AABBCollisionManager::Load(const std::string& filePath)
 
 		wall->Init();
 		// ID
-		wall->SetID(wallJson["ID"].get<int>());
+		wall->SetID(FindAvailableID());
 		// 名前
-		wall->SetObjectName(wallJson["Name"].get<std::string>());
+		wall->SetObjectName("AABBCollision_" + std::to_string(wall->GetID()));
 		// 座標(Stageからのローカル位置)
 		wall->SetLocalPos({
 			wallJson["Position"]["x"].get<float>(),
@@ -208,6 +206,8 @@ bool AABBCollisionManager::Load(const std::string& filePath)
 			wallJson["Scale"]["y"].get<float>(),
 			wallJson["Scale"]["z"].get<float>()
 			});
+
+		wall->SetOwner(owner);
 
 		m_spAABBCollisionList.push_back(wall);
 	}
@@ -241,14 +241,16 @@ void AABBCollisionManager::DrawDebug()
 	}
 }
 
-void AABBCollisionManager::SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale)
+void AABBCollisionManager::SetStageTransform(const StageObject* stageObject, const Math::Vector3& stagePos, const Math::Vector3& stageScale)
 {
 	for (const auto& wall : m_spAABBCollisionList)
 	{
-		if (!wall)
+		if (!wall ||
+			!wall->ShouldFollow(stageObject))
 		{
 			continue;
 		}
+
 
 		wall->SetStageTransform(stagePos, stageScale);
 	}

@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-class GroundCollision;
 class AIBlockCollision;
 
 class StageObject :public KdGameObject
@@ -36,7 +35,6 @@ private:
 
 	std::shared_ptr<KdModelWork> m_spModel = nullptr;
 
-	std::shared_ptr<GroundCollision> m_spGroundCollision=nullptr;
 	std::shared_ptr<AIBlockCollision>m_spAIBlockCollision = nullptr;
 
 	std::string m_stageModelName = "Stage01";
