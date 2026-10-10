@@ -14,6 +14,8 @@ public:
 	bool RegisterWayPoint(const std::shared_ptr<WayPoint>& wayPoint);
 	bool RemoveWayPoint(int id);
 
+	void RemoveByOwner(const StageObject* owner);
+
 	void ClearWayPoints();
 	// ウェイポイントを復元
 	void RestoreWayPoints();
@@ -42,7 +44,7 @@ public:
 
 	// デバッグの表示切り替えフラグ
 	bool IsDebug() { return m_isDebug; }
-	void SetDebugFlg(const bool flg) { m_isDebug = flg; }
+	void SetIsDebug(const bool flg) { m_isDebug = flg; }
 
 	bool Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner);
 

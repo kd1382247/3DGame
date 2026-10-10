@@ -11,11 +11,10 @@
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 
+#include"../../GameObject/Stage/StageObject.h"
+
 #include<algorithm>
 #include<cctype>
-
-
-
 
 void Hierarchy::Draw()
 {
@@ -29,6 +28,36 @@ void Hierarchy::Draw()
 
 	// カテゴリ選択(ボタンを押すと一覧が出て選択でき、選んだカテゴリ名をボタンの隣に表示する)
 	DrawCategorySelector();
+
+
+	const bool isStageDataCategory =
+		m_category == HierarchyCategory::AABB ||
+		m_category == HierarchyCategory::OBB ||
+		m_category == HierarchyCategory::WayPoint;
+
+	if (isStageDataCategory)
+	{
+		ImGui::Separator();
+		DrawActiveStageSelector();
+
+		// 同じモデルの2つ目以降のステージは、データを編集できない
+		if (!EditorManager::Instance().CanEditStageData())
+		{
+			auto activeStage = EditorManager::Instance().GetActiveStage();
+
+			auto primaryStage = EditorManager::Instance().FindPrimaryStage(
+				activeStage->GetStageModelName());
+
+			ImGui::Separator();
+			ImGui::TextWrapped(
+				U8("同じモデルは「%s」でだけ編集できます"),
+				primaryStage ? primaryStage->GetObjectName().c_str() : "");
+
+			// Beginに対応するEndを呼んでから抜ける
+			ImGui::End();
+			return;
+		}
+	}
 
 	ImGui::Separator();
 
@@ -51,6 +80,7 @@ void Hierarchy::Draw()
 		DrawSelectedCategoryList();
 	}
 
+
 	ImGui::EndChild();
 
 	ImGui::End();
@@ -66,10 +96,11 @@ void Hierarchy::DrawCategorySelector()
 	if (ImGui::BeginPopup("CategorySelectPopup"))
 	{
 		CategorySelectItem("GameObject", HierarchyCategory::GameObject);
-		CategorySelectItem("Stage", HierarchyCategory::Stage);
-		CategorySelectItem("WayPoint", HierarchyCategory::WayPoint);
-		CategorySelectItem("CollisionBox", HierarchyCategory::CollisionBox);
-		CategorySelectItem("OBB", HierarchyCategory::OBB);
+		CategorySelectItem("Stage",      HierarchyCategory::Stage);
+		CategorySelectItem("Gimmick",    HierarchyCategory::Gimmick);
+		CategorySelectItem("WayPoint",   HierarchyCategory::WayPoint);
+		CategorySelectItem("AABB",       HierarchyCategory::AABB);
+		CategorySelectItem("OBB",        HierarchyCategory::OBB);
 
 		ImGui::EndPopup();
 	}
@@ -100,12 +131,72 @@ const char* Hierarchy::GetCategoryLabel(HierarchyCategory category)
 	{
 	case HierarchyCategory::GameObject:   return "GameObject";
 	case HierarchyCategory::Stage:        return "Stage";
+	case HierarchyCategory::Gimmick:      return "Gimmick";
 	case HierarchyCategory::WayPoint:     return "WayPoint";
-	case HierarchyCategory::CollisionBox: return "CollisionBox";
+	case HierarchyCategory::AABB:         return "AABB";
 	case HierarchyCategory::OBB:          return "OBB";
 	}
 
 	return "";
+}
+
+void Hierarchy::DrawActiveStageSelector()
+{
+	auto activeStage = EditorManager::Instance().GetActiveStage();
+
+	if (!activeStage)
+	{
+		for (const auto& obj : SceneManager::Instance().GetObjList())
+		{
+			auto stage= std::dynamic_pointer_cast<StageObject>(obj);
+			if (stage)
+			{
+				activeStage = stage;
+				EditorManager::Instance().SetActiveStage(stage);
+
+				break;
+			}
+		}
+	}
+
+	std::string stageName = {};
+
+	if (activeStage)
+	{
+		stageName = activeStage->GetObjectName();
+	}
+	else
+	{
+		stageName = "None";
+	}
+
+	if (ImGui::BeginCombo("Active Stage", stageName.c_str()))
+	{
+
+		for (const auto& obj : SceneManager::Instance().GetObjList())
+		{
+			auto stage = std::dynamic_pointer_cast<StageObject>(obj);
+			if (stage)
+			{
+				ImGui::PushID(stage.get());
+
+				if (ImGui::Selectable(stage->GetObjectName().c_str(),stage == activeStage))
+				{
+					EditorManager::Instance().SetActiveStage(stage);
+					EditorManager::Instance().SetSelectedObject(nullptr);
+
+					// デバッグ表示フラグをfalseにする
+					WayPointManager::Instance().SetIsDebug(false);
+					AABBCollisionManager::Instance().SetIsDebug(false);
+					OBBCollisionManager::Instance().SetIsDebug(false);
+				}
+				ImGui::PopID();
+			}
+		}
+
+		ImGui::EndCombo();
+	}
+
 }
 
 void Hierarchy::DrawAddButtons()
@@ -121,8 +212,11 @@ void Hierarchy::DrawAddButtons()
 	case HierarchyCategory::Stage:
 		AddStage();
 		break;
-	case HierarchyCategory::CollisionBox:
-		AddCollisionBox();
+	case HierarchyCategory::Gimmick:
+		AddGimmick();
+		break;
+	case HierarchyCategory::AABB:
+		AddAABB();
 		break;
 	case HierarchyCategory::OBB:
 		AddOBB();
@@ -154,6 +248,9 @@ void Hierarchy::AddWayPoint()
 
 		if (wayPoint)
 		{
+
+			wayPoint->SetOwner(EditorManager::Instance().GetActiveStage());
+
 			// CreateWayPoint()内でManagerへの登録まで完了している
 			EditorManager::Instance().SetSelectedObject(wayPoint);
 
@@ -167,8 +264,8 @@ void Hierarchy::AddWayPoint()
 
 	if (ImGui::Checkbox("Debug", &isDebug))
 	{
-		isDebug ? WayPointManager::Instance().SetDebugFlg(true) :
-			WayPointManager::Instance().SetDebugFlg(false);
+		isDebug ? WayPointManager::Instance().SetIsDebug(true) :
+			WayPointManager::Instance().SetIsDebug(false);
 	}
 }
 
@@ -185,11 +282,12 @@ void Hierarchy::AddStage()
 		DrawAddObjectList(KdGameObject::ObjectCategory::Stage);
 		ImGui::EndPopup();
 	}
+}
 
-	ImGui::SameLine();
-
+void Hierarchy::AddGimmick()
+{
 	// ギミックを新規作成
-	if (ImGui::Button("AddGimmick"))
+	if (ImGui::Button("Add Gimmick"))
 	{
 		ImGui::OpenPopup("AddGimmickPopup");
 	}
@@ -199,18 +297,20 @@ void Hierarchy::AddStage()
 		DrawAddObjectList(KdGameObject::ObjectCategory::Gimmick);
 		ImGui::EndPopup();
 	}
-
 }
 
-void Hierarchy::AddCollisionBox()
+void Hierarchy::AddAABB()
 {
 
-	if (ImGui::Button("Add AABBBox"))
+	if (ImGui::Button("Add AABB"))
 	{
 		auto aabbBox = AABBCollisionManager::Instance().CreateAABBCollision();
 
 		if (aabbBox)
 		{
+
+			aabbBox->SetOwner(EditorManager::Instance().GetActiveStage());
+
 			// CreateWayPoint()内でManagerへの登録まで完了している
 			EditorManager::Instance().SetSelectedObject(aabbBox);
 
@@ -225,8 +325,8 @@ void Hierarchy::AddCollisionBox()
 
 	if (ImGui::Checkbox("Debug", &isDebug))
 	{
-		isDebug? AABBCollisionManager::Instance().SetDebugFlg(true):
-			     AABBCollisionManager::Instance().SetDebugFlg(false);
+		isDebug? AABBCollisionManager::Instance().SetIsDebug(true):
+			     AABBCollisionManager::Instance().SetIsDebug(false);
 	}
 
 }
@@ -236,9 +336,11 @@ void Hierarchy::AddOBB()
 	if (ImGui::Button("Add OBB"))
 	{
 		auto obb = OBBCollisionManager::Instance().CreateOBBCollision();
-
+		
 		if (obb)
 		{
+			obb->SetOwner(EditorManager::Instance().GetActiveStage());
+
 			// CreateWayPoint()内でManagerへの登録まで完了している
 			EditorManager::Instance().SetSelectedObject(obb);
 
@@ -252,8 +354,8 @@ void Hierarchy::AddOBB()
 
 	if (ImGui::Checkbox("Debug", &isDebug))
 	{
-		isDebug ? OBBCollisionManager::Instance().SetDebugFlg(true) :
-			OBBCollisionManager::Instance().SetDebugFlg(false);
+		isDebug ? OBBCollisionManager::Instance().SetIsDebug(true) :
+			OBBCollisionManager::Instance().SetIsDebug(false);
 	}
 }
 
@@ -303,8 +405,12 @@ void Hierarchy::DrawSelectedCategoryList()
 		DrawStage();
 		break;
 
-	case HierarchyCategory::CollisionBox:
-		DrawCollisionBox();
+	case HierarchyCategory::Gimmick:
+		DrawGimmick();
+		break;
+
+	case HierarchyCategory::AABB:
+		DrawAABB();
 		break;
 
 	case HierarchyCategory::OBB:
@@ -320,9 +426,13 @@ void Hierarchy::DrawGameObjects()
 
 void Hierarchy::DrawWayPoints()
 {
+
+	auto activeStage = EditorManager::Instance().GetActiveStage();
+
 	for (const auto& wayPoint : WayPointManager::Instance().GetWayPoints())
 	{
-		if (!wayPoint)
+		if (!wayPoint ||
+			wayPoint->GetOwner() != activeStage)
 		{
 			continue;
 		}
@@ -335,17 +445,33 @@ void Hierarchy::DrawStage()
 {
 	DrawObjectList(KdGameObject::ObjectCategory::Stage);
 
-	ImGui::Separator();
+	// 選択中のオブジェクトがステージ(部屋)なら、
+	   // その部屋を「編集するステージ」にする
+	auto selectedStage = std::dynamic_pointer_cast<StageObject>(
+		EditorManager::Instance().GetSelectedObject());
+
+	if (selectedStage)
+	{
+		EditorManager::Instance().SetActiveStage(selectedStage);
+	}
+
+}
+
+void Hierarchy::DrawGimmick()
+{
 
 	DrawObjectList(KdGameObject::ObjectCategory::Gimmick);
 }
 
-void Hierarchy::DrawCollisionBox()
+void Hierarchy::DrawAABB()
 {
+
+	auto activeStage = EditorManager::Instance().GetActiveStage();
 
 	for (const auto& aabbBox : AABBCollisionManager::Instance().GetAABBCollisionList())
 	{
-		if (!aabbBox)
+		if (!aabbBox||
+			aabbBox->GetOwner() != activeStage)
 		{
 			continue;
 		}
@@ -356,9 +482,13 @@ void Hierarchy::DrawCollisionBox()
 
 void Hierarchy::DrawOBB()
 {
+
+	auto activeStage = EditorManager::Instance().GetActiveStage();
+
 	for (const auto& obb : OBBCollisionManager::Instance().GetOBBCollisionList())
 	{
-		if (!obb)
+		if (!obb||
+			obb->GetOwner()!=activeStage)
 		{
 			continue;
 		}

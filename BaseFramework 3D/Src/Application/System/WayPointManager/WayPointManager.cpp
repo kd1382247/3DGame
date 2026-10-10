@@ -2,6 +2,8 @@
 
 #include"../../GameObject/WayPoint/WayPoint.h"
 
+#include"../../Editor/EditorManager.h"
+
 bool WayPointManager::RegisterWayPoint(const std::shared_ptr<WayPoint>& wayPoint)
 {
 	// 無効なWayPointは登録しない
@@ -53,6 +55,25 @@ bool WayPointManager::RemoveWayPoint(int id)
 	m_spWayPoints.erase(it);
 
 	return true;
+}
+
+void WayPointManager::RemoveByOwner(const StageObject* owner)
+{
+	// 先に消すIDを集める(ループ中にリストを変更しないため)
+	std::vector<int>removeIDs;
+
+	for (const auto& point : m_spWayPoints)
+	{
+		if (point && point->GetOwner().get() == owner)
+		{
+			removeIDs.push_back(point->GetID());
+		}
+	}
+
+	for (int id : removeIDs)
+	{
+		RemoveWayPoint(id);
+	}
 }
 
 void WayPointManager::ClearWayPoints()
@@ -383,6 +404,12 @@ void WayPointManager::DrawDebug()
 	for (const auto& point : m_spWayPoints)
 	{
 		if (!point)
+		{
+			continue;
+		}
+
+		// 持ち主が違う場合表示しない
+		if (point->GetOwner() != EditorManager::Instance().GetActiveStage())
 		{
 			continue;
 		}

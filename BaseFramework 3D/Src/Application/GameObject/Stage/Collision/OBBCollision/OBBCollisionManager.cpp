@@ -2,6 +2,8 @@
 
 #include"OBBCollision.h"
 
+#include"../../../../Editor/EditorManager.h"
+
 std::shared_ptr<OBBCollision> OBBCollisionManager::CreateOBBCollision()
 {
 	const int id = FindAvailableID();
@@ -40,6 +42,16 @@ void OBBCollisionManager::RemoveOBBCollision(int id)
 
 	m_spOBBCollisionList.erase(it);
 
+}
+
+void OBBCollisionManager::RemoveByOwner(const StageObject* owner)
+{
+	std::erase_if(m_spOBBCollisionList,
+		[owner](const std::shared_ptr<OBBCollision>& obb)
+		{
+			return obb && obb->GetOwner().get() == owner;
+		}
+	);
 }
 
 std::shared_ptr<OBBCollision> OBBCollisionManager::FindOBBCollision(int id)const
@@ -259,6 +271,12 @@ void OBBCollisionManager::DrawDebug()
 	for (const auto& obb : m_spOBBCollisionList)
 	{
 		if (!obb) { continue; }
+		// 持ち主が違う場合表示しない
+		if (obb->GetOwner() != EditorManager::Instance().GetActiveStage())
+		{
+			continue;
+		}
+
 		obb->DrawDebug();
 	}
 }

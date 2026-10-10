@@ -8,6 +8,8 @@ class SceneView;
 class CameraBase;
 class MessageWindow;
 
+class StageObject;
+
 class EditorManager
 {
 public:
@@ -65,6 +67,18 @@ public:
 	void ClearDirty() { m_isDirty = false; }
 	void MarkDirty() { m_isDirty = true; }
 
+	std::shared_ptr<StageObject>GetActiveStage()const { return m_wpActiveStage.lock(); }
+	void SetActiveStage(const std::shared_ptr<StageObject>& stageObj) { m_wpActiveStage = stageObj; }
+
+	// 同じステージモデルの中で、最初に置かれたステージを返す
+	// (AABB/OBB/WayPointを編集できるのは、このステージだけ)
+	std::shared_ptr<StageObject> FindPrimaryStage(const std::string& modelName) const;
+
+	// 今のアクティブステージで、AABB/OBB/WayPointを編集できるか
+	// (アクティブステージが「最初のステージ」ならtrue。ステージが1つもない場合もtrue)
+	bool CanEditStageData() const;
+
+
 private:
 
 	void Init();
@@ -99,11 +113,14 @@ private:
 	// ステージを選択
 	void SelectStageObjectByMouse();
 
+	// ギミックを選択
+	void SelectGimmickByMouse();
+
 	// ウェイポイントを選択
 	void SelectWayPointByMouse();
 
 	// AABBを選択
-	void SelectBoxByMouse();
+	void SelectAABBByMouse();
 
 	// OBBを選択
 	void SelectOBBByMouse();
@@ -111,9 +128,6 @@ private:
 	// 指定したクラス名で、シーン上の名前と重複しない名前を作る(例:"Slime_0")
 	// (同じクラス名の中で、未使用の最小の番号を採用する。番号の欠番は次回そこから埋まる)
 	std::string MakeUniqueObjectName(const std::string& className) const;
-
-
-private:
 
 	std::shared_ptr<KdGameObject> m_spSelectedObject=nullptr;
 
@@ -131,6 +145,9 @@ private:
 
 	// メッセージウィンドウ
 	std::shared_ptr<MessageWindow>m_spMessageWindow = nullptr;
+
+	// 編集中のステージ
+	std::weak_ptr<StageObject>m_wpActiveStage;
 
 	// 編集したかどうか
 	bool m_isDirty = false;

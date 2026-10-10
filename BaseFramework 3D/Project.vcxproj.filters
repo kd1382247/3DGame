@@ -421,6 +421,9 @@
     <Filter Include="Src\Application\Scene\Setting">
       <UniqueIdentifier>{8f1d8dc7-f55f-4040-8abb-6be7d127ac3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Gimmick\Room">
+      <UniqueIdentifier>{79a106a4-a403-4883-8aa3-f10d8afb0b17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1116,6 +1119,9 @@
     <ClInclude Include="Src\Application\Scene\Setting\Setting.h">
       <Filter>Src\Application\Scene\Setting</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Gimmick\Room\Room.h">
+      <Filter>Src\Application\GameObject\Gimmick\Room</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1723,6 +1729,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Scene\Setting\Setting.cpp">
       <Filter>Src\Application\Scene\Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Gimmick\Room\Room.cpp">
+      <Filter>Src\Application\GameObject\Gimmick\Room</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

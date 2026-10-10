@@ -3,6 +3,7 @@
 #include"../../Framework/Effekseer/KdEffekseerManager.h"
 #include"../GameObject/Camera/CameraBase.h"
 #include "../../Framework/GameObject/KdGameObjectFactory.h"
+
 #include"../System/WayPointManager/WayPointManager.h"
 #include"../GameObject/WayPoint/WayPoint.h"
 #include"../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
@@ -12,6 +13,8 @@
 #include"../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 
 #include"../Scene/EditorScene/EditorScene.h"
+
+#include"../GameObject/Stage/StageObject.h"
 
 #include"../System/ReferenceManager/ReferenceManager.h"
 #include "../Scene/SceneManager.h"
@@ -392,12 +395,16 @@ void EditorManager::UpdateMouseSelection()
 		SelectStageObjectByMouse();
 		break;
 
+	case Hierarchy::HierarchyCategory::Gimmick:
+		SelectGimmickByMouse();
+		break;
+
 	case Hierarchy::HierarchyCategory::WayPoint:
 		SelectWayPointByMouse();
 		break;
 
-	case Hierarchy::HierarchyCategory::CollisionBox:
-		SelectBoxByMouse();
+	case Hierarchy::HierarchyCategory::AABB:
+		SelectAABBByMouse();
 		break;
 	case Hierarchy::HierarchyCategory::OBB:
 		SelectOBBByMouse();
@@ -447,6 +454,7 @@ std::shared_ptr<KdGameObject> EditorManager::SelectClosestByMouse(const Containe
 
 void EditorManager::SelectGameObjectByMouse()
 {
+
 	auto selectedObj = SelectClosestByMouse(
 		SceneManager::Instance().GetObjList(),
 		KdCollider::TypeBump,
@@ -465,8 +473,21 @@ void EditorManager::SelectStageObjectByMouse()
 		KdCollider::TypeEvent,
 		[](const std::shared_ptr<KdGameObject>& obj)
 		{
-			return obj->GetObjectCategory() == KdGameObject::ObjectCategory::Stage ||
-				   obj->GetObjectCategory() == KdGameObject::ObjectCategory::Gimmick;
+			return obj->GetObjectCategory() == KdGameObject::ObjectCategory::Stage;
+		});
+
+	SetSelectedObject(selectedObj);
+}
+
+void EditorManager::SelectGimmickByMouse()
+{
+
+	auto selectedObj = SelectClosestByMouse(
+		SceneManager::Instance().GetObjList(),
+		KdCollider::TypeEvent,
+		[](const std::shared_ptr<KdGameObject>& obj)
+		{
+			return obj->GetObjectCategory() == KdGameObject::ObjectCategory::Gimmick;
 		});
 
 	SetSelectedObject(selectedObj);
@@ -474,30 +495,81 @@ void EditorManager::SelectStageObjectByMouse()
 
 void EditorManager::SelectWayPointByMouse()
 {
+	if (!CanEditStageData())
+	{
+		return;
+	}
+
+	auto activeStage = GetActiveStage();
+
 	auto selectedObj = SelectClosestByMouse(
 		WayPointManager::Instance().GetWayPoints(),
 		KdCollider::TypeBump,
-		[](const std::shared_ptr<KdGameObject>&) { return true; });
+		[activeStage](const std::shared_ptr<KdGameObject>& obj)
+		{
+			auto point = std::dynamic_pointer_cast<WayPoint>(obj);
+
+			if (!point)
+			{
+				return false;
+			}
+
+			return point->GetOwner() == activeStage;
+		});
 
 	SetSelectedObject(selectedObj);
 }
 
-void EditorManager::SelectBoxByMouse()
+void EditorManager::SelectAABBByMouse()
 {
+	if (!CanEditStageData())
+	{
+		return;
+	}
+
+	auto activeStage = GetActiveStage();
+
 	auto selectedObj = SelectClosestByMouse(
 		AABBCollisionManager::Instance().GetAABBCollisionList(),
 		KdCollider::TypeBump,
-		[](const std::shared_ptr<KdGameObject>&) { return true; });
+		[activeStage](const std::shared_ptr<KdGameObject>& obj)
+		{
+			auto aabb = std::dynamic_pointer_cast<AABBCollision>(obj);
+
+			if (!aabb)
+			{
+				return false;
+			}
+
+			return aabb->GetOwner() == activeStage;
+		});
 
 	SetSelectedObject(selectedObj);
 }
 
 void EditorManager::SelectOBBByMouse()
 {
+	if (!CanEditStageData())
+	{
+		return;
+	}
+
+	auto activeStage = GetActiveStage();
+
 	auto selectedObj = SelectClosestByMouse(
 		OBBCollisionManager::Instance().GetOBBCollisionList(),
 		KdCollider::TypeBump,
-		[](const std::shared_ptr<KdGameObject>&) { return true; });
+		[activeStage](const std::shared_ptr<KdGameObject>& obj)
+		{
+			auto obb = std::dynamic_pointer_cast<OBBCollision>(obj);
+
+			if (!obb)
+			{
+				return false;
+			}
+
+			return obb->GetOwner() == activeStage;
+		});
 
 	SetSelectedObject(selectedObj);
 }
@@ -518,13 +590,62 @@ void EditorManager::CreateGameObject(const std::string& className)
 	// ファクトリー登録名を保持しておく(SaveDataの"Class"に使う。表示名とは別)
 	newObject->SetFactoryClassName(className);
 
+
+	std::string baseName = className;
+
+	// ステージオブジェクトに変換
+	auto stage = std::dynamic_pointer_cast<StageObject>(newObject);
+	if (stage)
+	{
+		baseName = stage->GetStageModelName();
+		
+	}
+
 	// 表示名は"Slime_0"のように自動採番する
-	newObject->SetObjectName(MakeUniqueObjectName(className));
+	newObject->SetObjectName(MakeUniqueObjectName(baseName));
+	
 
 	SceneManager::Instance().AddObject(newObject);
 
+	if (stage)
+	{
+		StageDataManager::Instance().LoadStageModelData(stage);
+		SetActiveStage(stage);
+	}
+
 	// 現在選択中のオブジェクト
 	SetSelectedObject(newObject);
+}
+
+std::shared_ptr<StageObject> EditorManager::FindPrimaryStage(const std::string& modelName) const
+{
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto stage = std::dynamic_pointer_cast<StageObject>(obj);
+
+		if (stage && stage->GetStageModelName() == modelName)
+		{
+			// 先頭から見て、最初に見つかったものが「最初のステージ」
+			// (StageDataManager::SaveToFolderも同じ順番で最初の1つを保存する)
+			return stage;
+		}
+	}
+
+	return nullptr;
+}
+
+bool EditorManager::CanEditStageData() const
+{
+	auto activeStage = GetActiveStage();
+
+	// ステージがない間は、今までどおり編集できる
+	// (持ち主のないデータは、保存時に最初のステージが引き取る)
+	if (!activeStage)
+	{
+		return true;
+	}
+
+	return FindPrimaryStage(activeStage->GetStageModelName()) == activeStage;
 }
 
 std::string EditorManager::MakeUniqueObjectName(const std::string& className) const
@@ -569,6 +690,9 @@ void EditorManager::ResetState()
 
 	// 選択中のオブジェクトへの参照を解除
 	SetSelectedObject(nullptr);
+
+	// 編集中のステージの参照を解除
+	m_wpActiveStage.reset();
 
 	ClearDirty();
 

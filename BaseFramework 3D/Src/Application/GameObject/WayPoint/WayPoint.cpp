@@ -121,6 +121,11 @@ void WayPoint::DrawInspector()
 					continue;
 				}
 
+				if (wayPoint->GetOwner() != GetOwner())
+				{
+					continue;
+				}
+
 				bool hasLink = HasLink(wayPoint->GetID());
 
 				// 同名WayPointがあってもImGui上の項目を区別できるようIDを付ける

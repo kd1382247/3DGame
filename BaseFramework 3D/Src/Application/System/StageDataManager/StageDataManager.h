@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-
+class StageObject;
 
 class StageDataManager
 {
@@ -13,7 +13,8 @@ public:
 	bool SaveTemporary();
 	bool LoadTemporary();
 
-	
+	bool LoadStageModelData(const std::shared_ptr<StageObject>& stage);
+
 private:
 
 	std::filesystem::path GetStageFolder(const std::string& stageName) const;

@@ -24,12 +24,15 @@ public:
 	const std::string& GetStageModelName() const { return m_stageModelName; }
 	void SetStageModelName(const std::string& name) { m_stageModelName = name; }
 
+	void Destroy()override;
+
 private:
 
 	// modelNameのステージモデル(レンダー用モデル+GroundCollision+AIBlockCollision)を読み込む
 	// Init()(新規オブジェクトのデフォルト読込)とLoadData()(セーブデータからの読込)の両方から呼ばれる
 	void LoadStageModel(const std::string& modelName);
 
+	void ClearOwnerData();
 
 	std::shared_ptr<KdModelWork>m_model = nullptr;
 

@@ -2,23 +2,25 @@
 
 #include"AABBCollision.h"
 
+#include"../../../../Editor/EditorManager.h"
+
 std::shared_ptr<AABBCollision> AABBCollisionManager::CreateAABBCollision()
 {
 	const int id = FindAvailableID();
 
-	std::shared_ptr<AABBCollision>wall = std::make_shared<AABBCollision>();
+	std::shared_ptr<AABBCollision>aabb = std::make_shared<AABBCollision>();
 
-	wall->Init();
+	aabb->Init();
 
-	wall->SetID(id);
+	aabb->SetID(id);
 
 	// オブジェクトの名前をセット 後ろにID
 	std::string objName = "AABBCollision_" + std::to_string(id);
-	wall->SetObjectName(objName);
+	aabb->SetObjectName(objName);
 
-	m_spAABBCollisionList.push_back(wall);
+	m_spAABBCollisionList.push_back(aabb);
 
-	return wall;
+	return aabb;
 }
 
 void AABBCollisionManager::RemoveAABBCollision(int id)
@@ -42,19 +44,29 @@ void AABBCollisionManager::RemoveAABBCollision(int id)
 
 }
 
+void AABBCollisionManager::RemoveByOwner(const StageObject* owner)
+{
+	std::erase_if(m_spAABBCollisionList,
+		[owner](const std::shared_ptr<AABBCollision>& aabb)
+		{
+			return aabb&&aabb->GetOwner().get() == owner;
+		}
+	);
+}
+
 std::shared_ptr<AABBCollision> AABBCollisionManager::FindAABBCollision(int id)const
 {
 
-	for (const auto& wall : m_spAABBCollisionList)
+	for (const auto& aabb : m_spAABBCollisionList)
 	{
-		if (!wall)
+		if (!aabb)
 		{
 			continue;
 		}
 
-		if (wall->GetID() == id)
+		if (aabb->GetID() == id)
 		{
-			return wall;
+			return aabb;
 		}
 	}
 
@@ -84,28 +96,28 @@ bool AABBCollisionManager::Save(const std::string& filePath, const std::shared_p
 	nlohmann::json rootJson;
 	rootJson["AABBCollisions"] = nlohmann::json::array();
 
-	for (const auto& wall : m_spAABBCollisionList)
+	for (const auto& aabb : m_spAABBCollisionList)
 	{
-		if (!wall||
-			wall->GetOwner() != owner)
+		if (!aabb||
+			aabb->GetOwner() != owner)
 		{
 			continue;
 		}
 
 		nlohmann::json AABBCollisionJson;
 
-		AABBCollisionJson["ID"] = wall->GetID();
+		AABBCollisionJson["ID"] = aabb->GetID();
 
-		AABBCollisionJson["Name"] = wall->GetObjectName();
+		AABBCollisionJson["Name"] = aabb->GetObjectName();
 
 		// 座標(Stageからのローカル位置)
-		const auto& pos = wall->GetLocalPos();
+		const auto& pos = aabb->GetLocalPos();
 		AABBCollisionJson["Position"]["x"] = pos.x;
 		AABBCollisionJson["Position"]["y"] = pos.y;
 		AABBCollisionJson["Position"]["z"] = pos.z;
 
 		// 大きさ(Stageからのローカル大きさ)
-		const auto& scale = wall->GetLocalScale();
+		const auto& scale = aabb->GetLocalScale();
 		AABBCollisionJson["Scale"]["x"] = scale.x;
 		AABBCollisionJson["Scale"]["y"] = scale.y;
 		AABBCollisionJson["Scale"]["z"] = scale.z;
@@ -176,40 +188,40 @@ bool AABBCollisionManager::Load(const std::string& filePath, const std::shared_p
 
 
 	// Jsonに保存されてる情報でAABBCollisionを生成
-	for (const auto& wallJson : rootJson["AABBCollisions"])
+	for (const auto& aabbJson : rootJson["AABBCollisions"])
 	{
 
 		auto obj = KdGameObjectFactory::Instance().CreateGameObject("AABBCollision");
 
-		auto wall = std::dynamic_pointer_cast<AABBCollision>(obj);
+		auto aabb = std::dynamic_pointer_cast<AABBCollision>(obj);
 
-		if (!wall)
+		if (!aabb)
 		{
 			continue;
 		}
 
-		wall->Init();
+		aabb->Init();
 		// ID
-		wall->SetID(FindAvailableID());
+		aabb->SetID(FindAvailableID());
 		// 名前
-		wall->SetObjectName("AABBCollision_" + std::to_string(wall->GetID()));
+		aabb->SetObjectName("AABBCollision_" + std::to_string(aabb->GetID()));
 		// 座標(Stageからのローカル位置)
-		wall->SetLocalPos({
-			wallJson["Position"]["x"].get<float>(),
-			wallJson["Position"]["y"].get<float>(),
-			wallJson["Position"]["z"].get<float>()
+		aabb->SetLocalPos({
+			aabbJson["Position"]["x"].get<float>(),
+			aabbJson["Position"]["y"].get<float>(),
+			aabbJson["Position"]["z"].get<float>()
 			});
 
 		// 大きさ(Stageからのローカル大きさ)
-		wall->SetLocalScale({
-			wallJson["Scale"]["x"].get<float>(),
-			wallJson["Scale"]["y"].get<float>(),
-			wallJson["Scale"]["z"].get<float>()
+		aabb->SetLocalScale({
+			aabbJson["Scale"]["x"].get<float>(),
+			aabbJson["Scale"]["y"].get<float>(),
+			aabbJson["Scale"]["z"].get<float>()
 			});
 
-		wall->SetOwner(owner);
+		aabb->SetOwner(owner);
 
-		m_spAABBCollisionList.push_back(wall);
+		m_spAABBCollisionList.push_back(aabb);
 	}
 
 	return true;
@@ -234,25 +246,31 @@ void AABBCollisionManager::DrawDebug()
 		return;
 	}
 
-	for (const auto& wall : m_spAABBCollisionList)
+	for (const auto& aabb : m_spAABBCollisionList)
 	{
-		if (!wall){continue;}
-		wall->DrawDebug();
+		if (!aabb){continue;}
+		// 持ち主が違う場合表示しない
+		if (aabb->GetOwner() != EditorManager::Instance().GetActiveStage())
+		{
+			continue;
+		}
+
+		aabb->DrawDebug();
 	}
 }
 
 void AABBCollisionManager::SetStageTransform(const StageObject* stageObject, const Math::Vector3& stagePos, const Math::Vector3& stageScale)
 {
-	for (const auto& wall : m_spAABBCollisionList)
+	for (const auto& aabb : m_spAABBCollisionList)
 	{
-		if (!wall ||
-			!wall->ShouldFollow(stageObject))
+		if (!aabb ||
+			!aabb->ShouldFollow(stageObject))
 		{
 			continue;
 		}
 
 
-		wall->SetStageTransform(stagePos, stageScale);
+		aabb->SetStageTransform(stagePos, stageScale);
 	}
 }
 

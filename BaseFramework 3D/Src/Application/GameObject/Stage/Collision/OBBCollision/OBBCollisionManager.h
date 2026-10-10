@@ -14,6 +14,8 @@ public:
 
 	void RemoveOBBCollision(int id);
 
+	void RemoveByOwner(const StageObject* owner);
+
 	std::shared_ptr<OBBCollision> FindOBBCollision(int id)const;
 
 
@@ -39,7 +41,7 @@ public:
 
 	// デバッグの表示切り替えフラグ
 	bool IsDebug() { return m_isDebug; }
-	void SetDebugFlg(const bool flg) { m_isDebug = flg; }
+	void SetIsDebug(const bool flg) { m_isDebug = flg; }
 
 	// デバッグ表示
 	void DrawDebug();

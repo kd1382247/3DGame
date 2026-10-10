@@ -34,6 +34,56 @@ bool StageDataManager::LoadTemporary()
 	return LoadFromFolder("Asset/Data/EditorTemp");
 }
 
+bool StageDataManager::LoadStageModelData(const std::shared_ptr<StageObject>& stage)
+{
+	if (!stage)
+	{
+		return false;
+	}
+
+	const std::string modelName = stage->GetStageModelName();
+
+	if (modelName.empty())
+	{
+		return true;
+	}
+
+	// モデル名に対応する各データのファイルパスを取得
+	const std::filesystem::path aabbFilePath =
+		StageLoder::Instance().GetAABBCollisionDataPath(modelName);
+	const std::filesystem::path obbFilePath =
+		StageLoder::Instance().GetOBBCollisionDataPath(modelName);
+	const std::filesystem::path wayPointFilePath =
+		StageLoder::Instance().GetWayPointDataPath(modelName);
+
+	if (std::filesystem::exists(aabbFilePath))
+	{
+		if (!AABBCollisionManager::Instance().Load(aabbFilePath.string(), stage))
+		{
+			return false;
+		}
+	}
+
+	if (std::filesystem::exists(obbFilePath))
+	{
+		if (!OBBCollisionManager::Instance().Load(obbFilePath.string(), stage))
+		{
+			return false;
+		}
+	}
+
+	if (std::filesystem::exists(wayPointFilePath))
+	{
+		if (!WayPointManager::Instance().Load(wayPointFilePath.string(), stage))
+		{
+			return false;
+		}
+	}
+
+	return true;
+
+}
+
 std::filesystem::path StageDataManager::GetStageFolder(const std::string& stageName) const
 {
 	return std::filesystem::path("Asset/Data/Stage") / stageName;
@@ -136,11 +186,9 @@ bool StageDataManager::SaveToFolder(const std::filesystem::path& folder)
 		}
 
 		// 同じモデルが複数ある場合は、最初の1つだけ保存する
+		// (エディタで編集できるのも最初の1つだけなので、これは正常な動作)
 		if (!savedModelNames.insert(modelName).second)
 		{
-			KdDebugGUI::Instance().AddErrorLog(
-				"同じステージモデル(%s)が複数配置されているため、最初の1つだけ保存しました\n",
-				modelName.c_str());
 			continue;
 		}
 
@@ -294,41 +342,11 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 	// ロードした際に持ち主(ステージ)を渡す
 	for (const auto& stage : StageObjects)
 	{
-		std::string modelName = stage->GetStageModelName();
-
-		if (modelName.empty())
+		if (!LoadStageModelData(stage))
 		{
-			continue;
-		}
-
-		std::filesystem::path AABBFilePath = StageLoder::Instance().GetAABBCollisionDataPath(modelName);
-		std::filesystem::path OBBFilePath = StageLoder::Instance().GetOBBCollisionDataPath(modelName);
-		std::filesystem::path wayPointFilePath = StageLoder::Instance().GetWayPointDataPath(modelName);
-
-		if (std::filesystem::exists(AABBFilePath))
-		{
-			if (!AABBCollisionManager::Instance().Load(AABBFilePath.string(), stage))
-			{
-				return false;
-			}
-		}
-		if (std::filesystem::exists(OBBFilePath))
-		{
-			if (!OBBCollisionManager::Instance().Load(OBBFilePath.string(), stage))
-			{
-				return false;
-			}
-		}
-		if(	std::filesystem::exists(wayPointFilePath))
-		{
-			if (!WayPointManager::Instance().Load(wayPointFilePath.string(), stage))
-			{
-				return false;
-			}
+			return false;
 		}
 	}
-
-
 
 	return true;
 }

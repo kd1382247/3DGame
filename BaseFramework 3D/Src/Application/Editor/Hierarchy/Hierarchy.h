@@ -9,10 +9,10 @@ public:
 		GameObject,
 		WayPoint,
 		Stage,
-		CollisionBox,
+		Gimmick,
+		AABB,
 		OBB
 	};
-
 
 	void Draw();
 
@@ -25,13 +25,17 @@ private:
 	void CategorySelectItem(const char* label, HierarchyCategory category);
 	static const char* GetCategoryLabel(HierarchyCategory category);
 
+	// 編集するステージを選択
+	void DrawActiveStageSelector();
+
 	// 選択中カテゴリのAddボタン
 	void DrawAddButtons();
 
 	void AddGameObject();
 	void AddWayPoint();
 	void AddStage();
-	void AddCollisionBox();
+	void AddGimmick();
+	void AddAABB();
 	void AddOBB();
 
 	// 検索ボックス(名前の一部で一覧を絞り込む)
@@ -44,7 +48,8 @@ private:
 	void DrawGameObjects();
 	void DrawWayPoints();
 	void DrawStage();
-	void DrawCollisionBox();
+	void DrawGimmick();
+	void DrawAABB();
 	void DrawOBB();
 
 

@@ -5,6 +5,7 @@
 #include"Collision/OBBCollision/OBBCollisionManager.h"
 
 #include"../../System/StageLoder/StageLoder.h"
+#include"../../System/StageDataManager/StageDataManager.h"
 #include"../../System/WayPointManager/WayPointManager.h"
 #include"../../Editor/EditorManager.h"
 
@@ -40,6 +41,13 @@ void StageObject::LoadStageModel(const std::string& modelName)
 	m_spAIBlockCollision->SetMatrix(m_mWorld);
 }
 
+void StageObject::ClearOwnerData()
+{
+	AABBCollisionManager::Instance().RemoveByOwner(this);
+	OBBCollisionManager ::Instance().RemoveByOwner(this);
+	WayPointManager     ::Instance().RemoveByOwner(this);
+}
+
 void StageObject::PreDraw()
 {
 	// EditModeではUpdate()が呼ばれない(BaseScene::Update()参照)ため、
@@ -67,11 +75,19 @@ void StageObject::DrawInspector()
 		{
 			if (ImGui::Selectable(name.c_str(),name==m_stageModelName))
 			{
-				if (name != m_stageModelName)
+
+				if(name!=m_stageModelName)
 				{
 					LoadStageModel(name);
+
+					// 前もモデルデータを消して、新しいモデルのデータに入れ替える
+					ClearOwnerData();
+					StageDataManager::Instance().LoadStageModelData(
+						std::static_pointer_cast<StageObject>(shared_from_this()));
+
 					EditorManager::Instance().MarkDirty();
 				}
+
 			}
 		}
 		ImGui::EndCombo();
@@ -104,6 +120,22 @@ void StageObject::LoadData(const nlohmann::json& json)
 			LoadStageModel(modelName);
 		}
 	}
+}
+
+void StageObject::Destroy()
+{
+	// この部屋が持っているデータも消す
+	ClearOwnerData();
+
+	// 編集するステージ指定されていたら解除する
+	if (EditorManager::Instance().GetActiveStage().get() == this)
+	{
+		EditorManager::Instance().SetActiveStage(nullptr);
+	}
+
+	KdGameObject::Destroy();
+
+
 }
 
 nlohmann::json StageObject::SaveData()const
