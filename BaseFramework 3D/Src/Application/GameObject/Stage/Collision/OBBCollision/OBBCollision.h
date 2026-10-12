@@ -26,7 +26,7 @@ public:
 	void SetCollisionType(const OBBCollisionType type) { m_collisionType = type; }
 	OBBCollisionType GetCollisionType()const     { return m_collisionType; }
 
-	void SetCollisionType(const std::string typeName);
+	void SetCollisionType(const std::string& typeName);
 	std::string GetCollitionTypeName()const { return m_collisionTypeName[static_cast<int>(GetCollisionType())]; }
 
 
@@ -81,7 +81,7 @@ private:
 	Math::Vector3 m_localScale = Math::Vector3::One;
 
 
-	std::string m_collisionTypeName[2] = { {"Solid"},{"Walkable"} };
+	const std::string m_collisionTypeName[2] = { {"Solid"},{"Walkable"} };
 
 	std::weak_ptr<StageObject>m_wpOwner;
 

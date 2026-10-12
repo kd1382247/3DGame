@@ -31,6 +31,9 @@ void Inspector::Draw()
 	// 現在選択中のオブジェクト名表示
 	ImGui::Text("%s", obj->GetObjectName().c_str());
 
+	// コピーボタン(位置などを変更する項目の上)
+	DrawCopyButton(obj);
+
 	obj->DrawInspectorHeader();
 
 	ImGui::Separator();
@@ -55,6 +58,32 @@ void Inspector::Draw()
 	DrawDeleteButton(obj);
 
 	ImGui::End();
+}
+
+void Inspector::DrawCopyButton(const std::shared_ptr<KdGameObject>& obj)
+{
+	// コピーできるのは、ギミック・AABB・OBBだけ
+	if (!EditorManager::Instance().CanCopyObject(obj))
+	{
+		return;
+	}
+
+	if (!ImGui::Button("Copy"))
+	{
+		return;
+	}
+
+	auto copy = EditorManager::Instance().CopyObject(obj);
+
+	if (!copy)
+	{
+		return;
+	}
+
+	// コピーしたものを選択する
+	EditorManager::Instance().SetSelectedObject(copy);
+
+	EditorManager::Instance().MarkDirty();
 }
 
 void Inspector::DrawDeleteButton(const std::shared_ptr<KdGameObject>& obj)

@@ -38,7 +38,7 @@ void OBBCollision::DrawDebug()
 
 }
 
-void OBBCollision::SetCollisionType(const std::string typeName)
+void OBBCollision::SetCollisionType(const std::string& typeName)
 {
 	for (int i = 0; i < std::size(m_collisionTypeName); i++)
 	{

@@ -39,25 +39,6 @@
             }
         },
         {
-            "Class": "StarFish",
-            "Name": "StarFish_0",
-            "Position": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
-        },
-        {
             "Class": "StageObject",
             "Name": "Stage01_0",
             "Position": {
@@ -76,6 +57,54 @@
                 "z": 1.0
             },
             "StageModel": "Stage01"
+        },
+        {
+            "BossDefeatDuration": 3.0,
+            "Class": "Room",
+            "EnterDistance": 1.0,
+            "IntroDuration": 2.0,
+            "Name": "Room_0",
+            "OutroDuration": 2.0,
+            "Position": {
+                "x": 5.0,
+                "y": 1.899999976158142,
+                "z": 0.0
+            },
+            "RoomType": "Normal",
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 10.0,
+                "y": 6.0,
+                "z": 10.0
+            }
+        },
+        {
+            "Class": "RoomGate",
+            "CloseDuration": 0.6000000238418579,
+            "LinkedRoom": "Room_0",
+            "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
+            "Name": "RoomGate_0",
+            "OpenDuration": 1.5,
+            "OpenHeight": 3.0,
+            "Position": {
+                "x": 4.599999904632568,
+                "y": 0.0,
+                "z": -0.6000000238418579
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 4.0,
+                "y": 3.0,
+                "z": 0.5
+            }
         }
     ]
 }

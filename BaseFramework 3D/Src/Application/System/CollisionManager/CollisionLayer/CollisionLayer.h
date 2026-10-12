@@ -12,5 +12,6 @@ enum class CollisionLayer
 	AABB,
 	OBB,
 	AIBlock,
+	Gate,		// 部屋の柵(RoomGate)
 	Max
 };

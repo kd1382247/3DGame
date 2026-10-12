@@ -413,7 +413,9 @@
     <ClInclude Include="Src\Application\GameObject\FlyText\FlyTextManager.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\Parameter\EnemySpawnerParameter.h" />
+    <ClInclude Include="Src\Application\GameObject\Gimmick\RoomGate\RoomGate.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\Room\Room.h" />
+    <ClInclude Include="Src\Application\GameObject\Gimmick\Room\RoomManager.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\BossHPBar\BossHPBar.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.h" />
@@ -429,6 +431,7 @@
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockCollision.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollision.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.h" />
+    <ClInclude Include="Src\Application\GameObject\Stage\StageFollower.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\StageObject.h" />
     <ClInclude Include="Src\Application\GameObject\Title\Title.h" />
     <ClInclude Include="Src\Application\GameObject\WayPoint\WayPoint.h" />
@@ -622,7 +625,9 @@
     <ClCompile Include="Src\Application\GameObject\FlyText\FlyTextManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\Parameter\EnemySpawnerParameter.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Gimmick\RoomGate\RoomGate.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\Room\Room.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Gimmick\Room\RoomManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\BossHPBar\BossHPBar.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.cpp" />
@@ -638,6 +643,7 @@
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockCollision.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollision.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Stage\StageFollower.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Application\GameObject\Title\Title.cpp" />
     <ClCompile Include="Src\Application\GameObject\WayPoint\WayPoint.cpp" />

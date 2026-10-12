@@ -27,18 +27,43 @@ void StageObject::LoadStageModel(const std::string& modelName)
 {
 	m_stageModelName = modelName;
 
-	m_spModel = std::make_shared<KdModelWork>();
-	m_spModel->SetModelData(StageLoder::Instance().GetRenderModelPath(modelName).string());
+	// 前のモデルのデータを消す(ファイルが無かったときに、前のモデルが残らないようにする)
+	m_spModel = nullptr;
+	m_model = nullptr;
+	m_spAIBlockCollision = nullptr;
 
-	m_model = std::make_shared<KdModelWork>();
-	m_model->SetModelData(StageLoder::Instance().GetBackGroundModelPath(modelName).string());
+	// 本体のモデル(これが無いと表示できないので、無いときはエラーを出す)
+	const std::filesystem::path renderPath = StageLoder::Instance().GetRenderModelPath(modelName);
 
-	// ステージの当たり判定クラス生成
+	if (std::filesystem::exists(renderPath))
+	{
+		m_spModel = std::make_shared<KdModelWork>();
+		m_spModel->SetModelData(renderPath.string());
+	}
+	else
+	{
+		KdDebugGUI::Instance().AddErrorLog("Stage model not found : %s\n", renderPath.string().c_str());
+	}
 
-	m_spAIBlockCollision = std::make_shared<AIBlockCollision>();
-	m_spAIBlockCollision->SetModelPath(StageLoder::Instance().GetAIBlockCollisionPath(modelName));
-	m_spAIBlockCollision->Init();
-	m_spAIBlockCollision->SetMatrix(m_mWorld);
+	// 背景モデル(部屋や通路など、背景が要らないモデルは無くてもよい)
+	const std::filesystem::path backGroundPath = StageLoder::Instance().GetBackGroundModelPath(modelName);
+
+	if (std::filesystem::exists(backGroundPath))
+	{
+		m_model = std::make_shared<KdModelWork>();
+		m_model->SetModelData(backGroundPath.string());
+	}
+
+	// ステージの当たり判定クラス生成(AIBlockが要らないモデルは無くてもよい)
+	const std::filesystem::path aiBlockPath = StageLoder::Instance().GetAIBlockCollisionPath(modelName);
+
+	if (std::filesystem::exists(aiBlockPath))
+	{
+		m_spAIBlockCollision = std::make_shared<AIBlockCollision>();
+		m_spAIBlockCollision->SetModelPath(aiBlockPath);
+		m_spAIBlockCollision->Init();
+		m_spAIBlockCollision->SetMatrix(m_mWorld);
+	}
 }
 
 void StageObject::ClearOwnerData()
@@ -52,7 +77,10 @@ void StageObject::PreDraw()
 {
 	// EditModeではUpdate()が呼ばれない(BaseScene::Update()参照)ため、
 	// EditModeでもPlayModeでも必ず呼ばれるPreDraw()でStageへの追従処理を行う
-	m_spAIBlockCollision->SetMatrix(m_mWorld);
+	if (m_spAIBlockCollision)
+	{
+		m_spAIBlockCollision->SetMatrix(m_mWorld);
+	}
 
 	// AABB/OBB/WayPointは回転を表現できない(またはStage自体は回転させない方針の)ため、
 	// 位置と大きさだけをStageに追従させる
@@ -87,7 +115,6 @@ void StageObject::DrawInspector()
 
 					EditorManager::Instance().MarkDirty();
 				}
-
 			}
 		}
 		ImGui::EndCombo();
@@ -98,14 +125,21 @@ void StageObject::DrawInspector()
 void StageObject::DrawLit()
 {
 
-	KdShaderManager::Instance().m_StandardShader.SetColorSphereEnable(true);
+	// モデルの読み込みに失敗していたら何も描かない
+	if (m_spModel)
+	{
+		KdShaderManager::Instance().m_StandardShader.SetColorSphereEnable(true);
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 
-	KdShaderManager::Instance().m_StandardShader.SetColorSphereEnable(false);
+		KdShaderManager::Instance().m_StandardShader.SetColorSphereEnable(false);
+	}
 
-
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_model, m_mWorld);
+	// 背景モデルは無いモデルもある
+	if (m_model)
+	{
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_model, m_mWorld);
+	}
 }
 
 void StageObject::LoadData(const nlohmann::json& json)

@@ -11,6 +11,7 @@
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 
 #include"../../GameObject/Character/CharacterBase.h"
+#include"../../GameObject/Gimmick/RoomGate/RoomGate.h"
 
 
 void CollisionManager::DrawDebug()
@@ -247,6 +248,37 @@ CollisionManager::SweepResult CollisionManager::FindSweepContacts(const std::sha
 		const bool isObbTypeWalkable = (obbCollision->GetCollisionType() == OBBCollision::OBBCollisionType::Walkable);
 
 		if (ShouldSkipWalkableObbContact(isObbTypeWalkable, normal, character, isWalkableContact))
+		{
+			continue;
+		}
+
+		AddSweepContact(result, toi, normal, moveLength);
+	}
+
+	// 部屋の柵(RoomGate)。閉じている間・動いている間だけ壁として扱う
+	for (const auto& weakGate : GetObjects(CollisionLayer::Gate))
+	{
+		auto gate = std::dynamic_pointer_cast<RoomGate>(weakGate.lock());
+
+		if (!gate || !gate->IsBlocking())
+		{
+			continue;
+		}
+
+		float toi = 0.0f;
+
+		Math::Vector3 normal = Math::Vector3::Zero;
+
+		bool hit =
+			CollisionMath::SphereSweepVsOBB(
+				sweepStart,
+				remainingMove,
+				character->GetBumpSphere().Radius,
+				gate->GetCollisionBox(),
+				toi,
+				normal);
+
+		if (!hit)
 		{
 			continue;
 		}
@@ -622,6 +654,34 @@ void CollisionManager::ResolveOBBStartOverlap(const std::shared_ptr<CharacterBas
 	}
 }
 
+void CollisionManager::ResolveGateStartOverlap(const std::shared_ptr<CharacterBase>& character, Math::Vector3& currentPos, Math::Vector3& remainingMove)
+{
+	for (const auto& weakGate : GetObjects(CollisionLayer::Gate))
+	{
+		auto gate = std::dynamic_pointer_cast<RoomGate>(weakGate.lock());
+
+		if (!gate || !gate->IsBlocking())
+		{
+			continue;
+		}
+
+		DirectX::BoundingSphere sphere;
+		sphere.Center = GetBumpSphereCenterAt(character, currentPos);
+		sphere.Radius = character->GetBumpSphere().Radius;
+
+		Math::Vector3 push = Math::Vector3::Zero;
+		Math::Vector3 normal = Math::Vector3::Zero;
+
+		if (!CollisionMath::SphereVsOBB(sphere, gate->GetCollisionBox(), push, normal))
+		{
+			continue;
+		}
+
+		// 柵は歩行可能面としては扱わない
+		ResolveStartOverlapContact(push, normal, currentPos, remainingMove, false);
+	}
+}
+
 bool CollisionManager::IsWalkableSurface(const Math::Vector3& normal, const std::shared_ptr<CharacterBase>& character) const
 {
 	if(!character)
@@ -767,6 +827,8 @@ Math::Vector3 CollisionManager::ResolveCharacterDisplacement(const std::shared_p
 
 	ResolveOBBStartOverlap(character, currentPos, remainingMove);
 
+	ResolveGateStartOverlap(character, currentPos, remainingMove);
+
 	// =====================================
 	// 以降はSweepだけで移動を解決
 	// =====================================
@@ -799,35 +861,6 @@ Math::Vector3 CollisionManager::ResolveCharacterDisplacement(const std::shared_p
 		
 	}
 
-	// デバッグ用ログ：ノックバック/プッシュ解決(updateGroundState==false)では
-	// 毎キャラ分呼ばれて上書きされてしまい意味をなさないため、
-	// 本来の移動解決(ResolveCharacterMovementから呼ばれる時)だけ表示する
-	if (updateGroundState)
-	{
-		// 実際に移動した量
-		Math::Vector3 actualMove = currentPos - startPos;
-
-		// 入力された移動量の水平成分
-		Math::Vector3 inputHorizontal = move;
-		inputHorizontal.y = 0.0f;
-
-		// 実際の移動量の水平成分
-		Math::Vector3 actualHorizontal = actualMove;
-		actualHorizontal.y = 0.0f;
-
-		KdDebugGUI::Instance().ClearLog();
-
-		KdDebugGUI::Instance().AddLog("Input  X: %.4f  Z: %.4f",
-			inputHorizontal.x,
-			inputHorizontal.z);
-		KdDebugGUI::Instance().AddLog("\nActual X: %.4f  Z: %.4f",
-			actualHorizontal.x,
-			actualHorizontal.z);
-
-		KdDebugGUI::Instance().AddLog(
-			"\nActual Y: %.4f",
-			actualMove.y);
-	}
 
 	return currentPos;
 }

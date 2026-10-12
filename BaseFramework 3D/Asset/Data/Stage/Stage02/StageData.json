@@ -1,0 +1,503 @@
+{
+    "Objects": [
+        {
+            "Class": "TPSCamera",
+            "Name": "TPSCamera",
+            "Position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        {
+            "Class": "StageObject",
+            "Name": "Room_7x7_0",
+            "Position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "StageModel": "Room_7x7"
+        },
+        {
+            "BossDefeatDuration": 3.0,
+            "Class": "Room",
+            "CoreOffset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "CoreSize": {
+                "x": 12.0,
+                "y": 9.0,
+                "z": 12.0
+            },
+            "FollowStage": "Room_7x7_0",
+            "IntroDuration": 2.0,
+            "Name": "Room_0",
+            "OutroDuration": 2.0,
+            "Position": {
+                "x": 7.0,
+                "y": 4.300000190734863,
+                "z": 7.0
+            },
+            "RoomType": "Safe",
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 14.0,
+                "y": 9.0,
+                "z": 14.0
+            }
+        },
+        {
+            "Class": "StageObject",
+            "Name": "Corridor_0",
+            "Position": {
+                "x": 4.0,
+                "y": 0.0,
+                "z": 20.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "StageModel": "Corridor"
+        },
+        {
+            "Class": "StageObject",
+            "Name": "Corridor_1",
+            "Position": {
+                "x": 4.0,
+                "y": 0.0,
+                "z": 26.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "StageModel": "Corridor"
+        },
+        {
+            "Class": "StageObject",
+            "Name": "CombatRoom_9x13_0",
+            "Position": {
+                "x": -2.0,
+                "y": 0.0,
+                "z": 26.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "StageModel": "CombatRoom_9x13"
+        },
+        {
+            "Class": "Player",
+            "Name": "Player_0",
+            "Position": {
+                "x": 7.400000095367432,
+                "y": 4.5,
+                "z": 68.5999984741211
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        {
+            "BossDefeatDuration": 3.0,
+            "Class": "Room",
+            "CoreOffset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "CoreSize": {
+                "x": 18.0,
+                "y": 13.0,
+                "z": 24.0
+            },
+            "FollowStage": "CombatRoom_9x13_0",
+            "IntroDuration": 2.0,
+            "Name": "Room_1",
+            "OutroDuration": 2.0,
+            "Position": {
+                "x": 7.0,
+                "y": 5.599999904632568,
+                "z": 39.0
+            },
+            "RoomType": "Normal",
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 18.0,
+                "y": 13.0,
+                "z": 26.0
+            }
+        },
+        {
+            "Class": "RoomGate",
+            "CloseDuration": 0.6000000238418579,
+            "FollowStage": "CombatRoom_9x13_0",
+            "LinkedRoom": "Room_1",
+            "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
+            "Name": "RoomGate_0",
+            "OpenDuration": 1.5,
+            "OpenHeight": 3.0,
+            "Position": {
+                "x": 7.0,
+                "y": 0.0,
+                "z": 26.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 2.200000047683716,
+                "y": 3.0,
+                "z": 0.5
+            }
+        },
+        {
+            "Class": "RoomGate",
+            "CloseDuration": 0.6000000238418579,
+            "FollowStage": "CombatRoom_9x13_0",
+            "LinkedRoom": "Room_1",
+            "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
+            "Name": "RoomGate_1",
+            "OpenDuration": 1.5,
+            "OpenHeight": 3.0,
+            "Position": {
+                "x": 7.0,
+                "y": 3.0,
+                "z": 52.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 2.200000047683716,
+                "y": 3.0,
+                "z": 0.5
+            }
+        },
+        {
+            "Class": "StageObject",
+            "Name": "Corridor_2",
+            "Position": {
+                "x": 4.0,
+                "y": 3.0,
+                "z": 58.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "StageModel": "Corridor"
+        },
+        {
+            "Class": "StageObject",
+            "Name": "Corridor_3",
+            "Position": {
+                "x": 4.0,
+                "y": 3.0,
+                "z": 64.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "StageModel": "Corridor"
+        },
+        {
+            "Class": "StageObject",
+            "Name": "CombatRoom_21x15_0",
+            "Position": {
+                "x": 7.0,
+                "y": 3.0,
+                "z": 79.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "StageModel": "CombatRoom_21x15"
+        },
+        {
+            "BossDefeatDuration": 3.0,
+            "Class": "Room",
+            "CoreOffset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "CoreSize": {
+                "x": 43.0,
+                "y": 16.0,
+                "z": 27.0
+            },
+            "FollowStage": "CombatRoom_21x15_0",
+            "IntroDuration": 2.0,
+            "Name": "Room_2",
+            "OutroDuration": 2.0,
+            "Position": {
+                "x": 7.0,
+                "y": 10.0,
+                "z": 79.0
+            },
+            "RoomType": "Normal",
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 42.0,
+                "y": 16.0,
+                "z": 30.0
+            }
+        },
+        {
+            "Class": "RoomGate",
+            "CloseDuration": 0.6000000238418579,
+            "FollowStage": "CombatRoom_21x15_0",
+            "LinkedRoom": "Room_2",
+            "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
+            "Name": "RoomGate_2",
+            "OpenDuration": 1.5,
+            "OpenHeight": 3.0,
+            "Position": {
+                "x": 7.099999904632568,
+                "y": 3.0,
+                "z": 64.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 2.200000047683716,
+                "y": 3.0,
+                "z": 0.5
+            }
+        },
+        {
+            "Class": "RoomGate",
+            "CloseDuration": 0.6000000238418579,
+            "FollowStage": "CombatRoom_21x15_0",
+            "LinkedRoom": "Room_2",
+            "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
+            "Name": "RoomGate_3",
+            "OpenDuration": 1.5,
+            "OpenHeight": 3.0,
+            "Position": {
+                "x": 7.0,
+                "y": 3.0,
+                "z": 94.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 2.200000047683716,
+                "y": 3.0,
+                "z": 0.5
+            }
+        },
+        {
+            "Class": "StageObject",
+            "Name": "Corridor_4",
+            "Position": {
+                "x": 4.0,
+                "y": 3.0,
+                "z": 100.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "StageModel": "Corridor"
+        },
+        {
+            "Class": "StageObject",
+            "Name": "Corridor_5",
+            "Position": {
+                "x": 4.0,
+                "y": 3.0,
+                "z": 106.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "StageModel": "Corridor"
+        },
+        {
+            "Class": "StageObject",
+            "Name": "CombatRoom_11x11_0",
+            "Position": {
+                "x": -4.0,
+                "y": 3.0,
+                "z": 106.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "StageModel": "CombatRoom_11x11"
+        },
+        {
+            "BossDefeatDuration": 3.0,
+            "Class": "Room",
+            "CoreOffset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.5
+            },
+            "CoreSize": {
+                "x": 22.0,
+                "y": 13.0,
+                "z": 20.0
+            },
+            "FollowStage": "CombatRoom_11x11_0",
+            "IntroDuration": 2.0,
+            "Name": "Room_3",
+            "OutroDuration": 2.0,
+            "Position": {
+                "x": 7.0,
+                "y": 9.0,
+                "z": 117.0
+            },
+            "RoomType": "Boss",
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 22.0,
+                "y": 13.0,
+                "z": 22.0
+            }
+        },
+        {
+            "Class": "RoomGate",
+            "CloseDuration": 0.6000000238418579,
+            "FollowStage": "CombatRoom_11x11_0",
+            "LinkedRoom": "Room_3",
+            "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
+            "Name": "RoomGate_4",
+            "OpenDuration": 1.5,
+            "OpenHeight": 3.0,
+            "Position": {
+                "x": 7.0,
+                "y": 3.0,
+                "z": 106.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 2.200000047683716,
+                "y": 3.0,
+                "z": 0.5
+            }
+        }
+    ]
+}

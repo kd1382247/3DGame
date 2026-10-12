@@ -15,6 +15,7 @@
 #include"../Scene/EditorScene/EditorScene.h"
 
 #include"../GameObject/Stage/StageObject.h"
+#include"../GameObject/Gimmick/StageGimmick.h"
 
 #include"../System/ReferenceManager/ReferenceManager.h"
 #include "../Scene/SceneManager.h"
@@ -314,7 +315,7 @@ std::string EditorManager::MakeEllipsisText(const std::string& text, float maxWi
 	return ellipsis;
 }
 
-KdCollider::RayInfo EditorManager::CreateRayInfo(KdCollider::Type type)
+KdCollider::RayInfo EditorManager::CreateRayInfo(UINT type)
 {
 
 	// SceneView内のマウス座標
@@ -414,8 +415,9 @@ void EditorManager::UpdateMouseSelection()
 }
 
 template<typename Container, typename Predicate>
-std::shared_ptr<KdGameObject> EditorManager::SelectClosestByMouse(const Container& objects, KdCollider::Type rayType, Predicate predicate)
+std::shared_ptr<KdGameObject> EditorManager::SelectClosestByMouse(const Container& objects, UINT rayType, Predicate predicate)
 {
+
 	KdCollider::RayInfo rayInfo = CreateRayInfo(rayType);
 
 	float maxOverlap = 0.0f;
@@ -481,13 +483,22 @@ void EditorManager::SelectStageObjectByMouse()
 
 void EditorManager::SelectGimmickByMouse()
 {
+	auto activeStage = GetActiveStage();
 
 	auto selectedObj = SelectClosestByMouse(
 		SceneManager::Instance().GetObjList(),
-		KdCollider::TypeEvent,
-		[](const std::shared_ptr<KdGameObject>& obj)
+		KdCollider::TypeEvent|KdCollider::TypeBump,
+		[activeStage](const std::shared_ptr<KdGameObject>& obj)
 		{
-			return obj->GetObjectCategory() == KdGameObject::ObjectCategory::Gimmick;
+			if (obj->GetObjectCategory() != KdGameObject::ObjectCategory::Gimmick)
+			{
+				return false;
+			}
+
+			// 持ち主がいるギミックは、Active Stageのものだけ選べる(Hierarchyの一覧と同じ)
+			auto gimmick = std::dynamic_pointer_cast<StageGimmick>(obj);
+
+			return !gimmick || gimmick->GetOwnerStage() == activeStage;
 		});
 
 	SetSelectedObject(selectedObj);
@@ -574,7 +585,7 @@ void EditorManager::SelectOBBByMouse()
 	SetSelectedObject(selectedObj);
 }
 
-void EditorManager::CreateGameObject(const std::string& className)
+void EditorManager::CreateGameObject(const std::string& className, const std::string& stageModelName)
 {
 	auto newObject =
 		KdGameObjectFactory::Instance().CreateGameObject(className);
@@ -585,6 +596,16 @@ void EditorManager::CreateGameObject(const std::string& className)
 		KdDebugGUI::Instance().AddErrorLog("オブジェクトの生成に失敗しました\n");
 		return;
 	}
+
+	// ステージオブジェクトに変換
+	auto stage = std::dynamic_pointer_cast<StageObject>(newObject);
+
+	// 選んだステージモデルを、Init()で読み込まれるようにInit()より先にセットする
+	if (stage && !stageModelName.empty())
+	{
+		stage->SetStageModelName(stageModelName);
+	}
+
 	newObject->Init();
 
 	// ファクトリー登録名を保持しておく(SaveDataの"Class"に使う。表示名とは別)
@@ -593,8 +614,6 @@ void EditorManager::CreateGameObject(const std::string& className)
 
 	std::string baseName = className;
 
-	// ステージオブジェクトに変換
-	auto stage = std::dynamic_pointer_cast<StageObject>(newObject);
 	if (stage)
 	{
 		baseName = stage->GetStageModelName();
@@ -604,6 +623,12 @@ void EditorManager::CreateGameObject(const std::string& className)
 	// 表示名は"Slime_0"のように自動採番する
 	newObject->SetObjectName(MakeUniqueObjectName(baseName));
 	
+
+	// ギミックは、今のActive Stageを持ち主にする
+	if (auto gimmick = std::dynamic_pointer_cast<StageGimmick>(newObject))
+	{
+		gimmick->SetOwnerStage(GetActiveStage());
+	}
 
 	SceneManager::Instance().AddObject(newObject);
 
@@ -615,6 +640,122 @@ void EditorManager::CreateGameObject(const std::string& className)
 
 	// 現在選択中のオブジェクト
 	SetSelectedObject(newObject);
+}
+
+bool EditorManager::CanCopyObject(const std::shared_ptr<KdGameObject>& obj) const
+{
+	if (!obj)
+	{
+		return false;
+	}
+
+	return std::dynamic_pointer_cast<StageGimmick>(obj)
+		|| std::dynamic_pointer_cast<AABBCollision>(obj)
+		|| std::dynamic_pointer_cast<OBBCollision>(obj);
+}
+
+std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<KdGameObject>& src)
+{
+	if (!src)
+	{
+		return nullptr;
+	}
+
+	//------------------------------------------------------------
+	// AABB: 空いているIDで新しく作り、位置・大きさ・持ち主を写す
+	//------------------------------------------------------------
+	if (auto srcAABB = std::dynamic_pointer_cast<AABBCollision>(src))
+	{
+		auto copy = AABBCollisionManager::Instance().CreateAABBCollision();
+
+		if (!copy)
+		{
+			return nullptr;
+		}
+
+		copy->SetLocalPos(srcAABB->GetLocalPos());
+		copy->SetLocalScale(srcAABB->GetLocalScale());
+		copy->SetOwner(srcAABB->GetOwner());
+
+		// 次にステージの追従が更新されるまでの間も、同じ位置・大きさにしておく
+		copy->SetPos(srcAABB->GetPos());
+		copy->SetScale(srcAABB->GetScale());
+
+		return copy;
+	}
+
+	//------------------------------------------------------------
+	// OBB: AABBと同じ。回転と当たり判定のタイプも写す
+	//------------------------------------------------------------
+	if (auto srcOBB = std::dynamic_pointer_cast<OBBCollision>(src))
+	{
+		auto copy = OBBCollisionManager::Instance().CreateOBBCollision();
+
+		if (!copy)
+		{
+			return nullptr;
+		}
+
+		copy->SetLocalPos(srcOBB->GetLocalPos());
+		copy->SetLocalScale(srcOBB->GetLocalScale());
+		copy->SetOwner(srcOBB->GetOwner());
+		copy->SetCollisionType(srcOBB->GetCollisionType());
+
+		copy->SetPos(srcOBB->GetPos());
+		copy->SetScale(srcOBB->GetScale());
+		copy->SetRotation(srcOBB->GetRotation());
+
+		return copy;
+	}
+
+	//------------------------------------------------------------
+	// ギミック: 同じクラスを作り、保存データ(SaveData)の内容を読み込ませて写す
+	//------------------------------------------------------------
+	if (auto srcGimmick = std::dynamic_pointer_cast<StageGimmick>(src))
+	{
+		const std::string className = srcGimmick->GetFactoryClassName();
+
+		// 未登録のクラス名はファクトリーがassertで止まってしまうので、先に調べる
+		if (!KdGameObjectFactory::Instance().GetCreateFunctions().contains(className))
+		{
+			KdDebugGUI::Instance().AddErrorLog("Copy failed : unknown class '%s'\n", className.c_str());
+			return nullptr;
+		}
+
+		auto newObject = KdGameObjectFactory::Instance().CreateGameObject(className);
+
+		auto copy = std::dynamic_pointer_cast<StageGimmick>(newObject);
+
+		if (!copy)
+		{
+			KdDebugGUI::Instance().AddErrorLog("Copy failed : create object\n");
+			return nullptr;
+		}
+
+		copy->Init();
+
+		copy->SetFactoryClassName(className);
+
+		// 表示名は、空いている最小の番号で付ける("Room_0"がある状態でコピーすると"Room_1")
+		copy->SetObjectName(MakeUniqueObjectName(className));
+
+		// 位置・大きさ・回転を元と同じにする
+		copy->SetScale(srcGimmick->GetScale());
+		copy->SetRotation(srcGimmick->GetRotation());
+		copy->SetPos(srcGimmick->GetPos());
+
+		// そのクラス固有のデータ(Roomの設定、RoomGateのLinkedRoomなど)を写す
+		copy->LoadData(srcGimmick->SaveData());
+
+		// 持ち主(追従するステージ)も元と同じにする
+		copy->SetOwnerStage(srcGimmick->GetOwnerStage());
+
+		SceneManager::Instance().AddObject(copy);
+
+		return copy;
+	}
+
+	return nullptr;
 }
 
 std::shared_ptr<StageObject> EditorManager::FindPrimaryStage(const std::string& modelName) const

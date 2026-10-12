@@ -24,6 +24,9 @@ public:
 	const std::string& GetStageModelName() const { return m_stageModelName; }
 	void SetStageModelName(const std::string& name) { m_stageModelName = name; }
 
+	// 通路か(モデル名が"Corridor"で始まるものを、通路として扱う)
+	bool IsCorridor()const { return m_stageModelName.rfind("Corridor", 0) == 0; }
+
 	void Destroy()override;
 
 private:

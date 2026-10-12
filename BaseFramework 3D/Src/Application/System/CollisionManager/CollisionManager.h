@@ -140,6 +140,12 @@ private:
 		Math::Vector3& currentPos,
 		Math::Vector3& remainingMove);
 
+	// 部屋の柵(RoomGate)とのめり込みを解決
+	void ResolveGateStartOverlap(
+		const std::shared_ptr<CharacterBase>& character,
+		Math::Vector3& currentPos,
+		Math::Vector3& remainingMove);
+
 	//==============================
 	// スウィープ判定
 	//==============================

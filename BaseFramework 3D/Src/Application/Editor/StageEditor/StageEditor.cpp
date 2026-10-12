@@ -87,6 +87,10 @@ void StageEditor::CreateNewStage()
 	// カメラを作成(どのステージにも必ず必要)
 	std::shared_ptr<TPSCamera>camera = std::make_shared<TPSCamera>();
 	camera->Init();
+
+	// ファクトリーの登録名を持たせる(保存したときの"Class"になる。空だと読み込めなくなる)
+	camera->SetFactoryClassName("TPSCamera");
+
 	SceneManager::Instance().AddObject(camera);
 
 

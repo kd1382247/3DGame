@@ -12,6 +12,8 @@
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 
 #include"../../GameObject/Stage/StageObject.h"
+#include"../../GameObject/Gimmick/StageGimmick.h"
+#include"../../System/StageLoder/StageLoder.h"
 
 #include<algorithm>
 #include<cctype>
@@ -30,16 +32,25 @@ void Hierarchy::Draw()
 	DrawCategorySelector();
 
 
+	// ステージモデル単位で保存するデータ(同じモデルは最初のステージでだけ編集できる)
 	const bool isStageDataCategory =
 		m_category == HierarchyCategory::AABB ||
 		m_category == HierarchyCategory::OBB ||
 		m_category == HierarchyCategory::WayPoint;
 
-	if (isStageDataCategory)
+	// Active Stageで一覧を絞り込むカテゴリ(ギミックはステージごとに保存するので、編集の制限はない)
+	const bool isOwnerCategory =
+		isStageDataCategory ||
+		m_category == HierarchyCategory::Gimmick;
+
+	if (isOwnerCategory)
 	{
 		ImGui::Separator();
 		DrawActiveStageSelector();
+	}
 
+	if (isStageDataCategory)
+	{
 		// 同じモデルの2つ目以降のステージは、データを編集できない
 		if (!EditorManager::Instance().CanEditStageData())
 		{
@@ -142,14 +153,30 @@ const char* Hierarchy::GetCategoryLabel(HierarchyCategory category)
 
 void Hierarchy::DrawActiveStageSelector()
 {
+	// ギミックは通路には置かないので、Gimmickカテゴリでは通路を候補に入れない
+	const bool excludeCorridor = (m_category == HierarchyCategory::Gimmick);
+
+	auto isCandidate = [excludeCorridor](const std::shared_ptr<StageObject>& stage)
+	{
+		return !(excludeCorridor && stage->IsCorridor());
+	};
+
 	auto activeStage = EditorManager::Instance().GetActiveStage();
+
+	// 他のカテゴリで通路が選ばれたままなら、いったん外して選び直す
+	if (activeStage && !isCandidate(activeStage))
+	{
+		activeStage = nullptr;
+		EditorManager::Instance().SetActiveStage(nullptr);
+		EditorManager::Instance().SetSelectedObject(nullptr);
+	}
 
 	if (!activeStage)
 	{
 		for (const auto& obj : SceneManager::Instance().GetObjList())
 		{
 			auto stage= std::dynamic_pointer_cast<StageObject>(obj);
-			if (stage)
+			if (stage && isCandidate(stage))
 			{
 				activeStage = stage;
 				EditorManager::Instance().SetActiveStage(stage);
@@ -176,7 +203,7 @@ void Hierarchy::DrawActiveStageSelector()
 		for (const auto& obj : SceneManager::Instance().GetObjList())
 		{
 			auto stage = std::dynamic_pointer_cast<StageObject>(obj);
-			if (stage)
+			if (stage && isCandidate(stage))
 			{
 				ImGui::PushID(stage.get());
 
@@ -279,7 +306,28 @@ void Hierarchy::AddStage()
 
 	if (ImGui::BeginPopup("AddStagePopup"))
 	{
-		DrawAddObjectList(KdGameObject::ObjectCategory::Stage);
+		// 追加できるステージモデルの一覧(Inspectorのモデル変更と同じ一覧)
+		const auto modelNames = StageLoder::Instance().GetAvailableModelNames();
+
+		if (modelNames.empty())
+		{
+			ImGui::TextDisabled(U8("ステージモデルがありません"));
+		}
+
+		for (const auto& modelName : modelNames)
+		{
+			if (ImGui::Selectable(
+				modelName.c_str(),
+				false,
+				ImGuiSelectableFlags_DontClosePopups))
+			{
+				// 選んだモデルのステージを作る
+				EditorManager::Instance().CreateGameObject("StageObject", modelName);
+
+				EditorManager::Instance().MarkDirty();
+			}
+		}
+
 		ImGui::EndPopup();
 	}
 }
@@ -287,15 +335,33 @@ void Hierarchy::AddStage()
 void Hierarchy::AddGimmick()
 {
 	// ギミックを新規作成
-	if (ImGui::Button("Add Gimmick"))
+	// ギミックはActive Stageの持ち物になるので、ステージが無いときは作れない
+	if (EditorManager::Instance().GetActiveStage())
 	{
-		ImGui::OpenPopup("AddGimmickPopup");
+		if (ImGui::Button("Add Gimmick"))
+		{
+			ImGui::OpenPopup("AddGimmickPopup");
+		}
+
+		if (ImGui::BeginPopup("AddGimmickPopup"))
+		{
+			DrawAddObjectList(KdGameObject::ObjectCategory::Gimmick);
+			ImGui::EndPopup();
+		}
+	}
+	else
+	{
+		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
 	}
 
-	if (ImGui::BeginPopup("AddGimmickPopup"))
+	ImGui::SameLine();
+
+	// ギミックのデバッグ表示のON/OFF
+	bool isDebug = EditorManager::Instance().IsGimmickDebug();
+
+	if (ImGui::Checkbox("Debug", &isDebug))
 	{
-		DrawAddObjectList(KdGameObject::ObjectCategory::Gimmick);
-		ImGui::EndPopup();
+		EditorManager::Instance().SetGimmickDebug(isDebug);
 	}
 }
 
@@ -459,8 +525,28 @@ void Hierarchy::DrawStage()
 
 void Hierarchy::DrawGimmick()
 {
+	auto activeStage = EditorManager::Instance().GetActiveStage();
 
-	DrawObjectList(KdGameObject::ObjectCategory::Gimmick);
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (!obj ||
+			obj->GetObjectCategory() != KdGameObject::ObjectCategory::Gimmick)
+		{
+			continue;
+		}
+
+		// 持ち主がActive Stageではないギミックは出さない
+		// (持ち主の仕組みを持たないギミックは、常に出す)
+		auto gimmick = std::dynamic_pointer_cast<StageGimmick>(obj);
+
+		if (gimmick &&
+			gimmick->GetOwnerStage() != activeStage)
+		{
+			continue;
+		}
+
+		SelectHierarchyObject(obj);
+	}
 }
 
 void Hierarchy::DrawAABB()

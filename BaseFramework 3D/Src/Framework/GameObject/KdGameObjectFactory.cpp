@@ -32,6 +32,8 @@
 
 // ギミック
 #include"../../Application/GameObject/Gimmick/EnemySpawner/EnemySpawner.h"
+#include"../../Application/GameObject/Gimmick/Room/Room.h"
+#include"../../Application/GameObject/Gimmick/RoomGate/RoomGate.h"
 
 
 // エフェクト
@@ -121,7 +123,8 @@ void KdGameObjectFactory::Init()
 	// ギミック
 	//===================================================================
 	Register<EnemySpawner>("EnemySpawner", KdGameObject::ObjectCategory::Gimmick);
-
+	Register<Room>("Room", KdGameObject::ObjectCategory::Gimmick);
+	Register<RoomGate>("RoomGate", KdGameObject::ObjectCategory::Gimmick);
 
 
 	//===================================================================

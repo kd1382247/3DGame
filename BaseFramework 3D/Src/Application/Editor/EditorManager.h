@@ -59,7 +59,15 @@ public:
 	}
 
 	// オブジェクトを作成
-	void CreateGameObject(const std::string& className);
+	// stageModelNameはステージ(StageObject)を作るときだけ使う。最初から読み込むステージモデルの名前
+	void CreateGameObject(const std::string& className, const std::string& stageModelName = "");
+
+	// コピーできるオブジェクトか(ギミック・AABB・OBB)
+	bool CanCopyObject(const std::shared_ptr<KdGameObject>& obj) const;
+
+	// オブジェクトをコピーする。コピーしたオブジェクトを返す(できなければnullptr)
+	// 名前は、空いている最小のIDで付ける。位置・大きさ・持ち主(追従するステージ)は元と同じ
+	std::shared_ptr<KdGameObject> CopyObject(const std::shared_ptr<KdGameObject>& src);
 
 
 	// 編集したかどうか
@@ -73,6 +81,10 @@ public:
 	// 同じステージモデルの中で、最初に置かれたステージを返す
 	// (AABB/OBB/WayPointを編集できるのは、このステージだけ)
 	std::shared_ptr<StageObject> FindPrimaryStage(const std::string& modelName) const;
+
+	// ギミック(Room/RoomGateなど)のデバッグ表示のON/OFF
+	bool IsGimmickDebug() const { return m_isGimmickDebug; }
+	void SetGimmickDebug(bool isDebug) { m_isGimmickDebug = isDebug; }
 
 	// 今のアクティブステージで、AABB/OBB/WayPointを編集できるか
 	// (アクティブステージが「最初のステージ」ならtrue。ステージが1つもない場合もtrue)
@@ -91,7 +103,7 @@ private:
 	std::string MakeEllipsisText(const std::string& text, float maxWidth);
 
 	// レイ情報を生成
-	KdCollider::RayInfo CreateRayInfo(KdCollider::Type type);
+	KdCollider::RayInfo CreateRayInfo(UINT type);
 
 	// SceneViewのアスペクト比のに合わせて更新
 	void UpdateSceneViewProjection();
@@ -105,7 +117,7 @@ private:
 	// rayType  : 判定に使うレイの種類
 	// predicate: 候補を絞り込む条件(falseを返した要素は候補から除外する)
 	template<typename Container, typename Predicate>
-	std::shared_ptr<KdGameObject> SelectClosestByMouse(const Container& objects, KdCollider::Type rayType, Predicate predicate);
+	std::shared_ptr<KdGameObject> SelectClosestByMouse(const Container& objects, UINT rayType, Predicate predicate);
 
 	// キャラクターを選択
 	void SelectGameObjectByMouse();
@@ -151,6 +163,9 @@ private:
 
 	// 編集したかどうか
 	bool m_isDirty = false;
+
+	// ギミックのデバッグ表示(選択中のギミックは、OFFでも表示する)
+	bool m_isGimmickDebug = true;
 
 
 private: // シングルトンパターン

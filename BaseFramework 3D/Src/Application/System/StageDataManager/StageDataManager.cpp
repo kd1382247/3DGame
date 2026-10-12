@@ -1,4 +1,5 @@
 ﻿#include "StageDataManager.h"
+#include"../../GameObject/Gimmick/StageGimmick.h"
 
 #include"../../GameObject/Stage/StageObject.h"
 
@@ -270,6 +271,9 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 	// ステージのリスト
 	std::vector<std::shared_ptr<StageObject>>StageObjects;
 
+	// 読み込んだギミックのリスト(持ち主がいないものを、後で先頭のステージに引き取らせる)
+	std::vector<std::shared_ptr<StageGimmick>>Gimmicks;
+
 	// オブジェクトを生成
 	for (const auto& objectJson : stageJson["Objects"])
 	{
@@ -284,7 +288,28 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 			continue;
 		}
 
-		const std::string className = objectJson["Class"].get<std::string>();
+		std::string className = objectJson["Class"].get<std::string>();
+
+		const auto& createFunctions = KdGameObjectFactory::Instance().GetCreateFunctions();
+
+		// Classが空の古い保存データは、Nameがクラス名と同じ登録名ならそれを使う(例:TPSCamera)
+		if (className.empty())
+		{
+			const std::string objectName = objectJson["Name"].get<std::string>();
+
+			if (createFunctions.contains(objectName))
+			{
+				className = objectName;
+			}
+		}
+
+		// 未登録のクラス名はファクトリーがassertで止まってしまうので、先に調べて飛ばす
+		if (!createFunctions.contains(className))
+		{
+			KdDebugGUI::Instance().AddErrorLog("Unknown class in stage data : '%s'\n", className.c_str());
+			continue;
+		}
+
 		auto obj = KdGameObjectFactory::Instance().CreateGameObject(className);
 
 		if (!obj)
@@ -335,7 +360,36 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 			StageObjects.push_back(stageObj);
 		}
 
+		if (auto gimmick = std::dynamic_pointer_cast<StageGimmick>(obj))
+		{
+			Gimmicks.push_back(gimmick);
+		}
+
 		SceneManager::Instance().AddObject(obj);
+	}
+
+	// 持ち主のいないギミック(持ち主を保存する前の古いデータ)は、先頭のステージに引き取らせる
+	if (!StageObjects.empty())
+	{
+		// 通路ではない最初のステージ(無ければ先頭のステージ)
+		auto ownerStage = StageObjects.front();
+
+		for (const auto& stage : StageObjects)
+		{
+			if (!stage->IsCorridor())
+			{
+				ownerStage = stage;
+				break;
+			}
+		}
+
+		for (const auto& gimmick : Gimmicks)
+		{
+			if (!gimmick->HasOwnerStage())
+			{
+				gimmick->SetOwnerStage(ownerStage);
+			}
+		}
 	}
 
 	// 各ステージに対応する当たり判定、ウェイポイントをロード
