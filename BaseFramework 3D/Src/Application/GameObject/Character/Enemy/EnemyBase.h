@@ -137,7 +137,8 @@ protected:
 	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
 	float m_reachDistance = 1.5f;
 
-	
+	float m_smokeEffectScale = 0.6f;
+
 	MeleeAttackData m_meleeAttack = {};
 
 	// フライテキストのパス

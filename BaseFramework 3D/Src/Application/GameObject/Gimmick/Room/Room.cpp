@@ -6,6 +6,7 @@
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../../System/TimeManager/TimeManager.h"
 #include"../../../Scene/SceneManager.h"
+#include"../../Gimmick/EnemySpawner/EnemySpawner.h"
 
 #include"../../../GameObject/Character/Player/Player.h"
 
@@ -62,8 +63,6 @@ void Room::Update()
 	{
 		if (isPlayerInCore)
 		{
-			KdDebugGUI::Instance().AddLog("Core Enter \n");
-
 			// 初めて入ったときだけ、戦闘前の演出に進む
 			if (m_roomState == RoomState::Unvisited)
 			{
@@ -76,10 +75,6 @@ void Room::Update()
 					ChangeState(RoomState::Intro);
 				}
 			}
-		}
-		else
-		{
-			KdDebugGUI::Instance().AddLog("Core Exit \n");
 		}
 
 		m_isPlayerInCore = isPlayerInCore;
@@ -388,8 +383,6 @@ void Room::ChangeState(RoomState next)
 
 	// 状態が変わるたびに、経過時間を数え直す
 	m_stateTimer = 0.0f;
-
-	KdDebugGUI::Instance().AddLog("Room State : %s\n", GetRoomStateName(next));
 }
 
 void Room::FinishIntro()
@@ -416,6 +409,13 @@ void Room::UpdateIntro()
 
 void Room::UpdateCombat()
 {
+	
+	bool isFinished = SpawnerFinished();
+	if (!isFinished)
+	{
+		return;
+	}
+
 	// 部屋の中の生きている敵が0体になったら、クリア後の演出に進む
 	if (CountAliveEnemies() == 0)
 	{
@@ -473,6 +473,33 @@ void Room::UpdateOutro()
 	{
 		FinishOutro();
 	}
+}
+
+bool Room::SpawnerFinished()
+{
+
+	// スポナーが生成を終了したかどうかを調べる
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (!obj) { continue; }
+
+		auto spawner = std::dynamic_pointer_cast<EnemySpawner>(obj);
+
+		if (!spawner) { continue; }
+
+		if (spawner->GetLinkRoomName() != GetObjectName())
+		{
+			continue;
+		}
+
+		// 1つでもウェーブが終了していなかったら
+		if (!spawner->IsFinished())
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 int Room::CountAliveEnemies() const

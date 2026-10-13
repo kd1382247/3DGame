@@ -78,7 +78,7 @@ cbuffer cbColorSphere : register(b10)
 		int    ShapeType;
 		float  Angle;
 		float2 RectSize;
-	}g_ColorSpheres[20];
+	}g_ColorSpheres[100];
 
 };
 

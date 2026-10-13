@@ -1,18 +1,34 @@
 {
     "Large": {
+        "AttackCooldown": 0.800000011920929,
         "AttackPower": 10.0,
+        "HitEndFrame": 20.0,
+        "HitForwardOffset": 0.800000011920929,
+        "HitRadius": 0.6000000238418579,
+        "HitStartFrame": 16.0,
         "JumpPower": 0.4000000059604645,
-        "MaxHP": 100,
-        "MoveSpeed": 0.07000000029802322,
+        "KnockBackPower": 0.05000000074505806,
+        "MaxHP": 30,
+        "MoveSpeed": 0.03999999910593033,
+        "ReachDistance": 1.5,
         "Scale": 1.2999999523162842,
         "TurnSpeed": 12.0
     },
     "Small": {
+        "AttackCooldown": 0.8999999761581421,
         "AttackPower": 10.0,
+        "HitEndFrame": 20.0,
+        "HitForwardOffset": 0.800000011920929,
+        "HitRadius": 0.6000000238418579,
+        "HitStartFrame": 16.0,
         "JumpPower": 0.4000000059604645,
-        "MaxHP": 100,
-        "MoveSpeed": 0.07999999821186066,
+        "KnockBackPower": 0.05000000074505806,
+        "MaxHP": 20,
+        "MoveSpeed": 0.05000000074505806,
+        "ReachDistance": 1.5,
         "Scale": 0.800000011920929,
         "TurnSpeed": 12.0
-    }
+    },
+    "SplitLaunchPower": 0.30000001192092896,
+    "SplitLaunchSpeed": 0.05000000074505806
 }

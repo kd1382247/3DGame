@@ -137,6 +137,10 @@ void Bomb::Explode()
 
 void Bomb::CreateExplosionRange()
 {
+	if (m_colorSphereHandle != -1)
+	{
+		return;
+	}
 	// 爆発範囲を表示するカラースフィアを作る
 	m_colorSphereHandle = KdShaderManager::Instance().CreateColorSphere();
 }
@@ -150,14 +154,20 @@ void Bomb::UpdateExplosionRange()
 			GetPos(),
 			m_explosionRadius,
 			Math::Vector3(2.0f, 0.0f, 0.0f));
-
 	}
 }
 
 void Bomb::HideExplosionRange()
 {
+	if (m_colorSphereHandle == -1)
+	{
+		return;
+	}
+
 	// 表示を消す
 	KdShaderManager::Instance().ReleaseColorSphere(m_colorSphereHandle);
+
+	m_colorSphereHandle = -1;
 }
 
 void Bomb::OnHit(const AttackInfo attackInfo)

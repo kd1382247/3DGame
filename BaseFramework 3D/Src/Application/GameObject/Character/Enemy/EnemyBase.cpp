@@ -414,7 +414,7 @@ void EnemyBase::UpdateMove()
 void EnemyBase::CreateDeathSmoke()
 {
 	KdEffekseerManager::GetInstance().
-		Play("Smoke/Smoke.efkefc",GetPos(),0.2f,1.0f,false);
+		Play("Smoke/Smoke2.efkefc",GetPos(),m_smokeEffectScale,0.7f,false);
 
 	// SEを流す
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Enemy/Death/Death.wav");

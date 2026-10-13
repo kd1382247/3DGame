@@ -96,7 +96,7 @@ float4 main(VSOutput In) : SV_Target0
 			// 45度の坂まで色を変える
 			if(0.707f<dot(wN,float3(0,1,0)))
 			{
-				for (int i = 0; i < 20; i++)
+				for (int i = 0; i < 100; i++)
 				{
 					if (g_ColorSpheres[i].Enable)
 					{

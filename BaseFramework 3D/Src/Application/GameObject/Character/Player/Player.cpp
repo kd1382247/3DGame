@@ -499,6 +499,20 @@ void Player::OnHit(const AttackInfo attackInfo)
 		// ガード中に攻撃を受けた回数をカウント、上限値をこえたらガードを強制終了
 		m_playerGuard.NotifyGuardHit();
 
+		Math::Vector3 effectPos = GetPos() + Math::Vector3(0.0f, 0.7f, 0.0f);
+		effectPos += m_mWorld.Backward() * 0.3;
+
+		// ガード状態でエフェクトを変える
+		if(m_playerGuard.IsGuardHit())
+		{
+			KdEffekseerManager::GetInstance().Play("Player/Guard/Guard.efkefc", effectPos, 0.6f, 1.0f, false, 0, 20, GetRotation());
+		}
+		if (m_playerGuard.IsGuardBreak())
+		{
+			KdEffekseerManager::GetInstance().Play("Player/GuardBreak/GuardBreak.efkefc", effectPos, 0.3f, 0.6f, false);
+		}
+
+
 		// ノックバック量を減らす
 		info.m_knockBackPower *= m_playerGuard.GetParam().m_guardKnockBackRate;
 
@@ -651,6 +665,10 @@ void Player::OnParrySuccess()
 	effectPos += m_mWorld.Backward() * 0.3;
 	// パリィエフェクト
 	KdEffekseerManager::GetInstance().Play("Player/Parry/Parry.efkefc", effectPos, 0.3f, 1.0f, false,0,36,GetRotation());
+	KdEffekseerManager::GetInstance().Play("Player/Parry/ShockWave1.efkefc", effectPos, 0.6f, 0.6f, false,0,36);
+	KdEffekseerManager::GetInstance().Play("Player/Parry/ShockWave2.efkefc", effectPos, 0.6f, 0.6f, false,0,36);
+
+
 
 	TimeManager::Instance().StartHitStop(parryParam.m_parryHitStop);
 

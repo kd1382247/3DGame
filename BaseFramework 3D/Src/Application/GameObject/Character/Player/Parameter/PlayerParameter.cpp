@@ -118,7 +118,6 @@ void PlayerParameter::DrawInspecter()
 
 			InspectorUI::EndGroup();
 		}
-
 	}
 }
 

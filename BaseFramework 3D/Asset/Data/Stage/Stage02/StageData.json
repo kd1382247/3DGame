@@ -139,7 +139,7 @@
             "Position": {
                 "x": 7.400000095367432,
                 "y": 4.5,
-                "z": 68.5999984741211
+                "z": 8.100000381469727
             },
             "Rotation": {
                 "x": 0.0,
@@ -497,6 +497,209 @@
                 "x": 2.200000047683716,
                 "y": 3.0,
                 "z": 0.5
+            }
+        },
+        {
+            "Class": "EnemySpawner",
+            "FollowStage": "CombatRoom_9x13_0",
+            "LinkedRoom": "Room_1",
+            "Name": "EnemySpawner_0",
+            "Position": {
+                "x": 2.0999999046325684,
+                "y": 5.300000190734863,
+                "z": 47.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "Waves": [
+                {
+                    "Enemies": [
+                        "Bomb"
+                    ],
+                    "SpawnCount": 10,
+                    "SpawnInterval": 0.05000000074505806,
+                    "StartDelay": 1.0
+                }
+            ]
+        },
+        {
+            "Class": "ChestMonster",
+            "LinkedRoom": "Room_2",
+            "Name": "ChestMonster_0",
+            "Parameter": {
+                "AttackPower": 10.0,
+                "JumpPower": 0.4000000059604645,
+                "MaxHP": 100,
+                "MaxSpawnedAlive": 10,
+                "MaxTotalEnemies": 40,
+                "MoveSpeed": 0.05000000074505806,
+                "ReachDistance": 1.5,
+                "Scale": 2.0,
+                "SpawnEndFrame": 60.0,
+                "SpawnEnemies": [
+                    "Mushroom",
+                    "Slime",
+                    "TurtleShell"
+                ],
+                "SpawnHeight": 2.0,
+                "SpawnInterval": 2.0,
+                "SpawnLaunchPower": 0.20000000298023224,
+                "SpawnLaunchSpeed": 0.03999999910593033,
+                "SpawnStartFrame": 40.0,
+                "SpawnWaitFrame": 8.0,
+                "TurnSpeed": 12.0
+            },
+            "Position": {
+                "x": -9.0,
+                "y": 6.0,
+                "z": 69.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 45.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.9999969005584717,
+                "y": 2.0,
+                "z": 1.9999969005584717
+            }
+        },
+        {
+            "Class": "ChestMonster",
+            "LinkedRoom": "Room_2",
+            "Name": "ChestMonster_1",
+            "Parameter": {
+                "AttackPower": 10.0,
+                "JumpPower": 0.4000000059604645,
+                "MaxHP": 100,
+                "MaxSpawnedAlive": 10,
+                "MaxTotalEnemies": 40,
+                "MoveSpeed": 0.05000000074505806,
+                "ReachDistance": 1.5,
+                "Scale": 2.0,
+                "SpawnEndFrame": 60.0,
+                "SpawnEnemies": [
+                    "Bomb",
+                    "Mushroom",
+                    "Slime"
+                ],
+                "SpawnHeight": 2.0,
+                "SpawnInterval": 2.0,
+                "SpawnLaunchPower": 0.20000000298023224,
+                "SpawnLaunchSpeed": 0.03999999910593033,
+                "SpawnStartFrame": 40.0,
+                "SpawnWaitFrame": 8.0,
+                "TurnSpeed": 12.0
+            },
+            "Position": {
+                "x": 23.0,
+                "y": 6.0,
+                "z": 69.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": -45.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.9999977350234985,
+                "y": 2.0,
+                "z": 1.9999977350234985
+            }
+        },
+        {
+            "Class": "ChestMonster",
+            "LinkedRoom": "Room_2",
+            "Name": "ChestMonster_2",
+            "Parameter": {
+                "AttackPower": 10.0,
+                "JumpPower": 0.4000000059604645,
+                "MaxHP": 100,
+                "MaxSpawnedAlive": 10,
+                "MaxTotalEnemies": 40,
+                "MoveSpeed": 0.05000000074505806,
+                "ReachDistance": 1.5,
+                "Scale": 2.0,
+                "SpawnEndFrame": 60.0,
+                "SpawnEnemies": [
+                    "Mushroom",
+                    "Slime",
+                    "TurtleShell"
+                ],
+                "SpawnHeight": 2.0,
+                "SpawnInterval": 2.0,
+                "SpawnLaunchPower": 0.20000000298023224,
+                "SpawnLaunchSpeed": 0.03999999910593033,
+                "SpawnStartFrame": 40.0,
+                "SpawnWaitFrame": 8.0,
+                "TurnSpeed": 12.0
+            },
+            "Position": {
+                "x": -9.0,
+                "y": 6.0,
+                "z": 89.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 135.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.9999959468841553,
+                "y": 2.0,
+                "z": 1.9999959468841553
+            }
+        },
+        {
+            "Class": "ChestMonster",
+            "LinkedRoom": "Room_2",
+            "Name": "ChestMonster_3",
+            "Parameter": {
+                "AttackPower": 10.0,
+                "JumpPower": 0.4000000059604645,
+                "MaxHP": 100,
+                "MaxSpawnedAlive": 10,
+                "MaxTotalEnemies": 40,
+                "MoveSpeed": 0.05000000074505806,
+                "ReachDistance": 1.5,
+                "Scale": 2.0,
+                "SpawnEndFrame": 60.0,
+                "SpawnEnemies": [
+                    "Mushroom",
+                    "Slime",
+                    "TurtleShell"
+                ],
+                "SpawnHeight": 2.0,
+                "SpawnInterval": 2.0,
+                "SpawnLaunchPower": 0.20000000298023224,
+                "SpawnLaunchSpeed": 0.03999999910593033,
+                "SpawnStartFrame": 40.0,
+                "SpawnWaitFrame": 8.0,
+                "TurnSpeed": 12.0
+            },
+            "Position": {
+                "x": 23.0,
+                "y": 6.0,
+                "z": 89.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": -135.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.999991536140442,
+                "y": 2.0,
+                "z": 1.999991536140442
             }
         }
     ]

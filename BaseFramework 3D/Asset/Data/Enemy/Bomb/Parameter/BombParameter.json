@@ -1,7 +1,12 @@
 {
+    "AttackCooldown": 1.0,
     "AttackPower": 10.0,
+    "ChargeDuration": 1.5,
+    "ExplosionKnockBack": 0.5,
+    "ExplosionRadius": 3.0,
     "JumpPower": 0.4000000059604645,
-    "MaxHP": 100,
+    "MaxHP": 40,
     "MoveSpeed": 0.05999999865889549,
+    "ReachDistance": 1.5,
     "TurnSpeed": 12.0
 }

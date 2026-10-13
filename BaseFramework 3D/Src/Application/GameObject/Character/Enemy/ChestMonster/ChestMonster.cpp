@@ -22,20 +22,14 @@ void ChestMonster::Init()
 		// パラメータクラス初期化
 		m_parameter.Init();
 
-		const auto& param = m_parameter.GetParam();
-
-		m_health.Init(param.m_maxHP);
-
-		m_reachDistance = param.m_reachDistance;
-
-		// 敵を呼び出す間隔(秒)
-		m_spawnInterval = param.m_spawnInterval;
+		// Parameterの値を反映(HP・到達距離・召喚間隔)
+		ApplyParameter();
 
 		// ノーマルステートで初期化
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<ChestMonsterNormalState>();
 
-		m_spawnCountDown = m_spawnInterval;
+		m_smokeEffectScale = 0.9f;
 	}
 
 	EnemyBase::Init();
@@ -54,12 +48,14 @@ void ChestMonster::Update()
 
 	m_stateMachine.Update();
 
-	if (!IsSpawnEnemy())
+	// 紐づけた部屋が戦闘中の間だけ、召喚までの時間を数える
+	if (!IsSpawnEnemy() && IsInActiveRoom())
 	{
 		// 秒で数える
 		m_spawnCountDown -= m_deltaTime;
 
-		if (m_spawnCountDown <= 0)
+		// 時間が来ても、敵の数が上限なら召喚せず、空くまで待つ
+		if (m_spawnCountDown <= 0 && IsUnderEnemyLimit())
 		{
 			SetIsSpawnEnemy(true);
 		}
@@ -74,6 +70,15 @@ void ChestMonster::PostUpdate()
 	UpdateAnimation();
 
 	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
+
+}
+
+void ChestMonster::DrawInspectorHeader()
+{
+	EnemyBase::DrawInspectorHeader();
+	
+	// 対応する部屋(None のときは、部屋に関係なく召喚する)
+	m_roomLink.DrawCombo();
 
 }
 
@@ -114,19 +119,18 @@ void ChestMonster::UpdateSpawnEnemy()
 	}
 
 
-	m_LayerNum = KdRandom::GetInt(0, enemyLayerCount - 1);
+	// Inspectorで選んだ敵の中から、ランダムに1体選んで生成する
+	const auto& enemyNameSet = m_parameter.GetParam().m_spawnEnemyNames;
 
-	switch (static_cast<Enemes>(m_LayerNum))
+	// 敵の数が上限の時は、召喚の途中でも出さない
+	if (!enemyNameSet.empty() && IsUnderEnemyLimit())
 	{
-	case Enemes::Cactas:
-		CreateEnemy("Slime");
-		break;
-	case Enemes::Mushroom:
-		CreateEnemy("Mushroom");
-		break;
-	case Enemes::TurtleShell:
-		CreateEnemy("TurtleShell");
-		break;
+		// std::setはインデックスで選べないので、std::vectorへコピーする
+		const std::vector<std::string> enemyNames(enemyNameSet.begin(), enemyNameSet.end());
+
+		const int nameIndex = KdRandom::GetInt(0, static_cast<int>(enemyNames.size()) - 1);
+
+		CreateEnemy(enemyNames[nameIndex]);
 	}
 
 	// 次の1体までの待ちフレーム
@@ -182,9 +186,20 @@ void ChestMonster::OnHit(const AttackInfo attackInfo)
 
 void ChestMonster::CreateEnemy(const std::string& enemyName)
 {
+	// 未登録の名前をファクトリーに渡すとassertで止まるので、先に調べる
+	if (!KdGameObjectFactory::Instance().GetCreateFunctions().contains(enemyName))
+	{
+		return;
+	}
+
 	auto obj = KdGameObjectFactory::Instance().CreateGameObject(enemyName);
 
 	auto enemy = std::dynamic_pointer_cast<EnemyBase>(obj);
+
+	if (!enemy)
+	{
+		return;
+	}
 
 	const auto& param = m_parameter.GetParam();
 
@@ -211,6 +226,9 @@ void ChestMonster::CreateEnemy(const std::string& enemyName)
 	enemy->SetUpReference();
 
 	SceneManager::Instance().AddObject(enemy);
+
+	// 自分が出した敵として覚えておく
+	m_spawnedEnemies.push_back(enemy);
 }
 
 void ChestMonster::UpdateAnimation()
@@ -218,6 +236,116 @@ void ChestMonster::UpdateAnimation()
 
 	m_animation.Update(m_deltaTime);
 
+}
+
+nlohmann::json ChestMonster::SaveData() const
+{
+	// 位置・回転・大きさなどの共通データ
+	nlohmann::json json = EnemyBase::SaveData();
+
+	// この1体だけの個別パラメータ
+	json["Parameter"] = m_parameter.ToJson();
+
+	// 対応する部屋
+	m_roomLink.SaveData(json);
+
+	return json;
+}
+
+void ChestMonster::LoadData(const nlohmann::json& json)
+{
+	EnemyBase::LoadData(json);
+
+	m_roomLink.LoadData(json);
+
+	// キーが無い古いステージは、共通JSONのデフォルト値のまま動く
+	if (json.contains("Parameter"))
+	{
+		m_parameter.FromJson(json["Parameter"]);
+
+		// Initで反映済みの値を、個別の値で上書きし直す
+		ApplyParameter();
+	}
+}
+
+bool ChestMonster::IsInActiveRoom()
+{
+	// 部屋に紐づけていないときは、今まで通り常に有効
+	if (!m_roomLink.HasLink())
+	{
+		return true;
+	}
+
+	// 紐づけた部屋が見つからない・戦闘中ではない時は無効
+	auto spRoom = m_roomLink.GetRoom();
+
+	return spRoom && spRoom->IsCombat();
+}
+
+bool ChestMonster::IsUnderEnemyLimit()
+{
+	const auto& param = m_parameter.GetParam();
+
+	// 自分が出した敵が、上限まで生きているか
+	EraseSpawnedEnemy();
+
+	if (static_cast<int>(m_spawnedEnemies.size()) >= param.m_maxSpawnedAlive)
+	{
+		return false;
+	}
+
+	// 全体の敵が、上限まで生きているか
+	return CountTotalEnemies() < param.m_maxTotalEnemies;
+}
+
+void ChestMonster::EraseSpawnedEnemy()
+{
+	std::erase_if(m_spawnedEnemies,
+		[](const std::weak_ptr<EnemyBase>& enemy)
+		{
+			auto spEnemy = enemy.lock();
+
+			return !spEnemy || spEnemy->IsExpired();
+		}
+	);
+}
+
+int ChestMonster::CountTotalEnemies() const
+{
+	int count = 0;
+
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto enemy = std::dynamic_pointer_cast<EnemyBase>(obj);
+
+		if (!enemy || enemy->IsExpired())
+		{
+			continue;
+		}
+
+		// ChestMonster本体は、召喚した敵ではないので数えない
+		if (std::dynamic_pointer_cast<ChestMonster>(enemy))
+		{
+			continue;
+		}
+
+		++count;
+	}
+
+	return count;
+}
+
+void ChestMonster::ApplyParameter()
+{
+	const auto& param = m_parameter.GetParam();
+
+	m_health.Init(param.m_maxHP);
+
+	m_reachDistance = param.m_reachDistance;
+
+	// 敵を呼び出す間隔(秒)
+	m_spawnInterval = param.m_spawnInterval;
+	m_spawnCountDown = m_spawnInterval;
 }
 
 void ChestMonster::SetSpawnTiming()

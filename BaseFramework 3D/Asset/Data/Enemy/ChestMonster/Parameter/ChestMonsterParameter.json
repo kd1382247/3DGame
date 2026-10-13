@@ -2,6 +2,22 @@
     "AttackPower": 10.0,
     "JumpPower": 0.4000000059604645,
     "MaxHP": 100,
+    "MaxSpawnedAlive": 10,
+    "MaxTotalEnemies": 40,
     "MoveSpeed": 0.05000000074505806,
+    "ReachDistance": 1.5,
+    "Scale": 2.0,
+    "SpawnEndFrame": 60.0,
+    "SpawnEnemies": [
+        "Mushroom",
+        "Slime",
+        "TurtleShell"
+    ],
+    "SpawnHeight": 2.0,
+    "SpawnInterval": 2.0,
+    "SpawnLaunchPower": 0.20000000298023224,
+    "SpawnLaunchSpeed": 0.03999999910593033,
+    "SpawnStartFrame": 40.0,
+    "SpawnWaitFrame": 8.0,
     "TurnSpeed": 12.0
 }

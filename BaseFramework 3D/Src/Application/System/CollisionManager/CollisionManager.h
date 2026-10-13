@@ -192,6 +192,17 @@ private:
 
 	std::unique_ptr<KdDebugWireFrame>m_pDebugWire=nullptr;
 
+
+	float m_resolveTimeSum = 0.0f;
+	float m_movementTimeSum = 0.0f;
+	float m_characterTimeSum = 0.0f;
+	int   m_measureFrameCount = 0;
+
+	float m_pairTimeSum = 0.0f;   // ペア判定の合計時間(ms)
+	float m_pushTimeSum = 0.0f;   // 押し戻し(ApplyCharacterPush)の合計時間(ms)
+	int   m_pushCount = 0;      // 押し戻しで壁判定まで進んだ回数
+	int   m_hitCount = 0;      // キャラ同士が重なっていた回数
+
 private: // シングルトンパターン
 
 	CollisionManager() { Init(); }

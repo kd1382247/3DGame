@@ -98,7 +98,6 @@ private:
 	// メニュー表示
 	void DrawToolBar();
 
-
 	// ステージ名の長さを調べて返す
 	std::string MakeEllipsisText(const std::string& text, float maxWidth);
 

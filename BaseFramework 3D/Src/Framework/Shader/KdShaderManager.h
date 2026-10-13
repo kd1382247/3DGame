@@ -149,7 +149,7 @@ public:
 	// カラースフィア
 	struct cbColorSphere
 	{
-		static const int MaxColorSphereNum = 20;
+		static const int MaxColorSphereNum = 100;
 		std::array<ColorSphere, MaxColorSphereNum>ColorSpheres;
 	};
 

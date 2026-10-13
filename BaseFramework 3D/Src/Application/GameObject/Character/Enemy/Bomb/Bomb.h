@@ -14,7 +14,7 @@ class Bomb :public EnemyBase
 public:
 
 	Bomb() {}
-	~Bomb()override {}
+	~Bomb()override { HideExplosionRange(); }
 
 	void Init()override;
 	void Update()override;

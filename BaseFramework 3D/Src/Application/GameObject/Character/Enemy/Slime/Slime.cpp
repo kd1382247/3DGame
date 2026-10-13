@@ -41,6 +41,11 @@ void Slime::Init()
 		m_meleeAttack.m_forwardOffset = param.m_hitForwardOffset;
 		m_meleeAttack.m_knockBackPower = param.m_knockBackPower;
 
+		if (m_slimeSize == SlimeSize::Small)
+		{
+			m_smokeEffectScale = 0.3;
+		}
+
 	}
 
 	EnemyBase::Init();

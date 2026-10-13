@@ -159,6 +159,7 @@ void KdGameObjectFactory::RegisterCreateFunction(const std::string_view str, con
 
 std::shared_ptr<KdGameObject> KdGameObjectFactory::CreateGameObject(const std::string& objName) const
 {
+
 	// 登録されているクラス名から生成情報を検索
 	auto entryIt = m_createFunctions.find(objName);
 

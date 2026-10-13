@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <set>
+#include <string>
+#include"json.hpp"
 
 class ChestMonsterParameter
 {
@@ -26,8 +29,12 @@ public:
 		float m_spawnStartFrame = 40.0f;   // [F] 敵が出始めるフレーム(アニメーション開始から)
 		float m_spawnEndFrame = 60.0f;   // [F] 敵が出なくなるフレーム(アニメーション開始から)
 		float m_spawnWaitFrame = 8.0f;   // [F] 敵を1体出したあと、次の1体までの待ちフレーム
+		int   m_maxSpawnedAlive = 10;   // [体] このChestMonsterが出した敵が、同時に生きていられる数(この数なら召喚しない)
+		int   m_maxTotalEnemies = 40;   // [体] 全体の敵の数の上限(ChestMonster以外の生きている敵。この数なら召喚しない)
 
 		//---- Spawned Enemy ----
+		std::set<std::string> m_spawnEnemyNames = { "Slime", "Mushroom", "TurtleShell" };   // 召喚する敵の名前(この中からランダムに選ぶ)
+
 		float m_spawnHeight = 2.0f;   // [m] 敵を出す高さ(自分の位置から)
 		float m_spawnLaunchPower = 0.2f;   // 出した敵が飛び上がる勢い
 		float m_spawnLaunchSpeed = 0.04f;   // [m/F] 出した敵が正面へ飛び出す速さ
@@ -38,6 +45,10 @@ public:
 	void Init();
 
 	void DrawInspecter();
+
+	// ステージデータ(1体ごとの個別パラメータ)用の入出力
+	nlohmann::json ToJson()const;
+	void FromJson(const nlohmann::json& json);
 
 
 private:

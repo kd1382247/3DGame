@@ -31,6 +31,13 @@ void CollisionManager::Resolve()
 	{
 		return;
 	}
+	
+	using Clock = std::chrono::steady_clock;
+	using Ms = std::chrono::duration<float, std::milli>;
+
+	// 全体のはかりはじめ
+	const auto resolveStart = Clock::now();
+
 
 	// このフレームで使うキャラリストは1回だけ取得して使い回す
 	const std::vector<std::shared_ptr<CharacterBase>> characters = GetCharacters();
@@ -45,9 +52,10 @@ void CollisionManager::Resolve()
 
 		character->SetIsGrounded(false);
 	}
-
+	// 壁側の判定を測る
+	const auto movementStart = Clock::now();
 	ResolveCharacterMovement(characters);
-
+	m_movementTimeSum += Ms(Clock::now() - movementStart).count();
 	// ノックバック
 	for (const auto& character : characters)
 	{
@@ -59,9 +67,61 @@ void CollisionManager::Resolve()
 		ApplyKnockBack(character);
 	}
 
+	// キャラ同士の判定を測る
+	const auto characterStart = Clock::now();
 	// 最後にキャラ同士の判定をする
 	ResolveCharacterCollision(characters);
 
+	m_characterTimeSum += Ms(Clock::now() - characterStart).count();
+
+	// 全体の時間を足す
+	m_resolveTimeSum += Ms(Clock::now() - resolveStart).count();
+	m_measureFrameCount++;
+
+	//// 60フレームごとに平均を出す
+	//if (m_measureFrameCount >= 60)
+	//{
+	//	const float n = static_cast<float>(m_measureFrameCount);
+
+	//	KdDebugGUI::Instance().ClearLog();
+	//	KdDebugGUI::Instance().AddLog(
+	//		"Collision total:%.2f ms\n  move:%.2f ms\n  chara:%.2f ms\n",
+	//		m_resolveTimeSum / n,
+	//		m_movementTimeSum / n,
+	//		m_characterTimeSum / n);
+
+	//	// 次の60フレームのために0に戻す
+	//	m_resolveTimeSum = 0.0f;
+	//	m_movementTimeSum = 0.0f;
+	//	m_characterTimeSum = 0.0f;
+	//	m_measureFrameCount = 0;
+	//}
+
+	if (m_measureFrameCount >= 60)
+	{
+		const float n = static_cast<float>(m_measureFrameCount);
+
+		KdDebugGUI::Instance().ClearLog();
+		KdDebugGUI::Instance().AddLog(
+			"total:%.2f move:%.2f\n chara:%.2f (pair:%.2f push:%.2f)\n  pushCount:%.1f\n hitCount:%.1f\n",
+			m_resolveTimeSum / n,
+			m_movementTimeSum / n,
+			m_characterTimeSum / n,
+			m_pairTimeSum / n,
+			m_pushTimeSum / n,
+			m_pushCount / n,
+			m_hitCount / n);
+
+		// 次の60フレームのために0に戻す
+		m_resolveTimeSum = 0.0f;
+		m_movementTimeSum = 0.0f;
+		m_characterTimeSum = 0.0f;
+		m_pairTimeSum = 0.0f;
+		m_pushTimeSum = 0.0f;
+		m_pushCount = 0;
+		m_hitCount = 0;
+		m_measureFrameCount = 0;
+	}
 }
 
 void CollisionManager::ApplyCharacterPush(const std::shared_ptr<CharacterBase>& character)
@@ -79,6 +139,8 @@ void CollisionManager::ApplyCharacterPush(const std::shared_ptr<CharacterBase>& 
 		character->ClearPush();
 		return;
 	}
+
+	m_pushCount++;
 
 	Math::Vector3 finalPos =
 		ResolveCharacterDisplacement(character, character->GetPos(), push, false);
@@ -861,7 +923,6 @@ Math::Vector3 CollisionManager::ResolveCharacterDisplacement(const std::shared_p
 		
 	}
 
-
 	return currentPos;
 }
 
@@ -869,15 +930,19 @@ void CollisionManager::ResolveCharacterCollision(const std::vector<std::shared_p
 {
 	constexpr int Iteration = 4;
 
+	using Clock = std::chrono::steady_clock;
+	using Ms = std::chrono::duration<float, std::milli>;
+
 	for(int iter=0;iter<Iteration;iter++)
 	{
-
 		// 全キャラの押し戻し量をクリア
 		for (auto& character : characters)
 		{
 			character->ClearPush();
 		}
 		
+		const auto pairStart = Clock::now();
+
 		// 全ペアと判定
 		for (size_t i = 0; i < characters.size(); i++)
 		{
@@ -899,6 +964,11 @@ void CollisionManager::ResolveCharacterCollision(const std::vector<std::shared_p
 				std::list<KdCollider::CollisionResult>results;
 
 				charaB->Intersects(sphereInfo, &results);
+
+				if (!results.empty())
+				 {
+					m_hitCount++;
+					}
 
 				for (auto& ret : results)
 				{
@@ -948,9 +1018,14 @@ void CollisionManager::ResolveCharacterCollision(const std::vector<std::shared_p
 			}
 		}
 
+		m_pairTimeSum += Ms(Clock::now() - pairStart).count();
+		const auto pushStart = Clock::now();
+
 		for (auto& character : characters)
 		{
 			ApplyCharacterPush(character);
 		}
+
+		m_pushTimeSum += Ms(Clock::now() - pushStart).count();
 	}
 }

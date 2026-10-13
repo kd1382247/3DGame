@@ -54,6 +54,9 @@ public:
 	void SetRoomType(const std::string& typeName);
 	std::string GetRoomTypeName()const { return m_roomTypeName[static_cast<int>(GetRoomType())]; }
 
+	// 戦闘開始かどうか
+	bool IsCombat()const { return m_roomState == RoomState::InCombat; }
+
 	RoomState GetRoomState()const { return m_roomState; }
 	bool IsCleared()const { return m_roomState == RoomState::Cleared; }
 
@@ -86,6 +89,8 @@ private:
 	void UpdateCombat();
 	void UpdateBossDefeat();
 	void UpdateOutro();
+
+	bool SpawnerFinished();
 
 	// 部屋の箱の中にいる、生きている敵の数を数える
 	int CountAliveEnemies()const;

@@ -517,6 +517,11 @@ int KdShaderManager::CreateColorSphere()
 
 void KdShaderManager::ReleaseColorSphere(int handle)
 {
+	if (handle < 0 || handle >= m_cb10_ColorSphere.Work().MaxColorSphereNum)
+	{
+		return;
+	}
+
 	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
 
 	colorSp.ColorSpheres[handle].Enable = false;
@@ -539,6 +544,11 @@ void KdShaderManager::ClearColorSphere()
 
 void KdShaderManager::WriteCBColorSphereCircle(int handle, const Math::Vector3& pos, float radius, const Math::Vector3& color)
 {
+	if (handle < 0 || handle >= cbColorSphere::MaxColorSphereNum)
+	{
+		return;
+	}
+
 
 	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
 
@@ -552,6 +562,11 @@ void KdShaderManager::WriteCBColorSphereCircle(int handle, const Math::Vector3& 
 
 void KdShaderManager::WriteCBColorSphereSector(int handle, const Math::Vector3 & pos, const Math::Vector3 & dir, float radius, float angle, const Math::Vector3 & color)
 {
+	if (handle < 0 || handle >= cbColorSphere::MaxColorSphereNum)
+	{
+		return;
+	}
+
 
 	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
 
@@ -571,6 +586,11 @@ void KdShaderManager::WriteCBColorSphereSector(int handle, const Math::Vector3 &
 
 void KdShaderManager::WriteCBColorSphereRectangle(int handle, const Math::Vector3 & pos, const Math::Vector3 & dir, const Math::Vector2 & rectSize, const Math::Vector3 & color)
 {
+	if (handle < 0 || handle >= cbColorSphere::MaxColorSphereNum)
+	{
+		return;
+	}
+
 	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
 
 	Math::Vector3 normalizeDir = dir;
