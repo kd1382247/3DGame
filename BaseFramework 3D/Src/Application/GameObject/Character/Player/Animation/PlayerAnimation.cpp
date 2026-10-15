@@ -88,10 +88,12 @@ void PlayerAnimation::Play(PlayerAnimationType _animType)
 		m_animSpeed = 1.4f;
 		break;
 	case PlayerAnimationType::Die:
-
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false);
+		m_animSpeed = 1.4f;
 		break;
 	case PlayerAnimationType::DieStay:
-
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("DieStay"), true);
+		m_animSpeed = 1.4f;
 		break;
 	case PlayerAnimationType::Dizzy:
 

@@ -2,7 +2,6 @@
 
 enum class CollisionLayer
 {
-	Ground,
 	Player,
 	Enemy,
 	PlayerAttack,
@@ -11,7 +10,6 @@ enum class CollisionLayer
 	Gimmick,
 	AABB,
 	OBB,
-	AIBlock,
 	Gate,		// 部屋の柵(RoomGate)
 	Area,
 	Max

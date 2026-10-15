@@ -437,12 +437,13 @@ void Player::UpdateGroundPosY()
 	rayInfo.m_range = m_parameter.GetBody().m_groundRayLength;
 
 	// 当たり判定をしたいタイプを設定
-	rayInfo.m_type = KdCollider::TypeGround | KdCollider::TypeBump;
+	rayInfo.m_type =  KdCollider::TypeBump;
 
 	std::vector<const std::vector< std::weak_ptr<KdGameObject>>*>lists;
 
-	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::Ground));
 	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::AABB));
+	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::OBB));
+	
 
 	for (const auto& objList : lists)
 	{
@@ -521,7 +522,10 @@ void Player::OnHit(const AttackInfo attackInfo)
 	}
 	else if (m_health.TakeDamage(info.m_damage))
 	{
-		m_stateMachine.ChangeState<PlayerDieState>();
+		if(!m_stateMachine.IsState<PlayerDieState>())
+		{
+			m_stateMachine.ChangeState<PlayerDieState>();
+		}
 	}
 	else
 	{

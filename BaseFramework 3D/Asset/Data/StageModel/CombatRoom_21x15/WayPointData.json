@@ -5,10 +5,10 @@
             "Links": [
                 8,
                 10,
-                12,
                 18,
                 22,
-                21
+                21,
+                26
             ],
             "Name": "WayPoint_0",
             "Position": {
@@ -20,12 +20,12 @@
         {
             "ID": 1,
             "Links": [
-                2,
                 8,
                 10,
                 18,
                 19,
-                20
+                20,
+                25
             ],
             "Name": "WayPoint_1",
             "Position": {
@@ -37,15 +37,13 @@
         {
             "ID": 2,
             "Links": [
-                1,
-                19,
-                20,
-                3
+                3,
+                25
             ],
             "Name": "WayPoint_2",
             "Position": {
                 "x": 12.0,
-                "y": 2.0,
+                "y": 1.0,
                 "z": 0.0
             }
         },
@@ -67,8 +65,7 @@
             "ID": 4,
             "Links": [
                 3,
-                5,
-                23
+                5
             ],
             "Name": "WayPoint_4",
             "Position": {
@@ -81,7 +78,7 @@
             "ID": 5,
             "Links": [
                 4,
-                23
+                29
             ],
             "Name": "WayPoint_5",
             "Position": {
@@ -94,8 +91,7 @@
             "ID": 6,
             "Links": [
                 3,
-                7,
-                24
+                7
             ],
             "Name": "WayPoint_6",
             "Position": {
@@ -108,7 +104,7 @@
             "ID": 7,
             "Links": [
                 6,
-                24
+                30
             ],
             "Name": "WayPoint_7",
             "Position": {
@@ -125,7 +121,7 @@
                 18,
                 21,
                 20,
-                28
+                24
             ],
             "Name": "WayPoint_8",
             "Position": {
@@ -137,7 +133,7 @@
         {
             "ID": 9,
             "Links": [
-                28
+                24
             ],
             "Name": "WayPoint_9",
             "Position": {
@@ -154,7 +150,7 @@
                 18,
                 22,
                 19,
-                27
+                23
             ],
             "Name": "WayPoint_10",
             "Position": {
@@ -166,7 +162,7 @@
         {
             "ID": 11,
             "Links": [
-                27
+                23
             ],
             "Name": "WayPoint_11",
             "Position": {
@@ -178,15 +174,13 @@
         {
             "ID": 12,
             "Links": [
-                0,
-                21,
-                22,
-                13
+                13,
+                26
             ],
             "Name": "WayPoint_12",
             "Position": {
                 "x": -12.0,
-                "y": 2.0,
+                "y": 1.0,
                 "z": 0.0
             }
         },
@@ -208,8 +202,7 @@
             "ID": 14,
             "Links": [
                 13,
-                15,
-                26
+                15
             ],
             "Name": "WayPoint_14",
             "Position": {
@@ -222,7 +215,7 @@
             "ID": 15,
             "Links": [
                 14,
-                26
+                28
             ],
             "Name": "WayPoint_15",
             "Position": {
@@ -235,8 +228,7 @@
             "ID": 16,
             "Links": [
                 13,
-                17,
-                25
+                17
             ],
             "Name": "WayPoint_16",
             "Position": {
@@ -249,7 +241,7 @@
             "ID": 17,
             "Links": [
                 16,
-                25
+                27
             ],
             "Name": "WayPoint_17",
             "Position": {
@@ -276,10 +268,10 @@
         {
             "ID": 19,
             "Links": [
-                2,
                 1,
                 10,
-                27
+                23,
+                25
             ],
             "Name": "WayPoint_19",
             "Position": {
@@ -291,10 +283,10 @@
         {
             "ID": 20,
             "Links": [
-                2,
                 1,
                 8,
-                28
+                24,
+                25
             ],
             "Name": "WayPoint_20",
             "Position": {
@@ -306,10 +298,10 @@
         {
             "ID": 21,
             "Links": [
-                12,
                 8,
                 0,
-                28
+                24,
+                26
             ],
             "Name": "WayPoint_21",
             "Position": {
@@ -321,10 +313,10 @@
         {
             "ID": 22,
             "Links": [
-                12,
                 10,
                 0,
-                27
+                23,
+                26
             ],
             "Name": "WayPoint_22",
             "Position": {
@@ -336,64 +328,12 @@
         {
             "ID": 23,
             "Links": [
-                4,
-                5
-            ],
-            "Name": "WayPoint_23",
-            "Position": {
-                "x": 12.0,
-                "y": 3.0,
-                "z": -6.0
-            }
-        },
-        {
-            "ID": 24,
-            "Links": [
-                7,
-                6
-            ],
-            "Name": "WayPoint_24",
-            "Position": {
-                "x": 12.0,
-                "y": 3.0,
-                "z": 6.0
-            }
-        },
-        {
-            "ID": 25,
-            "Links": [
-                16,
-                17
-            ],
-            "Name": "WayPoint_25",
-            "Position": {
-                "x": -12.0,
-                "y": 3.0,
-                "z": -6.0
-            }
-        },
-        {
-            "ID": 26,
-            "Links": [
-                14,
-                15
-            ],
-            "Name": "WayPoint_26",
-            "Position": {
-                "x": -12.0,
-                "y": 3.0,
-                "z": 6.0
-            }
-        },
-        {
-            "ID": 27,
-            "Links": [
                 10,
                 22,
                 19,
                 11
             ],
-            "Name": "WayPoint_27",
+            "Name": "WayPoint_23",
             "Position": {
                 "x": 0.0,
                 "y": 0.0,
@@ -401,18 +341,96 @@
             }
         },
         {
-            "ID": 28,
+            "ID": 24,
             "Links": [
                 21,
                 8,
                 20,
                 9
             ],
-            "Name": "WayPoint_28",
+            "Name": "WayPoint_24",
             "Position": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 8.0
+            }
+        },
+        {
+            "ID": 25,
+            "Links": [
+                1,
+                2,
+                19,
+                20
+            ],
+            "Name": "WayPoint_25",
+            "Position": {
+                "x": 9.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "ID": 26,
+            "Links": [
+                21,
+                0,
+                22,
+                12
+            ],
+            "Name": "WayPoint_26",
+            "Position": {
+                "x": -9.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "ID": 27,
+            "Links": [
+                17
+            ],
+            "Name": "WayPoint_27",
+            "Position": {
+                "x": -6.0,
+                "y": 3.0,
+                "z": -12.0
+            }
+        },
+        {
+            "ID": 28,
+            "Links": [
+                15
+            ],
+            "Name": "WayPoint_28",
+            "Position": {
+                "x": -6.0,
+                "y": 3.0,
+                "z": 12.0
+            }
+        },
+        {
+            "ID": 29,
+            "Links": [
+                5
+            ],
+            "Name": "WayPoint_29",
+            "Position": {
+                "x": 6.0,
+                "y": 3.0,
+                "z": -12.0
+            }
+        },
+        {
+            "ID": 30,
+            "Links": [
+                7
+            ],
+            "Name": "WayPoint_30",
+            "Position": {
+                "x": 6.0,
+                "y": 3.0,
+                "z": 12.0
             }
         }
     ]

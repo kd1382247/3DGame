@@ -1,6 +1,5 @@
 ﻿#include "StageObject.h"
 
-#include"Collision/AIBlockCollision/AIBlockCollision.h"
 #include"Collision/AABBCollision/AABBCollisionManager.h"
 #include"Collision/OBBCollision/OBBCollisionManager.h"
 
@@ -30,7 +29,6 @@ void StageObject::LoadStageModel(const std::string& modelName)
 	// 前のモデルのデータを消す(ファイルが無かったときに、前のモデルが残らないようにする)
 	m_spModel = nullptr;
 	m_model = nullptr;
-	m_spAIBlockCollision = nullptr;
 
 	// 本体のモデル(これが無いと表示できないので、無いときはエラーを出す)
 	const std::filesystem::path renderPath = StageLoder::Instance().GetRenderModelPath(modelName);
@@ -53,18 +51,8 @@ void StageObject::LoadStageModel(const std::string& modelName)
 		m_model = std::make_shared<KdModelWork>();
 		m_model->SetModelData(backGroundPath.string());
 	}
-	
-	// ステージの当たり判定クラス生成(AIBlockが要らないモデルは無くてもよい)
-	const std::filesystem::path aiBlockPath = StageLoder::Instance().GetAIBlockCollisionPath(modelName);
-
-	if (std::filesystem::exists(aiBlockPath))
-	{
-		m_spAIBlockCollision = std::make_shared<AIBlockCollision>();
-		m_spAIBlockCollision->SetModelPath(aiBlockPath);
-		m_spAIBlockCollision->Init();
-		m_spAIBlockCollision->SetMatrix(m_mWorld);
-	}
 }
+
 
 void StageObject::ClearOwnerData()
 {
@@ -75,13 +63,6 @@ void StageObject::ClearOwnerData()
 
 void StageObject::PreDraw()
 {
-	// EditModeではUpdate()が呼ばれない(BaseScene::Update()参照)ため、
-	// EditModeでもPlayModeでも必ず呼ばれるPreDraw()でStageへの追従処理を行う
-	if (m_spAIBlockCollision)
-	{
-		m_spAIBlockCollision->SetMatrix(m_mWorld);
-	}
-
 	// AABB/OBB/WayPointは回転を表現できない(またはStage自体は回転させない方針の)ため、
 	// 位置と大きさだけをStageに追従させる
 	AABBCollisionManager::Instance().SetStageTransform(this,GetPos(), GetScale());

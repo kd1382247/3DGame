@@ -751,8 +751,8 @@
             "FollowStage": "CombatRoom_21x15_0",
             "Name": "AreaVolume_1",
             "Position": {
-                "x": 25.0,
-                "y": 8.0,
+                "x": 22.0,
+                "y": 6.0,
                 "z": 79.0
             },
             "Rotation": {
@@ -761,9 +761,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 6.0,
-                "y": 5.0,
-                "z": 30.0
+                "x": 12.0,
+                "y": 9.0,
+                "z": 6.0
             }
         },
         {
@@ -771,7 +771,7 @@
             "FollowStage": "CombatRoom_21x15_0",
             "Name": "AreaVolume_2",
             "Position": {
-                "x": 16.0,
+                "x": 13.0,
                 "y": 8.0,
                 "z": 91.0
             },
@@ -781,7 +781,7 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 12.0,
+                "x": 6.0,
                 "y": 5.0,
                 "z": 6.0
             }
@@ -791,7 +791,7 @@
             "FollowStage": "CombatRoom_21x15_0",
             "Name": "AreaVolume_3",
             "Position": {
-                "x": 16.0,
+                "x": 13.0,
                 "y": 8.0,
                 "z": 67.0
             },
@@ -801,7 +801,7 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 12.0,
+                "x": 6.0,
                 "y": 5.0,
                 "z": 6.0
             }
@@ -811,9 +811,9 @@
             "FollowStage": "CombatRoom_21x15_0",
             "Name": "AreaVolume_4",
             "Position": {
-                "x": 19.0,
+                "x": 22.0,
                 "y": 8.0,
-                "z": 85.0
+                "z": 88.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -821,9 +821,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 6.0,
+                "x": 12.0,
                 "y": 5.0,
-                "z": 6.0
+                "z": 12.0
             }
         },
         {
@@ -831,9 +831,9 @@
             "FollowStage": "CombatRoom_21x15_0",
             "Name": "AreaVolume_5",
             "Position": {
-                "x": 19.0,
+                "x": 22.0,
                 "y": 8.0,
-                "z": 73.0
+                "z": 70.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -841,49 +841,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 6.0,
+                "x": 12.0,
                 "y": 5.0,
-                "z": 6.0
-            }
-        },
-        {
-            "Class": "AreaVolume",
-            "FollowStage": "CombatRoom_21x15_0",
-            "Name": "AreaVolume_6",
-            "Position": {
-                "x": 19.0,
-                "y": 6.0,
-                "z": 79.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 6.0,
-                "y": 9.0,
-                "z": 6.0
-            }
-        },
-        {
-            "Class": "AreaVolume",
-            "FollowStage": "CombatRoom_21x15_0",
-            "Name": "AreaVolume_7",
-            "Position": {
-                "x": -5.0,
-                "y": 6.0,
-                "z": 79.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 6.0,
-                "y": 9.0,
-                "z": 6.0
+                "z": 12.0
             }
         },
         {
@@ -891,7 +851,7 @@
             "FollowStage": "CombatRoom_21x15_0",
             "Name": "AreaVolume_8",
             "Position": {
-                "x": -2.0,
+                "x": 1.0,
                 "y": 8.0,
                 "z": 67.0
             },
@@ -901,7 +861,7 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 12.0,
+                "x": 6.0,
                 "y": 5.0,
                 "z": 6.0
             }
@@ -911,7 +871,7 @@
             "FollowStage": "CombatRoom_21x15_0",
             "Name": "AreaVolume_9",
             "Position": {
-                "x": -2.0,
+                "x": 1.0,
                 "y": 8.0,
                 "z": 91.0
             },
@@ -921,7 +881,7 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 12.0,
+                "x": 6.0,
                 "y": 5.0,
                 "z": 6.0
             }
@@ -931,9 +891,9 @@
             "FollowStage": "CombatRoom_21x15_0",
             "Name": "AreaVolume_10",
             "Position": {
-                "x": -5.0,
+                "x": -8.0,
                 "y": 8.0,
-                "z": 73.0
+                "z": 70.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -941,9 +901,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 6.0,
+                "x": 12.0,
                 "y": 5.0,
-                "z": 6.0
+                "z": 12.0
             }
         },
         {
@@ -951,9 +911,9 @@
             "FollowStage": "CombatRoom_21x15_0",
             "Name": "AreaVolume_11",
             "Position": {
-                "x": -5.0,
+                "x": -8.0,
                 "y": 8.0,
-                "z": 85.0
+                "z": 88.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -961,9 +921,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 6.0,
+                "x": 12.0,
                 "y": 5.0,
-                "z": 6.0
+                "z": 12.0
             }
         },
         {
@@ -971,8 +931,8 @@
             "FollowStage": "CombatRoom_21x15_0",
             "Name": "AreaVolume_12",
             "Position": {
-                "x": -11.0,
-                "y": 8.0,
+                "x": -8.0,
+                "y": 6.0,
                 "z": 79.0
             },
             "Rotation": {
@@ -981,9 +941,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 6.0,
-                "y": 5.0,
-                "z": 30.0
+                "x": 12.0,
+                "y": 9.0,
+                "z": 6.0
             }
         },
         {

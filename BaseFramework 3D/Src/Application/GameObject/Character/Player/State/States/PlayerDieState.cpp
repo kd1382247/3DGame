@@ -11,7 +11,7 @@ void PlayerDieState::OnUpdate(Player * owner)
 {
 	if (owner->IsAnimationFinished())
 	{
-
+		owner->PlayAnimation(PlayerAnimationType::DieStay);
 	}
 }
 
