@@ -10,6 +10,8 @@
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void KdShaderManager::Init()
 {
+	m_isReleased = false;
+
 	//============================================
 	// シェーダ
 	//============================================
@@ -494,8 +496,48 @@ void KdShaderManager::WriteCBPointLight(const std::list<PointLight>& pointLights
 	m_cb9_Light.Write();
 }
 
+void KdShaderManager::FlushColorSphere()
+{
+	// 終了処理の後は、GPUのリソースに触らない
+	if (m_isReleased)
+	{
+		return;
+	}
+
+	// 変更がなければ何もしない
+	if (!m_colorSphereDirty)
+	{
+		return;
+	}
+
+	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
+
+	// 使用中のスロットの最大番号+1を求める
+	int usedCount = 0;
+	for (int i = cbColorSphere::MaxColorSphereNum - 1; i >= 0; i--)
+	{
+		if (colorSp.ColorSpheres[i].Enable)
+		{
+			usedCount = i + 1;
+			break;
+		}
+	}
+	colorSp.UsedCount = usedCount;
+
+	// 何回書き換えても、GPUへの転送はここで1回だけ
+	m_cb10_ColorSphere.Write();
+
+	m_colorSphereDirty = false;
+}
+
 int KdShaderManager::CreateColorSphere()
 {
+	// 終了処理の後は、GPUのリソースに触らない
+	if (m_isReleased)
+	{
+		return -1;
+	}
+
 	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
 
 	for (int i = 0; i < cbColorSphere::MaxColorSphereNum; i++)
@@ -505,7 +547,7 @@ int KdShaderManager::CreateColorSphere()
 		if (!colorSp.ColorSpheres[i].Enable)
 		{
 			colorSp.ColorSpheres[i].Enable = true;
-			m_cb10_ColorSphere.Write();
+			m_colorSphereDirty = true;
 
 			return i;
 		}
@@ -517,6 +559,12 @@ int KdShaderManager::CreateColorSphere()
 
 void KdShaderManager::ReleaseColorSphere(int handle)
 {
+	// 終了処理の後は、GPUのリソースに触らない
+	if (m_isReleased)
+	{
+		return;
+	}
+
 	if (handle < 0 || handle >= m_cb10_ColorSphere.Work().MaxColorSphereNum)
 	{
 		return;
@@ -526,11 +574,17 @@ void KdShaderManager::ReleaseColorSphere(int handle)
 
 	colorSp.ColorSpheres[handle].Enable = false;
 
-	m_cb10_ColorSphere.Write();
+	m_colorSphereDirty = true;
 }
 
 void KdShaderManager::ClearColorSphere()
 {
+	// 終了処理の後は、GPUのリソースに触らない
+	if (m_isReleased)
+	{
+		return;
+	}
+
 
 	cbColorSphere& colorSp = m_cb10_ColorSphere.Work();
 
@@ -539,11 +593,17 @@ void KdShaderManager::ClearColorSphere()
 		colorSp.ColorSpheres[i].Enable = false;
 	}
 
-	m_cb10_ColorSphere.Write();
+	m_colorSphereDirty = true;
 }
 
 void KdShaderManager::WriteCBColorSphereCircle(int handle, const Math::Vector3& pos, float radius, const Math::Vector3& color)
 {
+	// 終了処理の後は、GPUのリソースに触らない
+	if (m_isReleased)
+	{
+		return;
+	}
+
 	if (handle < 0 || handle >= cbColorSphere::MaxColorSphereNum)
 	{
 		return;
@@ -557,11 +617,17 @@ void KdShaderManager::WriteCBColorSphereCircle(int handle, const Math::Vector3& 
 	colorSp.ColorSpheres[handle].Color = color;
 	colorSp.ColorSpheres[handle].ShapeType = ColorSphereShape::Circle;
 
-	m_cb10_ColorSphere.Write();
+	m_colorSphereDirty = true;
 }
 
 void KdShaderManager::WriteCBColorSphereSector(int handle, const Math::Vector3 & pos, const Math::Vector3 & dir, float radius, float angle, const Math::Vector3 & color)
 {
+	// 終了処理の後は、GPUのリソースに触らない
+	if (m_isReleased)
+	{
+		return;
+	}
+
 	if (handle < 0 || handle >= cbColorSphere::MaxColorSphereNum)
 	{
 		return;
@@ -581,11 +647,17 @@ void KdShaderManager::WriteCBColorSphereSector(int handle, const Math::Vector3 &
 	colorSp.ColorSpheres[handle].Color = color;
 	colorSp.ColorSpheres[handle].ShapeType = ColorSphereShape::Sector;
 
-	m_cb10_ColorSphere.Write();
+	m_colorSphereDirty = true;
 }
 
 void KdShaderManager::WriteCBColorSphereRectangle(int handle, const Math::Vector3 & pos, const Math::Vector3 & dir, const Math::Vector2 & rectSize, const Math::Vector3 & color)
 {
+	// 終了処理の後は、GPUのリソースに触らない
+	if (m_isReleased)
+	{
+		return;
+	}
+
 	if (handle < 0 || handle >= cbColorSphere::MaxColorSphereNum)
 	{
 		return;
@@ -603,7 +675,7 @@ void KdShaderManager::WriteCBColorSphereRectangle(int handle, const Math::Vector
 	colorSp.ColorSpheres[handle].Color = color;
 	colorSp.ColorSpheres[handle].ShapeType = ColorSphereShape::Rectangle;
 
-	m_cb10_ColorSphere.Write();
+	m_colorSphereDirty = true;
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -612,6 +684,9 @@ void KdShaderManager::WriteCBColorSphereRectangle(int handle, const Math::Vector
 #pragma warning(disable:4239)
 void KdShaderManager::Release()
 {
+	// 以降、ColorSphereの関数は何もしない(Bombのデストラクタなどが終了時に呼んでも落ちないように)
+	m_isReleased = true;
+
 	m_StandardShader.Release();
 	m_postProcessShader.Release();
 	m_spriteShader.Release();
@@ -619,6 +694,7 @@ void KdShaderManager::Release()
 	m_cb7_Camera.Release();
 	m_cb8_Fog.Release();
 	m_cb9_Light.Release();
+	m_cb10_ColorSphere.Release();
 
 	//深度ステンシルステート開放
 	for (auto& state : m_depthStencilStates)

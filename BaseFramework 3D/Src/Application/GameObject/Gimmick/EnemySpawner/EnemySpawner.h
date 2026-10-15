@@ -85,5 +85,11 @@ private:
 	// 全滅したかどうか
 	std::vector<std::weak_ptr<EnemyBase>>m_spawnEnemyList;
 
+	std::weak_ptr<KdEffekseerObject>m_wpEffekseerObj;
+
+	// 生成を知らせるエフェクト
+	bool m_spawnIntroEffect = false;
+
+	bool m_isSpawnIntor = true;
 };
 

@@ -2,6 +2,8 @@
 
 #include"../../Editor/EditorManager.h"
 
+#include"../Gimmick/AreaVolume/AreaVolume.h"
+
 #include "../../System/WayPointManager/WayPointManager.h"
 
 void WayPoint::Init()
@@ -42,7 +44,8 @@ void WayPoint::DrawDebug()
 	}
 	else
 	{
-		color = kGreenColor;
+		// 通常はエリアIDごとの色(キャラクター・AreaVolumeと同じ色)
+		color = AreaVolume::GetAreaColor(GetAreaID());
 	}
 
 	m_pDebugWire->AddDebugSphere(GetPos(), 0.5f, color);
@@ -66,21 +69,6 @@ void WayPoint::DrawInspectorHeader()
 
 void WayPoint::DrawInspector()
 {
-	// AreaIDをセット
-
-	int areaID = GetAreaID();
-	int min = 0;
-	int max = 2;
-
-
-	if (ImGui::DragInt("Area ID", &areaID, 1.0f))
-	{
-		areaID=std::clamp(areaID, min, max);
-		SetAreaID(areaID);
-	}
-
-
-
 	// 接続先一覧
 	if (ImGui::Button("LinkList"))
 	{

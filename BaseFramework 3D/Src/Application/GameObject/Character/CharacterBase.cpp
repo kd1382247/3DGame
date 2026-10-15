@@ -6,6 +6,8 @@
 #include"../../Editor/EditorManager.h"
 #include"../../Editor/InspectorWidgets.h"
 
+#include"../Gimmick/AreaVolume/AreaVolume.h"
+
 
 CharacterBase::CharacterBase()
 {
@@ -30,6 +32,8 @@ void CharacterBase::PreUpdate()
 
 	// デルタタイムをセット
 	SetDeltaTime(TimeManager::Instance().GetDeltaTime());
+
+	UpdateCurrentAreaID();
 
 }
 
@@ -167,7 +171,13 @@ void CharacterBase::InitCharacterModel(const std::string& modelPath, const std::
 
 void CharacterBase::DrawBumpDebugSphere(const Math::Vector3& offset, float radius)
 {
-	m_pDebugWire->AddDebugSphere(GetPos() + offset, radius, kRedColor);
+	// 球の色は現在のエリアIDで変える
+	m_pDebugWire->AddDebugSphere(GetPos() + offset, radius, GetAreaDebugColor());
+}
+
+Math::Color CharacterBase::GetAreaDebugColor() const
+{
+	return AreaVolume::GetAreaColor(m_currentAreaID);
 }
 
 void CharacterBase::UpdateFacingDirection()
@@ -246,14 +256,62 @@ void CharacterBase::UpdateMatrix()
 
 }
 
-int CharacterBase::GetCurrentAreaID(const Math::Vector3& pos)
+void CharacterBase::UpdateCurrentAreaID()
 {
-	if (pos.y >= 3.5f)
+
+	DirectX::BoundingSphere sphere = GetBumpSphere();
+
+	// ボックスの中に入っている割合が高いIDとCoverageを保存
+	std::unordered_map<int, float> maxCoverageByID;
+
+	for (const auto& obj : CollisionManager::Instance().GetObjects(CollisionLayer::Area))
 	{
-		return 2;
+		auto areaVolume = std::dynamic_pointer_cast<AreaVolume>(obj.lock());
+
+		if (!areaVolume)
+		{
+			continue;
+		}
+
+		float coverage = areaVolume->CalcCoverage(sphere);
+		int   areaID = areaVolume->GetAreaID();
+
+		if (maxCoverageByID[areaID] < coverage)
+		{
+			maxCoverageByID[areaID] = coverage;
+		}
 	}
 
-	return 0;
+
+	int   bestID = -1;
+	float bestCoverage = 0.0f;
+
+	for (const auto&[id,coverage] : maxCoverageByID)
+	{
+		// 割合の高いIDを探す
+		if (coverage > bestCoverage)
+		{
+			bestCoverage = coverage;
+			bestID = id;
+		}
+
+	}
+	
+	if (bestID < 0)
+	{
+		return;
+	}
+
+	auto it = maxCoverageByID.find(m_currentAreaID);
+
+	float currentCoverage = (maxCoverageByID.end()!=it)?it->second:0.0f;
+	
+	// 今のエリアから完全に出た、別のエリアが、十分に深く入ってる
+	if (currentCoverage <= 0.0f||
+		bestCoverage > currentCoverage + AreaSwitchMargin)
+	{
+		m_currentAreaID = bestID;
+	}
 }
 
 void CharacterBase::AddKnockBack(const Math::Vector3& dir, const float power)

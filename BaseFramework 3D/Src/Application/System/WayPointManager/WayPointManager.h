@@ -33,9 +33,7 @@ public:
 	// 接続解除
 	bool Disconnect(int idA, int idB, bool bidirectional = true);
 
-	// 経路探索
-	std::vector<int> FindPath(int startId, int goalId) const;
-
+	
 	// WayPointを初期化する
 	std::shared_ptr<WayPoint> CreateWayPoint();
 
@@ -52,44 +50,42 @@ public:
 
 	const std::vector<std::shared_ptr<WayPoint>>& GetWayPoints() const
 	{
-		return m_spWayPoints;
+		return m_spWayPointList;
 	}
 
 	// Stage(親)のワールド位置・大きさを、管理している全WayPointに反映する
 	void SetStageTransform(const StageObject* stageObject,const Math::Vector3& stagePos, const Math::Vector3& stageScale);
 
+	// 全WayPointのエリアIDを座標から自動で決める
+	void AssignAreaIDs();
+
+	void UpdateFlowGoal(const int goalID);
+
+	// 次に向かうWayPointのID
+	int GetNextWayPointID(const int currentID)const;
+
+	bool IsFlowGoal(const int id)const { return  m_flowGoalID == id; }
+
 private:
-
-	struct SearchNode
-	{
-		int wayPointId = -1; // どのWayPointの探索情報なのか
-
-		float g = 0.0f;      // スタートから進んだ距離
-		float h = 0.0f;      // ゴールまでの予想距離
-		float f = 0.0f;      // gとhの合計値でゴールまでの経路の長さを示す
-
-		int parentId = -1;   // 経路を復元するための親(0番の親-1 → 1番の親0)
-	};
 
 	// 現在使われていない最小のIDを返す
 	int FindAvailableID() const;
 
-	// 現在地点からゴール地点までの予想距離を計算
-	float CalculateHeuristic(const WayPoint& current, const WayPoint& goal) const;
-
-	// スタートからゴールまでの道のり距離を返す
-	std::vector<int> ReconstructPath(
-		const std::unordered_map<int, SearchNode>& searchNodes,
-		int goalId) const;
-
+	// 標識を作る(ダイクストラ法)
+	void BuildFlowField(const int goalID);
 
 private:
 
 	// 現在のステージに配置されているWayPointを所有する
-	std::vector<std::shared_ptr<WayPoint>> m_spWayPoints;
+	std::vector<std::shared_ptr<WayPoint>> m_spWayPointList;
 	// バックアップ用のWayPointリスト
-	std::vector<std::shared_ptr<WayPoint>>m_spBackupWayPoints;
+	std::vector<std::shared_ptr<WayPoint>>m_spBackupWayPointList;
 
+	// ゴールまでの道のり(標識)
+	std::unordered_map<int, float>m_costToGoal;
+
+	// 今の標識がどのゴールのものか
+	int m_flowGoalID = -1;
 
 	// デバッグ
 	std::unique_ptr<KdDebugWireFrame> m_pDebugWire = nullptr;

@@ -76,6 +76,9 @@ void BaseScene::PreDraw()
 
 void BaseScene::Draw()
 {
+	// カラースフィアの変更を、描画の前に1回だけGPUへ反映する
+	KdShaderManager::Instance().FlushColorSphere();
+
 	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 	// 光を遮るオブジェクト(影を生み出す要因となるオブジェクト)をBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginGenerateDepthMapFromLight();

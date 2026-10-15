@@ -45,8 +45,6 @@ public:
 	bool RemoveLink(int id);
 	bool HasLink(int id) const;
 
-
-
 	// 当たり判定の持ち主(ステージ)のポインタをセット
 	void SetOwner(const std::shared_ptr<StageObject>& owner) { m_wpOwner = owner; }
 	std::shared_ptr<StageObject> GetOwner()const { return m_wpOwner.lock(); }
@@ -76,7 +74,7 @@ private:
 	std::weak_ptr<StageObject>m_wpOwner;
 
 	// エリアID
-	int m_areaID = 0;
+	int m_areaID = -1;
 
 	// WayPointManager内でWayPointを識別する一意な番号
 	int m_id = -1;

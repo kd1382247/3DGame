@@ -93,12 +93,16 @@ void KdDebugGUI::AddLog(const char* fmt,...)
 	// 初期化されてないなら動作させない
 	if (!m_uqLog) return;
 
-	char tmpStr[128] = {};
+	// 長いメッセージでも落ちないよう、バッファを大きくして
+	// 入りきらない分は切り捨てる(vsnprintfは必ず終端文字を付ける)
+	char tmpStr[1024] = {};
 	va_list args;
 	va_start(args, fmt);
-	vsprintf_s(tmpStr, fmt, args);
-	m_uqLog->AddLog(tmpStr);
+	vsnprintf(tmpStr, sizeof(tmpStr), fmt, args);
 	va_end(args);
+
+	// 整形済みの文字列を書式として解釈させない("%"が含まれていても壊れない)
+	m_uqLog->AddLog("%s", tmpStr);
 }
 
 void KdDebugGUI::ClearLog()
@@ -114,12 +118,16 @@ void KdDebugGUI::AddErrorLog(const char* fmt, ...)
 	// 初期化されてないなら動作させない
 	if (!m_uqErrorLog) return;
 
-	char tmpStr[128] = {};
+	// 長いメッセージでも落ちないよう、バッファを大きくして
+	// 入りきらない分は切り捨てる(vsnprintfは必ず終端文字を付ける)
+	char tmpStr[1024] = {};
 	va_list args;
 	va_start(args, fmt);
-	vsprintf_s(tmpStr, fmt, args);
-	m_uqErrorLog->AddLog(tmpStr);
+	vsnprintf(tmpStr, sizeof(tmpStr), fmt, args);
 	va_end(args);
+
+	// 整形済みの文字列を書式として解釈させない("%"が含まれていても壊れない)
+	m_uqErrorLog->AddLog("%s", tmpStr);
 }
 
 void KdDebugGUI::ClearErrorLog()

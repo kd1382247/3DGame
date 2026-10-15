@@ -57,6 +57,7 @@ void EnemySpawner::Update()
 		return;
 	}
 
+
 	if (m_spawnedInWave == 0)
 	{
 		m_waitTime = m_waves[m_currentWave].m_startDelay;
@@ -86,12 +87,14 @@ void EnemySpawner::Update()
 	if (m_spawnedInWave >= m_waves[m_currentWave].m_spawnCount)
 	{
 		m_currentWave++;
-
+		// 配列の要素を超えないようにクランプ
 		if (m_currentWave >= static_cast<int>(m_waves.size()))
 		{
 			m_currentWave = static_cast<int>(m_waves.size());
 		}
 		m_spawnedInWave = 0;
+
+		m_spawnIntroEffect = false;
 	}
 
 }
@@ -129,6 +132,7 @@ void EnemySpawner::DrawInspectorHeader()
 			}
 		}
 
+		// オブジェクトリストから部屋を探す
 		for (const auto& obj : SceneManager::Instance().GetObjList())
 		{
 			auto room = std::dynamic_pointer_cast<Room>(obj);
@@ -195,6 +199,7 @@ void EnemySpawner::DrawInspector()
 			{
 				bool checked = m_waves[i].m_enemyNames.contains(enemyName);
 
+				// 敵を出現させるかのチェックボックス
 				if (ImGui::Checkbox(enemyName.c_str(), &checked))
 				{
 					if (checked)
@@ -210,6 +215,7 @@ void EnemySpawner::DrawInspector()
 				}
 			}
 
+			// 現在のループの回数を入れる
 			if (ImGui::Button("RemoveWave"))
 			{
 				removeIndex = i;
@@ -299,6 +305,14 @@ void EnemySpawner::LoadData(const nlohmann::json& json)
 
 void EnemySpawner::SpawnEnemy()
 {
+	if (!m_spawnIntroEffect)
+	{
+		m_spawnIntroEffect = true;
+		KdEffekseerManager::GetInstance().Play("EnemySpawner/smoke.efkefc", GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f), 1.2f,0.7);
+		KdEffekseerManager::GetInstance().Play("EnemySpawner/Lightning.efkefc", GetPos() + Math::Vector3(0.0f, -1.0f, 0.0f), 0.6f, 1.0f, false, 20, 90);
+
+	}
+
 	const auto& src = m_waves[m_currentWave].m_enemyNames;
 
 	std::vector<std::string>enemyNames;
@@ -321,6 +335,7 @@ void EnemySpawner::SpawnEnemy()
 
 void EnemySpawner::EraseEnemy()
 {
+	// 倒れた敵のリストを整理
 	std::erase_if(m_spawnEnemyList,
 		[](const std::weak_ptr<EnemyBase>& enemy)
 		{

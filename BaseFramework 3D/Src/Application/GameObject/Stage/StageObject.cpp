@@ -53,7 +53,7 @@ void StageObject::LoadStageModel(const std::string& modelName)
 		m_model = std::make_shared<KdModelWork>();
 		m_model->SetModelData(backGroundPath.string());
 	}
-
+	
 	// ステージの当たり判定クラス生成(AIBlockが要らないモデルは無くてもよい)
 	const std::filesystem::path aiBlockPath = StageLoder::Instance().GetAIBlockCollisionPath(modelName);
 

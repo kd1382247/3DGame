@@ -126,7 +126,7 @@ public:
 		static const int	MaxPointLightNum = 100;
 
 		// 環境光
-		Math::Vector4		AmbientLight = { 0.3f, 0.3f, 0.3f, 1.0f };
+		Math::Vector4		AmbientLight = { 0.5f, 0.5f, 0.5f, 1.0f };
 
 		// 平行光
 		Math::Vector3		DirLight_Dir = { 1, -1, 1 };			// 光の方向
@@ -150,6 +150,12 @@ public:
 	struct cbColorSphere
 	{
 		static const int MaxColorSphereNum = 100;
+
+		// 使用中のスロットの最大番号+1(シェーダーのループ回数を減らすため)
+		// ※HLSL側のcbufferと並びを合わせること(配列より前に置く)
+		int UsedCount = 0;
+		int _pad[3] = {};
+
 		std::array<ColorSphere, MaxColorSphereNum>ColorSpheres;
 	};
 
@@ -235,6 +241,9 @@ public:
 	void ReleaseColorSphere(int handle);
 	void ClearColorSphere();
 
+	// カラースフィアの変更をGPUへ反映する(1フレームに1回、描画の前に呼ぶ)
+	void FlushColorSphere();
+
 	void WriteCBColorSphereCircle(int handle, const Math::Vector3& pos, float radius, const Math::Vector3& color);
 	void WriteCBColorSphereSector(int handle, const Math::Vector3& pos, const Math::Vector3& dir, float radius, float angle, const Math::Vector3& color);
 	void WriteCBColorSphereRectangle(int handle, const Math::Vector3& pos, const Math::Vector3& dir, const Math::Vector2& rectSize, const Math::Vector3& color);
@@ -270,6 +279,13 @@ private:
 
 	// エフェクト定数バッファ
 	KdConstantBuffer<cbColorSphere>	m_cb10_ColorSphere;
+
+	// Release()済みか(終了処理の後に、ゲームオブジェクトのデストラクタなどから
+	// ColorSphereの関数が呼ばれても、解放済みのGPUリソースに触らないための目印)
+	bool m_isReleased = false;
+
+	// カラースフィアの内容が変わったか(trueならFlushColorSphereでGPUへ転送する)
+	bool m_colorSphereDirty = false;
 
 	KdAmbientController m_ambientController;
 

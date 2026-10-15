@@ -6,7 +6,6 @@ class RoomManager
 {
 public:
 
-
 	void EnterRoom(const std::shared_ptr<Room>& room);
 	// 今の部屋と同じ部屋の場合は参照を解除
 	void ExitRoom(const std::shared_ptr<Room>& room);
@@ -18,6 +17,8 @@ public:
 		return m_wpCurrentRoom.lock().get() == room;
 	}
 
+	// 戦闘中かどうか
+	bool IsCombat()const;
 
 private:
 

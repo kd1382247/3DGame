@@ -400,6 +400,10 @@ void EditorManager::UpdateMouseSelection()
 		SelectGimmickByMouse();
 		break;
 
+	case Hierarchy::HierarchyCategory::AreaVolume:
+		SelectAreaVolumeByMouse();
+		break;
+
 	case Hierarchy::HierarchyCategory::WayPoint:
 		SelectWayPointByMouse();
 		break;
@@ -499,6 +503,30 @@ void EditorManager::SelectGimmickByMouse()
 			auto gimmick = std::dynamic_pointer_cast<StageGimmick>(obj);
 
 			return !gimmick || gimmick->GetOwnerStage() == activeStage;
+		});
+
+	SetSelectedObject(selectedObj);
+}
+
+void EditorManager::SelectAreaVolumeByMouse()
+{
+	auto activeStage = GetActiveStage();
+
+	// AreaVolumeだけが対象なので、Roomなど他のギミックに遮られない
+	auto selectedObj = SelectClosestByMouse(
+		SceneManager::Instance().GetObjList(),
+		KdCollider::TypeBump,
+		[activeStage](const std::shared_ptr<KdGameObject>& obj)
+		{
+			if (obj->GetObjectCategory() != KdGameObject::ObjectCategory::AreaVolume)
+			{
+				return false;
+			}
+
+			// Active Stageのものだけ選べる(Hierarchyの一覧と同じ)
+			auto areaVolume = std::dynamic_pointer_cast<StageGimmick>(obj);
+
+			return areaVolume && areaVolume->GetOwnerStage() == activeStage;
 		});
 
 	SetSelectedObject(selectedObj);

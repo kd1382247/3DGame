@@ -15,7 +15,7 @@ void ChestMonster::Init()
 	if (!m_spModel)
 	{
 		InitCharacterModel("Asset/Models/Enemy/ChestMonster/ChestMonster.gltf", "ChestMonster",
-			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "ChestMonster");
+			Math::Vector3(0.0f, 0.8f, 0.0f), 0.8f, "ChestMonster");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);

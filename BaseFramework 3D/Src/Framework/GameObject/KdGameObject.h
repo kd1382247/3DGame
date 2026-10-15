@@ -25,7 +25,8 @@ public:
 		Camera,
 		Stage,
 		Gimmick,
-		Effect
+		Effect,
+		AreaVolume
 	};
 
 	KdGameObject() {}

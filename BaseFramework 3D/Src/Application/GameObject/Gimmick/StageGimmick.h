@@ -26,18 +26,30 @@ public:
 
 protected:
 
+	// デバッグ表示のチェックがONか(継承先で、別のチェックボックスに切り替えられる)
+	virtual bool IsDebugEnabled() const
+	{
+		return EditorManager::Instance().IsGimmickDebug();
+	}
+
 	// デバッグの線を出すか(DrawDebugの最初に呼ぶ)
-	// Active Stageのギミックだけが対象。そのうえで、デバッグ表示がONか、選択中のときに出す
+	// PlayMode : Debugチェックに従う(Play開始でステージが作り直されるので、Active Stageは見ない)
+	// EditMode : Active Stageのギミックだけが対象。そのうえで、デバッグ表示がONか、選択中のときに出す
 	bool ShouldDrawDebug()
 	{
 		auto& editor = EditorManager::Instance();
+
+		if (editor.IsPlayMode())
+		{
+			return IsDebugEnabled();
+		}
 
 		if (GetOwnerStage() != editor.GetActiveStage())
 		{
 			return false;
 		}
 
-		return editor.IsGimmickDebug() || IsSelected();
+		return IsDebugEnabled() || IsSelected();
 	}
 
 	// 追従するステージ(持ち主)。継承先のInspector・Save・Loadから使う

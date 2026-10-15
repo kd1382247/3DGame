@@ -1,5 +1,7 @@
 ﻿#include "RoomManager.h"
 
+#include"Room.h"
+
 void RoomManager::EnterRoom(const std::shared_ptr<Room>& room)
 {
 
@@ -17,4 +19,16 @@ void RoomManager::ExitRoom(const std::shared_ptr<Room>&room)
 
 		KdDebugGUI::Instance().AddLog("Exit Room\n");
 	}
+}
+
+bool RoomManager::IsCombat() const
+{
+	auto spRoom = m_wpCurrentRoom.lock();
+
+	if (!spRoom)
+	{
+		return false;
+	}
+
+	return spRoom->IsCombat();
 }

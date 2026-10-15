@@ -18,7 +18,6 @@ void MageBeamState::OnStart(Mage* mage)
 
 	// 詠唱開始時点で座標・方向を確定させる(テレグラフ表示とBeam生成で同じ値を使うため)
 	// ボス中心ではなく、ボスの前方に押し出した位置を基準にする
-	// (テレグラフ表示・当たり判定・エフェクトの基準座標をすべてこの位置に揃える)
 	m_beamDir = mage->GetMatrix().Backward();
 	m_beamPos = mage->GetPos() + m_beamDir * param.m_beamForwardOffset;
 
@@ -112,7 +111,6 @@ void MageBeamState::HideBeamRange()
 
 void MageBeamState::CreateTelegraphIndicator()
 {
-
 	// 攻撃範囲を表示するカラースフィア(矩形)を作る
 	m_telegraphIndicatorHandle = KdShaderManager::Instance().CreateColorSphere();
 }
@@ -126,7 +124,6 @@ void MageBeamState::UpdateTelegraphIndicator()
 		float progress = (m_castDelay > 0.0f) ? (m_castTimer / m_castDelay) : 1.0f;
 		Math::Vector2 currentRect = Math::Vector2(m_beamWidth, m_beamLength);
 		currentRect *= progress;
-
 
 		KdShaderManager::Instance().WriteCBColorSphereRectangle(
 			m_telegraphIndicatorHandle,

@@ -86,6 +86,10 @@ public:
 	bool IsGimmickDebug() const { return m_isGimmickDebug; }
 	void SetGimmickDebug(bool isDebug) { m_isGimmickDebug = isDebug; }
 
+	// AreaVolumeのデバッグ表示のON/OFF(Gimmickとは別)
+	bool IsAreaVolumeDebug() const { return m_isAreaVolumeDebug; }
+	void SetAreaVolumeDebug(bool isDebug) { m_isAreaVolumeDebug = isDebug; }
+
 	// 今のアクティブステージで、AABB/OBB/WayPointを編集できるか
 	// (アクティブステージが「最初のステージ」ならtrue。ステージが1つもない場合もtrue)
 	bool CanEditStageData() const;
@@ -127,6 +131,9 @@ private:
 	// ギミックを選択
 	void SelectGimmickByMouse();
 
+	// AreaVolumeを選択
+	void SelectAreaVolumeByMouse();
+
 	// ウェイポイントを選択
 	void SelectWayPointByMouse();
 
@@ -164,7 +171,10 @@ private:
 	bool m_isDirty = false;
 
 	// ギミックのデバッグ表示(選択中のギミックは、OFFでも表示する)
-	bool m_isGimmickDebug = true;
+	bool m_isGimmickDebug = false;
+
+	// AreaVolumeのデバッグ表示(選択中のAreaVolumeは、OFFでも表示する)
+	bool m_isAreaVolumeDebug = false;
 
 
 private: // シングルトンパターン

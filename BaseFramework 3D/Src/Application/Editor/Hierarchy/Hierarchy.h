@@ -10,6 +10,7 @@ public:
 		WayPoint,
 		Stage,
 		Gimmick,
+		AreaVolume,
 		AABB,
 		OBB
 	};
@@ -35,6 +36,7 @@ private:
 	void AddWayPoint();
 	void AddStage();
 	void AddGimmick();
+	void AddAreaVolume();
 	void AddAABB();
 	void AddOBB();
 
@@ -49,6 +51,7 @@ private:
 	void DrawWayPoints();
 	void DrawStage();
 	void DrawGimmick();
+	void DrawAreaVolume();
 	void DrawAABB();
 	void DrawOBB();
 

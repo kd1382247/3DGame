@@ -38,10 +38,11 @@ void Hierarchy::Draw()
 		m_category == HierarchyCategory::OBB ||
 		m_category == HierarchyCategory::WayPoint;
 
-	// Active Stageで一覧を絞り込むカテゴリ(ギミックはステージごとに保存するので、編集の制限はない)
+	// Active Stageで一覧を絞り込むカテゴリ(ギミック・AreaVolumeはステージごとに保存するので、編集の制限はない)
 	const bool isOwnerCategory =
 		isStageDataCategory ||
-		m_category == HierarchyCategory::Gimmick;
+		m_category == HierarchyCategory::Gimmick ||
+		m_category == HierarchyCategory::AreaVolume;
 
 	if (isOwnerCategory)
 	{
@@ -109,6 +110,7 @@ void Hierarchy::DrawCategorySelector()
 		CategorySelectItem("GameObject", HierarchyCategory::GameObject);
 		CategorySelectItem("Stage",      HierarchyCategory::Stage);
 		CategorySelectItem("Gimmick",    HierarchyCategory::Gimmick);
+		CategorySelectItem("AreaVolume", HierarchyCategory::AreaVolume);
 		CategorySelectItem("WayPoint",   HierarchyCategory::WayPoint);
 		CategorySelectItem("AABB",       HierarchyCategory::AABB);
 		CategorySelectItem("OBB",        HierarchyCategory::OBB);
@@ -143,6 +145,7 @@ const char* Hierarchy::GetCategoryLabel(HierarchyCategory category)
 	case HierarchyCategory::GameObject:   return "GameObject";
 	case HierarchyCategory::Stage:        return "Stage";
 	case HierarchyCategory::Gimmick:      return "Gimmick";
+	case HierarchyCategory::AreaVolume:   return "AreaVolume";
 	case HierarchyCategory::WayPoint:     return "WayPoint";
 	case HierarchyCategory::AABB:         return "AABB";
 	case HierarchyCategory::OBB:          return "OBB";
@@ -153,8 +156,10 @@ const char* Hierarchy::GetCategoryLabel(HierarchyCategory category)
 
 void Hierarchy::DrawActiveStageSelector()
 {
-	// ギミックは通路には置かないので、Gimmickカテゴリでは通路を候補に入れない
-	const bool excludeCorridor = (m_category == HierarchyCategory::Gimmick);
+	// ギミック・AreaVolumeは通路には置かないので、通路を候補に入れない
+	const bool excludeCorridor =
+		(m_category == HierarchyCategory::Gimmick) ||
+		(m_category == HierarchyCategory::AreaVolume);
 
 	auto isCandidate = [excludeCorridor](const std::shared_ptr<StageObject>& stage)
 	{
@@ -241,6 +246,9 @@ void Hierarchy::DrawAddButtons()
 		break;
 	case HierarchyCategory::Gimmick:
 		AddGimmick();
+		break;
+	case HierarchyCategory::AreaVolume:
+		AddAreaVolume();
 		break;
 	case HierarchyCategory::AABB:
 		AddAABB();
@@ -365,6 +373,35 @@ void Hierarchy::AddGimmick()
 	}
 }
 
+void Hierarchy::AddAreaVolume()
+{
+	// AreaVolumeを新規作成(種類は1つだけなので、ボタンを押すとそのまま作る)
+	// Active Stageの持ち物になるので、ステージが無いときは作れない
+	if (EditorManager::Instance().GetActiveStage())
+	{
+		if (ImGui::Button("Add AreaVolume"))
+		{
+			EditorManager::Instance().CreateGameObject("AreaVolume");
+
+			EditorManager::Instance().MarkDirty();
+		}
+	}
+	else
+	{
+		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
+	}
+
+	ImGui::SameLine();
+
+	// AreaVolumeのデバッグ表示のON/OFF(Gimmickとは別)
+	bool isDebug = EditorManager::Instance().IsAreaVolumeDebug();
+
+	if (ImGui::Checkbox("Debug", &isDebug))
+	{
+		EditorManager::Instance().SetAreaVolumeDebug(isDebug);
+	}
+}
+
 void Hierarchy::AddAABB()
 {
 
@@ -475,6 +512,10 @@ void Hierarchy::DrawSelectedCategoryList()
 		DrawGimmick();
 		break;
 
+	case HierarchyCategory::AreaVolume:
+		DrawAreaVolume();
+		break;
+
 	case HierarchyCategory::AABB:
 		DrawAABB();
 		break;
@@ -541,6 +582,31 @@ void Hierarchy::DrawGimmick()
 
 		if (gimmick &&
 			gimmick->GetOwnerStage() != activeStage)
+		{
+			continue;
+		}
+
+		SelectHierarchyObject(obj);
+	}
+}
+
+void Hierarchy::DrawAreaVolume()
+{
+	auto activeStage = EditorManager::Instance().GetActiveStage();
+
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (!obj ||
+			obj->GetObjectCategory() != KdGameObject::ObjectCategory::AreaVolume)
+		{
+			continue;
+		}
+
+		// 持ち主がActive Stageではないものは出さない
+		auto areaVolume = std::dynamic_pointer_cast<StageGimmick>(obj);
+
+		if (areaVolume &&
+			areaVolume->GetOwnerStage() != activeStage)
 		{
 			continue;
 		}

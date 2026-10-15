@@ -55,8 +55,13 @@ public:
 	void ApplyPush() { SetPos(GetPos() + m_totalPush); }
 	void ClearPush() { m_totalPush = Math::Vector3::Zero; }
 
-	// 現在のエリアIDを返す
-	int   GetCurrentAreaID(const Math::Vector3& pos);
+
+	int GetAreaID()const { return m_currentAreaID; };
+
+	// 現在のエリアIDに対応するデバッグ表示色
+	Math::Color GetAreaDebugColor()const;
+	// エリアIDを更新
+	void  UpdateCurrentAreaID();
 
 	// 重力を返す
 	float GetGravity()const { return m_gravity; }
@@ -159,7 +164,9 @@ protected:
 	Health m_health;
 
 	// エリアID
-	int m_currentAreaID = 0;
+	int m_currentAreaID = -1;
+	static constexpr float AreaSwitchMargin = 0.2f;
+	
 
 	// 攻撃判定のタイミング
 	float        m_animFrame = 0;

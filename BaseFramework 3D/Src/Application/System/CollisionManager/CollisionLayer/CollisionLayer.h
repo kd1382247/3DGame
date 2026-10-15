@@ -13,5 +13,6 @@ enum class CollisionLayer
 	OBB,
 	AIBlock,
 	Gate,		// 部屋の柵(RoomGate)
+	Area,
 	Max
 };

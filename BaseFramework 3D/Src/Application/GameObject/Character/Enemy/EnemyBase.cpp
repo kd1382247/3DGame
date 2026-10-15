@@ -158,30 +158,33 @@ void EnemyBase::UpdateDirectChase()
 void EnemyBase::UpdateFollowPath()
 {
 
-	// 経路が空
-	if (m_path.empty())
-	{
-		return;
-	}
-	// 全てのWayPointを通過した
-	if (m_pathIndex >= m_path.size())
-	{
+	UpdateFlowGoal();
 
-		if (m_currentMoveState == MoveState::FollowPath)
+	// 進むウェイポイントがない
+	if (m_targetWayPointID < 0)
+	{
+		// 一定時間で新たにウェイポイントを探す
+		m_pathRefreshTimer -= m_deltaTime;
+		if (m_pathRefreshTimer < 0)
 		{
-			CreatePath();
+			m_pathRefreshTimer = PathRefreshDuration;
+			SelectStartWayPoint();
 		}
+
+		// 固まらないようにする
+		UpdateDirectChase();
+
 		return;
 	}
-
-	// 現在目指しているWayPointのID
-	int targetId = m_path[m_pathIndex];
 
 	// IDからWayPointを取得
-	auto targetPoint = WayPointManager::Instance().FindWayPoint(targetId);
+	auto targetPoint = WayPointManager::Instance().FindWayPoint(m_targetWayPointID);
 
-
-	if (!targetPoint) { return; }
+	if (!targetPoint) 
+	{
+		m_targetWayPointID = -1;
+		return;
+	}
 
 	// WayPointへの方向
 	Math::Vector3 targetDir = targetPoint->GetPos() - GetPos();
@@ -197,8 +200,25 @@ void EnemyBase::UpdateFollowPath()
 
 	if (targetDir.LengthSquared() <= arrivalDistance * arrivalDistance)
 	{
-		++m_pathIndex;
-		return;
+		// ゴールに到達しているか
+		if(WayPointManager::Instance().IsFlowGoal(m_targetWayPointID))
+		{
+			return;
+		}
+		else
+		{
+
+			// ゴールでなければ次のWayPointを探す
+			int nextID = WayPointManager::Instance().GetNextWayPointID(m_targetWayPointID);
+
+			m_targetWayPointID = nextID;
+
+			// -1が帰ってきたら処理を処理を飛ばす
+			if (m_targetWayPointID == -1)
+			{
+				return;
+			}
+		}
 	}
 
 	float distance = targetDir.Length();
@@ -226,52 +246,20 @@ bool EnemyBase::CanDirectChase()
 		return false;
 	}
 
-	auto player = m_wpPlayer.lock();
+	auto spPlayer = m_wpPlayer.lock();
 
-	if (!player)
+	if (!spPlayer)
 	{
 		return false;
 	}
 
-	Math::Vector3 startPos = GetPos();
-	Math::Vector3 playerPos = player->GetPos();
-
-	// プレイヤーの方向に向くベクトル作成
-	Math::Vector3 direction = playerPos - startPos;
-
-
-	// レイの長さをセット
-	float rayLength = direction.Length();
-
-	if (rayLength <= 0.0f)
+	if (GetAreaID() < 0 || spPlayer->GetAreaID()<0)
 	{
 		return true;
 	}
 
-	// 正規化
-	direction.Normalize();
-
-	// レイ情報
-	KdCollider::RayInfo rayInfo(KdCollider::Type::TypeSight,startPos,direction,rayLength);
-
-	bool hit = false;
-
-	for (auto& wpGameObj :CollisionManager::Instance().GetObjects(CollisionLayer::AIBlock))
-	{
-		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
-
-		if (!spGameObj)
-		{
-			continue;
-		}
-
-		if (spGameObj->Intersects(rayInfo, nullptr))
-		{
-			hit = true;
-		}
-	}
-
-	if (hit)
+	// 敵とプレイヤーが同じAreaIDだったら直接追跡
+	if (GetAreaID()!= spPlayer->GetAreaID())
 	{
 		// ウェイポイントが無ければ変更しない
 		if(!WayPointManager::Instance().GetWayPoints().empty())
@@ -288,31 +276,20 @@ bool EnemyBase::CanDirectChase()
 
 }
 
-void EnemyBase::CreatePath()
+void EnemyBase::SelectStartWayPoint()
 {
-
-	auto player = m_wpPlayer.lock();
-
-	if (!player)
-	{
-		return;
-	}
-
+	
 	// スタート地点
 	auto startPoint =
-		WayPointManager::Instance().FindNearest(GetPos(),GetCurrentAreaID(GetPos()));
+		WayPointManager::Instance().FindNearest(GetPos(), GetAreaID());
 
-	// ゴール（目標地点）
-	auto goalPoint =
-		WayPointManager::Instance().FindNearest(player->GetPos(), player->GetCurrentAreaID(player->GetPos()));
-
-
-	if (!startPoint || !goalPoint)
+	if (!startPoint)
 	{
+		m_targetWayPointID = -1;
 		return;
 	}
 
-	SetPath(WayPointManager::Instance().FindPath(startPoint->GetID(), goalPoint->GetID()),goalPoint->GetID());
+	m_targetWayPointID = startPoint->GetID();
 }
 
 void EnemyBase::ChangeMoveState(const MoveState nextState)
@@ -326,11 +303,12 @@ void EnemyBase::ChangeMoveState(const MoveState nextState)
 
 	if (m_currentMoveState == MoveState::FollowPath)
 	{
-		CreatePath();
+		m_targetWayPointID = -1;
+		SelectStartWayPoint();
 	}
 }
 
-void EnemyBase::UpdatePath()
+void EnemyBase::UpdateFlowGoal()
 {
 
 	auto player = m_wpPlayer.lock();
@@ -340,26 +318,15 @@ void EnemyBase::UpdatePath()
 		return;
 	}
 
-	auto currentGoalPoint =WayPointManager::Instance().FindNearest(player->GetPos(),player->GetCurrentAreaID(player->GetPos()));
+	auto currentGoalPoint =WayPointManager::Instance().FindNearest(player->GetPos(),player->GetAreaID());
 
 	if (!currentGoalPoint)
 	{
 		return;
 	}
 
-	if (m_goalWayPointID != currentGoalPoint->GetID())
-	{
-		CreatePath();
-	}
+	WayPointManager::Instance().UpdateFlowGoal(currentGoalPoint->GetID());
 
-}
-
-void EnemyBase::SetPath(const std::vector<int>& path,const int goalID)
-{
-	m_path = path;
-	m_pathIndex = 0;
-
-	m_goalWayPointID = goalID;
 }
 
 void EnemyBase::UpdateMove()

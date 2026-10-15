@@ -139,7 +139,7 @@ void Player::DrawDebug()
 {
 	CollisionManager::Instance().DrawDebug();
 
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.5, kRedColor);
+	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.5, GetAreaDebugColor());
 	m_pDebugWire->Draw();
 }
 

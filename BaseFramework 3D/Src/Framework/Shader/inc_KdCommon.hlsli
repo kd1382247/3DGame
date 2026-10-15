@@ -67,6 +67,9 @@ cbuffer cbLight : register(b9)
 //------------------------------
 cbuffer cbColorSphere : register(b10)
 {
+	// 使用中のスロットの最大番号+1(C++側のcbColorSphere::UsedCountと対応)
+	int g_ColorSphereCount;
+
 	// データ
 	struct ColorSphere
 	{

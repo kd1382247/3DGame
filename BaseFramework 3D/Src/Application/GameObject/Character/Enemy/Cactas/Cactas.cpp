@@ -80,7 +80,9 @@ void Cactas::SetUpReference()
 void Cactas::DrawDebug()
 {
 	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
-	//m_pDebugWire->Draw();
+
+	// 追加したデバッグ線を描画して消す(描画しないと頂点が溜まり続ける)
+	m_pDebugWire->Draw();
 }
 
 void Cactas::DrawParameterInspector()

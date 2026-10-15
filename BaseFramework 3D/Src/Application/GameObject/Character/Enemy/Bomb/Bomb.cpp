@@ -48,7 +48,7 @@ void Bomb::Update()
 {
 
 	m_pDebugWire->AddDebugSphere(GetPos(),m_explosionRadius,kRedColor);
-
+	
 	UpdateGravity();
 
 	m_stateMachine.Update();

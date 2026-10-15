@@ -14,6 +14,23 @@
 #include"../../GameObject/Gimmick/RoomGate/RoomGate.h"
 
 
+namespace
+{
+	// 調べる範囲の余白
+	constexpr float CullMargin = 0.05f;
+	
+	// 2つのAABBが重なっているか
+	bool IsOverlapAABB(
+		const Math::Vector3& minA, const Math::Vector3& maxA,
+		const Math::Vector3& minB, const Math::Vector3& maxB)
+	{
+		return minA.x <= maxB.x && maxA.x >= minB.x
+			&& minA.y <= maxB.y && maxA.y >= minB.y
+			&& minA.z <= maxB.z && maxB.z >= minB.z;		
+	}
+
+}
+
 void CollisionManager::DrawDebug()
 {
 	m_pDebugWire->Draw();
@@ -26,6 +43,9 @@ void CollisionManager::Init()
 
 void CollisionManager::Resolve()
 {
+	// 破棄済みのオブジェクト(weak_ptrが空になったもの)を登録リストから取り除く
+	// (放置すると、リストが増え続けてメモリも使い続ける)
+	RemoveExpiredObjects();
 
 	if (TimeManager::Instance().IsHitStop())
 	{
@@ -78,24 +98,6 @@ void CollisionManager::Resolve()
 	m_resolveTimeSum += Ms(Clock::now() - resolveStart).count();
 	m_measureFrameCount++;
 
-	//// 60フレームごとに平均を出す
-	//if (m_measureFrameCount >= 60)
-	//{
-	//	const float n = static_cast<float>(m_measureFrameCount);
-
-	//	KdDebugGUI::Instance().ClearLog();
-	//	KdDebugGUI::Instance().AddLog(
-	//		"Collision total:%.2f ms\n  move:%.2f ms\n  chara:%.2f ms\n",
-	//		m_resolveTimeSum / n,
-	//		m_movementTimeSum / n,
-	//		m_characterTimeSum / n);
-
-	//	// 次の60フレームのために0に戻す
-	//	m_resolveTimeSum = 0.0f;
-	//	m_movementTimeSum = 0.0f;
-	//	m_characterTimeSum = 0.0f;
-	//	m_measureFrameCount = 0;
-	//}
 
 	if (m_measureFrameCount >= 60)
 	{
@@ -124,32 +126,6 @@ void CollisionManager::Resolve()
 	}
 }
 
-void CollisionManager::ApplyCharacterPush(const std::shared_ptr<CharacterBase>& character)
-{
-
-	if (!character)
-	{
-		return;
-	}
-
-	Math::Vector3 push =character->GetTotalPush();
-
-	if (push.LengthSquared() <= 0.000001f)
-	{
-		character->ClearPush();
-		return;
-	}
-
-	m_pushCount++;
-
-	Math::Vector3 finalPos =
-		ResolveCharacterDisplacement(character, character->GetPos(), push, false);
-
-	character->SetPos(finalPos);
-
-	character->ClearPush();
-
-}
 
 void CollisionManager::ApplyKnockBack(const std::shared_ptr<CharacterBase>& character)
 {
@@ -239,6 +215,14 @@ CollisionManager::SweepResult CollisionManager::FindSweepContacts(const std::sha
 
 	Math::Vector3 sweepStart = GetBumpSphereCenterAt(character, currentPos);
 
+	// 球が今回動く範囲(AABB)
+	const float radius = character->GetBumpSphere().Radius;
+	const Math::Vector3 sweepEnd = sweepStart + remainingMove;
+	const Math::Vector3 reach(radius + CullMargin, radius + CullMargin, radius + CullMargin);
+	const Math::Vector3 sweepMin = Math::Vector3::Min(sweepStart, sweepEnd) - reach;
+	const Math::Vector3 sweepMax = Math::Vector3::Max(sweepStart, sweepEnd) + reach;
+
+
 	const auto& walls =AABBCollisionManager::Instance().GetAABBCollisionList();
 
 	for (const auto& wall : walls)
@@ -256,6 +240,12 @@ CollisionManager::SweepResult CollisionManager::FindSweepContacts(const std::sha
 		Math::Vector3 boxMin = center - extents;
 
 		Math::Vector3 boxMax = center + extents;
+
+		// 動く範囲と重なっていない壁は、詳しい判定をしない
+		if (!IsOverlapAABB(sweepMin, sweepMax, boxMin, boxMax))
+		{
+			continue;
+		}
 
 		float toi = 0.0f;
 		Math::Vector3 normal = Math::Vector3::Zero;
@@ -650,12 +640,28 @@ void CollisionManager::ResolveAABBStartOverlap(const std::shared_ptr<CharacterBa
 	const auto& walls =
 		AABBCollisionManager::Instance().GetAABBCollisionList();
 
+	const float radius = character->GetBumpSphere().Radius;
+	const Math::Vector3 reach(radius + CullMargin, radius + CullMargin, radius + CullMargin);
+
+
 	for (const auto& wall : walls)
 	{
 		if (!wall)
 		{
 			continue;
 		}
+
+		// 球の周りの範囲と重なっていない壁は詳しい判定をしない。
+		const Math::Vector3 center = GetBumpSphereCenterAt(character, currentPos);
+		const auto& box = wall->GetBox();
+		const Math::Vector3 boxMin = Math::Vector3(box.Center) - Math::Vector3(box.Extents);
+		const Math::Vector3 boxMax = Math::Vector3(box.Center) + Math::Vector3(box.Extents);
+
+		if (!IsOverlapAABB(center-reach,center+reach,boxMin,boxMax))
+		{
+			continue;
+		}
+
 
 		DirectX::BoundingSphere sphere;
 		sphere.Center = GetBumpSphereCenterAt(character, currentPos);
@@ -933,14 +939,24 @@ void CollisionManager::ResolveCharacterCollision(const std::vector<std::shared_p
 	using Clock = std::chrono::steady_clock;
 	using Ms = std::chrono::duration<float, std::milli>;
 
-	for(int iter=0;iter<Iteration;iter++)
+	// 押し戻す前の位置を覚えておく(最後に壁判定を1回にするため)
+	std::vector<Math::Vector3> startPositions;
+	startPositions.reserve(characters.size());
+
+	for (const auto& character : characters)
+	{
+		startPositions.push_back(character->GetPos());
+	}
+
+
+	for (int iter = 0; iter < Iteration; iter++)
 	{
 		// 全キャラの押し戻し量をクリア
 		for (auto& character : characters)
 		{
 			character->ClearPush();
 		}
-		
+
 		const auto pairStart = Clock::now();
 
 		// 全ペアと判定
@@ -966,9 +982,9 @@ void CollisionManager::ResolveCharacterCollision(const std::vector<std::shared_p
 				charaB->Intersects(sphereInfo, &results);
 
 				if (!results.empty())
-				 {
+				{
 					m_hitCount++;
-					}
+				}
 
 				for (auto& ret : results)
 				{
@@ -984,7 +1000,7 @@ void CollisionManager::ResolveCharacterCollision(const std::vector<std::shared_p
 						continue;
 					}
 
-	
+
 					dir.Normalize();
 
 					float overlap = ret.m_overlapDistance;
@@ -1019,13 +1035,39 @@ void CollisionManager::ResolveCharacterCollision(const std::vector<std::shared_p
 		}
 
 		m_pairTimeSum += Ms(Clock::now() - pairStart).count();
-		const auto pushStart = Clock::now();
 
-		for (auto& character : characters)
+		// 反復の間は、押し戻しを位置に足すだけ(壁判定はしない)
+		for (const auto& character : characters)
 		{
-			ApplyCharacterPush(character);
+			character->SetPos(character->GetPos() + character->GetTotalPush());
+			character->ClearPush();
+		}
+	}
+
+	// 最後に、動いたキャラだけ壁判定を1回する
+	const auto pushStart = Clock::now();
+
+	for (size_t i = 0; i < characters.size(); i++)
+	{
+		const auto& character = characters[i];
+
+		// 押し戻しの合計(今の位置 - 最初の位置)
+		const Math::Vector3 totalMove = character->GetPos() - startPositions[i];
+
+		if (totalMove.LengthSquared() <= 0.000001f)
+		{
+			continue;
 		}
 
-		m_pushTimeSum += Ms(Clock::now() - pushStart).count();
+		m_pushCount++;
+
+		// 最初の位置から、合計の移動量で壁判定をして、位置を決める
+		const Math::Vector3 finalPos =
+			ResolveCharacterDisplacement(character, startPositions[i], totalMove, false);
+
+		character->SetPos(finalPos);
 	}
+
+	m_pushTimeSum += Ms(Clock::now() - pushStart).count();
+
 }

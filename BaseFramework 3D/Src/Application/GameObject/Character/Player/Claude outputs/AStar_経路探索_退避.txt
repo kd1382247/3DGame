@@ -1,0 +1,267 @@
+﻿====================================================================
+ WayPointManager の A*(Aスター)経路探索 退避メモ
+====================================================================
+フローフィールド(ダイクストラ法)に置き換えたため、使わなくなった
+A*のプログラムをここに残しておく。復活させたいときはこのファイルから
+コピーして戻せばよい。
+
+--------------------------------------------------------------------
+ 1. A*のしくみ(このプログラムでの動き)
+--------------------------------------------------------------------
+・スタートのWayPointから、ゴールのWayPointまでの「最短の道」を1本だけ探す。
+・各WayPointについて、次の3つの値を持つ(SearchNode)
+    g : スタートからそこまで実際に歩いた距離
+    h : そこからゴールまでの予想距離(まっすぐ引いた距離。CalculateHeuristic)
+    f : g + h  (そのWayPoint経由でゴールまで行ったときの合計の見積り)
+・「これから調べる候補(openList)」の中からfが一番小さいWayPointを取り出し、
+  その隣(GetLinks)を順に調べる。
+・隣が初めて見つかった、または前より短い道で行けたら、g/h/f/親(parentId)を
+  記録して候補に入れる。
+・ゴールを取り出した時点で終了。親(parentId)をゴールからスタートへ
+  たどって逆順にすると、歩く順番の道(ID配列)になる(ReconstructPath)。
+・調べ終わったWayPointは closeList に入れ、二度と調べない。
+
+--------------------------------------------------------------------
+ 2. フローフィールド(今のやり方)との違い
+--------------------------------------------------------------------
+        A*(FindPath)                    フローフィールド(BuildFlowField)
+ 探す    スタート→ゴール(1本の道)        ゴール→全WayPoint(全員分の標識)
+ 敵が持つ  道のID配列(m_path)               次に向かうWayPointのID 1個だけ
+ ゴールが変わる  敵ごとに道を作り直す          標識を1回作り直せば全員に反映
+ 向いている  敵が少ない / 道を固定したい       敵が多い / ゴールが動き続ける
+
+--------------------------------------------------------------------
+ 3. 削除した(する)もの一覧
+--------------------------------------------------------------------
+[WayPointManager.h]
+  public:
+    std::vector<int> FindPath(int startId, int goalId) const;
+  private:
+    struct SearchNode
+    float CalculateHeuristic(const WayPoint& current, const WayPoint& goal) const;
+    std::vector<int> ReconstructPath(const std::unordered_map<int, SearchNode>& searchNodes, int goalId) const;
+
+[WayPointManager.cpp]
+  FindPath / CalculateHeuristic / ReconstructPath の3つの関数
+
+[削除前の確認]
+  プロジェクト全体で「FindPath」を検索して、他に使っている場所が
+  ないことを確認してから消す(EnemyBase側はすでに使っていない)。
+
+====================================================================
+ 4. ヘッダー(WayPointManager.h)の宣言
+====================================================================
+
+// public
+	// 経路探索
+	std::vector<int> FindPath(int startId, int goalId) const;
+
+// private
+	struct SearchNode
+	{
+		int wayPointId = -1; // どのWayPointの探索情報なのか
+
+		float g = 0.0f;      // スタートから進んだ距離
+		float h = 0.0f;      // ゴールまでの予想距離
+		float f = 0.0f;      // gとhの合計値でゴールまでの経路の長さを示す
+
+		int parentId = -1;   // 経路を復元するための親(0番の親-1 → 1番の親0)
+	};
+
+	// 現在地点からゴール地点までの予想距離を計算
+	float CalculateHeuristic(const WayPoint& current, const WayPoint& goal) const;
+
+	// スタートからゴールまでの道のり距離を返す
+	std::vector<int> ReconstructPath(
+		const std::unordered_map<int, SearchNode>& searchNodes,
+		int goalId) const;
+
+====================================================================
+ 5. WayPointManager.cpp の実装
+====================================================================
+
+// ---- FindPath ----
+std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
+{
+	// スタート地点とゴール地点のWayPointを探す
+	auto startPoint = FindWayPoint(startId);
+	auto goalPoint = FindWayPoint(goalId);
+
+	// どちらかのWayPointがなければreturn
+	if (!startPoint || !goalPoint)
+	{
+		return{};
+	}
+
+	// スタートIDとゴールIDが同じであればスタートIDを返す
+	if (startId == goalId)
+	{
+		return { startId };
+	}
+
+	SearchNode startNode;
+	// スタート地点のWayPointを入れる
+	startNode.wayPointId = startId;
+	startNode.g = 0.0f;
+	startNode.h = CalculateHeuristic(*startPoint, *goalPoint);
+
+	startNode.f = startNode.g + startNode.h;
+	startNode.parentId = -1;
+
+	// これから調べる候補
+	std::vector<int>openList;
+
+	// 調べ終わった場所を保存
+	std::unordered_set<int>closeList;
+
+	// 各WayPointの探索情報
+	std::unordered_map<int, SearchNode>searchNodes;
+
+	searchNodes[startId] = startNode;
+	openList.push_back(startId);
+
+	while (!openList.empty())
+	{
+		// Fが最小のIDのイテレータを返す処理
+		auto bestIt = std::min_element(openList.begin(), openList.end(),
+			[&](int leftId, int rightId)
+			{  // Fが小さいWayPointを比較する
+				return searchNodes.at(leftId).f < searchNodes.at(rightId).f;
+			});
+
+		// これから調べるWayPointのID
+		int currentId = *bestIt;
+
+		// 調べる候補から削除
+		openList.erase(bestIt);
+		// 調べ終わったリストに追加
+		closeList.insert(currentId);
+
+		// ゴールのIDと同じか
+		if (currentId == goalId)
+		{
+			//
+			return ReconstructPath(searchNodes, goalId);
+		}
+
+		auto currentPoint = FindWayPoint(currentId);
+
+		if (!currentPoint)
+		{
+			continue;
+		}
+
+		// 現在のWayPointから、その接続先のWayPointを調べる
+		for (int linkId : currentPoint->GetLinks())
+		{
+			// 調査済みリストに入っていたらスキップ
+			if (closeList.contains(linkId))
+			{
+				continue;
+			}
+
+			auto linkedPoint = FindWayPoint(linkId);
+
+			if (!linkedPoint)
+			{
+				continue;
+			}
+
+			// 接続先との距離を計算
+			Math::Vector3 difference = linkedPoint->GetPos() - currentPoint->GetPos();
+			// 一区間の距離を入れる
+			float moveCost = difference.Length();
+	
+
+			// スタート地点から、接続先WayPointまで進んだ合計距離
+			float newG = searchNodes.at(currentId).g + moveCost;
+
+			// 接続先WayPointを、今回の探索で初めて発見したか？
+			bool isNewNode = !searchNodes.contains(linkId);
+
+			// 発見済みの場合
+			// 今回見つけた道の方が、以前の道より短いか?
+			bool isShorterPath = !isNewNode && newG < searchNodes.at(linkId).g;
+
+
+			// 初めて発見してない、前より短い経路でもない場合スキップ
+			if (!isNewNode && !isShorterPath)
+			{
+				continue;
+			}
+
+			// 接続先のWayPoint情報
+			SearchNode linkedSearchNode;
+
+			// 今調べている接続先IDを入れる
+			linkedSearchNode.wayPointId = linkId;
+
+			// スタート地点から接続先までの距離
+			linkedSearchNode.g = newG;
+
+			// 接続先からゴールまでの予想距離
+			linkedSearchNode.h = CalculateHeuristic(*linkedPoint, *goalPoint);
+
+			linkedSearchNode.f = linkedSearchNode.g + linkedSearchNode.h;
+
+			// 接続先の親ID = 現在のWayPointIDを入れる
+			linkedSearchNode.parentId = currentId;
+
+			// 接続先Nodeを新たに追加
+			searchNodes[linkId] = linkedSearchNode;
+
+			// このWayPointがまだオープンリストに入っていなければ追加
+			if (std::find(openList.begin(), openList.end(), linkId) == openList.end())
+			{
+				openList.push_back(linkId);
+			}
+		}
+	}
+
+	return{};
+
+}
+
+// ---- CalculateHeuristic ----
+float WayPointManager::CalculateHeuristic(const WayPoint& current, const WayPoint& goal) const
+{
+
+	Math::Vector3 difference = goal.GetPos() - current.GetPos();
+
+	return difference.Length();
+}
+
+// ---- ReconstructPath ----
+std::vector<int> WayPointManager::ReconstructPath(const std::unordered_map<int, SearchNode>& searchNodes, int goalId) const
+{
+	// スタートからゴールまでのWayPointのID一覧
+	std::vector<int>path;
+
+	// ゴールから始める
+	int currentId = goalId;
+
+	// 親が無くなるまでたどる
+	while (currentId != -1)
+	{
+		path.push_back(currentId);
+
+		// 現在のIDのscerchNodesを探す
+		auto nodeIt = searchNodes.find(currentId);
+
+
+		if (nodeIt == searchNodes.end())
+		{
+			return{};
+		}
+
+		// 親情報を更新
+		currentId = nodeIt->second.parentId;
+
+	}
+
+	// ゴールから親を逆にたどり、それを反転して
+	// 敵が実際に歩く順番へ直す
+	std::reverse(path.begin(), path.end());
+
+	return path;
+}

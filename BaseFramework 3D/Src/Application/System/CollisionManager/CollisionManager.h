@@ -184,7 +184,7 @@ private:
 	//==============================
 	void ResolveCharacterCollision(const std::vector<std::shared_ptr<CharacterBase>>& characters);
 
-	void ApplyCharacterPush(const std::shared_ptr<CharacterBase>& character);
+	//void ApplyCharacterPush(const std::shared_ptr<CharacterBase>& character);
 	void ApplyKnockBack(const std::shared_ptr<CharacterBase>& character);
 
 

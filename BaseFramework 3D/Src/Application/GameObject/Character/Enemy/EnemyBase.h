@@ -82,14 +82,14 @@ protected:
 
 	// 追跡か経路探索移動かを判定する
 	bool CanDirectChase();
-	void CreatePath();
+
+	void SelectStartWayPoint();
 
 	// 移動方法を変更
 	void ChangeMoveState(const MoveState nextState);
 
 	// 新しくウェイポイント情報を更新
-	void UpdatePath();
-	void SetPath(const std::vector<int>& path,const int goalID);
+	void UpdateFlowGoal();
 
 	// 攻撃のクールダウン更新(ターゲットに到達したら攻撃フラグを立て、クールタイムを減らす)
 	void UpdateAttack();
@@ -109,12 +109,13 @@ protected:
 	MoveState m_currentMoveState = MoveState::DirectChase;
 	MoveState m_nextMoveState = MoveState::DirectChase;
 
-	// 敵が通るWayPointのID一覧
-	std::vector<int>m_path;
+	// 次に進むWayPointIDを1つだけ持つ
+	int m_targetWayPointID = -1;
 
-	// 現在目指しているWayPointが、m_pathの何番目か
-	size_t m_pathIndex = 0;
-	int m_goalWayPointID = 0;
+	// ウェイポイントの経路の更新時間
+	float       m_pathRefreshTimer = 0.0f;
+	const float PathRefreshDuration = 1.0f;
+
 
 	// プレイヤーに到達したかどうか
 	bool m_hasReachedTarget = false;

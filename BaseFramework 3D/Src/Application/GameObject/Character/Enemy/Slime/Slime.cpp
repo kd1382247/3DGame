@@ -88,6 +88,9 @@ void Slime::SetUpReference()
 void Slime::DrawDebug()
 {
 	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
+
+	// 追加したデバッグ線を描画して消す(描画しないと頂点が溜まり続ける)
+	m_pDebugWire->Draw();
 }
 
 void Slime::SetScale(const Math::Vector3&)

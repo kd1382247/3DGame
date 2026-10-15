@@ -139,7 +139,7 @@
             "Position": {
                 "x": 7.400000095367432,
                 "y": 4.5,
-                "z": 8.100000381469727
+                "z": 55.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -527,6 +527,30 @@
                     "SpawnCount": 10,
                     "SpawnInterval": 0.05000000074505806,
                     "StartDelay": 1.0
+                },
+                {
+                    "Enemies": [
+                        "Cactas"
+                    ],
+                    "SpawnCount": 1,
+                    "SpawnInterval": 0.20000000298023224,
+                    "StartDelay": 2.0
+                },
+                {
+                    "Enemies": [
+                        "Mushroom"
+                    ],
+                    "SpawnCount": 3,
+                    "SpawnInterval": 0.20000000298023224,
+                    "StartDelay": 2.0
+                },
+                {
+                    "Enemies": [
+                        "StarFish"
+                    ],
+                    "SpawnCount": 6,
+                    "SpawnInterval": 0.20000000298023224,
+                    "StartDelay": 2.0
                 }
             ]
         },
@@ -700,6 +724,306 @@
                 "x": 1.999991536140442,
                 "y": 2.0,
                 "z": 1.999991536140442
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_0",
+            "Position": {
+                "x": 7.0,
+                "y": 3.0,
+                "z": 79.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 18.0,
+                "y": 5.0,
+                "z": 18.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_1",
+            "Position": {
+                "x": 25.0,
+                "y": 8.0,
+                "z": 79.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 5.0,
+                "z": 30.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_2",
+            "Position": {
+                "x": 16.0,
+                "y": 8.0,
+                "z": 91.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 12.0,
+                "y": 5.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_3",
+            "Position": {
+                "x": 16.0,
+                "y": 8.0,
+                "z": 67.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 12.0,
+                "y": 5.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_4",
+            "Position": {
+                "x": 19.0,
+                "y": 8.0,
+                "z": 85.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 5.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_5",
+            "Position": {
+                "x": 19.0,
+                "y": 8.0,
+                "z": 73.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 5.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_6",
+            "Position": {
+                "x": 19.0,
+                "y": 6.0,
+                "z": 79.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 9.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_7",
+            "Position": {
+                "x": -5.0,
+                "y": 6.0,
+                "z": 79.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 9.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_8",
+            "Position": {
+                "x": -2.0,
+                "y": 8.0,
+                "z": 67.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 12.0,
+                "y": 5.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_9",
+            "Position": {
+                "x": -2.0,
+                "y": 8.0,
+                "z": 91.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 12.0,
+                "y": 5.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_10",
+            "Position": {
+                "x": -5.0,
+                "y": 8.0,
+                "z": 73.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 5.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_11",
+            "Position": {
+                "x": -5.0,
+                "y": 8.0,
+                "z": 85.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 5.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_12",
+            "Position": {
+                "x": -11.0,
+                "y": 8.0,
+                "z": 79.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 5.0,
+                "z": 30.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_13",
+            "Position": {
+                "x": 7.0,
+                "y": 3.0,
+                "z": 67.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 5.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_14",
+            "Position": {
+                "x": 7.0,
+                "y": 3.0,
+                "z": 91.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 5.0,
+                "z": 6.0
             }
         }
     ]

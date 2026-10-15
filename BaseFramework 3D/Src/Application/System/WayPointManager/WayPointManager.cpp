@@ -4,6 +4,12 @@
 
 #include"../../Editor/EditorManager.h"
 
+#include"../CollisionManager/CollisionManager.h"
+#include"../../GameObject/Gimmick/AreaVolume/AreaVolume.h"
+
+#include<queue>
+#include<functional>
+
 bool WayPointManager::RegisterWayPoint(const std::shared_ptr<WayPoint>& wayPoint)
 {
 	// 無効なWayPointは登録しない
@@ -18,9 +24,11 @@ bool WayPointManager::RegisterWayPoint(const std::shared_ptr<WayPoint>& wayPoint
 		return  false;
 	}
 
-	m_spWayPoints.push_back(wayPoint);
+	m_spWayPointList.push_back(wayPoint);
 
-
+	// 標識が古くなったので初期化
+	m_flowGoalID = -1;
+	
 	return true;
 }
 
@@ -35,7 +43,7 @@ bool WayPointManager::RemoveWayPoint(int id)
 
 	// 削除後に存在しないIDへのリンクが残らないよう、
 	// 管理リストから消す前に全WayPointの参照を解除する
-	for (const auto& wayPoint : m_spWayPoints)
+	for (const auto& wayPoint : m_spWayPointList)
 	{
 		if (!wayPoint)
 		{
@@ -45,14 +53,17 @@ bool WayPointManager::RemoveWayPoint(int id)
 		wayPoint->RemoveLink(id);
 	}
 
-	auto it = std::find(m_spWayPoints.begin(), m_spWayPoints.end(), target);
+	auto it = std::find(m_spWayPointList.begin(), m_spWayPointList.end(), target);
 
-	if (it == m_spWayPoints.end())
+	if (it == m_spWayPointList.end())
 	{
 		return false;
 	}
 
-	m_spWayPoints.erase(it);
+	m_spWayPointList.erase(it);
+
+	// 標識が古くなったので初期化
+	m_flowGoalID = -1;
 
 	return true;
 }
@@ -62,7 +73,7 @@ void WayPointManager::RemoveByOwner(const StageObject* owner)
 	// 先に消すIDを集める(ループ中にリストを変更しないため)
 	std::vector<int>removeIDs;
 
-	for (const auto& point : m_spWayPoints)
+	for (const auto& point : m_spWayPointList)
 	{
 		if (point && point->GetOwner().get() == owner)
 		{
@@ -79,26 +90,33 @@ void WayPointManager::RemoveByOwner(const StageObject* owner)
 void WayPointManager::ClearWayPoints()
 {
 	// 一時的にバックアップリストに移す
-	m_spBackupWayPoints = std::move(m_spWayPoints);
-	m_spWayPoints.clear();
+	m_spBackupWayPointList = std::move(m_spWayPointList);
+	m_spWayPointList.clear();
+
+	// 標識が古くなったので初期化
+	m_flowGoalID = -1;
 }
 
 void WayPointManager::RestoreWayPoints()
 {
 	// バックアップリストから復元
-	m_spWayPoints = std::move(m_spBackupWayPoints);
-	m_spBackupWayPoints.clear();
+	m_spWayPointList = std::move(m_spBackupWayPointList);
+	m_spBackupWayPointList.clear();
+
+
+	// 標識が古くなったので初期化
+	m_flowGoalID = -1;
 }
 
 void WayPointManager::ClearBackup()
 {
-	m_spBackupWayPoints.clear();
+	m_spBackupWayPointList.clear();
 }
 
 std::shared_ptr<WayPoint> WayPointManager::FindWayPoint(int id) const
 {
 	// 指定されたIDを検索、見つかればそのWayPointを返す
-	for (const auto& point : m_spWayPoints)
+	for (const auto& point : m_spWayPointList)
 	{
 		if (!point)
 		{
@@ -116,6 +134,12 @@ std::shared_ptr<WayPoint> WayPointManager::FindWayPoint(int id) const
 
 std::shared_ptr<WayPoint> WayPointManager::FindNearest(const Math::Vector3& pos, const int areaID) const
 {
+
+	if (areaID < 0)
+	{
+		return nullptr;
+	}
+
 	// 調べた中で一番近いWayPointを保存
 	std::shared_ptr<WayPoint>nearest = nullptr;
 
@@ -124,7 +148,7 @@ std::shared_ptr<WayPoint> WayPointManager::FindNearest(const Math::Vector3& pos,
 
 
 	// 1個ずつWayPointを確認する
-	for (const auto& point : m_spWayPoints)
+	for (const auto& point : m_spWayPointList)
 	{
 		if (!point)
 		{
@@ -177,6 +201,9 @@ bool WayPointManager::Connect(int idA, int idB, bool bidirectional)
 		addedB = pointB->AddLink(idA);
 	}
 
+	// 標識が古くなったので初期化
+	m_flowGoalID = -1;
+
 	return addedA || addedB;
 
 }
@@ -212,147 +239,10 @@ bool WayPointManager::Disconnect(int idA, int idB, bool bidirectional)
 		pointB->RemoveLink(idA);
 	}
 
+	// 標識が古くなったので初期化
+	m_flowGoalID = -1;
+
 	return hadLinkA || hadLinkB;
-}
-
-std::vector<int> WayPointManager::FindPath(int startId, int goalId) const
-{
-	// スタート地点とゴール地点のWayPointを探す
-	auto startPoint = FindWayPoint(startId);
-	auto goalPoint = FindWayPoint(goalId);
-
-	// どちらかのWayPointがなければreturn
-	if (!startPoint || !goalPoint)
-	{
-		return{};
-	}
-
-	// スタートIDとゴールIDが同じであればスタートIDを返す
-	if (startId == goalId)
-	{
-		return { startId };
-	}
-
-	SearchNode startNode;
-	// スタート地点のWayPointを入れる
-	startNode.wayPointId = startId;
-	startNode.g = 0.0f;
-	startNode.h = CalculateHeuristic(*startPoint, *goalPoint);
-
-	startNode.f = startNode.g + startNode.h;
-	startNode.parentId = -1;
-
-	// これから調べる候補
-	std::vector<int>openList;
-
-	// 調べ終わった場所を保存
-	std::unordered_set<int>closeList;
-
-	// 各WayPointの探索情報
-	std::unordered_map<int, SearchNode>searchNodes;
-
-	searchNodes[startId] = startNode;
-	openList.push_back(startId);
-
-	while (!openList.empty())
-	{
-		// Fが最小のIDのイテレータを返す処理
-		auto bestIt = std::min_element(openList.begin(), openList.end(),
-			[&](int leftId, int rightId)
-			{  // Fが小さいWayPointを比較する
-				return searchNodes.at(leftId).f < searchNodes.at(rightId).f;
-			});
-
-		// これから調べるWayPointのID
-		int currentId = *bestIt;
-
-		// 調べる候補から削除
-		openList.erase(bestIt);
-		// 調べ終わったリストに追加
-		closeList.insert(currentId);
-
-		// ゴールのIDと同じか
-		if (currentId == goalId)
-		{
-			//
-			return ReconstructPath(searchNodes, goalId);
-		}
-
-		auto currentPoint = FindWayPoint(currentId);
-
-		if (!currentPoint)
-		{
-			continue;
-		}
-
-		// 現在のWayPointから、その接続先のWayPointを調べる
-		for (int linkId : currentPoint->GetLinks())
-		{
-			// 調査済みリストに入っていたらスキップ
-			if (closeList.contains(linkId))
-			{
-				continue;
-			}
-
-			auto linkedPoint = FindWayPoint(linkId);
-
-			if (!linkedPoint)
-			{
-				continue;
-			}
-
-			// 接続先との距離を計算
-			Math::Vector3 difference = linkedPoint->GetPos() - currentPoint->GetPos();
-			// 一区間の距離を入れる
-			float moveCost = difference.Length();
-
-			// スタート地点から、接続先WayPointまで進んだ合計距離
-			float newG = searchNodes.at(currentId).g + moveCost;
-
-			// 接続先WayPointを、今回の探索で初めて発見したか？
-			bool isNewNode = !searchNodes.contains(linkId);
-
-			// 発見済みの場合
-			// 今回見つけた道の方が、以前の道より短いか?
-			bool isShorterPath = !isNewNode && newG < searchNodes.at(linkId).g;
-
-
-			// 初めて発見してない、前より短い経路でもない場合スキップ
-			if (!isNewNode && !isShorterPath)
-			{
-				continue;
-			}
-
-			// 接続先のWayPoint情報
-			SearchNode linkedSearchNode;
-
-			// 今調べている接続先IDを入れる
-			linkedSearchNode.wayPointId = linkId;
-
-			// スタート地点から接続先までの距離
-			linkedSearchNode.g = newG;
-
-			// 接続先からゴールまでの予想距離
-			linkedSearchNode.h = CalculateHeuristic(*linkedPoint, *goalPoint);
-
-			linkedSearchNode.f = linkedSearchNode.g + linkedSearchNode.h;
-
-			// 接続先の親ID = 現在のWayPointIDを入れる
-			linkedSearchNode.parentId = currentId;
-
-			// 接続先Nodeを新たに追加
-			searchNodes[linkId] = linkedSearchNode;
-
-			// このWayPointがまだオープンリストに入っていなければ追加
-			if (std::find(openList.begin(), openList.end(), linkId) == openList.end())
-			{
-				openList.push_back(linkId);
-			}
-		}
-	}
-
-	return{};
-
 }
 
 std::shared_ptr<WayPoint> WayPointManager::CreateWayPoint()
@@ -401,7 +291,7 @@ void WayPointManager::DrawDebug()
 		return;
 	}
 
-	for (const auto& point : m_spWayPoints)
+	for (const auto& point : m_spWayPointList)
 	{
 		if (!point)
 		{
@@ -445,7 +335,7 @@ bool WayPointManager::Save(const std::string& filePath, const std::shared_ptr<St
 	nlohmann::json rootJson;
 	rootJson["WayPoints"] = nlohmann::json::array();
 
-	for (const auto& wayPoint : m_spWayPoints)
+	for (const auto& wayPoint : m_spWayPointList)
 	{
 		if (!wayPoint||
 			wayPoint->GetOwner()!=owner)
@@ -468,8 +358,6 @@ bool WayPointManager::Save(const std::string& filePath, const std::shared_ptr<St
 
 		wayPointJson["Links"] = wayPoint->GetLinks();
 
-		wayPointJson["AreaID"] = wayPoint->GetAreaID();
-
 		rootJson["WayPoints"].push_back(wayPointJson);
 	}
 
@@ -477,7 +365,6 @@ bool WayPointManager::Save(const std::string& filePath, const std::shared_ptr<St
 
 	if (!file.is_open())
 	{
-		OutputDebugStringA("WayPointDataの保存に失敗しました\n");
 		KdDebugGUI::Instance().AddErrorLog("WayPointDataの保存に失敗しました\n");
 
 		return false;
@@ -495,9 +382,6 @@ bool WayPointManager::Load(const std::string& filePath, const std::shared_ptr<St
 
 	if (!file.is_open())
 	{
-		OutputDebugStringA(
-			"WayPointDataを開けませんでした\n"
-		);
 		KdDebugGUI::Instance().AddErrorLog("WayPointDataを開けませんでした\n");
 
 		return false;
@@ -511,13 +395,8 @@ bool WayPointManager::Load(const std::string& filePath, const std::shared_ptr<St
 	}
 	catch (const nlohmann::json::exception& e)
 	{
-		OutputDebugStringA(
-			"WayPointDataの読み込みに失敗しました\n"
-		);
 		KdDebugGUI::Instance().AddErrorLog("WayPointDataの読み込みに失敗しました\n");
 
-		OutputDebugStringA(e.what());
-		OutputDebugStringA("\n");
 		KdDebugGUI::Instance().AddErrorLog("%s\n", e.what());
 
 		return false;
@@ -526,15 +405,10 @@ bool WayPointManager::Load(const std::string& filePath, const std::shared_ptr<St
 	if (!rootJson.contains("WayPoints") ||
 		!rootJson["WayPoints"].is_array())
 	{
-		OutputDebugStringA(
-			"WayPoints配列がありません\n"
-		);
 		KdDebugGUI::Instance().AddErrorLog("WayPoints配列がありません\n");
 
 		return false;
 	}
-
-
 
 	// ファイルのIDをキー、新たに割り振ったIDを値に入れる
 	std::unordered_map<int, int>idMap;
@@ -569,10 +443,6 @@ bool WayPointManager::Load(const std::string& filePath, const std::shared_ptr<St
 
 		wayPoint->SetOwner(owner);
 
-		if (wpJson.contains("AreaID"))
-		{
-			wayPoint->SetAreaID(wpJson["AreaID"].get<int>());
-		}
 
 		// WayPointsに登録
 		if (!RegisterWayPoint(wayPoint))
@@ -613,54 +483,87 @@ bool WayPointManager::Load(const std::string& filePath, const std::shared_ptr<St
 		}
 	}
 
+	// 標識が古くなったので初期化
+	m_flowGoalID = -1;
+
 	return true;
 }
 
-float WayPointManager::CalculateHeuristic(const WayPoint& current, const WayPoint& goal) const
+void WayPointManager::BuildFlowField(const int goalID)
 {
+	m_costToGoal.clear();
 
-	Math::Vector3 difference = goal.GetPos() - current.GetPos();
+	m_flowGoalID = goalID;
 
-	return difference.Length();
-}
-
-std::vector<int> WayPointManager::ReconstructPath(const std::unordered_map<int, SearchNode>& searchNodes, int goalId) const
-{
-	// スタートからゴールまでのWayPointのID一覧
-	std::vector<int>path;
-
-	// ゴールから始める
-	int currentId = goalId;
-
-	// 親が無くなるまでたどる
-	while (currentId != -1)
+	if (!FindWayPoint(goalID))
 	{
-		path.push_back(currentId);
-
-		// 現在のIDのscerchNodesを探す
-		auto nodeIt = searchNodes.find(currentId);
-
-
-		if (nodeIt == searchNodes.end())
-		{
-			return{};
-		}
-
-		// 親情報を更新
-		currentId = nodeIt->second.parentId;
-
+		return;
 	}
 
-	// ゴールから親を逆にたどり、それを反転して
-	// 敵が実際に歩く順番へ直す
-	std::reverse(path.begin(), path.end());
+	m_costToGoal[goalID] = 0.0f; // 表 : ゴールは距離0と記録
 
-	return path;
+	using QueueItem = std::pair<float, int>; //ゴールまでの距離、WayPointのID
+
+	std::priority_queue
+		<QueueItem,std::vector <QueueItem>,std::greater<QueueItem>> openQueue;
+
+	openQueue.push({ 0.0f,goalID }); // 作業リスト : ゴールから調べ始める
+
+	while (!openQueue.empty())
+	{
+
+		auto [cost, currentID] = openQueue.top();
+		openQueue.pop();
+
+		// 取り出した記録がcostToGoalより記録が大きければ処理を飛ばす
+		if (cost > m_costToGoal[currentID])
+		{
+			continue;
+		}
+
+		auto wayPoint = FindWayPoint(currentID);
+
+		if (!wayPoint)
+		{
+			continue;
+		}
+
+		for (int linkId : wayPoint->GetLinks())
+		{
+			auto linkedPoint = FindWayPoint(linkId);
+
+			if (!linkedPoint)
+			{
+				continue;
+			}
+
+			//　隣までの距離
+			float neighborDistance =(wayPoint->GetPos() - linkedPoint->GetPos()).Length();
+
+			// 新しい距離
+			float newDist = cost + neighborDistance;
+
+			// 表があるか
+			bool hasEntry = m_costToGoal.contains(linkId);
+
+			bool IsShortPath = hasEntry && newDist<m_costToGoal.at(linkId);
+
+			if (hasEntry && !IsShortPath)
+			{
+				continue;
+			}
+
+			m_costToGoal[linkId] = newDist;
+			openQueue.push({ newDist,linkId });
+
+		}
+	}
+
 }
 
 void WayPointManager::SetStageTransform(const StageObject* stageObject,const Math::Vector3& stagePos, const Math::Vector3& stageScale)
 {
-	for (const auto& point : m_spWayPoints)
+	for (const auto& point : m_spWayPointList)
 	{
 		if (!point ||
 			!point->ShouldFollow(stageObject))
@@ -670,4 +573,105 @@ void WayPointManager::SetStageTransform(const StageObject* stageObject,const Mat
 
 		point->SetStageTransform(stagePos, stageScale);
 	}
+
+	AssignAreaIDs();
+
+	// 標識が古くなったので初期化
+	m_flowGoalID = -1;
+}
+
+void WayPointManager::AssignAreaIDs()
+{
+
+	std::vector<std::shared_ptr<AreaVolume>> areaVolumeList;
+
+	for (const auto& obj : CollisionManager::Instance().GetObjects(CollisionLayer::Area))
+	{
+		auto areaVolume = std::dynamic_pointer_cast<AreaVolume>(obj.lock());
+
+		if (!areaVolume)
+		{
+			continue;
+		}
+
+		areaVolumeList.push_back(areaVolume);
+	}
+
+
+	for (const auto& wayPoint : m_spWayPointList)
+	{
+		if (!wayPoint)
+		{
+			continue;
+		}
+
+		int areaID = -1;
+
+		for (const auto& areaVolume : areaVolumeList)
+		{
+			if (areaVolume->IsInside(wayPoint->GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f)))
+			{
+				areaID = areaVolume->GetAreaID();
+				break;
+			}
+		}
+
+		wayPoint->SetAreaID(areaID);
+
+	}
+}
+
+void WayPointManager::UpdateFlowGoal(const int goalID)
+{
+	if (m_flowGoalID == goalID)
+	{
+		return;
+	}
+
+	BuildFlowField(goalID);
+
+}
+
+int WayPointManager::GetNextWayPointID(const int currentID) const
+{
+	
+	auto wayPoint = FindWayPoint(currentID);
+
+	if (!wayPoint)
+	{
+		return -1;
+	}
+
+	int   id = -1;
+	float shortPath = FLT_MAX;
+
+	for (int linkID : wayPoint->GetLinks())
+	{
+
+		if (!m_costToGoal.contains(linkID))
+		{
+			continue;
+		}
+
+		auto linkedPoint = FindWayPoint(linkID);
+
+		if (!linkedPoint)
+		{
+			continue;
+		}
+
+		//　隣までの距離
+		float neighborDistance = (wayPoint->GetPos() - linkedPoint->GetPos()).Length();
+
+		float totalDist = neighborDistance + m_costToGoal.at(linkID);
+
+		if (totalDist < shortPath)
+		{
+			shortPath = totalDist;
+			id = linkID;
+		}
+	}
+
+	return id;
+
 }
