@@ -16,6 +16,8 @@ cbuffer cbObject : register(b0)
 
 	int   g_ColorSphereEnable;
 
+	float g_DitherRate;		// ディザ透明のフェード率(0:不透明 ～ 1:完全に透明)
+
 	float3 g_OverlayColor;
 	float    g_OverlayRate;
 	

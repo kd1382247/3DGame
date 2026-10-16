@@ -6,6 +6,7 @@
 
 #include"../../Scene/Setting/Setting.h"
 
+#include"../../System/TimeManager/TimeManager.h"
 
 void Title::Init()
 {
@@ -21,11 +22,15 @@ void Title::Init()
 
 void Title::Update()
 {
+
 	// 画像をサインカーブで上下に揺らす
 	UpdateSinCurve();
 
 	UpdateButtonInput();
 
+	UpdateTitleLogoShine();
+
+	UpdateButtonShine();
 }
 
 void Title::DrawSprite()
@@ -40,12 +45,28 @@ void Title::DrawSprite()
 	// 加算合成で描画
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
 
+
+	//----------------------------------------------------------------
+	// シャインで帯状に光らせる
+	//----------------------------------------------------------------
+	
+	KdShaderManager::Instance().m_spriteShader.SetShineEnable(true);
+	// シャインの値をセット
+	KdShaderManager::Instance().m_spriteShader.SetShine(m_shinePos, ShineWidth,ShineIntensity);
+
 	// タイトルロゴ
 	KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTitleLogoTex, 0, 250);
+
+	// シャインの値をセット
+	//KdShaderManager::Instance().m_spriteShader.SetShine(m_buttonShinePos, ButtonShineWidth, ButtonShineIntensity,ButtonShineSlope);
+
+	KdShaderManager::Instance().m_spriteShader.SetShineEnable(false);
 
 	// ボタンを描画
 	DrawButton(m_spStartButtonTex,   m_startButtonPos,   m_isHoverStartButton);
 	DrawButton(m_spSettingButtonTex, m_settingButtonPos, m_isHoverSettingButton);
+
+
 
 	KdShaderManager::Instance().UndoBlendState();
 
@@ -148,4 +169,48 @@ void Title::UpdateButtonInput()
 		m_isHoverSettingButton = false;
 	}
 
+}
+
+void Title::UpdateTitleLogoShine()
+{
+
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	// 待ち時間中は動かさない
+	if (m_shineWaitCount > 0)
+	{
+		m_shineWaitCount-=deltaTime;
+		return;
+	}
+
+	// 左から右へ進める
+	m_shinePos += ShineSpeed*deltaTime;
+
+	// 右端を完全に抜けたら、左に戻して待ち時間へ
+	if (m_shinePos > 1.0f + ShineWidth)
+	{
+		m_shinePos = -ShineWidth;
+		m_shineWaitCount = ShineWaitTime;
+	}
+}
+
+void Title::UpdateButtonShine()
+{
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	// 待ち時間中は動かさない
+	if (m_buttonShineWaitTime > 0)
+	{
+		m_buttonShineWaitTime -= deltaTime;
+		return;
+	}
+	// 左から右へ進める
+	m_buttonShinePos += ButtonShineSpeed * deltaTime;
+
+	// 右端を完全に抜けたら、左に戻して待ち時間へ
+	if (m_buttonShinePos > 1.5f + ButtonShineWidth)
+	{
+		m_buttonShinePos = -ButtonShineWidth;
+		m_buttonShineWaitTime = ButtonShineWaitTime;
+	}
 }

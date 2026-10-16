@@ -32,3 +32,15 @@ bool RoomManager::IsCombat() const
 
 	return spRoom->IsCombat();
 }
+
+bool RoomManager::IsBossCombat() const
+{
+	auto spRoom = m_wpCurrentRoom.lock();
+
+	if (!spRoom)
+	{
+		return false;
+	}
+
+	return spRoom->IsBossCombat();
+}

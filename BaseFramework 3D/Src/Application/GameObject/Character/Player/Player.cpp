@@ -22,6 +22,21 @@
 
 #include"../../../System/TimeManager/TimeManager.h"
 
+namespace
+{
+	// カメラが近い時にプレイヤーを透けさせる設定
+	// この距離より遠いと不透明。近づくほど透け始める
+	constexpr float kFadeStartDist = 2.5f;
+	// この距離以下で完全に透明になる
+	constexpr float kFadeEndDist = 1.0f;
+	// 透け具合の変化の速さ(0～1、小さいほどゆっくり)
+	constexpr float kFadeSpeed = 0.15f;
+	// カメラとの距離を測る、プレイヤーの足元からの高さ
+	constexpr float kFadePivotHeight = 0.5f;
+	// 透明度の上限
+	constexpr float kFadeMaxRate = 0.8f;
+}
+
 void Player::Init()
 {
 	if (!m_spModel)
@@ -98,6 +113,9 @@ void Player::PostUpdate()
 	CharacterBase::PostUpdate();
 
 	m_playerSwordTrail.UpdateTrail(m_spModel,m_mWorld,GetAnimFrame());
+
+	// カメラとの距離に応じた透け具合を更新
+	UpdateCameraFade();
 }
 
 void Player::SetUpReference()
@@ -115,6 +133,12 @@ void Player::SetUpReference()
 
 void Player::DrawLit()
 {
+	// カメラが近い時はプレイヤーを透けさせる(描画後に自動で元に戻る)
+	if (m_fadeRate > 0.0f)
+	{
+		KdShaderManager::Instance().m_StandardShader.SetDitherRate(m_fadeRate);
+	}
+
 	CharacterBase::DrawLit();
 }
 
@@ -419,6 +443,37 @@ void Player::ApplyCameraRelativeMove(const float speed)
 void Player::UpdateAnimation()
 {
 	m_animation.Update(m_deltaTime);
+}
+
+void Player::UpdateCameraFade()
+{
+	float targetRate = 0.0f;
+
+	auto spCamera = m_wpCamera.lock();
+	if (spCamera)
+	{
+		// プレイヤーの体の中心とカメラとの距離
+		const Math::Vector3 center = GetPos() + Math::Vector3(0.0f, kFadePivotHeight, 0.0f);
+		const float dist = (spCamera->GetPos() - center).Length();
+
+		// 遠い(開始距離以上)なら0、近い(終了距離以下)なら1になる割合
+		const float rate = (dist - kFadeEndDist) / (kFadeStartDist - kFadeEndDist);
+		targetRate = 1.0f - std::clamp(rate, 0.0f, 1.0f);
+	}
+
+	// 急に変わらないよう、少しずつ目標へ近づける
+	m_fadeRate += (targetRate - m_fadeRate) * kFadeSpeed;
+
+	if (m_fadeRate > kFadeMaxRate)
+	{
+		m_fadeRate = kFadeMaxRate;
+	}
+
+	// ほぼ0なら0にして、シェーダー側の処理を省く
+	if (m_fadeRate < 0.001f)
+	{
+		m_fadeRate = 0.0f;
+	}
 }
 
 

@@ -4,11 +4,13 @@
 #include "TitleScene/TitleScene.h"
 #include "GameScene/GameScene.h"
 #include "EditorScene/EditorScene.h"
+#include "ResultScene/ResultScene.h"
 
 #include "../System/CollisionManager/CollisionManager.h"
 #include "../System/WayPointManager/WayPointManager.h"
 #include "../System/TimeManager/TimeManager.h"
 #include "../Editor/EditorManager.h"
+#include "../BGMManager/BGMManager.h"
 #include "../../Framework/Effekseer/KdEffekseerManager.h"
 #include "../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include "../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
@@ -95,6 +97,9 @@ void SceneManager::ChangeScene(SceneType _sceneType)
 	case SceneType::Editor:
 		m_currentScene = std::make_shared<EditorScene>();
 		break;
+	case SceneType::Result:
+		m_currentScene = std::make_shared<ResultScene>();
+		break;
 	}
 
 	// 現在のシーン情報を更新
@@ -129,6 +134,9 @@ void SceneManager::ResetSystems()
 
 	// 音を全て止める
 	KdAudioManager::Instance().StopAllSound();
+
+	// BGMの状態(今のBGM・上書き)
+	BGMManager::Instance().Reset();
 
 	// エディタの状態(モード・選択・編集中のステージ)
 	EditorManager::Instance().ResetState();

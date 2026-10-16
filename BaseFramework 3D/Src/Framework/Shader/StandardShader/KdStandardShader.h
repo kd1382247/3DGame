@@ -37,7 +37,10 @@ public:
 		
 		// カラースフィア
 		int             ColorSphereEnable = 0;
-		int             _blank[2];
+
+		// ディザ透明のフェード率(0:不透明 ～ 1:完全に透明)
+		float           DitherRate = 0.0f;
+		int             _blank = 0;
 
 
 		// 指定色への色寄せ(被ダメージ演出など)
@@ -119,6 +122,15 @@ public:
 	{
 		m_cb0_Obj.Work().OverlayColor = color;
 		m_cb0_Obj.Work().OverlayRate = rate;
+
+		m_dirtyCBObj = true;
+	}
+
+	// ディザ透明のフェード率設定(0:不透明 ～ 1:完全に透明)
+	// カメラが近い時にキャラクターを透けさせる用。描画後に自動で元(0)に戻る
+	void SetDitherRate(float rate)
+	{
+		m_cb0_Obj.Work().DitherRate = rate;
 
 		m_dirtyCBObj = true;
 	}

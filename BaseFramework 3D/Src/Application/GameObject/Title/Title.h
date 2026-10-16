@@ -25,6 +25,12 @@ private:
 
 	void UpdateButtonInput();
 
+	// タイトルロゴを光らせる
+	void UpdateTitleLogoShine();
+
+	// ボタンを光らせる
+	void UpdateButtonShine();
+
 	std::shared_ptr<KdTexture>m_spTitleBGTex       = nullptr;
 	std::shared_ptr<KdTexture>m_spCharactersTex    = nullptr;
 	std::shared_ptr<KdTexture>m_spTitleLogoTex     = nullptr;
@@ -53,6 +59,28 @@ private:
 	float m_angle = 0.0f;
 
 	float m_charactersTexPosY = 0.0f;
+
+	// 光の帯
+	float m_shinePos = -0.15f;      // 帯の位置 (UV.x)
+	float   m_shineWaitCount = 0;   // 次の光までの待ちフレーム
+
+	const float ShineWidth = 0.1f;  // 帯の幅
+	const float ShineSpeed = 0.5f;  // 1秒で進む量
+	const float ShineIntensity = 1.5f;   // 光の強さ 
+	const float   ShineWaitTime = 2.0f; // 光り終わってからの待ち
+
+	// ボタンの光
+	const float ButtonShineWidth = 0.15f;      // 帯の幅
+	const float ButtonShineSpeed = 0.8f;      // 1秒で進む量
+	const float ButtonShineWaitTime = 2.0f;   // 光り終わってからの待ち(秒)
+	const float ButtonShineIntensity = 2.5f;  // 光の強さ
+	const float ButtonShineSlope = ButtonTexSize.y / ButtonTexSize.x;   // 傾き係数
+
+	float m_buttonShinePos = -ButtonShineWidth; // 帯の位置
+	float m_buttonShineWaitTime = 0.0f;         // 待ち残り時間(秒)
+
+
+
 
 	const std::string FilePath = "Asset/Textures/Title/";
 

@@ -1,6 +1,6 @@
 {
     "Angry": {
-        "AttackCooldown": 0.8999999761581421,
+        "AttackCooldown": 0.30000001192092896,
         "AttackPower": 10.0,
         "HitEndFrame": 28.0,
         "HitForwardOffset": 0.800000011920929,
@@ -15,7 +15,7 @@
     },
     "AngryRate": 30.0,
     "Smile": {
-        "AttackCooldown": 1.25,
+        "AttackCooldown": 0.800000011920929,
         "AttackPower": 10.0,
         "HitEndFrame": 28.0,
         "HitForwardOffset": 0.800000011920929,

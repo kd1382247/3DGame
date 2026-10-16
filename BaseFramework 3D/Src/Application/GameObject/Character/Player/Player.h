@@ -137,6 +137,9 @@ private:
 
 	void UpdateGroundPosY();
 
+	// カメラとの距離に応じて、プレイヤーを透けさせる度合い(フェード率)を更新する
+	void UpdateCameraFade();
+
 	// 攻撃判定・トレイルのフレーム区間をセットする
 	void ApplyActionTiming(const PlayerActionTiming& timing);
 
@@ -189,6 +192,9 @@ private:
 
 	// カメラ
 	std::weak_ptr<CameraBase> m_wpCamera;
+
+	// カメラが近い時に透けさせる度合い(0:不透明 ～ 1:完全に透明)
+	float m_fadeRate = 0.0f;
 
 	// アニメーションクラス
 	PlayerAnimation           m_animation;

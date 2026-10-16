@@ -52,6 +52,18 @@ public:
 		m_cb0.Work().mTransform = m;
 	}
 
+	void SetShineEnable(const bool enable)
+	{
+		m_cb0.Work().ShineEnable = enable;
+	}
+
+	// シャイン情報をセット
+	void SetShine(const float pos,const float width,const float intensity,const float slope=0.0f)
+	{
+		m_cb0.Work().Shine = { pos,width,intensity };
+		m_cb0.Work().ShineSlope = slope;
+	}
+
 	// 2D画像描画(Begin～End間で実行すると、処理効率が上がる)
 	// ・tex			… 描画するテクスチャ(Texture)
 	// ・x				… x座標(ピクセル)
@@ -148,6 +160,12 @@ private:
 	struct cbSprite {
 		Math::Matrix		mTransform;
 		Math::Vector4		Color = { 1, 1, 1, 1 };
+
+		Math::Vector3       Shine = {0,0.1f,0};
+		int                 ShineEnable=false;
+
+		float               ShineSlope = 0;
+		float               _blank[3];
 	};
 	KdConstantBuffer<cbSprite>	m_cb0;
 

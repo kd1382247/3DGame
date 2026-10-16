@@ -20,6 +20,8 @@ public:
 	// 戦闘中かどうか
 	bool IsCombat()const;
 
+	bool IsBossCombat()const;
+
 private:
 
 

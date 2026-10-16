@@ -31,6 +31,33 @@ float BlinnPhong(float3 lightDir, float3 vCam, float3 normal, float specPower)
 //================================
 float4 main(VSOutput In) : SV_Target0
 {
+	//------------------------------------------
+	// ディザ透明(画素を間引いて透けて見せる)
+	//------------------------------------------
+	if (g_DitherRate > 0)
+	{
+		// 4x4のBayerマトリクス(0～15)
+		static const float bayer[16] =
+		{
+			 0,  8,  2, 10,
+			12,  4, 14,  6,
+			 3, 11,  1,  9,
+			15,  7, 13,  5
+		};
+
+		// 画面上のピクセル座標
+		uint2 px = (uint2) In.Pos.xy;
+
+		// しきい値(0～1)：0.5を足して、フェード率0で何も消えず、1で全部消えるようにする
+		float threshold = (bayer[(px.y % 4) * 4 + (px.x % 4)] + 0.5) / 16.0;
+
+		// フェード率がしきい値より大きいピクセルは描かない
+		if (g_DitherRate > threshold)
+		{
+			discard;
+		}
+	}
+
 	// ディゾルブによる描画スキップ
 	float discardValue = g_dissolveTex.Sample(g_ss, In.UV).r;
 	if (discardValue < g_dissolveValue)

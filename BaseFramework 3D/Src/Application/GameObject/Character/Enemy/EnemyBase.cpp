@@ -410,6 +410,10 @@ void EnemyBase::UpdateAttack()
 			m_attackFlg = false;
 		}
 	}
+	else
+	{
+		m_attackCooldown = m_attackCooldownDuration;
+	}
 }
 
 bool EnemyBase::UpdateMeleeAttackCollision(float knockBackPower, float damage, float sphereRadius, float forwardOffset)

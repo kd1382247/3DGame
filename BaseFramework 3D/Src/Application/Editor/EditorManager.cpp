@@ -21,6 +21,8 @@
 #include "../Scene/SceneManager.h"
 #include"../System/StageDataManager/StageDataManager.h"
 
+#include"../BGMManager/BGMManager.h"
+
 #include "Hierarchy/Hierarchy.h"
 #include "Inspector/Inspector.h"
 #include "StageEditor/StageEditor.h"
@@ -159,6 +161,9 @@ void EditorManager::StopPlayMode()
 
 	// 音を全て止める
 	KdAudioManager::Instance().StopAllSound();
+
+	// BGMの状態(今のBGM・上書き)もリセット
+	BGMManager::Instance().Reset();
 
 	// Play中の状態を削除
 	editorScene->BackupObjectList();

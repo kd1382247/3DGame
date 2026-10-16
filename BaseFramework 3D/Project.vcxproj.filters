@@ -424,6 +424,12 @@
     <Filter Include="Src\Application\GameObject\Gimmick\AreaID">
       <UniqueIdentifier>{15b94a60-655e-4dda-a261-266f80c94c44}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\BGMManager">
+      <UniqueIdentifier>{38295832-3c07-42fd-89cb-5a330736b966}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Scene\ResultScene">
+      <UniqueIdentifier>{d0b46613-44e7-455c-a832-de53b1611bc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1128,6 +1134,12 @@
     <ClInclude Include="Src\Application\GameObject\Gimmick\AreaVolume\AreaVolume.h">
       <Filter>Src\Application\GameObject\Gimmick\AreaID</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\BGMManager\BGMManager.h">
+      <Filter>Src\Application\BGMManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Scene\ResultScene\ResultScene.h">
+      <Filter>Src\Application\Scene\ResultScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1744,6 +1756,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Gimmick\AreaVolume\AreaVolume.cpp">
       <Filter>Src\Application\GameObject\Gimmick\AreaID</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\BGMManager\BGMManager.cpp">
+      <Filter>Src\Application\BGMManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Scene\ResultScene\ResultScene.cpp">
+      <Filter>Src\Application\Scene\ResultScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

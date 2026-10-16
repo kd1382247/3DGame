@@ -1,5 +1,5 @@
 {
-    "AttackCooldown": 1.0,
+    "AttackCooldown": 0.30000001192092896,
     "AttackPower": 10.0,
     "ChargeDuration": 1.5,
     "ExplosionKnockBack": 0.5,

@@ -56,6 +56,8 @@ public:
 
 	// 戦闘開始かどうか
 	bool IsCombat()const { return m_roomState == RoomState::InCombat; }
+	
+	bool IsBossCombat()const { return m_roomState == RoomState::InCombat && m_roomType == RoomType::Boss; }
 
 	RoomState GetRoomState()const { return m_roomState; }
 	bool IsCleared()const { return m_roomState == RoomState::Cleared; }

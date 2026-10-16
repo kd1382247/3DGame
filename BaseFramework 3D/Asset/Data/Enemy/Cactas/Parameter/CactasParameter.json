@@ -1,5 +1,5 @@
 {
-    "AttackCooldown": 0.5,
+    "AttackCooldown": 0.30000001192092896,
     "AttackPower": 10.0,
     "HitEndFrame": 20.0,
     "HitForwardOffset": 0.800000011920929,

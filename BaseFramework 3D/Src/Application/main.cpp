@@ -1,6 +1,7 @@
 ﻿#include "main.h"
 
 #include "Scene/SceneManager.h"
+#include "BGMManager/BGMManager.h"
 #include"../Framework/Effekseer/KdEffekseerManager.h"
 #include"../Application/System/TimeManager/TimeManager.h"
 
@@ -70,6 +71,9 @@ void Application::PreUpdate()
 void Application::Update()
 {
 	SceneManager::Instance().Update();
+
+	// BGMの切り替え(シーンの更新で部屋の状態が変わった後に行う)
+	BGMManager::Instance().Update();
 
 	KdEffekseerManager::GetInstance().Update();
 }
