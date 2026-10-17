@@ -3,6 +3,7 @@
 #include"../../System/CollisionManager/CollisionManager.h"
 
 #include"../../Editor/EditorManager.h"
+#include"../../GameObject/PointLight/PointLightManager.h"
 
 
 void BaseScene::PreUpdate()
@@ -165,7 +166,9 @@ void BaseScene::DrawDebug()
 
 void BaseScene::EditorUpdate()
 {
-
+	// Edit中はオブジェクトのUpdateが止まっているので、
+	// ポイントライトだけは毎フレームシェーダーへ登録する(登録しないとEditモードで明るくならない)
+	PointLightObjectManager::Instance().ApplyAllLights();
 }
 
 bool BaseScene::IsEditing() const

@@ -1,0 +1,34 @@
+{
+    "PointLights": [
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 12,
+            "Name": "PointLight_12",
+            "Position": {
+                "x": 0.5,
+                "y": 3.5,
+                "z": -3.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 13,
+            "Name": "PointLight_13",
+            "Position": {
+                "x": 5.5,
+                "y": 3.5,
+                "z": -3.0
+            },
+            "Range": 3.0
+        }
+    ]
+}

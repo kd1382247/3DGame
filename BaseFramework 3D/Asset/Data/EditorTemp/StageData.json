@@ -139,7 +139,7 @@
             "Position": {
                 "x": 7.400000095367432,
                 "y": 4.5,
-                "z": 55.0
+                "z": 97.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -506,7 +506,7 @@
             "Name": "EnemySpawner_0",
             "Position": {
                 "x": 2.0999999046325684,
-                "y": 5.300000190734863,
+                "y": 6.5,
                 "z": 47.0
             },
             "Rotation": {
@@ -984,6 +984,66 @@
                 "x": 6.0,
                 "y": 5.0,
                 "z": 6.0
+            }
+        },
+        {
+            "Class": "EnemySpawner",
+            "FollowStage": "CombatRoom_9x13_0",
+            "LinkedRoom": "Room_1",
+            "Name": "EnemySpawner_1",
+            "Position": {
+                "x": 13.0,
+                "y": 3.5,
+                "z": 29.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "Waves": [
+                {
+                    "Enemies": [
+                        "StarFish",
+                        "TurtleShell"
+                    ],
+                    "SpawnCount": 1,
+                    "SpawnInterval": 0.20000000298023224,
+                    "StartDelay": 2.0
+                },
+                {
+                    "Enemies": [
+                        "Cactas",
+                        "TurtleShell"
+                    ],
+                    "SpawnCount": 4,
+                    "SpawnInterval": 0.20000000298023224,
+                    "StartDelay": 2.0
+                }
+            ]
+        },
+        {
+            "Class": "Mage",
+            "Name": "Mage_0",
+            "Position": {
+                "x": 7.400000095367432,
+                "y": 3.5999999046325684,
+                "z": 121.5
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 180.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.4999994039535522,
+                "y": 1.5,
+                "z": 1.4999994039535522
             }
         }
     ]

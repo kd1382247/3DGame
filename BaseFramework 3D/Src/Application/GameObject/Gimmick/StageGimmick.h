@@ -24,6 +24,11 @@ public:
 	// 持ち主が決まっているか
 	bool HasOwnerStage()const { return m_stageFollower.HasStage(); }
 
+	// エディタでクリックしたときの選ばれやすさ(大きいほど優先)
+	// 重なっているギミックのうち、優先度が高いほうが先に選ばれる
+	// (Roomのように大きな箱は低くして、中にあるスポナーなどを選べるようにする)
+	virtual int GetSelectPriority() const { return 0; }
+
 protected:
 
 	// デバッグ表示のチェックがONか(継承先で、別のチェックボックスに切り替えられる)

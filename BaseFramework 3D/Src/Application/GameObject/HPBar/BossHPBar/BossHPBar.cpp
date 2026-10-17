@@ -11,7 +11,9 @@ void BossHPBar::Init()
 	InitTexture(m_spBarRedTex, "Bar_red.png");
 
 	m_spNamePrateTex = std::make_shared<KdTexture>();
-	m_spNamePrateTex->Load("BossName/NamePrate"+m_bossName);
+
+	std::string filePath = "Asset/Textures/BossName/NamePrate_";
+	m_spNamePrateTex->Load(filePath+m_bossName);
 
 }
 
@@ -50,6 +52,16 @@ void BossHPBar::DrawSprite()
 	{
 		return;
 	}
+
+	if (m_alpha < 1.0f)
+	{
+		m_alpha += 0.02f;
+		if (m_alpha >= 1.0f)
+		{
+			m_alpha = 1.0f;
+		}
+	}
+
 
 	DrawNamePrate();
 
@@ -101,7 +113,7 @@ void BossHPBar::DrawBar(const std::shared_ptr<KdTexture>& tex, const float rate)
 	const long h = static_cast<long>(m_barHeight);
 
 	Math::Rectangle rc = { 0,0,w,h };
-	Math::Color color = { 1.0f,1.0f,1.0f };
+	Math::Color color = { 1.0f,1.0f,1.0f,m_alpha };
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(
 		tex,
@@ -120,11 +132,14 @@ void BossHPBar::DrawNamePrate()
 		return;
 	}
 
+	Math::Color color={ 1.0f,1.0f,1.0f,m_alpha };
+
 	KdShaderManager::Instance().m_spriteShader.DrawTex(
 		m_spNamePrateTex,
 		static_cast<int>(m_namePlatePos.x),
 		static_cast<int>(m_namePlatePos.y),
 		static_cast<int>(m_namePrateWidth),
-		static_cast<int>(m_namePrateHeight));
+		static_cast<int>(m_namePrateHeight),
+		nullptr,&color);
 
 }

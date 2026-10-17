@@ -12,8 +12,20 @@
 #include "../../System/WayPointManager/WayPointManager.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../../GameObject/PointLight/PointLight.h"
+#include"../../GameObject/PointLight/PointLightManager.h"
 #include"../../System/StageLoder/StageLoder.h"
 
+
+namespace
+{
+	// PointLightのデータファイルのパス
+	// (AABBなどと同じステージモデルのフォルダーに置く)
+	std::filesystem::path GetPointLightDataPath(const std::string& modelName)
+	{
+		return StageLoder::Instance().GetAABBCollisionDataPath(modelName).parent_path() / "PointLight.json";
+	}
+}
 
 bool StageDataManager::Save(const std::string& stageName)
 {
@@ -76,6 +88,17 @@ bool StageDataManager::LoadStageModelData(const std::shared_ptr<StageObject>& st
 	if (std::filesystem::exists(wayPointFilePath))
 	{
 		if (!WayPointManager::Instance().Load(wayPointFilePath.string(), stage))
+		{
+			return false;
+		}
+	}
+
+	const std::filesystem::path ambientLightFilePath =
+		GetPointLightDataPath(modelName);
+
+	if (std::filesystem::exists(ambientLightFilePath))
+	{
+		if (!PointLightObjectManager::Instance().Load(ambientLightFilePath.string(), stage))
 		{
 			return false;
 		}
@@ -172,6 +195,14 @@ bool StageDataManager::SaveToFolder(const std::filesystem::path& folder)
 				obb->SetOwner(firstStage);
 			}
 		}
+
+		for (const auto& light : PointLightObjectManager::Instance().GetPointLights())
+		{
+			if (light && !light->GetOwner())
+			{
+				light->SetOwner(firstStage);
+			}
+		}
 	}
 
 	// 保存済みのモデル名(同じモデルを2回保存しないため)
@@ -217,6 +248,13 @@ bool StageDataManager::SaveToFolder(const std::filesystem::path& folder)
 		// OBBを保存
 		if (!OBBCollisionManager::Instance().Save(
 			StageLoder::Instance().GetOBBCollisionDataPath(modelName).string(), stage))
+		{
+			return false;
+		}
+
+		// PointLightを保存
+		if (!PointLightObjectManager::Instance().Save(
+			GetPointLightDataPath(modelName).string(), stage))
 		{
 			return false;
 		}

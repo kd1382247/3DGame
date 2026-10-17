@@ -80,6 +80,9 @@ public:
 	// プレイヤーの足音再生
 	void UpdateWalkSE(const float footstepInterval);
 
+	// 鳴っている足音を止める
+	void StopWalkSE();
+
 	// 通常攻撃の開始 / 終了
 	void StartCurrentAttack();
 	void EndAttack();
@@ -132,6 +135,9 @@ private:
 
 	// 入力を受け付ける
 	void UpdateInput();
+
+	// ボスの登場演出中は、操作を受け付けない待機ステートにする
+	void UpdateBossIntroLock();
 
 	void UpdateAnimation();
 

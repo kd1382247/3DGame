@@ -83,6 +83,11 @@ BGMManager::BGMType BGMManager::DecideTargetType() const
 		return BGMType::None;
 	}
 
+	if (RoomManager::Instance().IsBossIntro())
+	{
+		return BGMType::None;
+	}
+
 	// 部屋の状態で決める
 	if (RoomManager::Instance().IsBossCombat())
 	{

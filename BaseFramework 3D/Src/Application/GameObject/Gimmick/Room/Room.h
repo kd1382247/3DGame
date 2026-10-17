@@ -54,10 +54,17 @@ public:
 	void SetRoomType(const std::string& typeName);
 	std::string GetRoomTypeName()const { return m_roomTypeName[static_cast<int>(GetRoomType())]; }
 
+	// 部屋は大きな箱なので、中にあるギミックを選べるように優先度を下げる
+	int GetSelectPriority() const override { return -1; }
+
 	// 戦闘開始かどうか
 	bool IsCombat()const { return m_roomState == RoomState::InCombat; }
 	
+	// ボス戦かどうか
 	bool IsBossCombat()const { return m_roomState == RoomState::InCombat && m_roomType == RoomType::Boss; }
+
+	// ボスのイントロ中なのか
+	bool IsBossIntro()const { return m_roomState == RoomState::Intro && m_roomType == RoomType::Boss; }
 
 	RoomState GetRoomState()const { return m_roomState; }
 	bool IsCleared()const { return m_roomState == RoomState::Cleared; }
@@ -82,6 +89,9 @@ public:
 
 
 private:
+
+	// ボスに登場演出の開始を伝える
+	bool StartBossIntro();
 
 	// 状態を変える(ログも出す)
 	void ChangeState(RoomState next);
@@ -124,5 +134,7 @@ private:
 
 	// 今の状態になってからの経過時間(状態が変わるたびに0に戻る)
 	float m_stateTimer = 0.0f;
+
+	bool  m_waitBossIntro = false;
 
 };

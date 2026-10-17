@@ -146,6 +146,12 @@ private:
 		Math::Vector3& currentPos,
 		Math::Vector3& remainingMove);
 
+	// 敵のスポナー(EnemySpawner)とのめり込みを解決
+	void ResolveSpawnerStartOverlap(
+		const std::shared_ptr<CharacterBase>& character,
+		Math::Vector3& currentPos,
+		Math::Vector3& remainingMove);
+
 	//==============================
 	// スウィープ判定
 	//==============================

@@ -143,6 +143,9 @@ private:
 	// OBBを選択
 	void SelectOBBByMouse();
 
+	// PointLightを選択
+	void SelectPointLightByMouse();
+
 	// 指定したクラス名で、シーン上の名前と重複しない名前を作る(例:"Slime_0")
 	// (同じクラス名の中で、未使用の最小の番号を採用する。番号の欠番は次回そこから埋まる)
 	std::string MakeUniqueObjectName(const std::string& className) const;

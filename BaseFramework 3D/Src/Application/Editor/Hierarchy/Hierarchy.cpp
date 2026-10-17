@@ -11,6 +11,9 @@
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 
+#include"../../GameObject/PointLight/PointLight.h"
+#include"../../GameObject/PointLight/PointLightManager.h"
+
 #include"../../GameObject/Stage/StageObject.h"
 #include"../../GameObject/Gimmick/StageGimmick.h"
 #include"../../System/StageLoder/StageLoder.h"
@@ -36,7 +39,8 @@ void Hierarchy::Draw()
 	const bool isStageDataCategory =
 		m_category == HierarchyCategory::AABB ||
 		m_category == HierarchyCategory::OBB ||
-		m_category == HierarchyCategory::WayPoint;
+		m_category == HierarchyCategory::WayPoint ||
+		m_category == HierarchyCategory::PointLight;
 
 	// Active Stageで一覧を絞り込むカテゴリ(ギミック・AreaVolumeはステージごとに保存するので、編集の制限はない)
 	const bool isOwnerCategory =
@@ -114,6 +118,7 @@ void Hierarchy::DrawCategorySelector()
 		CategorySelectItem("WayPoint",   HierarchyCategory::WayPoint);
 		CategorySelectItem("AABB",       HierarchyCategory::AABB);
 		CategorySelectItem("OBB",        HierarchyCategory::OBB);
+		CategorySelectItem("PointLight", HierarchyCategory::PointLight);
 
 		ImGui::EndPopup();
 	}
@@ -149,6 +154,7 @@ const char* Hierarchy::GetCategoryLabel(HierarchyCategory category)
 	case HierarchyCategory::WayPoint:     return "WayPoint";
 	case HierarchyCategory::AABB:         return "AABB";
 	case HierarchyCategory::OBB:          return "OBB";
+	case HierarchyCategory::PointLight: return "PointLight";
 	}
 
 	return "";
@@ -221,6 +227,7 @@ void Hierarchy::DrawActiveStageSelector()
 					WayPointManager::Instance().SetIsDebug(false);
 					AABBCollisionManager::Instance().SetIsDebug(false);
 					OBBCollisionManager::Instance().SetIsDebug(false);
+					PointLightObjectManager::Instance().SetIsDebug(false);
 				}
 				ImGui::PopID();
 			}
@@ -255,6 +262,9 @@ void Hierarchy::DrawAddButtons()
 		break;
 	case HierarchyCategory::OBB:
 		AddOBB();
+		break;
+	case HierarchyCategory::PointLight:
+		AddPointLight();
 		break;
 	}
 }
@@ -462,6 +472,40 @@ void Hierarchy::AddOBB()
 	}
 }
 
+void Hierarchy::AddPointLight()
+{
+	// PointLightはActive Stageの持ち物になるので、ステージが無いときは作れない
+	if (EditorManager::Instance().GetActiveStage())
+	{
+		if (ImGui::Button("Add PointLight"))
+		{
+			auto light = PointLightObjectManager::Instance().CreatePointLight(
+				EditorManager::Instance().GetActiveStage());
+
+			if (light)
+			{
+				// CreatePointLight()内でシーンへの追加まで完了している
+				EditorManager::Instance().SetSelectedObject(light);
+
+				EditorManager::Instance().MarkDirty();
+			}
+		}
+	}
+	else
+	{
+		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
+	}
+
+	ImGui::SameLine();
+
+	bool isDebug = PointLightObjectManager::Instance().IsDebug();
+
+	if (ImGui::Checkbox("Debug", &isDebug))
+	{
+		PointLightObjectManager::Instance().SetIsDebug(isDebug);
+	}
+}
+
 void Hierarchy::DrawSearchFilter()
 {
 	ImGui::SetNextItemWidth(-1);// ウィンドウの横幅いっぱいに広げる
@@ -522,6 +566,10 @@ void Hierarchy::DrawSelectedCategoryList()
 
 	case HierarchyCategory::OBB:
 		DrawOBB();
+		break;
+
+	case HierarchyCategory::PointLight:
+		DrawPointLight();
 		break;
 	}
 }
@@ -646,6 +694,22 @@ void Hierarchy::DrawOBB()
 		}
 
 		SelectHierarchyObject(obb);
+	}
+}
+
+void Hierarchy::DrawPointLight()
+{
+	auto activeStage = EditorManager::Instance().GetActiveStage();
+
+	for (const auto& light : PointLightObjectManager::Instance().GetPointLights())
+	{
+		if (!light ||
+			light->GetOwner() != activeStage)
+		{
+			continue;
+		}
+
+		SelectHierarchyObject(light);
 	}
 }
 

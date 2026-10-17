@@ -9,6 +9,7 @@
 #include"../../../../Framework/GameObject/KdGameObjectFactory.h"
 
 #include"../../../System/CollisionManager/CollisionManager.h"
+#include"../../../System/CollisionManager/CollisionMath/CollisionMath.h"
 
 #include"../../../Editor/InspectorWidgets.h"
 
@@ -22,8 +23,15 @@ void EnemySpawner::Init()
 		m_spModel = std::make_shared<KdModelWork>();
 		m_spModel->SetModelData("Asset/Models/Gimmick/EnemySpawner.gltf");
 
+		m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+		// 当たり判定は球(クリック選択用)。モデルの形ではなく、半径kColliderRadiusの球にする
 		m_pCollider = std::make_unique<KdCollider>();
-		m_pCollider->RegisterCollisionShape("EnemySpawner",m_spModel,KdCollider::TypeEvent);
+		m_pCollider->RegisterCollisionShape(
+			"EnemySpawner",
+			Math::Vector3(0.0f,0.0f, 0.0f),
+			kColliderRadius,
+			KdCollider::TypeEvent|KdCollider::TypeBump);
 
 		CollisionManager::Instance().RegisterObject(CollisionLayer::Gimmick,shared_from_this());
 	}
@@ -39,6 +47,9 @@ void EnemySpawner::Update()
 {
 	// 倒された敵をリストから削除
 	EraseEnemy();
+
+	// スポナーから出終わった敵を、押し戻し対象に戻す
+	UpdateEmergingEnemies();
 
 	auto spRoom = GetLinkedRoom();
 
@@ -103,8 +114,38 @@ void EnemySpawner::DrawLit()
 {
 	if (m_spModel)
 	{
+		// 選択中はリムライトで光らせる(プレイヤーなどと同じ)
+		if (IsSelected())
+		{
+			KdShaderManager::Instance().m_StandardShader.SetSelected(true);
+		}
+
 		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+
+		KdShaderManager::Instance().m_StandardShader.SetSelected(false);
 	}
+}
+
+void EnemySpawner::DrawDebug()
+{
+	// Active Stageのスポナーだけ、デバッグ表示がONのとき(または選択中)に球を出す
+	if (!ShouldDrawDebug())
+	{
+		KdGameObject::DrawDebug();
+		return;
+	}
+
+	// 選択中は黄色、通常はオレンジ
+	Math::Color color = Math::Color(1.0f, 0.5f, 0.0f, 1.0f);
+
+	if (IsSelected())
+	{
+		color = kRedColor + kGreenColor;
+	}
+
+	m_pDebugWire->AddDebugSphere(GetColliderCenter(), kColliderRadius, color);
+
+	KdGameObject::DrawDebug();
 }
 
 void EnemySpawner::DrawInspectorHeader()
@@ -308,8 +349,10 @@ void EnemySpawner::SpawnEnemy()
 	if (!m_spawnIntroEffect)
 	{
 		m_spawnIntroEffect = true;
-		KdEffekseerManager::GetInstance().Play("EnemySpawner/smoke.efkefc", GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f), 1.2f,0.7);
+		KdEffekseerManager::GetInstance().Play("EnemySpawner/smoke.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 1.2f,0.7);
 		KdEffekseerManager::GetInstance().Play("EnemySpawner/Lightning.efkefc", GetPos() + Math::Vector3(0.0f, -1.0f, 0.0f), 0.6f, 1.0f, false, 20, 90);
+
+		KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Gimmick/EnemySpawner/Spark.wav");
 
 	}
 
@@ -395,6 +438,50 @@ void EnemySpawner::CreateEnemy(const std::string& enemyName)
 
 	m_spawnEnemyList.push_back(enemy);
 
+	// スポナーの当たり判定の中から出てくるので、外に出るまでは押し戻さない
+	m_emergingEnemies.push_back(enemy);
+
+}
+
+bool EnemySpawner::IsBlockingCharacter(const CharacterBase* character) const
+{
+	for (const auto& wpEnemy : m_emergingEnemies)
+	{
+		auto spEnemy = wpEnemy.lock();
+
+		if (spEnemy && spEnemy.get() == character)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void EnemySpawner::UpdateEmergingEnemies()
+{
+	std::erase_if(m_emergingEnemies,
+		[this](const std::weak_ptr<EnemyBase>& wpEnemy)
+		{
+			auto spEnemy = wpEnemy.lock();
+
+			if (!spEnemy || spEnemy->IsExpired())
+			{
+				return true;
+			}
+
+			Math::Vector3 push = Math::Vector3::Zero;
+			Math::Vector3 normal = Math::Vector3::Zero;
+
+			// スポナーの当たり判定と重ならなくなったら、出終わったとみなす
+			return !CollisionMath::SphereVsCylinder(
+				spEnemy->GetBumpSphere(),
+				GetColliderCenter(),
+				kColliderRadius,
+				kColliderRadius,
+				push,
+				normal);
+		});
 }
 
 std::shared_ptr<Room> EnemySpawner::FindRoomByName(const std::string& name) const

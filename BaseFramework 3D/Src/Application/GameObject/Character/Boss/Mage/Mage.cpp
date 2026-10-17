@@ -16,6 +16,7 @@
 #include"../../../HPBar/BossHPBar/BossHPBar.h"
 
 #include"State/States/MageNormalState.h"
+#include"State/States/MageIntroState.h"
 
 void Mage::Init()
 {
@@ -40,7 +41,7 @@ void Mage::Init()
 		m_attackCooldown = m_attackCooldownDuration;
 
 		m_stateMachine.Start(this);
-		m_stateMachine.ChangeState<MageNormalState>();
+		m_stateMachine.ChangeState<MageIntroState>();
 	}
 
 	BossBase::Init();
@@ -73,13 +74,18 @@ void Mage::PostUpdate()
 void Mage::SetUpReference()
 {
 	BossBase::SetUpReference();
+}
 
+void Mage::CreateHPBar()
+{
 	std::shared_ptr<BossHPBar>hpBar = std::make_shared<BossHPBar>();
+
+	hpBar->SetNamePrateParam(GetFactoryClassName(), 227, 50);
 	hpBar->Init();
 	hpBar->SetBoss(std::dynamic_pointer_cast<BossBase>(shared_from_this()));
-	//hpBar->SetBossName("Mage",)
 
 	SceneManager::Instance().AddObject(hpBar);
+
 }
 
 void Mage::DrawParameterInspector()

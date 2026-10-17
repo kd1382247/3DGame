@@ -22,6 +22,12 @@ public:
 
 	void SetUpReference()override;
 
+	// 登場演出を始める
+	void StartIntro()override { m_introRequested = true; }
+
+	// HPバーを生成
+	void CreateHPBar();
+
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
 
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
@@ -100,5 +106,6 @@ private:
 
 	// 召喚攻撃で使う、敵の出現予定座標(煙エフェクト再生時に計算し、敵生成時に消費する)
 	std::vector<Math::Vector3> m_summonPositions;
+
 
 };

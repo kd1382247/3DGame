@@ -17,6 +17,9 @@ public:
 
 private:
 
+	// HPバーを表示するか
+	bool IsDrawHPBar()const;
+
 	void InitTexture(std::shared_ptr<KdTexture>& tex, const std::string& fileName);
 
 	void DrawFrame();
@@ -48,5 +51,7 @@ private:
 	Math::Vector2 m_barOffset = {-400.0f,-300.0f};
 
 	const std::string FilePath = "Asset/Textures/HP/Player/";
+
+	float m_alpha = 0.0f;
 
 };

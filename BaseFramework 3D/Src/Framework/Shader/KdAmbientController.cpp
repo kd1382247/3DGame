@@ -170,10 +170,9 @@ void KdAmbientController::WriteLightParams()
 	}
 
 	// 点光源
-	if (m_pointLights.size())
-	{
-		KdShaderManager::Instance().WriteCBPointLight(m_pointLights);
-	}
+	// 0個のときも書き込む(書き込まないと、最後に残ったライトの数がGPU側に残り、
+	// ライトを消しても光が消えない)
+	KdShaderManager::Instance().WriteCBPointLight(m_pointLights);
 
 	// 影描画エリアの更新
 	KdShaderManager::Instance().WriteCBShadowArea(m_shadowProj, m_dirLightHeight);

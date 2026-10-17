@@ -12,7 +12,8 @@ public:
 		Gimmick,
 		AreaVolume,
 		AABB,
-		OBB
+		OBB,
+		PointLight
 	};
 
 	void Draw();
@@ -39,6 +40,7 @@ private:
 	void AddAreaVolume();
 	void AddAABB();
 	void AddOBB();
+	void AddPointLight();
 
 	// 検索ボックス(名前の一部で一覧を絞り込む)
 	void DrawSearchFilter();
@@ -54,6 +56,7 @@ private:
 	void DrawAreaVolume();
 	void DrawAABB();
 	void DrawOBB();
+	void DrawPointLight();
 
 
 	// 指定のカテゴリに登録されている生成候補を表示する

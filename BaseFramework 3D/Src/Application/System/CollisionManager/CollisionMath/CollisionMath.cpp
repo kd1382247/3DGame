@@ -521,3 +521,117 @@ bool CollisionMath::SegmentVsAABB(const Math::Vector3& start, const Math::Vector
 	return true;
 
 }
+
+bool CollisionMath::SphereVsCylinder(const DirectX::BoundingSphere& sphere, const Math::Vector3& cylinderCenter, float cylinderRadius, float cylinderHalfHeight, Math::Vector3& outPush, Math::Vector3& outNormal)
+{
+	outPush = Math::Vector3::Zero;
+	outNormal = Math::Vector3::Zero;
+
+	const Math::Vector3 sphereCenter = sphere.Center;
+
+	// 高さが重なっていなければ当たらない
+	if (std::abs(sphereCenter.y - cylinderCenter.y) >= cylinderHalfHeight + sphere.Radius)
+	{
+		return false;
+	}
+
+	// 水平方向(X,Z)の距離だけで判定する
+	const float dx = sphereCenter.x - cylinderCenter.x;
+	const float dz = sphereCenter.z - cylinderCenter.z;
+
+	const float distanceSq = dx * dx + dz * dz;
+
+	const float radiusSum = cylinderRadius + sphere.Radius;
+
+	if (distanceSq >= radiusSum * radiusSum)
+	{
+		return false;
+	}
+
+	const float distance = std::sqrt(distanceSq);
+
+	// 中心がほぼ同じ場所だと押し出す方向が決まらないので、決め打ちの方向にする
+	if (distance < 0.0001f)
+	{
+		outNormal = Math::Vector3::Right;
+		outPush = outNormal * radiusSum;
+
+		return true;
+	}
+
+	outNormal = Math::Vector3(dx / distance, 0.0f, dz / distance);
+	outPush = outNormal * (radiusSum - distance);
+
+	return true;
+}
+
+bool CollisionMath::SphereSweepVsCylinder(const Math::Vector3& start, const Math::Vector3& move, float radius, const Math::Vector3& cylinderCenter, float cylinderRadius, float cylinderHalfHeight, float& outTOI, Math::Vector3& outNormal)
+{
+	// 水平方向(X,Z)だけの動き
+	const float vx = move.x;
+	const float vz = move.z;
+
+	const float a = vx * vx + vz * vz;
+
+	// 水平に動かないなら、側面には当たらない
+	if (a < 0.000001f)
+	{
+		return false;
+	}
+
+	// 円柱の中心から見た、開始位置
+	const float px = start.x - cylinderCenter.x;
+	const float pz = start.z - cylinderCenter.z;
+
+	const float radiusSum = cylinderRadius + radius;
+
+	const float c = px * px + pz * pz - radiusSum * radiusSum;
+
+	// 最初からめり込んでいる場合は、めり込み解消(SphereVsCylinder)に任せる
+	if (c <= 0.0f)
+	{
+		return false;
+	}
+
+	// 2次方程式 a*t^2 + 2*b*t + c = 0 を解く
+	const float b = px * vx + pz * vz;
+
+	const float discriminant = b * b - a * c;
+
+	if (discriminant < 0.0f)
+	{
+		return false;
+	}
+
+	const float t = (-b - std::sqrt(discriminant)) / a;
+
+	// 今回の移動の間に当たらない(離れていく向きの場合もここで外れる)
+	if (t < 0.0f || t > 1.0f)
+	{
+		return false;
+	}
+
+	// 当たる瞬間に、高さが重なっているか
+	const float hitY = start.y + move.y * t;
+
+	if (std::abs(hitY - cylinderCenter.y) >= cylinderHalfHeight + radius)
+	{
+		return false;
+	}
+
+	// 当たった位置から、円柱の中心を引いた水平方向が法線
+	const float hx = px + vx * t;
+	const float hz = pz + vz * t;
+
+	const float length = std::sqrt(hx * hx + hz * hz);
+
+	if (length < 0.0001f)
+	{
+		return false;
+	}
+
+	outTOI = t;
+	outNormal = Math::Vector3(hx / length, 0.0f, hz / length);
+
+	return true;
+}

@@ -12,6 +12,9 @@
 #include"../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 #include"../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 
+#include"../GameObject/PointLight/PointLightManager.h"
+#include"../GameObject/PointLight/PointLight.h"
+
 #include"../Scene/EditorScene/EditorScene.h"
 
 #include"../GameObject/Stage/StageObject.h"
@@ -420,6 +423,10 @@ void EditorManager::UpdateMouseSelection()
 		SelectOBBByMouse();
 		break;
 
+	case Hierarchy::HierarchyCategory::PointLight:
+		SelectPointLightByMouse();
+		break;
+
 	}
 }
 
@@ -494,21 +501,41 @@ void EditorManager::SelectGimmickByMouse()
 {
 	auto activeStage = GetActiveStage();
 
-	auto selectedObj = SelectClosestByMouse(
-		SceneManager::Instance().GetObjList(),
-		KdCollider::TypeEvent|KdCollider::TypeBump,
-		[activeStage](const std::shared_ptr<KdGameObject>& obj)
-		{
-			if (obj->GetObjectCategory() != KdGameObject::ObjectCategory::Gimmick)
+	// 優先度の高いギミックから順に調べる
+	// (Roomのように大きな箱は優先度を低くしてあり、他のギミックに当たっていないときだけ選ばれる)
+	const int priorities[] = { 0, -1 };
+
+	std::shared_ptr<KdGameObject> selectedObj = nullptr;
+
+	for (const int priority : priorities)
+	{
+		selectedObj = SelectClosestByMouse(
+			SceneManager::Instance().GetObjList(),
+			KdCollider::TypeEvent | KdCollider::TypeBump,
+			[activeStage, priority](const std::shared_ptr<KdGameObject>& obj)
 			{
-				return false;
-			}
+				if (obj->GetObjectCategory() != KdGameObject::ObjectCategory::Gimmick)
+				{
+					return false;
+				}
 
-			// 持ち主がいるギミックは、Active Stageのものだけ選べる(Hierarchyの一覧と同じ)
-			auto gimmick = std::dynamic_pointer_cast<StageGimmick>(obj);
+				// 持ち主がいるギミックは、Active Stageのものだけ選べる(Hierarchyの一覧と同じ)
+				auto gimmick = std::dynamic_pointer_cast<StageGimmick>(obj);
 
-			return !gimmick || gimmick->GetOwnerStage() == activeStage;
-		});
+				if (!gimmick)
+				{
+					return priority == 0;
+				}
+
+				return gimmick->GetOwnerStage() == activeStage
+					&& gimmick->GetSelectPriority() == priority;
+			});
+
+		if (selectedObj)
+		{
+			break;
+		}
+	}
 
 	SetSelectedObject(selectedObj);
 }
@@ -618,6 +645,33 @@ void EditorManager::SelectOBBByMouse()
 	SetSelectedObject(selectedObj);
 }
 
+void EditorManager::SelectPointLightByMouse()
+{
+	if (!CanEditStageData())
+	{
+		return;
+	}
+
+	auto activeStage = GetActiveStage();
+
+	auto selectedObj = SelectClosestByMouse(
+		PointLightObjectManager::Instance().GetPointLights(),
+		KdCollider::TypeBump,
+		[activeStage](const std::shared_ptr<KdGameObject>& obj)
+		{
+			auto light = std::dynamic_pointer_cast<PointLightObject>(obj);
+
+			if (!light)
+			{
+				return false;
+			}
+
+			return light->GetOwner() == activeStage;
+		});
+
+	SetSelectedObject(selectedObj);
+}
+
 void EditorManager::CreateGameObject(const std::string& className, const std::string& stageModelName)
 {
 	auto newObject =
@@ -684,7 +738,8 @@ bool EditorManager::CanCopyObject(const std::shared_ptr<KdGameObject>& obj) cons
 
 	return std::dynamic_pointer_cast<StageGimmick>(obj)
 		|| std::dynamic_pointer_cast<AABBCollision>(obj)
-		|| std::dynamic_pointer_cast<OBBCollision>(obj);
+		|| std::dynamic_pointer_cast<OBBCollision>(obj)
+		|| std::dynamic_pointer_cast<PointLightObject>(obj);
 }
 
 std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<KdGameObject>& src)
@@ -737,6 +792,27 @@ std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<Kd
 		copy->SetPos(srcOBB->GetPos());
 		copy->SetScale(srcOBB->GetScale());
 		copy->SetRotation(srcOBB->GetRotation());
+
+		return copy;
+	}
+
+	//------------------------------------------------------------
+	// PointLight: 新しく作り、位置・色・範囲・持ち主を写す
+	//------------------------------------------------------------
+	if (auto srcLight = std::dynamic_pointer_cast<PointLightObject>(src))
+	{
+		auto copy = PointLightObjectManager::Instance().CreatePointLight(srcLight->GetOwner());
+
+		if (!copy)
+		{
+			return nullptr;
+		}
+
+		copy->SetLocalPos(srcLight->GetLocalPos());
+		copy->SetColor(srcLight->GetColor());
+		copy->SetRange(srcLight->GetRange());
+
+		copy->UpdateWorldPos();
 
 		return copy;
 	}

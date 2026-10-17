@@ -71,4 +71,9 @@ private:
 	// Playを始めた最初の1フレームは、動かさずに今の状態へ合わせる
 	bool m_needSnap = true;
 
+	// ゲートのフラグを保存
+	bool m_shouldClose = false;
+
+	bool m_isPlaySE = false;
+
 };

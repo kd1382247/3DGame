@@ -67,10 +67,6 @@ public:
 
 private:
 
-	void DrawID();
-	void SetUpDrawID();
-
-
 	std::weak_ptr<StageObject>m_wpOwner;
 
 	// エリアID
@@ -85,17 +81,4 @@ private:
 	// Stageからのローカル位置
 	Math::Vector3 m_localPos = Math::Vector3::Zero;
 
-	// ウェイポイントのIDを描画する
-	unsigned long    m_wayPointID = {};
-	static const int maxDigits = 3;
-	std::shared_ptr<KdSquarePolygon>m_spPoly[maxDigits] = {};
-
-	int              m_digits[maxDigits] = {}; // 各桁の数値を格納
-
-	int              m_renderDigitCount = {};
-
-
-	bool             m_digitDrawFlg[maxDigits] = {};
-
-	Math::Vector3    m_localNumberPos[maxDigits] = {};
 };

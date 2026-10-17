@@ -4,6 +4,8 @@
 
 #include"../Player/Player.h"
 
+#include"../../Camera/TPSCamera/TPSCamera.h"
+
 #include"../../FlyText/FlyTextManager.h"
 
 void BossBase::Init()
@@ -21,6 +23,8 @@ void BossBase::PostUpdate()
 void BossBase::SetUpReference()
 {
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
+
+	m_wpCamera = GameObjectFinder::Instance().FindObject<TPSCamera>();
 }
 
 void BossBase::DrawInspector()
@@ -117,6 +121,57 @@ void BossBase::SetTargetDir()
 	targetDir.y = 0.0f;
 
 	SetMoveDir(targetDir);
+}
+
+void BossBase::StartCameraIntro()
+{
+	auto spCamera = m_wpCamera.lock();
+
+	if (!spCamera)
+	{
+		return;
+	}
+
+	TPSCamera::BossIntroParam param;
+	spCamera->StartBossIntro(GetPos(), param);
+}
+
+void BossBase::StartCameraRoar()
+{
+	auto spCamera = m_wpCamera.lock();
+
+	if (!spCamera)
+	{
+		return;
+	}
+
+	spCamera->StartRoar();
+}
+
+bool BossBase::IsCameraIntroHold()
+{
+	auto spCamera = m_wpCamera.lock();
+
+	if (!spCamera)
+	{
+		return true; 
+	}
+	
+	return spCamera->IsBossIntroHold();
+
+}
+
+bool BossBase::IsBossIntroPlaying()
+{
+
+	auto spCamera = m_wpCamera.lock();
+
+	if (!spCamera)
+	{
+		return false;
+	}
+
+	return spCamera->IsBossIntroPlaying();
 }
 
 

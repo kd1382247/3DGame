@@ -9,6 +9,7 @@
 #include"../../Gimmick/EnemySpawner/EnemySpawner.h"
 
 #include"../../../GameObject/Character/Player/Player.h"
+#include"../../Character/Boss/BossBase.h"
 
 void Room::Init()
 {
@@ -73,6 +74,8 @@ void Room::Update()
 				else
 				{
 					ChangeState(RoomState::Intro);
+
+					m_waitBossIntro = StartBossIntro();
 				}
 			}
 		}
@@ -97,9 +100,6 @@ void Room::Update()
 
 	case RoomState::Outro:
 		UpdateOutro();
-		break;
-
-	default:
 		break;
 	}
 
@@ -377,6 +377,34 @@ static const char* GetRoomStateName(const Room::RoomState state)
 	return "";
 }
 
+bool Room::StartBossIntro()
+{
+
+	if (m_roomType != RoomType::Boss)
+	{
+		return false;
+	}
+
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto boss = std::dynamic_pointer_cast<BossBase>(obj);
+		
+		if (!boss)
+		{
+			continue;
+		}
+
+		if (IsInside(boss->GetPos()))
+		{
+			boss->StartIntro();
+			return true;
+		}
+	}
+
+
+	return false;
+}
+
 void Room::ChangeState(RoomState next)
 {
 	m_roomState = next;
@@ -393,11 +421,18 @@ void Room::FinishIntro()
 		return;
 	}
 
+	m_waitBossIntro = false;
+
 	ChangeState(RoomState::InCombat);
 }
 
 void Room::UpdateIntro()
 {
+	if (m_waitBossIntro)
+	{
+		return;
+	}
+
 	// 演出の仕組みができるまでは、決めた時間が経ったら演出が終わったことにする
 	m_stateTimer += TimeManager::Instance().GetDeltaTime();
 

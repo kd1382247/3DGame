@@ -39,11 +39,19 @@ void RoomGate::Update()
 	if (m_needSnap)
 	{
 		m_openRate = shouldClose ? 0.0f : 1.0f;
+		m_shouldClose = shouldClose;
 		m_needSnap = false;
 		return;
 	}
 
 	const float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+
+	if (shouldClose != m_shouldClose)
+	{
+		m_shouldClose = shouldClose;
+		KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Stage/Close/Close.wav");
+	}
 
 	if (shouldClose)
 	{
@@ -55,6 +63,7 @@ void RoomGate::Update()
 	}
 
 	m_openRate = std::clamp(m_openRate, 0.0f, 1.0f);
+
 }
 
 void RoomGate::DrawLit()
@@ -268,6 +277,7 @@ DirectX::BoundingOrientedBox RoomGate::GetCollisionBox() const
 
 	return box;
 }
+
 
 std::shared_ptr<Room> RoomGate::FindRoomByName(const std::string& name) const
 {

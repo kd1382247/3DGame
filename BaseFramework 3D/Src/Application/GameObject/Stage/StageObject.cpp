@@ -3,6 +3,8 @@
 #include"Collision/AABBCollision/AABBCollisionManager.h"
 #include"Collision/OBBCollision/OBBCollisionManager.h"
 
+#include"../PointLight/PointLightManager.h"
+
 #include"../../System/StageLoder/StageLoder.h"
 #include"../../System/StageDataManager/StageDataManager.h"
 #include"../../System/WayPointManager/WayPointManager.h"
@@ -59,6 +61,7 @@ void StageObject::ClearOwnerData()
 	AABBCollisionManager::Instance().RemoveByOwner(this);
 	OBBCollisionManager ::Instance().RemoveByOwner(this);
 	WayPointManager     ::Instance().RemoveByOwner(this);
+	PointLightObjectManager::Instance().RemoveByOwner(this);
 }
 
 void StageObject::PreDraw()

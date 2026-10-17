@@ -2,6 +2,9 @@
 
 #include"../../../System/CollisionManager/CollisionManager.h"
 
+#include"../../Gimmick/RoomGate/RoomGate.h"
+#include"../../../System/TimeManager/TimeManager.h"
+
 namespace
 {
 	// レイの起点にする、プレイヤーの足元からの高さ
@@ -15,6 +18,9 @@ namespace
 	// 追う速さ
 	constexpr float kFollowSpeed = 0.3f;
 
+	// カメラが対象に到着した判定
+	constexpr float kArriveThreshold = 0.99f; // Approachの到着判定
+	constexpr float kLeaveThreshold = 0.01f;  // Returnの到着判定
 
 	using ObjectList = std::vector<std::weak_ptr<KdGameObject>>;
 	using ObstacleLists = std::vector<const ObjectList*>;
@@ -26,7 +32,7 @@ namespace
 
 		lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::AABB));
 		lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::OBB));
-
+		lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::Gate));
 		return lists;
 	}
 
@@ -68,10 +74,19 @@ void TPSCamera::Init()
 
 	m_smoothTargetPos = {};
 	m_isSmoothTargetInit = false;
+
+
+	m_introState = BossIntroState::None;
+	m_introBlend = 0.0f;
+	m_shakeTime = 0.0f;
+
 }
 
 void TPSCamera::PostUpdate()
 {
+
+	UpdateBossIntro();
+
 	const std::shared_ptr<const KdGameObject> spTarget = m_wpTarget.lock();
 
 	// カメラの回転とワールド行列の更新
@@ -89,6 +104,184 @@ void TPSCamera::PostUpdate()
 
 	// 壁に近づきすぎないよう、壁から押し戻す
 	PushOutBySphere();
+
+	ApplyBossIntro();
+
+}
+
+void TPSCamera::StartBossIntro(const Math::Vector3& pos, const BossIntroParam& param)
+{
+	const std::shared_ptr<const KdGameObject> spTarget = m_wpTarget.lock();
+	
+	// プレイヤーがいない
+	// m_introStateがNone以外の時は受け付けない
+	if (!spTarget||
+		m_introState!=BossIntroState::None)
+	{
+		return;
+	}
+
+	// 引数を保存
+	m_bossPos = pos;
+	m_introParam = param;
+
+	// カメラの位置を計算
+	Math::Vector3 bossDir = spTarget->GetPos() - m_bossPos ;
+
+	bossDir.y = 0.0f;
+	// 長さがほぼ0なら、借りの方向に差し替える
+	if (bossDir.LengthSquared() <= 0.000001f)
+	{
+		bossDir = Math::Vector3(0.0f, 0.0f, -1.0f);
+	}
+
+	bossDir.Normalize();
+
+	// カメラの位置をボスから見たプレイヤーの位置の方向に
+	// distance分離れた位置に持っていく
+	m_introCamPos = m_bossPos + bossDir * m_introParam.distance + Math::Vector3(0.0f, m_introParam.height, 0.0f);
+
+	// カメラの向きをセット
+	m_introCamRot = CreateLookRotation(m_introCamPos, m_introParam.lookHeight);
+
+
+	// ステートを変更しシェイクタイマーを0にする
+	m_introState = BossIntroState::Approach;
+	m_shakeTime = 0.0f;
+
+}
+
+void TPSCamera::UpdateBossIntro()
+{
+	if (m_introState == BossIntroState::None)
+	{
+		return;
+	}
+
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	switch (m_introState)
+	{
+	case TPSCamera::BossIntroState::Approach:
+
+		// 少しずつ1へ近づける
+		m_introBlend += (1.0f - m_introBlend) * m_introParam.approachSpeed;
+
+		if (m_introBlend >= kArriveThreshold)
+		{
+			m_introBlend = 1.0f;
+			m_introState = BossIntroState::Hold;
+		}
+
+		break;
+	case TPSCamera::BossIntroState::Hold:
+
+		break;
+	case TPSCamera::BossIntroState::Roar:
+
+		m_shakeTime += deltaTime;
+		
+		if (m_shakeTime >= m_introParam.shakeDuration)
+		{
+			m_introState = BossIntroState::Return;
+		}
+
+		break;
+	case TPSCamera::BossIntroState::Return:
+
+		m_introBlend += (0.0f - m_introBlend) * m_introParam.returnSpeed;
+
+		if (m_introBlend <= kLeaveThreshold)
+		{
+			m_introBlend = 0.0f;
+			m_introState = BossIntroState::None;
+		}
+
+		break;
+	}
+}
+
+void TPSCamera::ApplyBossIntro()
+{
+	if (m_introBlend <= 0)
+	{
+		return;
+	}
+
+	// 位置を混ぜる
+	Math::Vector3 camPos = GetPos();
+	Math::Vector3 blendPos = {};
+
+	blendPos = Math::Vector3::Lerp(camPos,m_introCamPos,m_introBlend);
+
+	// 回転を混ぜる
+	Math::Quaternion camRotation = Math::Quaternion::CreateFromRotationMatrix(m_mRotation);
+	Math::Quaternion blendRotation = {};
+
+	blendRotation = Math::Quaternion::Slerp(camRotation, m_introCamRot, m_introBlend);
+
+	m_mWorld = Math::Matrix::CreateFromQuaternion(blendRotation);
+
+	Math::Vector3 camFoward = Math::Vector3::TransformNormal(Math::Vector3::Backward, m_mWorld);
+
+	blendPos += camFoward * CalcShakeOffsest();
+
+	SetPos(blendPos);
+
+}
+
+float TPSCamera::CalcShakeOffsest() const
+{
+
+	// Roarじゃいないまたは、揺れの時間が0の場合は0を返す
+	if (m_introState != BossIntroState::Roar||
+		m_introParam.shakeDuration<=0)
+	{
+		return 0.0f;
+	}
+
+	// 進み具合
+	float t = std::clamp( m_shakeTime / m_introParam.shakeDuration,0.0f,1.0f);
+
+	// 徐々に弱める
+	float decay = 1 - t;
+
+	// カメラの揺れ
+	float angle = m_shakeTime * m_introParam.shakeFrequency * DirectX::XM_2PI;
+
+	// サインカーブで揺らす
+	float wave = sin(angle);
+
+	return m_introParam.shakeAmplitude * wave * decay;
+}
+
+Math::Quaternion TPSCamera::CreateLookRotation(const Math::Vector3& camPos, const float lookHeight)
+{
+
+	Math::Vector3 lookDir = m_bossPos + Math::Vector3(0.0f,lookHeight, 0.0f);
+
+	Math::Vector3 camDir = lookDir - camPos;
+
+	// カメラと見る点がほぼ同じ位置の場合、Identityを返す
+	if (camDir.LengthSquared() <= 0.000001f)
+	{
+		return Math::Quaternion::Identity;
+	}
+
+	// 正規化
+	camDir.Normalize();
+
+	// カメラの向くそれぞれの軸を作る
+	Math::Vector3 forward = camDir;
+
+	Math::Vector3 right   = Math::Vector3::Up.Cross(forward);
+	right.Normalize();
+
+	Math::Vector3 up      = forward.Cross(right);
+
+	Math::Matrix rotation(right, up, forward);
+
+	return Math::Quaternion::CreateFromRotationMatrix(rotation);
 }
 
 void TPSCamera::UpdateCameraMatrix(const std::shared_ptr<const KdGameObject>& spTarget)
@@ -112,7 +305,10 @@ void TPSCamera::UpdateCameraMatrix(const std::shared_ptr<const KdGameObject>& sp
 	}
 
 	// カメラの回転
-	UpdateRotateByMouse();
+	if(m_introState==BossIntroState::None)
+	{
+		UpdateRotateByMouse();
+	}
 	m_mRotation = GetRotationMatrix();
 	m_mWorld = m_mLocalPos * m_mRotation * targetMat;
 }

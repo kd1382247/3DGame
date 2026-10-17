@@ -2,6 +2,9 @@
 
 #include"../../Character/Player/Player.h"
 
+#include"../../Gimmick/Room/Room.h"
+#include"../../Gimmick/Room/RoomManager.h"
+
 void PlayerHPBar::Init()
 {
 
@@ -11,6 +14,7 @@ void PlayerHPBar::Init()
 	InitTexture(m_spBarGreenTex, "Bar_green.png");
 	InitTexture(m_spBarRedTex, "Bar_red.png");
 
+	m_alpha = 1.0f;
 }
 
 void PlayerHPBar::Update()
@@ -21,6 +25,9 @@ void PlayerHPBar::Update()
 	{
 		return;
 	}
+
+
+
 
 	m_hpRate = spPlayer->GetHealth().GetHPRate();
 
@@ -49,11 +56,32 @@ void PlayerHPBar::DrawSprite()
 		return;
 	}
 
-	
+	if (!IsDrawHPBar())
+	{
+		return;
+	}
+
 	DrawFrameBackGround();
 	DrawBarRed();
 	DrawBarGreen();
 	DrawFrame();
+}
+
+bool PlayerHPBar::IsDrawHPBar() const
+{
+	auto room = RoomManager::Instance().GetCurrentRoom();
+
+	if (!room)
+	{
+		return true;
+	}
+
+	if (room->IsBossIntro())
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void PlayerHPBar::InitTexture(std::shared_ptr<KdTexture>& tex, const std::string& fileName)
@@ -93,7 +121,7 @@ void PlayerHPBar::DrawBar(const std::shared_ptr<KdTexture>&tex, const float rate
 	const long h = static_cast<long>(m_barHeight);
 
 	Math::Rectangle rc = { 0,0,w,h };
-	Math::Color color = { 1.0f,1.0f,1.0f };
+	Math::Color color = { 1.0f,1.0f,1.0f,m_alpha };
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(
 		tex,

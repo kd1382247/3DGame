@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 
 #include"../../Camera/CameraBase.h"
+#include"../../Camera/TPSCamera/TPSCamera.h"
 
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../../System/CollisionManager/CollisionManager.h"
@@ -10,6 +11,7 @@
 #include"../../FlyText/FlyTextManager.h"
 
 #include"../../HPBar/PlayerHPBar/PlayerHPBar.h"
+#include"../../EnemyCounter/EnemyCounter.h"
 
 #include"State/States/PlayerNormalState.h"
 #include"State/States/PlayerAttackState.h"
@@ -19,8 +21,12 @@
 #include"State/States/PlayerParryState.h"
 #include"State/States/PlayerDamageState.h"
 #include"State/States/PlayerDieState.h"
+#include"State/States/PlayerIntroWaitState.h"
+
+#include"../../Gimmick/Room/RoomManager.h"
 
 #include"../../../System/TimeManager/TimeManager.h"
+
 
 namespace
 {
@@ -85,6 +91,9 @@ void Player::Update()
 	// 操作入力
 	UpdateInput();
 
+	// ボスの登場演出中は操作できないようにする
+	UpdateBossIntroLock();
+
 	// 各ステートの更新
 	m_stateMachine.Update();
 
@@ -129,6 +138,11 @@ void Player::SetUpReference()
 	hpBar->Init();
 	hpBar->SetPlayer(std::dynamic_pointer_cast<Player>(shared_from_this()));
 	SceneManager::Instance().AddObject(hpBar);
+
+	// 敵の数を表示するUI
+	std::shared_ptr<EnemyCounter>enemyCounter = std::make_shared<EnemyCounter>();
+	enemyCounter->Init();
+	SceneManager::Instance().AddObject(enemyCounter);
 }
 
 void Player::DrawLit()
@@ -191,6 +205,26 @@ void Player::UpdateDebugCommand()
 	{
 		key = false;
 	}
+
+	auto spTpsCamera = std::dynamic_pointer_cast<TPSCamera>( m_wpCamera.lock());
+
+	if (!spTpsCamera)
+	{
+		return;
+	}
+
+	if (GetAsyncKeyState('Y') & 0x8000)
+	{
+
+		TPSCamera::BossIntroParam param;
+		spTpsCamera->StartBossIntro(GetPos() + Math::Vector3(0.0f, 0.0f, 10.0f), param);
+	}
+
+	if (GetAsyncKeyState('U') & 0x8000)
+	{
+		spTpsCamera->StartRoar();
+	}
+
 }
 
 //================================
@@ -309,19 +343,41 @@ void Player::UpdateAttackMove()
 	FacingDirectionToCamera();
 }
 
+void Player::UpdateBossIntroLock()
+{
+	if (!RoomManager::Instance().IsBossIntro())
+	{
+		return;
+	}
+
+	// すでに待機中、または死亡中は何もしない
+	if (m_stateMachine.IsState<PlayerIntroWaitState>() ||
+		m_stateMachine.IsState<PlayerDieState>())
+	{
+		return;
+	}
+
+	m_stateMachine.ChangeState<PlayerIntroWaitState>();
+}
+
+void Player::StopWalkSE()
+{
+	// SEが鳴っていたら止める
+	auto spSoundInst = m_wpSoundInst.lock();
+	if (spSoundInst)
+	{
+		if (spSoundInst->IsPlaying())
+		{
+			spSoundInst->Stop();
+		}
+	}
+}
+
 void Player::UpdateWalkSE(const float footstepInterval)
 {
 	if (!m_input.IsMovePressed())
 	{
-		// SEが鳴っていたら止める
-		auto spSoundInst = m_wpSoundInst.lock();
-		if (spSoundInst)
-		{
-			if(spSoundInst->IsPlaying())
-			{
-				spSoundInst->Stop();
-			}
-		}
+		StopWalkSE();
 
 		return;
 	}

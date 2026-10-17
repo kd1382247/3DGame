@@ -22,6 +22,9 @@ public:
 
 	bool IsBossCombat()const;
 
+	// ボスの登場演出中かどうか
+	bool IsBossIntro()const;
+
 private:
 
 

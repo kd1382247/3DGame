@@ -163,7 +163,7 @@ void KdDebugGUI::DrawEditor()
 	if (EditorManager::Instance().IsPlayMode())
 	{
 		// ログウィンドウ
-		m_uqLog->Draw("Log Window");
+		//m_uqLog->Draw("Log Window");
 	}
 
 	if (EditorManager::Instance().IsEditMode())

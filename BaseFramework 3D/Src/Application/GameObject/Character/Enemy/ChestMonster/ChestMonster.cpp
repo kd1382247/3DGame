@@ -171,7 +171,12 @@ void ChestMonster::RePlayAnimation(ChestMonsterAnimationType type)
 
 void ChestMonster::OnHit(const AttackInfo attackInfo)
 {
-	if (ApplyDamage(attackInfo))
+	// ノックバックは受けないようにする
+	AttackInfo info = attackInfo;
+
+	info.m_knockBackDir = Math::Vector3::Zero;
+
+	if (ApplyDamage(info))
 	{
 		m_stateMachine.ChangeState<ChestMonsterDieState>();
 	}

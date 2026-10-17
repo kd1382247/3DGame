@@ -482,12 +482,26 @@ void KdShaderManager::WriteCBPointLight(const std::list<PointLight>& pointLights
 {
 	cbLight& light = m_cb9_Light.Work();
 
-	light.PointLight_Num = (signed)pointLights.size();
+	// 配列(MaxPointLightNum個)を超えて書き込まないよう、登録数を制限する
+	const int maxNum = cbLight::MaxPointLightNum;
+	int count = (int)pointLights.size();
 
-	UINT pointIndex = 0;
+	if (count > maxNum)
+	{
+		count = maxNum;
+	}
+
+	light.PointLight_Num = count;
+
+	int pointIndex = 0;
 
 	for (const PointLight& pointlight : pointLights)
 	{
+		if (pointIndex >= count)
+		{
+			break;
+		}
+
 		light.PointLights[pointIndex] = pointlight;
 
 		++pointIndex;

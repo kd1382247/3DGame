@@ -4,6 +4,8 @@
 
 class Player;
 
+class TPSCamera;
+
 class BossBase :public CharacterBase
 {
 
@@ -24,7 +26,28 @@ public:
 
 	bool HasReachedTarget()const { return m_hasReachedTarget; }
 
+
+	// =====================ボスの登場演出=====================//
+	virtual void StartIntro() {}
+
+	// イントロ開始
+	bool IsIntroRequested()const { return m_introRequested; }
+
+	// カメラをボスに寄らせる
+	void StartCameraIntro();
+
+	// ボスの咆哮開始
+	void StartCameraRoar();
+
+	// カメラがボスに寄って止まっているか
+	bool IsCameraIntroHold();
+
+	// 演出中ならtrueを返す
+	bool IsBossIntroPlaying();
+
 private:
+
+	
 
 
 protected:
@@ -46,6 +69,8 @@ protected:
 
 	std::weak_ptr<Player>m_wpPlayer;
 
+	std::weak_ptr<TPSCamera>m_wpCamera;
+
 	const std::string m_flyTextPath = "DamageNumber_Orange.png";
 
 	// プレイヤーに到達したかどうか
@@ -55,5 +80,5 @@ protected:
 
 	float m_reachDistanceMargin = 6.0f;
 
-
+	bool  m_introRequested = false;
 };

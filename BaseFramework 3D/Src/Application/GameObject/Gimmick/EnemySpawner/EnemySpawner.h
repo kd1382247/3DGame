@@ -5,6 +5,7 @@
 
 class Room;
 class EnemyBase;
+class CharacterBase;
 
 class EnemySpawner :public StageGimmick
 {
@@ -25,6 +26,8 @@ public:
 	void Update()override;
 	void DrawLit()override;
 
+	void DrawDebug()override;
+
 	// 固定表示(スクロールしない):名前・位置・回転・大きさ
 	void DrawInspectorHeader()override;
 
@@ -41,11 +44,30 @@ public:
 
 	std::string GetLinkRoomName()const { return m_linkedRoomName; }
 
+	// 当たり判定の球(クリック選択・デバッグ表示)の半径
+	// キャラを押し戻す当たり判定(縦向きの円柱)の半径にも使う
+	static constexpr float kColliderRadius  = 1.0f;
+
+	float GetColliderRadius() const { return kColliderRadius; }
+
+	// 当たり判定の球の中心(ワールド座標)
+	Math::Vector3 GetColliderCenter() const
+	{
+		return GetPos();
+	}
+
+	// このキャラを押し戻すか(CollisionManagerが見る)
+	// このスポナーから出てきたばかりの敵は、外に出るまで押し戻さない(中から出られなくなるため)
+	bool IsBlockingCharacter(const CharacterBase* character) const;
+
 private:
 
 	void SpawnEnemy();
 
 	void EraseEnemy();
+
+	// スポナーから出終わった敵を、「出てきたばかり」のリストから外す
+	void UpdateEmergingEnemies();
 
 	// 飛び出す方向を決める
 	Math::Vector3 CreateLaunchDir()const;
@@ -84,6 +106,9 @@ private:
 	// スポーンした敵の配列
 	// 全滅したかどうか
 	std::vector<std::weak_ptr<EnemyBase>>m_spawnEnemyList;
+
+	// 出てきたばかりで、まだスポナーの当たり判定から出ていない敵
+	std::vector<std::weak_ptr<EnemyBase>>m_emergingEnemies;
 
 	std::weak_ptr<KdEffekseerObject>m_wpEffekseerObj;
 

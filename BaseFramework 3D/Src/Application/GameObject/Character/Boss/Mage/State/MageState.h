@@ -9,6 +9,7 @@ enum class MageAnimationType
 	BeamRPT,
 	BeamEND,
 	GetHit,
+	Roar,
 	Idle,
 	Walk,
 	Die

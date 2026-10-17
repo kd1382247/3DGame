@@ -57,6 +57,11 @@ void MageAnimation::Animations(MageAnimationType animType)
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), true);
 		m_animSpeed = 1.0f;
 		break;
+	case MageAnimationType::Roar:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Roar"), false);
+		m_animSpeed = 1.0f;
+		break;
+
 	case MageAnimationType::Idle:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Idle"), true);
 		m_animSpeed = 1.0f;

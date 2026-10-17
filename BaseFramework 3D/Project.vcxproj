@@ -304,6 +304,7 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBeamState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBoltState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardSectorState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageIntroState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNormalState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNovaCircleState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageSummonState.h" />
@@ -393,6 +394,7 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerDieState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerGuardState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerIntroWaitState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpAirState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpLandState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpStartState.h" />
@@ -406,6 +408,7 @@
     <ClInclude Include="Src\Application\GameObject\Effect\EffectManager.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Stun\StunEffect.h" />
+    <ClInclude Include="Src\Application\GameObject\EnemyCounter\EnemyCounter.h" />
     <ClInclude Include="Src\Application\GameObject\EnergyBullet\EnergyBullet.h" />
     <ClInclude Include="Src\Application\GameObject\EnergyBullet\EnergyBulletManager.h" />
     <ClInclude Include="Src\Application\GameObject\Explosion\Explosion.h" />
@@ -427,6 +430,8 @@
     <ClInclude Include="Src\Application\GameObject\MageMagicCircle\MageMagicCircleManager.h" />
     <ClInclude Include="Src\Application\GameObject\MageMagicSector\MageMagicSector.h" />
     <ClInclude Include="Src\Application\GameObject\MageMagicSector\MageMagicSectorManager.h" />
+    <ClInclude Include="Src\Application\GameObject\PointLight\PointLight.h" />
+    <ClInclude Include="Src\Application\GameObject\PointLight\PointLightManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollision.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollision.h" />
@@ -531,6 +536,7 @@
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBeamState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBoltState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardSectorState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageIntroState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNormalState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNovaCircleState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageSummonState.cpp" />
@@ -608,6 +614,7 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDieState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerGuardState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerIntroWaitState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpAirState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpLandState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpStartState.cpp" />
@@ -619,6 +626,7 @@
     <ClCompile Include="Src\Application\GameObject\Effect\EffectManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\Stun\StunEffect.cpp" />
+    <ClCompile Include="Src\Application\GameObject\EnemyCounter\EnemyCounter.cpp" />
     <ClCompile Include="Src\Application\GameObject\EnergyBullet\EnergyBullet.cpp" />
     <ClCompile Include="Src\Application\GameObject\EnergyBullet\EnergyBulletManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Explosion\Explosion.cpp" />
@@ -640,6 +648,8 @@
     <ClCompile Include="Src\Application\GameObject\MageMagicCircle\MageMagicCircleManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\MageMagicSector\MageMagicSector.cpp" />
     <ClCompile Include="Src\Application\GameObject\MageMagicSector\MageMagicSectorManager.cpp" />
+    <ClCompile Include="Src\Application\GameObject\PointLight\PointLight.cpp" />
+    <ClCompile Include="Src\Application\GameObject\PointLight\PointLightManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollision.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollision.cpp" />

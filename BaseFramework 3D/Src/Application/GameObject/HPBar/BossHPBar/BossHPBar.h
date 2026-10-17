@@ -15,7 +15,7 @@ public:
 
 	void SetBoss(const std::shared_ptr<BossBase>&boss){m_wpBoss=boss;}
 
-	void SetBossName(const std::string& name,const float width,const float height) 
+	void SetNamePrateParam(const std::string& name,const float width,const float height) 
 	{ 
 		m_bossName = name+".png";
 		m_namePrateWidth = width;
@@ -56,14 +56,18 @@ private:
 	const Math::Vector2 pivot = { 0.0f,0.5f };
 
 	// Barの位置
-	Math::Vector2 m_barOffset = { -400.0f,300.0f };
+	Math::Vector2 m_barOffset = { -380.0f,300.0f };
 
 	const std::string FilePath = "Asset/Textures/HP/Boss/";
 
 	std::string m_bossName = {};
 
-	Math::Vector2 m_namePlatePos = { 0.0f,330.0f };
+	Math::Vector2 m_namePlatePos = { 0.0f,335.0f };
 	float m_namePrateWidth = 0.0f;
 	float m_namePrateHeight = 0.0f;
+
+
+	float m_alpha = 0.0f;
+
 
 };

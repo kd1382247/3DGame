@@ -12,6 +12,7 @@
 
 #include"../../GameObject/Character/CharacterBase.h"
 #include"../../GameObject/Gimmick/RoomGate/RoomGate.h"
+#include"../../GameObject/Gimmick/EnemySpawner/EnemySpawner.h"
 
 
 namespace
@@ -327,6 +328,39 @@ CollisionManager::SweepResult CollisionManager::FindSweepContacts(const std::sha
 				remainingMove,
 				character->GetBumpSphere().Radius,
 				gate->GetCollisionBox(),
+				toi,
+				normal);
+
+		if (!hit)
+		{
+			continue;
+		}
+
+		AddSweepContact(result, toi, normal, moveLength);
+	}
+
+	// 敵のスポナー(EnemySpawner)。動かない障害物として扱う
+	for (const auto& weakObj : GetObjects(CollisionLayer::Gimmick))
+	{
+		auto spawner = std::dynamic_pointer_cast<EnemySpawner>(weakObj.lock());
+
+		if (!spawner || !spawner->IsBlockingCharacter(character.get()))
+		{
+			continue;
+		}
+
+		float toi = 0.0f;
+
+		Math::Vector3 normal = Math::Vector3::Zero;
+
+		bool hit =
+			CollisionMath::SphereSweepVsCylinder(
+				sweepStart,
+				remainingMove,
+				radius,
+				spawner->GetColliderCenter(),
+				spawner->GetColliderRadius(),
+				spawner->GetColliderRadius(),
 				toi,
 				normal);
 
@@ -750,6 +784,41 @@ void CollisionManager::ResolveGateStartOverlap(const std::shared_ptr<CharacterBa
 	}
 }
 
+void CollisionManager::ResolveSpawnerStartOverlap(const std::shared_ptr<CharacterBase>& character, Math::Vector3& currentPos, Math::Vector3& remainingMove)
+{
+	for (const auto& weakObj : GetObjects(CollisionLayer::Gimmick))
+	{
+		auto spawner = std::dynamic_pointer_cast<EnemySpawner>(weakObj.lock());
+
+		// 出てきたばかりの敵は、スポナーから出るまで押し戻さない
+		if (!spawner || !spawner->IsBlockingCharacter(character.get()))
+		{
+			continue;
+		}
+
+		DirectX::BoundingSphere sphere;
+		sphere.Center = GetBumpSphereCenterAt(character, currentPos);
+		sphere.Radius = character->GetBumpSphere().Radius;
+
+		Math::Vector3 push = Math::Vector3::Zero;
+		Math::Vector3 normal = Math::Vector3::Zero;
+
+		if (!CollisionMath::SphereVsCylinder(
+			sphere,
+			spawner->GetColliderCenter(),
+			spawner->GetColliderRadius(),
+			spawner->GetColliderRadius(),
+			push,
+			normal))
+		{
+			continue;
+		}
+
+		// スポナーは歩行可能面としては扱わない
+		ResolveStartOverlapContact(push, normal, currentPos, remainingMove, false);
+	}
+}
+
 bool CollisionManager::IsWalkableSurface(const Math::Vector3& normal, const std::shared_ptr<CharacterBase>& character) const
 {
 	if(!character)
@@ -896,6 +965,8 @@ Math::Vector3 CollisionManager::ResolveCharacterDisplacement(const std::shared_p
 	ResolveOBBStartOverlap(character, currentPos, remainingMove);
 
 	ResolveGateStartOverlap(character, currentPos, remainingMove);
+
+	ResolveSpawnerStartOverlap(character, currentPos, remainingMove);
 
 	// =====================================
 	// 以降はSweepだけで移動を解決
