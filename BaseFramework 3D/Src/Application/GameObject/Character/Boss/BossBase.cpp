@@ -38,8 +38,7 @@ void BossBase::OnHit(const AttackInfo attackInfo)
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.m_damage, GetPos(),m_flyTextPath);
 
-	KdEffekseerManager::GetInstance().
-		Play("Hit/Hit2.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, 1.0f, false);
+	PlayHitEffect();
 }
 
 void BossBase::UpdateMove()
@@ -217,4 +216,39 @@ int BossBase::LotteryPattern(const std::vector<float>& weights)const
 	}
 
 	return -1;
+}
+
+void BossBase::PlayHitEffect()
+{
+
+	auto spPlayer = m_wpPlayer.lock();
+
+	Math::Vector3 playerPos = {};
+
+	if (spPlayer)
+	{
+		playerPos = spPlayer->GetPos();
+	}
+
+	Math::Vector3 bossDir = playerPos - GetPos();
+
+	bossDir.y = 0.0f;
+	if (bossDir.LengthSquared() <= 0.000001f)
+	{
+		bossDir = Math::Vector3::Backward;
+	}
+	bossDir.Normalize();
+
+	// ボスから見てプレイヤーの方向に、エフェクトの位置を持っていく
+	Math::Vector3 effectPos = GetPos() + bossDir * 1.2f+Math::Vector3(0.0f, 0.8f, 0.0f);
+
+
+	KdEffekseerManager::GetInstance().
+		Play("Hit/Hit2.efkefc",effectPos, 0.3f, 0.8f, false);
+
+	KdEffekseerManager::GetInstance().
+		Play("Hit/Hit3.efkefc", effectPos, 0.3f, 0.6f, false);
+
+	KdEffekseerManager::GetInstance().
+		Play("Hit/Hit.efkefc", effectPos, 0.4f, 0.6f, false);
 }

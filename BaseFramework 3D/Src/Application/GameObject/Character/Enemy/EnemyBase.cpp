@@ -7,6 +7,8 @@
 
 #include"../../../System/WayPointManager/WayPointManager.h"
 #include"../../../GameObject/WayPoint/WayPoint.h"
+#include"../../../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"
+#include"../../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
 
 #include"../../../Editor/EditorManager.h"
 
@@ -86,15 +88,37 @@ Math::Vector3 EnemyBase::CreateSpawnDirection()
 void EnemyBase::PlayHitEffect()
 {
 
-	KdEffekseerManager::GetInstance().
-		Play("Hit/Hit2.efkefc", GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f), 0.3f, 0.8f, false);
+
+	auto spPlayer = m_wpPlayer.lock();
+
+	Math::Vector3 playerPos = {};
+
+	if (spPlayer)
+	{
+		playerPos = spPlayer->GetPos();
+	}
+
+	Math::Vector3 bossDir = playerPos - GetPos();
+
+	bossDir.y = 0.0f;
+	if (bossDir.LengthSquared() <= 0.000001f)
+	{
+		bossDir = Math::Vector3::Backward;
+	}
+	bossDir.Normalize();
+
+	// ボスから見てプレイヤーの方向に、エフェクトの位置を持っていく
+	Math::Vector3 effectPos = GetPos() + bossDir * m_effectDist + Math::Vector3(0.0f, 0.8f, 0.0f);
+
 
 	KdEffekseerManager::GetInstance().
-		Play("Hit/Hit3.efkefc", GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f), 0.3f, 0.6f, false);
-
+		Play("Hit/Hit2.efkefc", effectPos, 0.3f, 0.8f, false);
 
 	KdEffekseerManager::GetInstance().
-		Play("Hit/Hit.efkefc", GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f), 0.4f, 0.6f, false);
+		Play("Hit/Hit3.efkefc", effectPos, 0.3f, 0.6f, false);
+
+	KdEffekseerManager::GetInstance().
+		Play("Hit/Hit.efkefc", effectPos, 0.4f, 0.6f, false);
 }
 
 void EnemyBase::UpdateDirectChase()
@@ -238,6 +262,71 @@ void EnemyBase::UpdateFollowPath()
 	AddPendingMove(move);
 }
 
+bool EnemyBase::IsSightClear(const Math::Vector3& playerPos)
+{
+	// 遠いときはレイを撃たない(ウェイポイント移動のまま)
+	if ((playerPos - GetPos()).LengthSquared() > SightCheckDistance * SightCheckDistance)
+	{
+		// 近づいたときにすぐ判定でき、かつ全員が同じフレームに撃たないよう、ばらつかせる
+		m_sightCheckTimer = KdRandom::GetFloat(0.0f, SightCheckInterval);
+
+		// 判定していない間は遮られている扱いにする
+		m_isSightBlocked = true;
+
+		return false;
+	}
+
+	// 一定間隔でだけレイを撃ち、結果を保持する
+	m_sightCheckTimer -= m_deltaTime;
+
+	if (m_sightCheckTimer <= 0.0f)
+	{
+		m_sightCheckTimer = SightCheckInterval;
+
+		const Math::Vector3 offset = { 0.0f,SightRayHeight,0.0f };
+
+		m_isSightBlocked = IsBlockedByAIBlock(GetPos() + offset, playerPos + offset);
+	}
+
+	return !m_isSightBlocked;
+}
+
+bool EnemyBase::IsBlockedByAIBlock(const Math::Vector3& from, const Math::Vector3& to) const
+{
+	Math::Vector3 direction = to - from;
+
+	const float rayLength = direction.Length();
+
+	if (rayLength <= 0.0f)
+	{
+		return false;
+	}
+
+	direction /= rayLength;
+
+	const DirectX::XMVECTOR origin = DirectX::XMLoadFloat3(&from);
+	const DirectX::XMVECTOR dir    = DirectX::XMLoadFloat3(&direction);
+
+	for (const auto& block : AIBlockManager::Instance().GetAIBlockList())
+	{
+		if (!block)
+		{
+			continue;
+		}
+
+		float hitDistance = 0.0f;
+
+		// AABBとレイの判定。プレイヤーより奥のブロックは無視する
+		if (block->GetBox().Intersects(origin, dir, hitDistance) &&
+			hitDistance <= rayLength)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool EnemyBase::CanDirectChase()
 {
 	// プレイヤーに到達していたらスキップ
@@ -261,8 +350,13 @@ bool EnemyBase::CanDirectChase()
 	// 敵とプレイヤーが同じAreaIDだったら直接追跡
 	if (GetAreaID()!= spPlayer->GetAreaID())
 	{
+		if (IsSightClear(spPlayer->GetPos()))
+		{
+			// Areaが違っても、近くて間に壁が無ければ直接追跡する
+			m_nextMoveState = MoveState::DirectChase;
+		}
 		// ウェイポイントが無ければ変更しない
-		if(!WayPointManager::Instance().GetWayPoints().empty())
+		else if(!WayPointManager::Instance().GetWayPoints().empty())
 		{
 			m_nextMoveState = MoveState::FollowPath;
 		}

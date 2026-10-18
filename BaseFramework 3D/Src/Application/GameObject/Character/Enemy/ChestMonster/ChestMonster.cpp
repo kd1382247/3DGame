@@ -30,6 +30,8 @@ void ChestMonster::Init()
 		m_stateMachine.ChangeState<ChestMonsterNormalState>();
 
 		m_smokeEffectScale = 0.9f;
+
+		m_effectDist = 1.4;
 	}
 
 	EnemyBase::Init();

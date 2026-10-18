@@ -7,6 +7,7 @@
 #include "../../System/WayPointManager/WayPointManager.h"
 #include"../../System/StageDataManager/StageDataManager.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 
 
@@ -432,6 +433,7 @@ void StageEditor::LoadSucceeded(const std::string& stageName)
 	AABBCollisionManager::Instance().ClearBackup();
 
 	OBBCollisionManager::Instance().ClearBackup();
+	AIBlockManager::Instance().ClearBackup();
 
 	EditorManager::Instance().ClearDirty();
 
@@ -463,6 +465,7 @@ void StageEditor::LoadFailed()
 	AABBCollisionManager::Instance().RestoreAABBCollisionList();
 
 	OBBCollisionManager::Instance().RestoreOBBCollisionList();
+	AIBlockManager::Instance().RestoreAIBlockList();
 }
 
 bool StageEditor::IsStageExists(const std::string& stageName) const
@@ -601,6 +604,7 @@ void StageEditor::ClearStage()
 
 	// OBBをクリア
 	OBBCollisionManager::Instance().ClearOBBCollisionList();
+	AIBlockManager::Instance().ClearAIBlockList();
 
 	// ゲームオブジェクトをクリア
 	auto editorScene = SceneManager::Instance().GetCurrentScene<EditorScene>();

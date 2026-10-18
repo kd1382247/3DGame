@@ -13,6 +13,7 @@
 #include "../BGMManager/BGMManager.h"
 #include "../../Framework/Effekseer/KdEffekseerManager.h"
 #include "../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
+#include "../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
 #include "../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 
 void SceneManager::PreUpdate()
@@ -118,6 +119,9 @@ void SceneManager::ResetSystems()
 
 	OBBCollisionManager::Instance().ClearOBBCollisionList();
 	OBBCollisionManager::Instance().ClearBackup();
+
+	AIBlockManager::Instance().ClearAIBlockList();
+	AIBlockManager::Instance().ClearBackup();
 
 	// ウェイポイント(同じく退避用リストも空にする)
 	WayPointManager::Instance().ClearWayPoints();

@@ -61,6 +61,8 @@ protected:
 	// 重み付き抽選。weights[i]が0以下の要素は選ばれない。戻り値は選ばれたweightsのindex
 	int LotteryPattern(const std::vector<float>& weights)const;
 
+	void PlayHitEffect();
+
 
 	// UpdateMoveから呼ばれる。歩き/待機モーションの再生は各Bossが実装する
 	virtual void PlayWalkAnimation() {}

@@ -15,10 +15,9 @@ std::filesystem::path StageLoder::GetGroundCollisionPath(const std::string& mode
 	return GetModelFolder(modelName) / "GroundCollision.gltf";
 }
 
-std::filesystem::path StageLoder::GetAIBlockCollisionPath(const std::string& modelName) const
+std::filesystem::path StageLoder::GetAIBlockDataPath(const std::string& modelName) const
 {
-	// 実際のモデルファイル名は"AIBlock.gltf"(AIBlockCollision.cppで使用しているファイル名に合わせている)
-	return GetModelFolder(modelName) / "AIBlock.gltf";
+	return GetModelDataFolder(modelName) / "AIBlockData.json";
 }
 
 std::filesystem::path StageLoder::GetOBBCollisionDataPath(const std::string& modelName) const

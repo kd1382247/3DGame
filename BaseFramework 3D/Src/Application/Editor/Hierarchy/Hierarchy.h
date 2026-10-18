@@ -13,6 +13,7 @@ public:
 		AreaVolume,
 		AABB,
 		OBB,
+		AIBlock,
 		PointLight
 	};
 
@@ -40,6 +41,7 @@ private:
 	void AddAreaVolume();
 	void AddAABB();
 	void AddOBB();
+	void AddAIBlock();
 	void AddPointLight();
 
 	// 検索ボックス(名前の一部で一覧を絞り込む)
@@ -56,6 +58,7 @@ private:
 	void DrawAreaVolume();
 	void DrawAABB();
 	void DrawOBB();
+	void DrawAIBlock();
 	void DrawPointLight();
 
 

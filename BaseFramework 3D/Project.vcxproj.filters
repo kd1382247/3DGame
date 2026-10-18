@@ -436,6 +436,9 @@
     <Filter Include="Src\Application\GameObject\EnemyCounter">
       <UniqueIdentifier>{3741244a-b9f3-4e8a-8f0a-1518a645cb8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision">
+      <UniqueIdentifier>{0b60795c-ae50-483f-833d-e401b59b51f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1161,6 +1164,12 @@
     <ClInclude Include="Src\Application\GameObject\EnemyCounter\EnemyCounter.h">
       <Filter>Src\Application\GameObject\EnemyCounter</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlock.h">
+      <Filter>Src\Application\GameObject\Stage\Collision\AIBlockCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockManager.h">
+      <Filter>Src\Application\GameObject\Stage\Collision\AIBlockCollision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1798,6 +1807,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\EnemyCounter\EnemyCounter.cpp">
       <Filter>Src\Application\GameObject\EnemyCounter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlock.cpp">
+      <Filter>Src\Application\GameObject\Stage\Collision\AIBlockCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockManager.cpp">
+      <Filter>Src\Application\GameObject\Stage\Collision\AIBlockCollision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

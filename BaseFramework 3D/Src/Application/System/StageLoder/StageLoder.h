@@ -13,8 +13,8 @@ public:
 	// GroundCollisionメッシュのパス
 	std::filesystem::path GetGroundCollisionPath(const std::string& modelName) const;
 
-	// AIBlockCollisionメッシュのパス
-	std::filesystem::path GetAIBlockCollisionPath(const std::string& modelName) const;
+	// AIBlockデータ(json)のパス
+	std::filesystem::path GetAIBlockDataPath(const std::string& modelName) const;
 
 	// OBBCollisionデータ(json)のパス
 	std::filesystem::path GetOBBCollisionDataPath(const std::string& modelName) const;

@@ -83,6 +83,12 @@ protected:
 	// 追跡か経路探索移動かを判定する
 	bool CanDirectChase();
 
+	// プレイヤーまで視線が通っているか(距離で絞り、一定間隔でだけレイを撃つ。結果は保持する)
+	bool IsSightClear(const Math::Vector3& playerPos);
+
+	// fromからtoの間にAIBlockがあるか
+	bool IsBlockedByAIBlock(const Math::Vector3& from, const Math::Vector3& to) const;
+
 	void SelectStartWayPoint();
 
 	// 移動方法を変更
@@ -116,6 +122,15 @@ protected:
 	float       m_pathRefreshTimer = 0.0f;
 	const float PathRefreshDuration = 1.0f;
 
+	// プレイヤーとの間にAIBlock(視線を遮るブロック)があるかのレイ判定
+	// Areaが違う敵が、壁越しにまっすぐ追わず、ウェイポイントを使うかを決めるために使う
+	float       m_sightCheckTimer = 0.0f;   // 次の判定までの時間
+	bool        m_isSightBlocked  = true;   // 直前の判定結果(trueなら遮られている)
+	const float SightCheckInterval = 0.2f;  // 判定の間隔(秒)
+	const float SightCheckDistance = 5.0f;  // この距離以内のときだけ判定する
+	const float SightRayHeight     = 0.5f;  // レイの高さ(足元からの高さ)
+
+
 
 	// プレイヤーに到達したかどうか
 	bool m_hasReachedTarget = false;
@@ -139,6 +154,9 @@ protected:
 	float m_reachDistance = 1.5f;
 
 	float m_smokeEffectScale = 0.6f;
+
+	// エフェクトの距離
+	float m_effectDist = 0.6f;
 
 	MeleeAttackData m_meleeAttack = {};
 

@@ -2,6 +2,7 @@
 
 #include"Collision/AABBCollision/AABBCollisionManager.h"
 #include"Collision/OBBCollision/OBBCollisionManager.h"
+#include"Collision/AIBlockCollision/AIBlockManager.h"
 
 #include"../PointLight/PointLightManager.h"
 
@@ -60,6 +61,7 @@ void StageObject::ClearOwnerData()
 {
 	AABBCollisionManager::Instance().RemoveByOwner(this);
 	OBBCollisionManager ::Instance().RemoveByOwner(this);
+	AIBlockManager      ::Instance().RemoveByOwner(this);
 	WayPointManager     ::Instance().RemoveByOwner(this);
 	PointLightObjectManager::Instance().RemoveByOwner(this);
 }
@@ -70,6 +72,7 @@ void StageObject::PreDraw()
 	// 位置と大きさだけをStageに追従させる
 	AABBCollisionManager::Instance().SetStageTransform(this,GetPos(), GetScale());
 	OBBCollisionManager::Instance().SetStageTransform(this,GetPos(), GetScale());
+	AIBlockManager::Instance().SetStageTransform(this,GetPos(), GetScale());
 	WayPointManager::Instance().SetStageTransform(this,GetPos(), GetScale());
 }
 

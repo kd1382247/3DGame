@@ -11,6 +11,9 @@
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 
+#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"
+#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
+
 #include"../../GameObject/PointLight/PointLight.h"
 #include"../../GameObject/PointLight/PointLightManager.h"
 
@@ -39,6 +42,7 @@ void Hierarchy::Draw()
 	const bool isStageDataCategory =
 		m_category == HierarchyCategory::AABB ||
 		m_category == HierarchyCategory::OBB ||
+		m_category == HierarchyCategory::AIBlock ||
 		m_category == HierarchyCategory::WayPoint ||
 		m_category == HierarchyCategory::PointLight;
 
@@ -118,6 +122,7 @@ void Hierarchy::DrawCategorySelector()
 		CategorySelectItem("WayPoint",   HierarchyCategory::WayPoint);
 		CategorySelectItem("AABB",       HierarchyCategory::AABB);
 		CategorySelectItem("OBB",        HierarchyCategory::OBB);
+		CategorySelectItem("AIBlock",    HierarchyCategory::AIBlock);
 		CategorySelectItem("PointLight", HierarchyCategory::PointLight);
 
 		ImGui::EndPopup();
@@ -154,6 +159,7 @@ const char* Hierarchy::GetCategoryLabel(HierarchyCategory category)
 	case HierarchyCategory::WayPoint:     return "WayPoint";
 	case HierarchyCategory::AABB:         return "AABB";
 	case HierarchyCategory::OBB:          return "OBB";
+	case HierarchyCategory::AIBlock:      return "AIBlock";
 	case HierarchyCategory::PointLight: return "PointLight";
 	}
 
@@ -227,6 +233,7 @@ void Hierarchy::DrawActiveStageSelector()
 					WayPointManager::Instance().SetIsDebug(false);
 					AABBCollisionManager::Instance().SetIsDebug(false);
 					OBBCollisionManager::Instance().SetIsDebug(false);
+					AIBlockManager::Instance().SetIsDebug(false);
 					PointLightObjectManager::Instance().SetIsDebug(false);
 				}
 				ImGui::PopID();
@@ -262,6 +269,9 @@ void Hierarchy::DrawAddButtons()
 		break;
 	case HierarchyCategory::OBB:
 		AddOBB();
+		break;
+	case HierarchyCategory::AIBlock:
+		AddAIBlock();
 		break;
 	case HierarchyCategory::PointLight:
 		AddPointLight();
@@ -472,6 +482,33 @@ void Hierarchy::AddOBB()
 	}
 }
 
+void Hierarchy::AddAIBlock()
+{
+	if (ImGui::Button("Add AIBlock"))
+	{
+		auto block = AIBlockManager::Instance().CreateAIBlock();
+
+		if (block)
+		{
+			block->SetOwner(EditorManager::Instance().GetActiveStage());
+
+			// CreateAIBlock()内でManagerへの登録まで完了している
+			EditorManager::Instance().SetSelectedObject(block);
+
+			EditorManager::Instance().MarkDirty();
+		}
+	}
+
+	ImGui::SameLine();
+
+	bool isDebug = AIBlockManager::Instance().IsDebug();
+
+	if (ImGui::Checkbox("Debug", &isDebug))
+	{
+		AIBlockManager::Instance().SetIsDebug(isDebug);
+	}
+}
+
 void Hierarchy::AddPointLight()
 {
 	// PointLightはActive Stageの持ち物になるので、ステージが無いときは作れない
@@ -566,6 +603,10 @@ void Hierarchy::DrawSelectedCategoryList()
 
 	case HierarchyCategory::OBB:
 		DrawOBB();
+		break;
+
+	case HierarchyCategory::AIBlock:
+		DrawAIBlock();
 		break;
 
 	case HierarchyCategory::PointLight:
@@ -694,6 +735,22 @@ void Hierarchy::DrawOBB()
 		}
 
 		SelectHierarchyObject(obb);
+	}
+}
+
+void Hierarchy::DrawAIBlock()
+{
+	auto activeStage = EditorManager::Instance().GetActiveStage();
+
+	for (const auto& block : AIBlockManager::Instance().GetAIBlockList())
+	{
+		if (!block ||
+			block->GetOwner() != activeStage)
+		{
+			continue;
+		}
+
+		SelectHierarchyObject(block);
 	}
 }
 

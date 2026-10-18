@@ -434,6 +434,8 @@
     <ClInclude Include="Src\Application\GameObject\PointLight\PointLightManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollision.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.h" />
+    <ClInclude Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlock.h" />
+    <ClInclude Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollision.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\StageFollower.h" />
@@ -652,6 +654,8 @@
     <ClCompile Include="Src\Application\GameObject\PointLight\PointLightManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollision.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlock.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollision.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\StageFollower.cpp" />

@@ -12,6 +12,8 @@
 #include "../../System/WayPointManager/WayPointManager.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"
+#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
 #include"../../GameObject/PointLight/PointLight.h"
 #include"../../GameObject/PointLight/PointLightManager.h"
 #include"../../System/StageLoder/StageLoder.h"
@@ -80,6 +82,17 @@ bool StageDataManager::LoadStageModelData(const std::shared_ptr<StageObject>& st
 	if (std::filesystem::exists(obbFilePath))
 	{
 		if (!OBBCollisionManager::Instance().Load(obbFilePath.string(), stage))
+		{
+			return false;
+		}
+	}
+
+	const std::filesystem::path aiBlockFilePath =
+		StageLoder::Instance().GetAIBlockDataPath(modelName);
+
+	if (std::filesystem::exists(aiBlockFilePath))
+	{
+		if (!AIBlockManager::Instance().Load(aiBlockFilePath.string(), stage))
 		{
 			return false;
 		}
@@ -196,6 +209,14 @@ bool StageDataManager::SaveToFolder(const std::filesystem::path& folder)
 			}
 		}
 
+		for (const auto& block : AIBlockManager::Instance().GetAIBlockList())
+		{
+			if (block && !block->GetOwner())
+			{
+				block->SetOwner(firstStage);
+			}
+		}
+
 		for (const auto& light : PointLightObjectManager::Instance().GetPointLights())
 		{
 			if (light && !light->GetOwner())
@@ -248,6 +269,13 @@ bool StageDataManager::SaveToFolder(const std::filesystem::path& folder)
 		// OBBを保存
 		if (!OBBCollisionManager::Instance().Save(
 			StageLoder::Instance().GetOBBCollisionDataPath(modelName).string(), stage))
+		{
+			return false;
+		}
+
+		// AIBlockを保存
+		if (!AIBlockManager::Instance().Save(
+			StageLoder::Instance().GetAIBlockDataPath(modelName).string(), stage))
 		{
 			return false;
 		}

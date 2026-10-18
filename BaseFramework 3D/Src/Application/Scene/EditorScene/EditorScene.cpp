@@ -7,6 +7,7 @@
 #include"../../GameObject/WayPoint/WayPoint.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
 
 void EditorScene::PreDraw()
 {
@@ -33,6 +34,8 @@ void EditorScene::DrawDebug()
 	AABBCollisionManager::Instance().DrawDebug();
 
 	OBBCollisionManager::Instance().DrawDebug();
+
+	AIBlockManager::Instance().DrawDebug();
 
 	WayPointManager::Instance().DrawDebug();
 	

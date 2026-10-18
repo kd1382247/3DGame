@@ -12,6 +12,9 @@
 #include"../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 #include"../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 
+#include"../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
+#include"../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"
+
 #include"../GameObject/PointLight/PointLightManager.h"
 #include"../GameObject/PointLight/PointLight.h"
 
@@ -104,6 +107,11 @@ void EditorManager::Draw()
 void EditorManager::StartPlayMode()
 {
 
+	// Play開始/終了でステージが作り直されるため、編集中のステージを名前で覚えておく
+	// (覚えておかないとActiveStageが消え、Hierarchyが先頭のステージを選び直してしまう)
+	const auto currentActiveStage = GetActiveStage();
+	const std::string activeStageName = currentActiveStage ? currentActiveStage->GetObjectName() : std::string();
+
 	if (!StageDataManager::Instance().SaveTemporary())
 	{
 		return;
@@ -120,6 +128,7 @@ void EditorManager::StartPlayMode()
 	WayPointManager::Instance().ClearWayPoints();
 	AABBCollisionManager::Instance().ClearAABBCollisionList();
 	OBBCollisionManager::Instance().ClearOBBCollisionList();
+	AIBlockManager::Instance().ClearAIBlockList();
 
 
 	// Edit開始前の状態を復元
@@ -130,6 +139,7 @@ void EditorManager::StartPlayMode()
 		WayPointManager::Instance().RestoreWayPoints();
 		AABBCollisionManager::Instance().RestoreAABBCollisionList();
 		OBBCollisionManager::Instance().RestoreOBBCollisionList();
+		AIBlockManager::Instance().RestoreAIBlockList();
 
 		return;
 	}
@@ -139,6 +149,10 @@ void EditorManager::StartPlayMode()
 	WayPointManager::Instance().ClearBackup();
 	AABBCollisionManager::Instance().ClearBackup();
 	OBBCollisionManager::Instance().ClearBackup();
+	AIBlockManager::Instance().ClearBackup();
+
+	// 作り直されたステージの中から、編集中だったステージを選び直す
+	RestoreActiveStageByName(activeStageName);
 
 	// モードを切り替える
 	SetEditorMode(EditorMode::Play);
@@ -155,6 +169,11 @@ void EditorManager::StartPlayMode()
 
 void EditorManager::StopPlayMode()
 {
+
+	// Play開始/終了でステージが作り直されるため、編集中のステージを名前で覚えておく
+	// (覚えておかないとActiveStageが消え、Hierarchyが先頭のステージを選び直してしまう)
+	const auto currentActiveStage = GetActiveStage();
+	const std::string activeStageName = currentActiveStage ? currentActiveStage->GetObjectName() : std::string();
 
 	auto editorScene = SceneManager::Instance().GetCurrentScene<EditorScene>();
 	if (!editorScene)
@@ -173,6 +192,7 @@ void EditorManager::StopPlayMode()
 	WayPointManager::Instance().ClearWayPoints();
 	AABBCollisionManager::Instance().ClearAABBCollisionList();
 	OBBCollisionManager::Instance().ClearOBBCollisionList();
+	AIBlockManager::Instance().ClearAIBlockList();
 
 	// Edit開始前の状態を復元
 	if (!StageDataManager::Instance().LoadTemporary())
@@ -182,6 +202,7 @@ void EditorManager::StopPlayMode()
 		WayPointManager::Instance().RestoreWayPoints();
 		AABBCollisionManager::Instance().RestoreAABBCollisionList();
 		OBBCollisionManager::Instance().RestoreOBBCollisionList();
+		AIBlockManager::Instance().RestoreAIBlockList();
 
 		return;
 	}
@@ -191,6 +212,10 @@ void EditorManager::StopPlayMode()
 	WayPointManager::Instance().ClearBackup();
 	AABBCollisionManager::Instance().ClearBackup();
 	OBBCollisionManager::Instance().ClearBackup();
+	AIBlockManager::Instance().ClearBackup();
+
+	// 作り直されたステージの中から、編集中だったステージを選び直す
+	RestoreActiveStageByName(activeStageName);
 
 	// モードを切り替える
 	SetEditorMode(EditorMode::Edit);
@@ -203,6 +228,25 @@ void EditorManager::StopPlayMode()
 
 	// マウスカーソル
 	ShowCursor(true);
+}
+
+void EditorManager::RestoreActiveStageByName(const std::string& stageName)
+{
+	if (stageName.empty())
+	{
+		return;
+	}
+
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto stage = std::dynamic_pointer_cast<StageObject>(obj);
+
+		if (stage && stage->GetObjectName() == stageName)
+		{
+			SetActiveStage(stage);
+			return;
+		}
+	}
 }
 
 void EditorManager::BeginSceneViewRender()
@@ -421,6 +465,10 @@ void EditorManager::UpdateMouseSelection()
 		break;
 	case Hierarchy::HierarchyCategory::OBB:
 		SelectOBBByMouse();
+		break;
+
+	case Hierarchy::HierarchyCategory::AIBlock:
+		SelectAIBlockByMouse();
 		break;
 
 	case Hierarchy::HierarchyCategory::PointLight:
@@ -645,6 +693,33 @@ void EditorManager::SelectOBBByMouse()
 	SetSelectedObject(selectedObj);
 }
 
+void EditorManager::SelectAIBlockByMouse()
+{
+	if (!CanEditStageData())
+	{
+		return;
+	}
+
+	auto activeStage = GetActiveStage();
+
+	auto selectedObj = SelectClosestByMouse(
+		AIBlockManager::Instance().GetAIBlockList(),
+		KdCollider::TypeBump,
+		[activeStage](const std::shared_ptr<KdGameObject>& obj)
+		{
+			auto block = std::dynamic_pointer_cast<AIBlock>(obj);
+
+			if (!block)
+			{
+				return false;
+			}
+
+			return block->GetOwner() == activeStage;
+		});
+
+	SetSelectedObject(selectedObj);
+}
+
 void EditorManager::SelectPointLightByMouse()
 {
 	if (!CanEditStageData())
@@ -739,6 +814,7 @@ bool EditorManager::CanCopyObject(const std::shared_ptr<KdGameObject>& obj) cons
 	return std::dynamic_pointer_cast<StageGimmick>(obj)
 		|| std::dynamic_pointer_cast<AABBCollision>(obj)
 		|| std::dynamic_pointer_cast<OBBCollision>(obj)
+		|| std::dynamic_pointer_cast<AIBlock>(obj)
 		|| std::dynamic_pointer_cast<PointLightObject>(obj);
 }
 
@@ -792,6 +868,29 @@ std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<Kd
 		copy->SetPos(srcOBB->GetPos());
 		copy->SetScale(srcOBB->GetScale());
 		copy->SetRotation(srcOBB->GetRotation());
+
+		return copy;
+	}
+
+	//------------------------------------------------------------
+	// AIBlock: AABBと同じ。空いているIDで新しく作り、位置・大きさ・持ち主を写す
+	//------------------------------------------------------------
+	if (auto srcBlock = std::dynamic_pointer_cast<AIBlock>(src))
+	{
+		auto copy = AIBlockManager::Instance().CreateAIBlock();
+
+		if (!copy)
+		{
+			return nullptr;
+		}
+
+		copy->SetLocalPos(srcBlock->GetLocalPos());
+		copy->SetLocalScale(srcBlock->GetLocalScale());
+		copy->SetOwner(srcBlock->GetOwner());
+
+		// 次にステージの追従が更新されるまでの間も、同じ位置・大きさにしておく
+		copy->SetPos(srcBlock->GetPos());
+		copy->SetScale(srcBlock->GetScale());
 
 		return copy;
 	}

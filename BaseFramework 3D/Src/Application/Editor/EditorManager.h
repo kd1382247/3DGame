@@ -62,7 +62,7 @@ public:
 	// stageModelNameはステージ(StageObject)を作るときだけ使う。最初から読み込むステージモデルの名前
 	void CreateGameObject(const std::string& className, const std::string& stageModelName = "");
 
-	// コピーできるオブジェクトか(ギミック・AABB・OBB)
+	// コピーできるオブジェクトか(ギミック・AABB・OBB・AIBlock・PointLight)
 	bool CanCopyObject(const std::shared_ptr<KdGameObject>& obj) const;
 
 	// オブジェクトをコピーする。コピーしたオブジェクトを返す(できなければnullptr)
@@ -143,8 +143,14 @@ private:
 	// OBBを選択
 	void SelectOBBByMouse();
 
+	// AIBlockを選択
+	void SelectAIBlockByMouse();
+
 	// PointLightを選択
 	void SelectPointLightByMouse();
+
+	// 名前が同じステージをActiveStageにする(Play開始/終了でステージが作り直されるため)
+	void RestoreActiveStageByName(const std::string& stageName);
 
 	// 指定したクラス名で、シーン上の名前と重複しない名前を作る(例:"Slime_0")
 	// (同じクラス名の中で、未使用の最小の番号を採用する。番号の欠番は次回そこから埋まる)
