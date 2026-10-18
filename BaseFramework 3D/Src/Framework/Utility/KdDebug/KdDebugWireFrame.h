@@ -14,8 +14,16 @@ public:
 
 	void Draw();
 
+	// 全てのデバッグ線の追加を、まとめてON/OFFする
+	// OFFの間は線を追加しても何もしない (描画しないまま頂点が溜まり続けるのを防ぐため)
+	static void SetEnable(const bool isEnable) { s_isEnable = isEnable; }
+	static bool IsEnable() { return s_isEnable; }
+
 private:
 	void Release();
+
+	// デバッグ線を追加するか (全てのKdDebugWireFrameで共通)
+	static inline bool s_isEnable = true;
 
 	std::vector<KdPolygon::Vertex>	m_debugVertices;
 };

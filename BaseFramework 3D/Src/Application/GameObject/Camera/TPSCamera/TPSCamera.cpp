@@ -79,6 +79,7 @@ void TPSCamera::Init()
 	m_introState = BossIntroState::None;
 	m_introBlend = 0.0f;
 	m_shakeTime = 0.0f;
+	m_isDefeat = false;
 
 }
 
@@ -124,6 +125,7 @@ void TPSCamera::StartBossIntro(const Math::Vector3& pos, const BossIntroParam& p
 	// 引数を保存
 	m_bossPos = pos;
 	m_introParam = param;
+	m_isDefeat = false;
 
 	// カメラの位置を計算
 	Math::Vector3 bossDir = spTarget->GetPos() - m_bossPos ;
@@ -151,6 +153,48 @@ void TPSCamera::StartBossIntro(const Math::Vector3& pos, const BossIntroParam& p
 
 }
 
+void TPSCamera::StartBossDefeat(const Math::Vector3& pos, const Math::Vector3& forward, const BossIntroParam& param)
+{
+	const std::shared_ptr<const KdGameObject> spTarget = m_wpTarget.lock();
+
+	// プレイヤーがいない
+	// m_introStateがNone以外の時は受け付けない
+	if (!spTarget ||
+		m_introState != BossIntroState::None)
+	{
+		return;
+	}
+
+	// 引数を保存し、撃破演出であることを覚える
+	m_bossPos = pos;
+	m_introParam = param;
+	m_isDefeat = true;
+
+	// ボスの正面の向き(水平方向だけ)
+	Math::Vector3 bossFront = forward;
+
+	bossFront.y = 0.0f;
+	// 長さがほぼ0なら、仮の方向に差し替える
+	if (bossFront.LengthSquared() <= 0.000001f)
+	{
+		bossFront = Math::Vector3(0.0f, 0.0f, -1.0f);
+	}
+
+	bossFront.Normalize();
+
+	// カメラの基準の位置をボスの正面の方向に
+	// distance分離れた位置に持っていく
+	m_introCamPos = m_bossPos + bossFront * m_introParam.distance + Math::Vector3(0.0f, m_introParam.height, 0.0f);
+
+	// カメラの向きをセット
+	m_introCamRot = CreateLookRotation(m_introCamPos, m_introParam.lookHeight);
+
+	// ステートを変更しタイマーを0にする
+	m_introState = BossIntroState::Approach;
+	m_shakeTime = 0.0f;
+
+}
+
 void TPSCamera::UpdateBossIntro()
 {
 	if (m_introState == BossIntroState::None)
@@ -170,7 +214,8 @@ void TPSCamera::UpdateBossIntro()
 		if (m_introBlend >= kArriveThreshold)
 		{
 			m_introBlend = 1.0f;
-			m_introState = BossIntroState::Hold;
+			// 撃破演出ならそのままよろけ演出へ、咆哮演出なら合図を待つ
+			m_introState = m_isDefeat ? BossIntroState::Stagger : BossIntroState::Hold;
 		}
 
 		break;
@@ -187,7 +232,23 @@ void TPSCamera::UpdateBossIntro()
 		}
 
 		break;
+	case TPSCamera::BossIntroState::Stagger:
+
+		m_shakeTime += deltaTime;
+
+		if (m_shakeTime >= m_introParam.staggerDuration)
+		{
+			m_introState = BossIntroState::Return;
+		}
+
+		break;
 	case TPSCamera::BossIntroState::Return:
+
+		// 撃破演出では、戻る間も動きが途切れないよう時間を進め続ける
+		if (m_isDefeat)
+		{
+			m_shakeTime += deltaTime;
+		}
 
 		m_introBlend += (0.0f - m_introBlend) * m_introParam.returnSpeed;
 
@@ -208,23 +269,50 @@ void TPSCamera::ApplyBossIntro()
 		return;
 	}
 
+	// 今フレームの、演出カメラの目標の位置と向き
+	// (咆哮演出では、StartBossIntroで決めた位置と向きのまま)
+	Math::Vector3    introPos = m_introCamPos;
+	Math::Quaternion introRot = m_introCamRot;
+
+	// 撃破演出では、ボスの正面を中心に左右へ回り込む
+	if (m_isDefeat)
+	{
+		// 基準の位置を、ボスを中心にY軸まわりで回す
+		// (m_introCamPosそのものは書き換えない)
+		Math::Vector3    offset = m_introCamPos - m_bossPos;
+		Math::Quaternion sway   = Math::Quaternion::CreateFromAxisAngle(Math::Vector3::Up, CalcSwayAngle());
+
+		offset = Math::Vector3::Transform(offset, sway);
+
+		introPos = m_bossPos + offset;
+
+		// 回した位置から、ボスを見る向きを作り直す
+		introRot = CreateLookRotation(introPos, m_introParam.lookHeight);
+	}
+
 	// 位置を混ぜる
 	Math::Vector3 camPos = GetPos();
 	Math::Vector3 blendPos = {};
 
-	blendPos = Math::Vector3::Lerp(camPos,m_introCamPos,m_introBlend);
+	blendPos = Math::Vector3::Lerp(camPos,introPos,m_introBlend);
 
 	// 回転を混ぜる
 	Math::Quaternion camRotation = Math::Quaternion::CreateFromRotationMatrix(m_mRotation);
 	Math::Quaternion blendRotation = {};
 
-	blendRotation = Math::Quaternion::Slerp(camRotation, m_introCamRot, m_introBlend);
+	blendRotation = Math::Quaternion::Slerp(camRotation, introRot, m_introBlend);
 
 	m_mWorld = Math::Matrix::CreateFromQuaternion(blendRotation);
 
 	Math::Vector3 camFoward = Math::Vector3::TransformNormal(Math::Vector3::Backward, m_mWorld);
 
 	blendPos += camFoward * CalcShakeOffsest();
+
+	// 撃破演出の小刻みな揺れ(カメラの左右方向)
+	// 戻るとき(Return)は、混ぜ具合に合わせて小さくして、最後に飛ばないようにする
+	Math::Vector3 camRight = Math::Vector3::TransformNormal(Math::Vector3::Right, m_mWorld);
+
+	blendPos += camRight * CalcStaggerShake() * m_introBlend;
 
 	SetPos(blendPos);
 
@@ -253,6 +341,57 @@ float TPSCamera::CalcShakeOffsest() const
 	float wave = sin(angle);
 
 	return m_introParam.shakeAmplitude * wave * decay;
+}
+
+float TPSCamera::CalcSwayAngle() const
+{
+	// 撃破演出でなければ、回り込まない
+	if (!m_isDefeat)
+	{
+		return 0.0f;
+	}
+
+	// 回り込む角度の上限(ラジアン)
+	float maxAngle = DirectX::XMConvertToRadians(m_introParam.swayAngle);
+
+	// ゆっくりしたサインカーブで、左右に往復させる
+	float wave = sin(m_shakeTime * m_introParam.swayFrequency * DirectX::XM_2PI);
+
+	return maxAngle * wave;
+}
+
+float TPSCamera::CalcStaggerShake() const
+{
+	// 撃破演出でない、または揺れの設定が0以下の場合は0を返す
+	if (!m_isDefeat ||
+		m_introParam.staggerShakeInterval <= 0.0f ||
+		m_introParam.staggerShakeBurst <= 0.0f)
+	{
+		return 0.0f;
+	}
+
+	// 今の揺れが始まってからの時間(0 〜 staggerShakeInterval)
+	float phase = std::fmod(m_shakeTime, m_introParam.staggerShakeInterval);
+
+	// 揺れの時間が終わったら、次の揺れが始まるまで0
+	if (phase >= m_introParam.staggerShakeBurst)
+	{
+		return 0.0f;
+	}
+
+	// 進み具合
+	float t = phase / m_introParam.staggerShakeBurst;
+
+	// 徐々に弱める
+	float decay = 1.0f - t;
+
+	// 小刻みな揺れ
+	float angle = phase * m_introParam.staggerShakeFrequency * DirectX::XM_2PI;
+
+	// サインカーブで揺らす
+	float wave = sin(angle);
+
+	return m_introParam.staggerShakeAmplitude * wave * decay;
 }
 
 Math::Quaternion TPSCamera::CreateLookRotation(const Math::Vector3& camPos, const float lookHeight)

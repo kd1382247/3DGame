@@ -2,6 +2,7 @@
 
 #include "../../../Framework/Audio/KdAudio.h"
 #include "../../System/Mouse/Mouse.h"
+#include "../../System/TimeManager/TimeManager.h"
 
 namespace
 {
@@ -51,6 +52,24 @@ namespace
 
 	// 画面を暗くする色
 	const Math::Color DimColor = { 0.0f, 0.0f, 0.0f, 0.6f };
+
+	// 左右キーを押し続けた時に、音量が変わる速さ (1秒あたり。0.5なら、端から端まで2秒)
+	constexpr float VolumeKeySpeed = 0.5f;
+
+	// 選ばれているスライダーの見た目
+	constexpr int   SelectBoxX      = -10;	// 行の背景の中心X
+	constexpr int   SelectBoxHalfW  = 310;	// 行の背景の半分の幅
+	constexpr int   SelectBoxHalfH  = 32;	// 行の背景の半分の高さ
+	constexpr float KnobSelectScale = 1.3f;	// つまみの大きさの倍率
+
+	// 選ばれているスライダーの行の背景の色
+	const Math::Color SelectBoxColor = { 1.0f, 1.0f, 1.0f, 0.15f };
+
+	// キー(マウスのボタン)が押されているか
+	bool IsKeyDown(int key)
+	{
+		return (GetAsyncKeyState(key) & 0x8000) != 0;
+	}
 }
 
 void Setting::Init()
@@ -70,6 +89,8 @@ void Setting::Init()
 	m_isJustOpened    = false;
 	m_isHoverClose    = false;
 	m_dragSlider      = SliderType::None;
+	m_selectedItem    = MenuItem::BGM;
+	m_keyAdjustSlider = SliderType::None;
 
 	// テクスチャの読み込み
 	InitTexture(m_spPanelTex,          "SettingsPanel.png");
@@ -85,11 +106,25 @@ void Setting::Init()
 
 void Setting::Update()
 {
-	// マウスの左ボタンの状態
+	// 入力の状態
 	// 閉じている間も毎フレーム更新しておく (開いた瞬間に「押した瞬間」を正しく判定するため)
-	const bool isMouseDown    = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+	const bool  isMouseDown = IsKeyDown(VK_LBUTTON);
+	const bool  isUpKey     = IsKeyDown('W') || IsKeyDown(VK_UP);
+	const bool  isDownKey   = IsKeyDown('S') || IsKeyDown(VK_DOWN);
+	const bool  isEnterKey  = IsKeyDown(VK_RETURN);
+	const POINT mousePos    = Mouse::Instance().Get2DMousePos();
+
 	const bool isMouseTrigger = isMouseDown && !m_isPrevMouseDown;
+	const bool isUpTrigger    = isUpKey      && !m_isPrevUpKey;
+	const bool isDownTrigger  = isDownKey    && !m_isPrevDownKey;
+	const bool isEnterTrigger = isEnterKey   && !m_isPrevEnterKey;
+	const bool isMouseMoved   = mousePos.x != m_prevMousePos.x || mousePos.y != m_prevMousePos.y;
+
 	m_isPrevMouseDown = isMouseDown;
+	m_isPrevUpKey     = isUpKey;
+	m_isPrevDownKey   = isDownKey;
+	m_isPrevEnterKey  = isEnterKey;
+	m_prevMousePos    = mousePos;
 
 	if (!m_isOpen)
 	{
@@ -97,14 +132,12 @@ void Setting::Update()
 	}
 
 	// 開いた直後のフレームは入力を受け付けない
-	// (設定ボタンを押したクリックが、そのまま設定画面側のクリックになるのを防ぐ)
+	// (設定ボタンを押したクリックやEnterが、そのまま設定画面側の入力になるのを防ぐ)
 	if (m_isJustOpened)
 	{
 		m_isJustOpened = false;
 		return;
 	}
-
-	POINT mousePos = Mouse::Instance().Get2DMousePos();
 
 	// 閉じるボタン
 	m_isHoverClose = IsHoverCloseButton(mousePos);
@@ -115,16 +148,35 @@ void Setting::Update()
 		return;
 	}
 
+	// マウスが動いた時は、乗っている項目を選ぶ (ドラッグ中は選び直さない)
+	if (isMouseMoved && m_dragSlider == SliderType::None)
+	{
+		if (m_isHoverClose)
+		{
+			Select(MenuItem::Close);
+		}
+		else if (IsHoverSlider(mousePos, BGMBarY))
+		{
+			Select(MenuItem::BGM);
+		}
+		else if (IsHoverSlider(mousePos, SEBarY))
+		{
+			Select(MenuItem::SE);
+		}
+	}
+
 	// スライダーをつかむ (押した瞬間に、どのスライダーの上にいるかを調べる)
 	if (isMouseTrigger)
 	{
 		if (IsHoverSlider(mousePos, BGMBarY))
 		{
 			m_dragSlider = SliderType::BGM;
+			Select(MenuItem::BGM);
 		}
 		else if (IsHoverSlider(mousePos, SEBarY))
 		{
 			m_dragSlider = SliderType::SE;
+			Select(MenuItem::SE);
 		}
 	}
 
@@ -150,6 +202,12 @@ void Setting::Update()
 			SaveVolume();
 		}
 	}
+
+	// キー操作 (マウスでつかんでいる間は受け付けない)
+	if (m_dragSlider == SliderType::None)
+	{
+		UpdateKeyInput(isUpTrigger, isDownTrigger, isEnterTrigger);
+	}
 }
 
 void Setting::DrawSprite()
@@ -171,12 +229,22 @@ void Setting::DrawSprite()
 	sprite.DrawTex(m_spHeadingTex,        0, HeadingY);
 	sprite.DrawTex(m_spHeadingDividerTex, 0, HeadingDividerY);
 
+	// 選ばれているスライダーの行の背景
+	if (m_selectedItem == MenuItem::BGM)
+	{
+		sprite.DrawBox(SelectBoxX, BGMBarY, SelectBoxHalfW, SelectBoxHalfH, &SelectBoxColor);
+	}
+	else if (m_selectedItem == MenuItem::SE)
+	{
+		sprite.DrawBox(SelectBoxX, SEBarY, SelectBoxHalfW, SelectBoxHalfH, &SelectBoxColor);
+	}
+
 	// スライダー (上: BGM / 下: SE)
 	sprite.DrawTex(m_spLabelBGMTex, LabelX, BGMBarY);
 	sprite.DrawTex(m_spLabelSETex,  LabelX, SEBarY);
 
-	DrawSlider(BGMBarY, GetSliderValue(SliderType::BGM));
-	DrawSlider(SEBarY,  GetSliderValue(SliderType::SE));
+	DrawSlider(BGMBarY, GetSliderValue(SliderType::BGM), m_selectedItem == MenuItem::BGM);
+	DrawSlider(SEBarY,  GetSliderValue(SliderType::SE),  m_selectedItem == MenuItem::SE);
 
 	// 閉じるボタン
 	DrawCloseButton();
@@ -184,18 +252,143 @@ void Setting::DrawSprite()
 
 void Setting::Open()
 {
-	m_isOpen       = true;
-	m_isJustOpened = true;
-	m_isHoverClose = false;
-	m_dragSlider   = SliderType::None;
+	m_isOpen          = true;
+	m_isJustOpened    = true;
+	m_isHoverClose    = false;
+	m_dragSlider      = SliderType::None;
+	m_selectedItem    = MenuItem::BGM;
+	m_keyAdjustSlider = SliderType::None;
 }
 
 void Setting::Close()
 {
+	// キーで音量を変えている途中なら、閉じる前に保存する
+	if (m_keyAdjustSlider != SliderType::None)
+	{
+		m_keyAdjustSlider = SliderType::None;
+
+		SaveVolume();
+	}
+
 	m_isOpen       = false;
 	m_isJustOpened = false;
 	m_isHoverClose = false;
 	m_dragSlider   = SliderType::None;
+}
+
+bool Setting::UpdateKeyInput(bool isUpTrigger, bool isDownTrigger, bool isEnterTrigger)
+{
+	// 上下で項目を選ぶ (画面の上から ×、BGM、SE の順。端から先は反対側に回る)
+	constexpr int ItemCount = 3;
+
+	int item = static_cast<int>(m_selectedItem);
+
+	if (isUpTrigger)
+	{
+		item = (item + ItemCount - 1) % ItemCount;
+	}
+
+	if (isDownTrigger)
+	{
+		item = (item + 1) % ItemCount;
+	}
+
+	Select(static_cast<MenuItem>(item));
+
+	// ×を選んでいる時は、Enterで閉じる
+	if (m_selectedItem == MenuItem::Close)
+	{
+		if (isEnterTrigger)
+		{
+			Close();
+
+			return true;
+		}
+
+		return false;
+	}
+
+	// 左右のキーで音量を変える (押している間、少しずつ変わる)
+	const bool isLeftKey  = IsKeyDown('A') || IsKeyDown(VK_LEFT);
+	const bool isRightKey = IsKeyDown('D') || IsKeyDown(VK_RIGHT);
+
+	float direction = 0.0f;
+
+	if (isRightKey)
+	{
+		direction += 1.0f;
+	}
+
+	if (isLeftKey)
+	{
+		direction -= 1.0f;
+	}
+
+	const SliderType slider = GetSelectedSlider();
+
+	if (direction != 0.0f)
+	{
+		// ヒットストップなどの影響を受けないように、実時間の経過を使う
+		const float deltaTime = TimeManager::Instance().GetUnscaleeDeltaTime();
+
+		const float value = GetSliderValue(slider) + direction * VolumeKeySpeed * deltaTime;
+
+		SetSliderValue(slider, std::clamp(value, 0.0f, 1.0f));
+
+		m_keyAdjustSlider = slider;
+	}
+	else
+	{
+		// キーを離した
+		FinishKeyAdjust();
+	}
+
+	return false;
+}
+
+void Setting::Select(MenuItem item)
+{
+	if (item == m_selectedItem)
+	{
+		return;
+	}
+
+	// 音量を変えている途中で別の項目に移ったら、そこで調節を終える
+	FinishKeyAdjust();
+
+	m_selectedItem = item;
+}
+
+void Setting::FinishKeyAdjust()
+{
+	if (m_keyAdjustSlider == SliderType::None)
+	{
+		return;
+	}
+
+	// SEなら、確認用にSEを鳴らす (音量を耳で確かめられる)
+	if (m_keyAdjustSlider == SliderType::SE)
+	{
+		PlayPreviewSE();
+	}
+
+	m_keyAdjustSlider = SliderType::None;
+
+	// キーを離した時に保存する (毎フレームは保存しない)
+	SaveVolume();
+}
+
+Setting::SliderType Setting::GetSelectedSlider() const
+{
+	switch (m_selectedItem)
+	{
+	case MenuItem::BGM:
+		return SliderType::BGM;
+	case MenuItem::SE:
+		return SliderType::SE;
+	default:
+		return SliderType::None;
+	}
 }
 
 bool Setting::LoadVolume()
@@ -324,7 +517,7 @@ float Setting::CalcValueFromMouseX(int mouseX) const
 	return std::clamp(value, 0.0f, 1.0f);
 }
 
-void Setting::DrawSlider(int barY, float value)
+void Setting::DrawSlider(int barY, float value, bool isSelected)
 {
 	KdSpriteShader& sprite = KdShaderManager::Instance().m_spriteShader;
 
@@ -344,16 +537,28 @@ void Setting::DrawSlider(int barY, float value)
 		sprite.DrawTex(m_spBarFillTex, BarLeft, barY, fillWidth, BarHeight, &srcRect, &kWhiteColor, { 0.0f, 0.5f });
 	}
 
-	// つまみ
-	sprite.DrawTex(m_spKnobTex, knobX, barY);
+	// つまみ (選ばれている時は、少し大きく描く)
+	if (isSelected && m_spKnobTex)
+	{
+		const int knobW = static_cast<int>(m_spKnobTex->GetWidth()  * KnobSelectScale);
+		const int knobH = static_cast<int>(m_spKnobTex->GetHeight() * KnobSelectScale);
+
+		sprite.DrawTex(m_spKnobTex, knobX, barY, knobW, knobH);
+	}
+	else
+	{
+		sprite.DrawTex(m_spKnobTex, knobX, barY);
+	}
 }
 
 void Setting::DrawCloseButton()
 {
 	KdSpriteShader& sprite = KdShaderManager::Instance().m_spriteShader;
 
-	// マウスが乗っている時は、少し大きく描く (タイトルのボタンと同じ)
-	const int size = m_isHoverClose ? CloseButtonHoverSize : CloseButtonHalf * 2;
+	// マウスが乗っている時や、キーで選ばれている時は、少し大きく描く (タイトルのボタンと同じ)
+	const bool isBig = m_isHoverClose || m_selectedItem == MenuItem::Close;
+
+	const int size = isBig ? CloseButtonHoverSize : CloseButtonHalf * 2;
 
 	sprite.DrawTex(m_spCloseButtonTex, CloseButtonX, CloseButtonY, size, size);
 }

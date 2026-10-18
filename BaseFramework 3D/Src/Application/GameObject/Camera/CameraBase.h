@@ -43,6 +43,19 @@ public:
 
 	void SetUpReference()override;
 
+	// マウスでのカメラ回転を止める / 再開する (メニューをマウスで操作する時などに止める)
+	// 止めている間は、カーソルを画面中央へ戻す処理もしない
+	void SetMouseRotateLock(const bool isLock)
+	{
+		// 再開する時にカーソルを中央へ戻す (戻さないと、動かした分だけカメラが急に回ってしまう)
+		if (m_isMouseRotateLock && !isLock)
+		{
+			SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
+		}
+
+		m_isMouseRotateLock = isLock;
+	}
+
 
 protected:
 	// カメラ回転用角度
@@ -59,4 +72,7 @@ protected:
 
 	// カメラ回転用マウス座標の差分
 	POINT										m_FixMousePos{};
+
+	// マウスでのカメラ回転を止めているか
+	bool										m_isMouseRotateLock = false;
 };

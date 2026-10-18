@@ -2,6 +2,12 @@
 
 void KdDebugWireFrame::AddDebugLine(const Math::Vector3& start, const Math::Vector3& end, const Math::Color& col)
 {
+	// 追加を止めている間は、何もしない
+	if (!s_isEnable)
+	{
+		return;
+	}
+
 	// デバッグラインの始点
 	KdPolygon::Vertex v1;
 	v1.color = col.RGBA().v;
@@ -20,6 +26,12 @@ void KdDebugWireFrame::AddDebugLine(const Math::Vector3& start, const Math::Vect
 
 void KdDebugWireFrame::AddDebugLine(const Math::Vector3& start, const Math::Vector3& dir, float length, const Math::Color& col)
 {
+	// 追加を止めている間は、何もしない
+	if (!s_isEnable)
+	{
+		return;
+	}
+
 	// デバッグラインの始点
 	KdPolygon::Vertex v1;
 	v1.color = col.RGBA().v;
@@ -60,6 +72,12 @@ void KdDebugWireFrame::AddDebugLineFromMatrix(const Math::Matrix& mat, float sca
 // デバッグスフィアの描画
 void KdDebugWireFrame::AddDebugSphere(const Math::Vector3& pos, float radius, const Math::Color& col)
 {
+	// 追加を止めている間は、何もしない
+	if (!s_isEnable)
+	{
+		return;
+	}
+
 	KdPolygon::Vertex v;
 	v.UV = Math::Vector2::Zero;
 	v.color = col.RGBA().v;
@@ -105,6 +123,12 @@ void KdDebugWireFrame::AddDebugSphere(const Math::Vector3& pos, float radius, co
 // デバッグボックスの描画
 void KdDebugWireFrame::AddDebugBox(const Math::Matrix& matrix, const Math::Vector3& size, const Math::Vector3& offset, const bool isOriented, const Math::Color& col)
 {
+	// 追加を止めている間は、何もしない
+	if (!s_isEnable)
+	{
+		return;
+	}
+
 	KdPolygon::Vertex v;
 	v.UV = Math::Vector2::Zero;
 	v.color = col.RGBA().v;

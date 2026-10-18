@@ -26,6 +26,12 @@ public:
 		return false;
 	}
 
+	// HPを強制的に0にする(演出の都合で、ダメージを与えずに倒すとき)
+	void Kill()
+	{
+		m_hp = 0;
+	}
+
 	// HP回復
 	void Heal(const int amount)
 	{

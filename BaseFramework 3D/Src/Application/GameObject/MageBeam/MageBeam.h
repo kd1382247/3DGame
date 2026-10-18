@@ -23,6 +23,9 @@ public:
 
 	bool IsFinished()const { return m_isFinished; }
 
+	// 攻撃を取り消す(エフェクトを止めて、オブジェクトも消す)
+	void Cancel();
+
 private:
 
 	struct EffectInfo

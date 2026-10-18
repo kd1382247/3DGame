@@ -144,4 +144,7 @@ void SceneManager::ResetSystems()
 
 	// エディタの状態(モード・選択・編集中のステージ)
 	EditorManager::Instance().ResetState();
+
+	// デバッグ線(当たり判定の球など)の追加 (GameSceneが止めているので、元に戻す)
+	KdDebugWireFrame::SetEnable(true);
 }

@@ -20,7 +20,8 @@ void PlayerIntroWaitState::OnStart(Player* owner)
 void PlayerIntroWaitState::OnUpdate(Player* owner)
 {
 	// 演出が終わったら通常の操作に戻る
-	if (!RoomManager::Instance().IsBossIntro())
+	if (!RoomManager::Instance().IsBossIntro() &&
+		!RoomManager::Instance().IsBossDefeat())
 	{
 		m_pMachine->ChangeState<PlayerNormalState>();
 		return;

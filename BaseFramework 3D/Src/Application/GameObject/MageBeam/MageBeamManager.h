@@ -23,6 +23,10 @@ public:
 		const Math::Vector3& rotation,
 		const Math::Vector3& effectPos);
 
+
+	// 生成済みのものを全て取り消す(ボスが倒れた時など)
+	void CancelAll();
+
 private:
 
 	MageBeamManager() {}

@@ -26,3 +26,18 @@ std::shared_ptr<MageMagicSector> MageMagicSectorManager::CreateMagicSector(const
 
 	return magicSector;
 }
+
+void MageMagicSectorManager::CancelAll()
+{
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		const auto magicSector = std::dynamic_pointer_cast<MageMagicSector>(obj);
+
+		if (!magicSector)
+		{
+			continue;
+		}
+
+		magicSector->Cancel();
+	}
+}

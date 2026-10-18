@@ -23,6 +23,9 @@ public:
 
 	bool IsFinished()const { return m_isFinished; }
 
+	// 攻撃を取り消す(予告の表示とエフェクトを消して、オブジェクトも消す)
+	void Cancel();
+
 private:
 
 

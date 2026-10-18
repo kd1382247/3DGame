@@ -21,6 +21,9 @@ public:
 
 	void SetEffectInfo(const std::string& fileName, float size,float speed,float startFrame,float endFrame);
 
+	// 攻撃を取り消す(予告の表示とエフェクトを消して、オブジェクトも消す)
+	void Cancel();
+
 private:
 
 

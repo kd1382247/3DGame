@@ -76,6 +76,14 @@ void MageBeamState::OnExit(Mage* mage)
 {
 	HideBeamRange();
 
+	// 詠唱の途中で別のステートへ切り替わっても、予告の表示とエフェクトが残らないようにする
+	HideTelegraphIndicator();
+
+	if (auto spEffect = m_wpEffekseerObj.lock())
+	{
+		spEffect->StopEffect();
+	}
+
 	mage->EndAttack();
 }
 

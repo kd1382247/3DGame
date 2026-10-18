@@ -17,13 +17,14 @@
 
 #include"State/States/MageNormalState.h"
 #include"State/States/MageIntroState.h"
+#include"State/States/MageDieState.h"
 
 void Mage::Init()
 {
 	if (!m_spModel)
 	{
 		InitCharacterModel("Asset/Models/Boss/Mage/Mage.gltf", "Mage",
-			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "Mage");
+			Math::Vector3(0.0f, 0.8f, 0.0f), 0.7f, "Mage");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
@@ -120,7 +121,17 @@ void Mage::RePlayAnimation(MageAnimationType type)
 
 void Mage::OnHit(const AttackInfo attackInfo)
 {
-	BossBase::OnHit(attackInfo);
+	// 倒された後は攻撃を受けない
+	if (m_health.IsDead())
+	{
+		return;
+	}
+
+	// 倒された時は、撃破ヒットストップが入って、やられ状態へ切り替わる
+	if (ApplyDamage(attackInfo))
+	{
+		m_stateMachine.ChangeState<MageDieState>();
+	}
 }
 
 void Mage::UpdateAttack()
@@ -137,6 +148,17 @@ void Mage::EndAttack()
 {
 	m_attackFlg = false;
 	m_attackCooldown = m_attackCooldownDuration;
+}
+
+void Mage::CancelAllAttacks()
+{
+	MageMagicCircleManager::Instance().CancelAll();
+	MageMagicSectorManager::Instance().CancelAll();
+	MageBeamManager::Instance().CancelAll();
+	EnergyBulletManager::Instance().CancelAll();
+
+	// 召喚の準備中だった座標も捨てる
+	m_summonPositions.clear();
 }
 
 MageAttackPattern Mage::SelectAttackPattern()

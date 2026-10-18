@@ -19,6 +19,10 @@ public:
 		float knockBackPower,
 		float lifeTime);
 
+
+	// 生成済みのものを全て取り消す(ボスが倒れた時など)
+	void CancelAll();
+
 private:
 
 	EnergyBulletManager(){}

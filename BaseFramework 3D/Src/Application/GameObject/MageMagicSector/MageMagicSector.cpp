@@ -72,8 +72,15 @@ void MageMagicSector::UpdateMagicSectorRange()
 
 void MageMagicSector::HideMagicSectorRange()
 {
-	// 表示を消す
-	KdShaderManager::Instance().ReleaseColorSphere(m_colorSphereHandle);
+	// 解放済みなら何もしない
+	// (毎フレーム呼ばれるので、解放済みの番号をもう一度解放すると、別の物が使っている番号を消してしまう)
+	if (m_colorSphereHandle != -1)
+	{
+		// 表示を消す
+		KdShaderManager::Instance().ReleaseColorSphere(m_colorSphereHandle);
+
+		m_colorSphereHandle = -1;
+	}
 }
 
 
@@ -112,8 +119,31 @@ void MageMagicSector::HideTelegraphIndicator()
 }
 
 
+void MageMagicSector::Cancel()
+{
+	// 地面に出している予告の表示を消す
+	HideTelegraphIndicator();
+	HideMagicSectorRange();
+
+	// 再生中のエフェクトを止める
+	if (auto spEffect = m_wpEffekseerObj.lock())
+	{
+		spEffect->StopEffect();
+	}
+
+	m_isFinished = true;
+
+	Destroy();
+}
+
 void MageMagicSector::Update()
 {
+	// 取り消された後は何もしない
+	if (IsExpired())
+	{
+		return;
+	}
+
 	float deltaTime = TimeManager::Instance().GetDeltaTime();
 
 	UpdateTelegraphIndicator();

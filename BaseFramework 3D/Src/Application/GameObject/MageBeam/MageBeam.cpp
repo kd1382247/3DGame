@@ -53,8 +53,27 @@ void MageBeam::SetEffectInfo(const std::string& fileName, float size, float spee
 }
 
 
+void MageBeam::Cancel()
+{
+	// 再生中のエフェクトを止める
+	if (auto spEffect = m_wpEffekseerObj.lock())
+	{
+		spEffect->StopEffect();
+	}
+
+	m_isFinished = true;
+
+	Destroy();
+}
+
 void MageBeam::Update()
 {
+	// 取り消された後は何もしない(エフェクトをもう一度再生しないようにする)
+	if (IsExpired())
+	{
+		return;
+	}
+
 	float deltaTime = TimeManager::Instance().GetDeltaTime();
 
 	if (m_effectHandle < 0)

@@ -439,6 +439,9 @@
     <Filter Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision">
       <UniqueIdentifier>{0b60795c-ae50-483f-833d-e401b59b51f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\GameResultUI">
+      <UniqueIdentifier>{9de79ddf-a3a1-4894-8362-589a76cb7628}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1170,6 +1173,15 @@
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockManager.h">
       <Filter>Src\Application\GameObject\Stage\Collision\AIBlockCollision</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\GameResultUI\GameClearUI.h">
+      <Filter>Src\Application\GameObject\GameResultUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\GameResultUI\GameOverUI.h">
+      <Filter>Src\Application\GameObject\GameResultUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageDieState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1813,6 +1825,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlockManager.cpp">
       <Filter>Src\Application\GameObject\Stage\Collision\AIBlockCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\GameResultUI\GameClearUI.cpp">
+      <Filter>Src\Application\GameObject\GameResultUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\GameResultUI\GameOverUI.cpp">
+      <Filter>Src\Application\GameObject\GameResultUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageDieState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

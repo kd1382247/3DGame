@@ -37,8 +37,7 @@ private:
 	std::shared_ptr<KdTexture>m_spBarRedTex=nullptr;
 	std::shared_ptr<KdTexture>m_spBarGreenTex = nullptr;
 
-
-	const float m_barWidth = 250.0f;
+	const float m_barWidth = 300.0f;
 	const float m_barHeight = 50.0f;
 
 	float m_hpRate = 1.0f;
@@ -48,7 +47,7 @@ private:
 	const Math::Vector2 pivot = { 0.0f,0.5f };
 
 	// Barの位置
-	Math::Vector2 m_barOffset = {-400.0f,-300.0f};
+	Math::Vector2 m_barOffset = {-500.0f,-300.0f};
 
 	const std::string FilePath = "Asset/Textures/HP/Player/";
 

@@ -25,6 +25,9 @@ public:
 	// ボスの登場演出中かどうか
 	bool IsBossIntro()const;
 
+	// ボスを倒した演出中かどうか
+	bool IsBossDefeat()const;
+
 private:
 
 

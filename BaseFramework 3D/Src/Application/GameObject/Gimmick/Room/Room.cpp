@@ -10,6 +10,7 @@
 
 #include"../../../GameObject/Character/Player/Player.h"
 #include"../../Character/Boss/BossBase.h"
+#include"../../Character/Enemy/EnemyBase.h"
 
 void Room::Init()
 {
@@ -466,6 +467,23 @@ void Room::UpdateCombat()
 	}
 }
 
+void Room::StartBossDefeat()
+{
+	// 戦闘中のボス部屋だけ受け付ける
+	if (m_roomState != RoomState::InCombat || m_roomType != RoomType::Boss)
+	{
+		return;
+	}
+
+	ChangeState(RoomState::BossDefeat);
+
+	// ボスが演出を終えて FinishBossDefeat() を呼ぶまで、時間では終わらせない
+	m_waitBossDefeat = true;
+
+	// 部屋の中の敵を、ボスと同時に全員倒す
+	KillAllEnemies();
+}
+
 void Room::FinishBossDefeat()
 {
 	// ボスを倒した演出中でなければ何もしない
@@ -474,11 +492,19 @@ void Room::FinishBossDefeat()
 		return;
 	}
 
+	m_waitBossDefeat = false;
+
 	ChangeState(RoomState::Outro);
 }
 
 void Room::UpdateBossDefeat()
 {
+	// ボスの撃破演出が終わるのを待つ(終わらせるのは、ボス側から呼ぶFinishBossDefeat)
+	if (m_waitBossDefeat)
+	{
+		return;
+	}
+
 	// 演出の仕組みができるまでは、決めた時間が経ったら演出が終わったことにする
 	m_stateTimer += TimeManager::Instance().GetDeltaTime();
 
@@ -535,6 +561,27 @@ bool Room::SpawnerFinished()
 	}
 
 	return true;
+}
+
+void Room::KillAllEnemies()
+{
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		const auto enemy = std::dynamic_pointer_cast<EnemyBase>(obj);
+
+		if (!enemy)
+		{
+			continue;
+		}
+
+		// 部屋の外にいる敵は倒さない
+		if (!IsInside(enemy->GetPos()))
+		{
+			continue;
+		}
+
+		enemy->ForceKill();
+	}
 }
 
 int Room::CountAliveEnemies() const

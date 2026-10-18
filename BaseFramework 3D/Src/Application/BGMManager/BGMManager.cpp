@@ -88,6 +88,12 @@ BGMManager::BGMType BGMManager::DecideTargetType() const
 		return BGMType::None;
 	}
 
+	// ボスを倒した演出中も、BGMを止める
+	if (RoomManager::Instance().IsBossDefeat())
+	{
+		return BGMType::None;
+	}
+
 	// 部屋の状態で決める
 	if (RoomManager::Instance().IsBossCombat())
 	{
@@ -153,8 +159,8 @@ std::string BGMManager::GetPath(const BGMType type) const
 	case BGMType::Battle:   return std::string(kBGMFilePath) + "Battle/Battle.wav";
 	case BGMType::Boss:     return std::string(kBGMFilePath) + "Boss/Boss.wav";
 	case BGMType::Result:   return std::string(kBGMFilePath) + "Result/Result.wav";
-	case BGMType::GameOver: return std::string(kBGMFilePath) + "GameOver/GameOver.wav";
-	case BGMType::GameClear:return std::string(kBGMFilePath) + "GameClear/GameClear.wav";
+	case BGMType::GameOver: return std::string(kBGMFilePath) + "Result/GameOver.wav";
+	case BGMType::GameClear:return std::string(kBGMFilePath) + "Result/GameClear.wav";
 	case BGMType::None:     break;
 	}
 

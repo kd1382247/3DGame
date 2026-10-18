@@ -51,6 +51,16 @@ public:
 	// ターゲットに到達するまで追跡し、到達後はノックバック方向を向く
 	void UpdateMove();
 
+	// 行動を止めて、待機モーションにする
+	// (ゲームオーバー中など、Updateを止めている間、毎フレーム呼ぶ)
+	void HoldIdle();
+
+	// ボス撃破などで、強制的に倒す(ダメージ表示・ヒットストップなどの演出なしで、やられ状態にする)
+	void ForceKill();
+
+	// ForceKillで倒されたか(スライムの分裂など、倒れた後に増える処理をしないために使う)
+	bool IsForceKilled()const { return m_isForceKilled; }
+
 	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
 	float GetReachDistance()const { return m_reachDistance; }
 
@@ -127,7 +137,7 @@ protected:
 	float       m_sightCheckTimer = 0.0f;   // 次の判定までの時間
 	bool        m_isSightBlocked  = true;   // 直前の判定結果(trueなら遮られている)
 	const float SightCheckInterval = 0.2f;  // 判定の間隔(秒)
-	const float SightCheckDistance = 5.0f;  // この距離以内のときだけ判定する
+	const float SightCheckDistance = 8.0f;  // この距離以内のときだけ判定する
 	const float SightRayHeight     = 0.5f;  // レイの高さ(足元からの高さ)
 
 
@@ -144,6 +154,9 @@ protected:
 	bool m_attackFlg = false;
 
 	bool m_hitTarget = false;
+
+	// ForceKillで倒されたか
+	bool m_isForceKilled = false;
 
 	// 飛び出す方向と勢い
 	Math::Vector3 m_launchVec;

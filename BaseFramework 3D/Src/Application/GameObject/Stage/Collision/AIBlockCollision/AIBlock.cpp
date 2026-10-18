@@ -23,7 +23,7 @@ void AIBlock::DrawDebug()
 
 	if (IsSelected())
 	{
-		color = kBlueColor + kGreenColor;
+		color = kRedColor + kGreenColor;
 	}
 	else
 	{

@@ -303,6 +303,7 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\MageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBeamState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBoltState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageDieState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardSectorState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageIntroState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNormalState.h" />
@@ -415,6 +416,8 @@
     <ClInclude Include="Src\Application\GameObject\Explosion\ExplosionManager.h" />
     <ClInclude Include="Src\Application\GameObject\FlyText\FlyText.h" />
     <ClInclude Include="Src\Application\GameObject\FlyText\FlyTextManager.h" />
+    <ClInclude Include="Src\Application\GameObject\GameResultUI\GameClearUI.h" />
+    <ClInclude Include="Src\Application\GameObject\GameResultUI\GameOverUI.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\AreaVolume\AreaVolume.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\RoomGate\RoomGate.h" />
@@ -537,6 +540,7 @@
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\Parameter\MageParameter.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBeamState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBoltState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageDieState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardSectorState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageIntroState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageNormalState.cpp" />
@@ -635,6 +639,8 @@
     <ClCompile Include="Src\Application\GameObject\Explosion\ExplosionManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\FlyText\FlyText.cpp" />
     <ClCompile Include="Src\Application\GameObject\FlyText\FlyTextManager.cpp" />
+    <ClCompile Include="Src\Application\GameObject\GameResultUI\GameClearUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\GameResultUI\GameOverUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\AreaVolume\AreaVolume.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\RoomGate\RoomGate.cpp" />

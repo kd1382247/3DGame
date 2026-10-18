@@ -225,6 +225,13 @@ void Player::UpdateDebugCommand()
 		spTpsCamera->StartRoar();
 	}
 
+	if (GetAsyncKeyState('I') & 0x8000)
+	{
+		// ボスの撃破演出(確認用に、ボスの座標と正面の向きは仮の値)
+		TPSCamera::BossIntroParam param;
+		spTpsCamera->StartBossDefeat(GetPos() + Math::Vector3(0.0f, 0.0f, 10.0f), Math::Vector3(1.0f, 0.0f, -1.0f), param);
+	}
+
 }
 
 //================================
@@ -345,6 +352,7 @@ void Player::UpdateAttackMove()
 
 void Player::UpdateBossIntroLock()
 {
+	// ボスの登場演出中と、ボスを倒した演出中は、操作できないようにする
 	if (!RoomManager::Instance().IsBossIntro())
 	{
 		return;
@@ -590,6 +598,13 @@ void Player::UpdateGroundPosY()
 
 void Player::OnHit(const AttackInfo attackInfo)
 {
+	// 死んだ後と、ボスを倒した演出中は攻撃を受けない
+	// (ゲームオーバー中に攻撃が当たり続けたり、ボスを倒した後に残った爆発などで倒されたりしないようにする)
+	if (m_health.IsDead() || RoomManager::Instance().IsBossDefeat())
+	{
+		return;
+	}
+
 	
 	AttackInfo info = attackInfo;
 
@@ -606,7 +621,8 @@ void Player::OnHit(const AttackInfo attackInfo)
 		return;
 	}
 	else if(m_stateMachine.IsState<PlayerGuardState>()&&
-		    m_playerGuard.IsInGuardRange(m_mWorld.Backward(),info.m_knockBackDir))
+		    m_playerGuard.IsInGuardRange(m_mWorld.Backward(),info.m_knockBackDir)&&
+			!m_playerGuard.IsGuardBreak())
 	{
 		// ガード中に攻撃を受けた回数をカウント、上限値をこえたらガードを強制終了
 		m_playerGuard.NotifyGuardHit();
@@ -618,10 +634,12 @@ void Player::OnHit(const AttackInfo attackInfo)
 		if(m_playerGuard.IsGuardHit())
 		{
 			KdEffekseerManager::GetInstance().Play("Player/Guard/Guard.efkefc", effectPos, 0.6f, 1.0f, false, 0, 20, GetRotation());
+			KdAudioManager::Instance().Play("Asset/Data/Sound/SE/Player/Guard/Guard.wav");
 		}
 		if (m_playerGuard.IsGuardBreak())
 		{
 			KdEffekseerManager::GetInstance().Play("Player/GuardBreak/GuardBreak.efkefc", effectPos, 0.3f, 0.6f, false);
+			KdAudioManager::Instance().Play("Asset/Data/Sound/SE/Player/Guard/GuardBreak.wav");
 		}
 
 

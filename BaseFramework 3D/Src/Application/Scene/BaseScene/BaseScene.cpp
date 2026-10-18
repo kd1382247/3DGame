@@ -45,6 +45,12 @@ void BaseScene::Update()
 	// KdGameObjectを継承した全てのオブジェクトの更新 (ポリモーフィズム)
 	for (auto& obj : m_objList)
 	{
+		// 継承先のシーンが止めているオブジェクトは更新しない
+		if (IsUpdateSkipped(obj))
+		{
+			continue;
+		}
+
 		obj->Update();
 	}
 }

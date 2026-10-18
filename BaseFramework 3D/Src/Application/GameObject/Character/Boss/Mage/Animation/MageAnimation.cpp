@@ -61,6 +61,10 @@ void MageAnimation::Animations(MageAnimationType animType)
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Roar"), false);
 		m_animSpeed = 1.0f;
 		break;
+	case MageAnimationType::Die:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false);
+		m_animSpeed = 0.6f;
+		break;
 
 	case MageAnimationType::Idle:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Idle"), true);
@@ -68,11 +72,6 @@ void MageAnimation::Animations(MageAnimationType animType)
 		break;
 	case MageAnimationType::Walk:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Walk"), true);
-		m_animSpeed = 1.0f;
-		break;
-
-	case MageAnimationType::Die:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), true);
 		m_animSpeed = 1.0f;
 		break;
 	}

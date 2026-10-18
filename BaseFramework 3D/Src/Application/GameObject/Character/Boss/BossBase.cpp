@@ -8,6 +8,19 @@
 
 #include"../../FlyText/FlyTextManager.h"
 
+#include"../../../System/TimeManager/TimeManager.h"
+
+namespace
+{
+	// 撃破した瞬間のヒットストップの最低時間(秒)
+	// (攻撃側の値がこれより短くても、ボスを倒した手応えが出るようにする)
+	constexpr float kMinKillHitStop = 0.3f;
+
+	// 撃破演出のカメラが、よろけ続ける時間の上限(秒)
+	// (演出は死亡アニメーションが終わるとEndDefeatDirectionで終わる。これは終わりの合図が来なかった時の保険)
+	constexpr float kDefeatStaggerLimit = 2.5f;
+}
+
 void BossBase::Init()
 {
 	// カテゴリーをセット
@@ -34,11 +47,25 @@ void BossBase::DrawInspector()
 
 void BossBase::OnHit(const AttackInfo attackInfo)
 {
-	m_health.TakeDamage(attackInfo.m_damage);
+	ApplyDamage(attackInfo);
+}
+
+bool BossBase::ApplyDamage(const AttackInfo& attackInfo)
+{
+	const bool isDead = m_health.TakeDamage(attackInfo.m_damage);
 
 	FlyTextManager::Instance().CreateDamateText(attackInfo.m_damage, GetPos(),m_flyTextPath);
 
 	PlayHitEffect();
+
+	// 倒した瞬間だけ、ヒットストップとスロー演出をする
+	if (isDead)
+	{
+		TimeManager::Instance().StartHitStop(std::max(attackInfo.m_killHitStop, kMinKillHitStop));
+		TimeManager::Instance().StartSlowMotion(attackInfo.m_SlowScale, attackInfo.m_SlowDuration);
+	}
+
+	return isDead;
 }
 
 void BossBase::UpdateMove()
@@ -122,6 +149,11 @@ void BossBase::SetTargetDir()
 	SetMoveDir(targetDir);
 }
 
+void BossBase::HoldIdle()
+{
+	PlayIdleAnimation();
+}
+
 void BossBase::StartCameraIntro()
 {
 	auto spCamera = m_wpCamera.lock();
@@ -133,6 +165,35 @@ void BossBase::StartCameraIntro()
 
 	TPSCamera::BossIntroParam param;
 	spCamera->StartBossIntro(GetPos(), param);
+}
+
+void BossBase::StartDefeatDirection()
+{
+	auto spCamera = m_wpCamera.lock();
+
+	if (!spCamera)
+	{
+		return;
+	}
+
+	// ボスの正面(キャラの前方向は、ワールド行列のBackward)へカメラが回り込む
+	TPSCamera::BossIntroParam param;
+	param.staggerDuration = kDefeatStaggerLimit;
+
+	spCamera->StartBossDefeat(GetPos(), m_mWorld.Backward(), param);
+}
+
+void BossBase::EndDefeatDirection()
+{
+	auto spCamera = m_wpCamera.lock();
+
+	if (!spCamera)
+	{
+		return;
+	}
+
+	// カメラが元の位置に戻り始める
+	spCamera->EndBossDefeat();
 }
 
 void BossBase::StartCameraRoar()
@@ -171,6 +232,16 @@ bool BossBase::IsBossIntroPlaying()
 	}
 
 	return spCamera->IsBossIntroPlaying();
+}
+
+void BossBase::PlayDeathSmoke()
+{
+
+	KdEffekseerManager::GetInstance().
+		Play("Smoke/Smoke2.efkefc", GetPos(), 1.0f, 0.7f, false);
+
+	// SEを流す
+	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Enemy/Death/Death.wav");
 }
 
 

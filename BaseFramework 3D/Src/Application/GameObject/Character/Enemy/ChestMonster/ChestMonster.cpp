@@ -171,6 +171,11 @@ void ChestMonster::RePlayAnimation(ChestMonsterAnimationType type)
 	m_animation.RePlay(type);
 }
 
+void ChestMonster::PlayIdleAnimation()
+{
+	PlayAnimation(ChestMonsterAnimationType::Idle);
+}
+
 void ChestMonster::OnHit(const AttackInfo attackInfo)
 {
 	// ノックバックは受けないようにする

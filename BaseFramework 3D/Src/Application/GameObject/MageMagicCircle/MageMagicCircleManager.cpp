@@ -23,3 +23,18 @@ void MageMagicCircleManager::CreateMagicCircle(const Math::Vector3& pos, float r
 
 	SceneManager::Instance().AddObject(magicCircle);
 }
+
+void MageMagicCircleManager::CancelAll()
+{
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		const auto magicCircle = std::dynamic_pointer_cast<MageMagicCircle>(obj);
+
+		if (!magicCircle)
+		{
+			continue;
+		}
+
+		magicCircle->Cancel();
+	}
+}

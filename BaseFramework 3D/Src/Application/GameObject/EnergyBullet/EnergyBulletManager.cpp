@@ -24,3 +24,18 @@ void EnergyBulletManager::CreateEnergyBullet(const std::shared_ptr<CharacterBase
 
 	SceneManager::Instance().AddObject(bullet);
 }
+
+void EnergyBulletManager::CancelAll()
+{
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		const auto bullet = std::dynamic_pointer_cast<EnergyBullet>(obj);
+
+		if (!bullet)
+		{
+			continue;
+		}
+
+		bullet->Cancel();
+	}
+}

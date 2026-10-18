@@ -752,7 +752,7 @@
             "Name": "AreaVolume_1",
             "Position": {
                 "x": 22.0,
-                "y": 6.0,
+                "y": 3.0,
                 "z": 79.0
             },
             "Rotation": {
@@ -762,7 +762,7 @@
             },
             "Scale": {
                 "x": 12.0,
-                "y": 9.0,
+                "y": 5.0,
                 "z": 6.0
             }
         },
@@ -932,7 +932,7 @@
             "Name": "AreaVolume_12",
             "Position": {
                 "x": -8.0,
-                "y": 6.0,
+                "y": 3.0,
                 "z": 79.0
             },
             "Rotation": {
@@ -942,7 +942,7 @@
             },
             "Scale": {
                 "x": 12.0,
-                "y": 9.0,
+                "y": 5.0,
                 "z": 6.0
             }
         },
@@ -1044,6 +1044,46 @@
                 "x": 1.4999994039535522,
                 "y": 1.5,
                 "z": 1.4999994039535522
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_6",
+            "Position": {
+                "x": -11.0,
+                "y": 8.0,
+                "z": 79.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 5.0,
+                "z": 6.0
+            }
+        },
+        {
+            "Class": "AreaVolume",
+            "FollowStage": "CombatRoom_21x15_0",
+            "Name": "AreaVolume_7",
+            "Position": {
+                "x": 25.0,
+                "y": 8.0,
+                "z": 79.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 6.0,
+                "y": 5.0,
+                "z": 6.0
             }
         }
     ]

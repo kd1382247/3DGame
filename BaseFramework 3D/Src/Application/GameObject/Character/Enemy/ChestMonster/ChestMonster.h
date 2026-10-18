@@ -69,6 +69,8 @@ private:
 
 	void DrawParameterInspector() override;
 
+	void PlayIdleAnimation() override;
+
 	void SetSpawnTiming();
 
 	// Parameterの値を、このクラスのメンバーへ反映する(Init後・LoadData後に呼ぶ)

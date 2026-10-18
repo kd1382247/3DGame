@@ -121,6 +121,12 @@ void Slime::RePlayAnimation(SlimeAnimationType type)
 
 void Slime::Split()
 {
+	// ボス撃破などで強制的に倒された時は、分裂しない
+	if (IsForceKilled())
+	{
+		return;
+	}
+
 	if (m_slimeSize != SlimeSize::Large)
 	{
 		return;

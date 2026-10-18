@@ -25,6 +25,9 @@ public:
 	// 弾を発射したクラスのポインタをセット
 	void SetOwner(const std::shared_ptr<CharacterBase>owner) { m_wpOwner = owner; }
 
+	// 弾を取り消す(エフェクトを止めて、オブジェクトも消す)
+	void Cancel() { Vanish(); }
+
 private:
 
 	// 弾を消す(エフェクト停止 + Destroy)

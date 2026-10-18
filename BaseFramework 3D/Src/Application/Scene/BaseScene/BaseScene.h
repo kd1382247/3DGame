@@ -47,6 +47,13 @@ protected :
 
 	bool IsEditing()const;
 
+	// 更新を止めたいオブジェクトを、継承先シーンで指定する
+	// (trueを返したオブジェクトは、そのフレームのUpdateが呼ばれない)
+	virtual bool IsUpdateSkipped(const std::shared_ptr<KdGameObject>&)const
+	{
+		return false;
+	}
+
 	// 継承先シーンで必要ならオーバーライドする
 	virtual void Event();
 	virtual void Init();

@@ -66,11 +66,18 @@ public:
 	// ボスのイントロ中なのか
 	bool IsBossIntro()const { return m_roomState == RoomState::Intro && m_roomType == RoomType::Boss; }
 
+	// ボスを倒した演出中なのか
+	bool IsBossDefeat()const { return m_roomState == RoomState::BossDefeat && m_roomType == RoomType::Boss; }
+
 	RoomState GetRoomState()const { return m_roomState; }
 	bool IsCleared()const { return m_roomState == RoomState::Cleared; }
 
 	// 戦闘前の演出が終わったことを知らせる(演出の仕組みができたら、そこから呼ぶ)
 	void FinishIntro();
+
+	// ボスを倒したことを知らせる(ボス撃破の演出を始める。戦闘中のボス部屋だけ受け付ける)
+	// 部屋の中の敵は、ボスと同時に全員倒される
+	void StartBossDefeat();
 
 	// ボスを倒した演出が終わったことを知らせる(ボス撃破の演出から呼ぶ)
 	void FinishBossDefeat();
@@ -107,6 +114,9 @@ private:
 	// 部屋の箱の中にいる、生きている敵の数を数える
 	int CountAliveEnemies()const;
 
+	// 部屋の箱の中にいる敵を、全員倒す(ボスは含まない)
+	void KillAllEnemies();
+
 	std::weak_ptr<Player>m_wpPlayer;
 	bool m_isPlayerInside = false;
 
@@ -136,5 +146,8 @@ private:
 	float m_stateTimer = 0.0f;
 
 	bool  m_waitBossIntro = false;
+
+	// ボスの撃破演出が終わる(FinishBossDefeatが呼ばれる)のを待っているか
+	bool  m_waitBossDefeat = false;
 
 };

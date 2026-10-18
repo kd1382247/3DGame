@@ -18,6 +18,10 @@ public:
 		float startFrame,
 		float endFrame);
 
+
+	// 生成済みのものを全て取り消す(ボスが倒れた時など)
+	void CancelAll();
+
 private:
 
 	MageMagicCircleManager(){}

@@ -472,6 +472,32 @@ void EnemyBase::UpdateMove()
 	UpdateFacingDirection();
 }
 
+void EnemyBase::HoldIdle()
+{
+	// 空中で止まらないように、落下だけは続ける
+	UpdateGravity();
+
+	PlayIdleAnimation();
+}
+
+void EnemyBase::ForceKill()
+{
+	// すでに倒されている敵は、やられモーションの途中なのでそのままにする
+	if (m_health.IsDead())
+	{
+		return;
+	}
+
+	m_isForceKilled = true;
+
+	// HPを0にしてから、ダメージ0の攻撃を当てる
+	// (各敵のOnHitは、HPが0ならやられ状態へ切り替える。
+	//  ダメージが0なので、ダメージ表示・ヒットエフェクト・ヒットストップは出ない)
+	m_health.Kill();
+
+	OnHit(AttackInfo());
+}
+
 void EnemyBase::CreateDeathSmoke()
 {
 	KdEffekseerManager::GetInstance().

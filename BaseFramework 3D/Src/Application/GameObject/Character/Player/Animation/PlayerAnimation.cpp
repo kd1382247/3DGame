@@ -14,7 +14,7 @@ void PlayerAnimation::Play(PlayerAnimationType _animType)
 	{
 		return;
 	}
-
+		
 	switch (_animType)
 	{
 	case PlayerAnimationType::None:
@@ -89,7 +89,7 @@ void PlayerAnimation::Play(PlayerAnimationType _animType)
 		break;
 	case PlayerAnimationType::Die:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false);
-		m_animSpeed = 1.4f;
+		m_animSpeed = 0.8f;
 		break;
 	case PlayerAnimationType::DieStay:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("DieStay"), true);

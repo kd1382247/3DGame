@@ -8,6 +8,15 @@
 
 #include"../../System/TimeManager/TimeManager.h"
 
+namespace
+{
+	// キー(マウスのボタン)が押されているか
+	bool IsKeyDown(int key)
+	{
+		return (GetAsyncKeyState(key) & 0x8000) != 0;
+	}
+}
+
 void Title::Init()
 {
 	// 各テクスチャを初期化
@@ -17,11 +26,23 @@ void Title::Init()
 	InitTexture(m_spStartButtonTex,   "StartButton2.png");
 	InitTexture(m_spSettingButtonTex, "SettingButton2.png");
 
+	// 前のシーンで押していたキーで、いきなり決定されないようにする
+	m_isPrevMouseDown = IsKeyDown(VK_LBUTTON);
+	m_isPrevLeftKey   = IsKeyDown('A') || IsKeyDown(VK_LEFT);
+	m_isPrevRightKey  = IsKeyDown('D') || IsKeyDown(VK_RIGHT);
+	m_isPrevEnterKey  = IsKeyDown(VK_RETURN);
+	m_prevMousePos    = Mouse::Instance().Get2DMousePos();
+
 
 }
 
 void Title::Update()
 {
+
+	if (GetAsyncKeyState(VK_TAB) & 0x8000)
+	{
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Editor);
+	}
 
 	// 画像をサインカーブで上下に揺らす
 	UpdateSinCurve();
@@ -63,8 +84,8 @@ void Title::DrawSprite()
 	KdShaderManager::Instance().m_spriteShader.SetShineEnable(false);
 
 	// ボタンを描画
-	DrawButton(m_spStartButtonTex,   m_startButtonPos,   m_isHoverStartButton);
-	DrawButton(m_spSettingButtonTex, m_settingButtonPos, m_isHoverSettingButton);
+	DrawButton(m_spStartButtonTex,   m_startButtonPos,   m_selectedButton == ButtonType::Start);
+	DrawButton(m_spSettingButtonTex, m_settingButtonPos, m_selectedButton == ButtonType::Setting);
 
 
 
@@ -84,12 +105,13 @@ void Title::InitTexture(std::shared_ptr<KdTexture>& tex, std::string fileName)
 
 }
 
-void Title::DrawButton(const std::shared_ptr<KdTexture> tex, const Math::Vector2& pos, bool isHover)
+void Title::DrawButton(const std::shared_ptr<KdTexture> tex, const Math::Vector2& pos, bool isSelected)
 {
 
 	Math::Vector2 buttonTexSize = ButtonTexSize;
 
-	if (isHover)
+	// 選ばれているボタンは、少し大きく描く
+	if (isSelected)
 	{
 		buttonTexSize.x += 20;
 		buttonTexSize.y += 10;
@@ -112,63 +134,116 @@ void Title::UpdateSinCurve()
 
 void Title::UpdateButtonInput()
 {
-	// マウスの左ボタンの状態 (「押した瞬間」を取るため、毎フレーム更新する)
-	const bool isMouseDown    = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+	// 入力の状態 (「押した瞬間」を取るため、毎フレーム更新する)
+	const bool  isMouseDown = IsKeyDown(VK_LBUTTON);
+	const bool  isLeftKey   = IsKeyDown('W') || IsKeyDown(VK_UP);
+	const bool  isRightKey  = IsKeyDown('S') || IsKeyDown(VK_DOWN);
+	const bool  isEnterKey  = IsKeyDown(VK_RETURN);
+	const POINT mousePos    = Mouse::Instance().Get2DMousePos();
+
 	const bool isMouseTrigger = isMouseDown && !m_isPrevMouseDown;
+	const bool isLeftTrigger  = isLeftKey    && !m_isPrevLeftKey;
+	const bool isRightTrigger = isRightKey   && !m_isPrevRightKey;
+	const bool isEnterTrigger = isEnterKey   && !m_isPrevEnterKey;
+	const bool isMouseMoved   = mousePos.x != m_prevMousePos.x || mousePos.y != m_prevMousePos.y;
+
 	m_isPrevMouseDown = isMouseDown;
+	m_isPrevLeftKey   = isLeftKey;
+	m_isPrevRightKey  = isRightKey;
+	m_isPrevEnterKey  = isEnterKey;
+	m_prevMousePos    = mousePos;
 
 	// 設定画面が開いている間は、タイトルのボタンを操作できないようにする
 	std::shared_ptr<Setting> spSetting = m_wpSetting.lock();
 	if (spSetting && spSetting->IsOpen())
 	{
-		m_isHoverStartButton   = false;
-		m_isHoverSettingButton = false;
 		return;
 	}
 
-	POINT mousePos = Mouse::Instance().Get2DMousePos();
-
-	// スタートボタンの幅を算出
-	Math::Vector2 startButtonMax = m_startButtonPos + ButtonTexSize/2;
-	Math::Vector2 startButtonMin = m_startButtonPos - ButtonTexSize/2;
-
-	// マウスがスタートボタンの上にいるか
-	if (startButtonMin.x < mousePos.x && mousePos.x<startButtonMax.x &&
-		startButtonMin.y<mousePos.y && mousePos.y < startButtonMax.y)
+	// 左右のキーで選ぶ (押した瞬間だけ。左: スタート / 右: セッティング)
+	if (isLeftTrigger)
 	{
-		m_isHoverStartButton = true;
+		Select(ButtonType::Start);
+	}
 
-		if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+	if (isRightTrigger)
+	{
+		Select(ButtonType::Setting);
+	}
+
+	const bool isHoverStart   = IsHoverButton(mousePos, m_startButtonPos);
+	const bool isHoverSetting = IsHoverButton(mousePos, m_settingButtonPos);
+
+	// マウスは、動いた時だけ、乗っているボタンを選ぶ
+	// (止まっている間も選ぶと、キーで選んだボタンをすぐ上書きしてしまう)
+	if (isMouseMoved)
+	{
+		if (isHoverStart)
 		{
-			SceneManager::Instance().SetNextScene(SceneManager::SceneType::Editor);
+			Select(ButtonType::Start);
+		}
+		else if (isHoverSetting)
+		{
+			Select(ButtonType::Setting);
 		}
 	}
-	else
+
+	// 決定 (Enter か、ボタンの上でクリック)
+	if (isEnterTrigger)
 	{
-		m_isHoverStartButton = false;
+		Decide(m_selectedButton);
 	}
-
-	// スタートボタンの幅を算出
-	Math::Vector2 settingButtonMax = m_settingButtonPos + ButtonTexSize / 2;
-	Math::Vector2 settingButtonMin = m_settingButtonPos - ButtonTexSize / 2;
-
-	// マウスがスタートボタンの上にいるか
-	if (settingButtonMin.x < mousePos.x && mousePos.x < settingButtonMax.x &&
-		settingButtonMin.y < mousePos.y && mousePos.y < settingButtonMax.y)
+	else if (isMouseTrigger)
 	{
-		m_isHoverSettingButton = true;
+		if (isHoverStart)
+		{
+			Decide(ButtonType::Start);
+		}
+		else if (isHoverSetting)
+		{
+			Decide(ButtonType::Setting);
+		}
+	}
+}
 
-		// クリックした瞬間に設定画面を開く
-		if (isMouseTrigger && spSetting)
+void Title::Select(ButtonType button)
+{
+	m_selectedButton = button;
+}
+
+void Title::Decide(ButtonType button)
+{
+	switch (button)
+	{
+	case ButtonType::Start:
+
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Game);
+
+		break;
+
+	case ButtonType::Setting:
+	{
+		// 設定画面を開く
+		std::shared_ptr<Setting> spSetting = m_wpSetting.lock();
+
+		if (spSetting)
 		{
 			spSetting->Open();
 		}
-	}
-	else
-	{
-		m_isHoverSettingButton = false;
-	}
 
+		break;
+	}
+	}
+}
+
+bool Title::IsHoverButton(const POINT& mousePos, const Math::Vector2& buttonPos) const
+{
+	// ボタンの範囲を算出
+	const Math::Vector2 buttonMax = buttonPos + ButtonTexSize / 2;
+	const Math::Vector2 buttonMin = buttonPos - ButtonTexSize / 2;
+
+	return  buttonMin.x < mousePos.x && mousePos.x < buttonMax.x &&
+			buttonMin.y < mousePos.y && mousePos.y < buttonMax.y;
 }
 
 void Title::UpdateTitleLogoShine()

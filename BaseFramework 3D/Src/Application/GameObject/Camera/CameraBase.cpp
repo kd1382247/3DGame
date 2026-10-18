@@ -35,6 +35,12 @@ void CameraBase::SetUpReference()
 
 void CameraBase::UpdateRotateByMouse()
 {
+	// 止めている間は、回転もカーソルの固定もしない
+	if (m_isMouseRotateLock)
+	{
+		return;
+	}
+
 	// マウスでカメラを回転させる処理
 	POINT _nowPos;
 	GetCursorPos(&_nowPos);
