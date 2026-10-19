@@ -1,13 +1,13 @@
 ﻿#pragma once
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-// 設定画面 (今は BGM / SE の音量調節)
+// 設定画面 (今は マスター / BGM / SE の音量調節)
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // どのシーンでも、生成して AddObject するだけで使える
 // 音量の値そのものは KdAudioManager が持っているので、シーンが変わっても保持される
 // Open() で開き、閉じるボタンか Close() で閉じる。開いている間だけ更新・描画される
 // 操作 : マウス(スライダーをドラッグ・×をクリック)
-//        W,S,↑,↓ で項目(BGM / SE / ×)を選ぶ・A,D,←,→ で音量を変える・×を選んでEnterで閉じる
+//        W,S,↑,↓ で項目(MASTER / BGM / SE / ×)を選ぶ・A,D,←,→ で音量を変える・×を選んでEnterで閉じる
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 class Setting : public KdGameObject
 {
@@ -38,14 +38,16 @@ private:
 	enum class SliderType
 	{
 		None,
+		Master,
 		BGM,
 		SE
 	};
 
-	// 選べる項目 (キー操作で選ぶ。画面の上から ×、BGM、SE の順に並んでいる)
+	// 選べる項目 (キー操作で選ぶ。画面の上から ×、MASTER、BGM、SE の順に並んでいる)
 	enum class MenuItem
 	{
 		Close,
+		Master,
 		BGM,
 		SE
 	};
@@ -57,7 +59,7 @@ private:
 	// 項目を選ぶ
 	void Select(MenuItem item);
 
-	// キーでの音量調節を終える (SEなら確認用のSEを鳴らし、音量を保存する)
+	// キーでの音量調節を終える (マスター・SEなら確認用のSEを鳴らし、音量を保存する)
 	void FinishKeyAdjust();
 
 	// 選ばれている項目のスライダー (×を選んでいる時は SliderType::None)
@@ -77,6 +79,7 @@ private:
 	// 描画
 	void DrawSlider(int barY, float value, bool isSelected);
 	void DrawCloseButton();
+	void DrawLabel(const std::shared_ptr<KdTexture>& tex, int barY);
 
 	// 確認用SEを鳴らす
 	void PlayPreviewSE();
@@ -94,7 +97,7 @@ private:
 	bool m_isHoverClose = false;
 
 	// 今選ばれている項目
-	MenuItem m_selectedItem = MenuItem::BGM;
+	MenuItem m_selectedItem = MenuItem::Master;
 
 	// キーで音量を変えている途中のスライダー
 	SliderType m_keyAdjustSlider = SliderType::None;
@@ -117,6 +120,7 @@ private:
 	std::shared_ptr<KdTexture> m_spPanelTex          = nullptr;	// パネル(背景)
 	std::shared_ptr<KdTexture> m_spHeadingTex        = nullptr;	// 「SETTING」の見出し
 	std::shared_ptr<KdTexture> m_spHeadingDividerTex = nullptr;	// 見出しの下の区切り線
+	std::shared_ptr<KdTexture> m_spLabelMasterTex    = nullptr;	// 「MASTER」のラベル
 	std::shared_ptr<KdTexture> m_spLabelBGMTex       = nullptr;	// 「BGM」のラベル
 	std::shared_ptr<KdTexture> m_spLabelSETex        = nullptr;	// 「SE」のラベル
 	std::shared_ptr<KdTexture> m_spBarBackTex        = nullptr;	// スライダーのバー(背景)

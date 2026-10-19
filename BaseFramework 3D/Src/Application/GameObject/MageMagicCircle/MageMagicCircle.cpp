@@ -115,6 +115,11 @@ void MageMagicCircle::Cancel()
 	{
 		spEffect->StopEffect();
 	}
+	// エフェクトの管理側から外れていても、まだ再生中なら、ハンドルで直接止める
+	else if (m_effectHandle >= 0 && !KdEffekseerManager::GetInstance().HasEffectFinished(m_effectHandle))
+	{
+		KdEffekseerManager::GetInstance().StopEffect(m_effectHandle);
+	}
 
 	Destroy();
 }
@@ -164,6 +169,11 @@ void MageMagicCircle::Update()
 	// ハンドルベースでの終了判定(KdEffekseerObjectの生存期間に依存しない)
 	else if (KdEffekseerManager::GetInstance().HasEffectFinished(m_effectHandle))
 	{
+		// 消える時は、地面に出している円も必ず消す
+		// (エフェクトが先に終わると、下の「進行度で消す」処理に届かないまま消えてしまい、範囲の円だけが残る)
+		HideTelegraphIndicator();
+		HideMagicCircleRange();
+
 		Destroy();
 	}
 

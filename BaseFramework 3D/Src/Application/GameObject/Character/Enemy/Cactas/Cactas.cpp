@@ -116,8 +116,6 @@ void Cactas::PlayIdleAnimation()
 	PlayAnimation(CactasAnimationType::Idle);
 }
 
-
-
 void Cactas::OnHit(const AttackInfo attackInfo)
 {
 	if (ApplyDamage(attackInfo))

@@ -48,7 +48,9 @@ void CollisionManager::Resolve()
 	// (放置すると、リストが増え続けてメモリも使い続ける)
 	RemoveExpiredObjects();
 
-	if (TimeManager::Instance().IsHitStop())
+	// ヒットストップ中と、一時停止中(設定画面を開いている間など)は、当たり判定を解決しない
+	if (TimeManager::Instance().IsHitStop() ||
+		TimeManager::Instance().IsPaused())
 	{
 		return;
 	}

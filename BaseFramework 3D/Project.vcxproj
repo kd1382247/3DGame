@@ -418,6 +418,7 @@
     <ClInclude Include="Src\Application\GameObject\FlyText\FlyTextManager.h" />
     <ClInclude Include="Src\Application\GameObject\GameResultUI\GameClearUI.h" />
     <ClInclude Include="Src\Application\GameObject\GameResultUI\GameOverUI.h" />
+    <ClInclude Include="Src\Application\GameObject\GameResultUI\ResultUI.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\AreaVolume\AreaVolume.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\RoomGate\RoomGate.h" />
@@ -435,6 +436,7 @@
     <ClInclude Include="Src\Application\GameObject\MageMagicSector\MageMagicSectorManager.h" />
     <ClInclude Include="Src\Application\GameObject\PointLight\PointLight.h" />
     <ClInclude Include="Src\Application\GameObject\PointLight\PointLightManager.h" />
+    <ClInclude Include="Src\Application\GameObject\RoomIntroUI\RoomIntroUI.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollision.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlock.h" />
@@ -641,6 +643,7 @@
     <ClCompile Include="Src\Application\GameObject\FlyText\FlyTextManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\GameResultUI\GameClearUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\GameResultUI\GameOverUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\GameResultUI\ResultUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\AreaVolume\AreaVolume.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\RoomGate\RoomGate.cpp" />
@@ -658,6 +661,7 @@
     <ClCompile Include="Src\Application\GameObject\MageMagicSector\MageMagicSectorManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\PointLight\PointLight.cpp" />
     <ClCompile Include="Src\Application\GameObject\PointLight\PointLightManager.cpp" />
+    <ClCompile Include="Src\Application\GameObject\RoomIntroUI\RoomIntroUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollision.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlock.cpp" />

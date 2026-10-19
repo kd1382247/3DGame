@@ -18,7 +18,7 @@ namespace
 
 	// 撃破演出のカメラが、よろけ続ける時間の上限(秒)
 	// (演出は死亡アニメーションが終わるとEndDefeatDirectionで終わる。これは終わりの合図が来なかった時の保険)
-	constexpr float kDefeatStaggerLimit = 2.5f;
+	constexpr float kDefeatStaggerLimit = 3.0f;
 }
 
 void BossBase::Init()
@@ -62,7 +62,7 @@ bool BossBase::ApplyDamage(const AttackInfo& attackInfo)
 	if (isDead)
 	{
 		TimeManager::Instance().StartHitStop(std::max(attackInfo.m_killHitStop, kMinKillHitStop));
-		TimeManager::Instance().StartSlowMotion(attackInfo.m_SlowScale, attackInfo.m_SlowDuration);
+		TimeManager::Instance().StartSlowMotion(0.3f,2.0f);
 	}
 
 	return isDead;
@@ -180,7 +180,7 @@ void BossBase::StartDefeatDirection()
 	TPSCamera::BossIntroParam param;
 	param.staggerDuration = kDefeatStaggerLimit;
 
-	spCamera->StartBossDefeat(GetPos(), m_mWorld.Backward(), param);
+	spCamera->StartBossDefeat(GetPos(),param);
 }
 
 void BossBase::EndDefeatDirection()

@@ -4,6 +4,7 @@
 
 void TimeManager::Init()
 {
+	m_isPaused     = false;
 	m_isHitStop    = false;
 	m_hitStopTimer = 0.0f;
 	m_isSlow       = false;
@@ -34,8 +35,8 @@ void TimeManager::Update()
 
 void TimeManager::UpdateTimeScale()
 {
-	// ヒットストップ中の場合
-	if (IsHitStop())
+	// 一時停止中か、ヒットストップ中の場合
+	if (m_isPaused || IsHitStop())
 	{
 		m_timeScale = 0.0f;
 	}
@@ -68,7 +69,8 @@ void TimeManager::StartHitStop(const float duration)
 
 void TimeManager::UpdateHitStop()
 {
-	if (!m_isHitStop)
+	// 一時停止中は、残り時間を減らさない
+	if (!m_isHitStop || m_isPaused)
 	{
 		return;
 	}
@@ -109,7 +111,8 @@ void TimeManager::StartSlowMotion(const float scale, const float duration)
 void TimeManager::UpdateSlowMotion()
 {
 
-	if (!m_isSlow)
+	// 一時停止中は、残り時間を減らさない
+	if (!m_isSlow || m_isPaused)
 	{
 		return;
 	}

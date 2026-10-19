@@ -106,4 +106,7 @@ protected:
 	bool  m_introRequested = false;
 
 
+	bool          m_initPos = false;
+	Math::Vector3 m_roomCenter = {};
+
 };

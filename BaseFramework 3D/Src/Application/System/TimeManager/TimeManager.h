@@ -12,6 +12,11 @@ public:
 
 	float GetTimeScale()               const { return m_timeScale; }
 
+	// 一時停止 (設定画面を開いている間など)
+	// 止めている間は、deltaTimeが0になり、ヒットストップやスローの残り時間も減らない
+	void  SetPause(const bool isPause) { m_isPaused = isPause; }
+	bool  IsPaused() const { return m_isPaused; }
+
 
 	bool  IsHitStop() const { return m_isHitStop; }
 	void  StartHitStop(const float duration);
@@ -28,6 +33,9 @@ private:
 	float m_unscaledDeltaTime = 0.0f;
 	float m_deltaTime = 0.0f;
 	float m_timeScale = 1.0f;
+
+	// 一時停止中か
+	bool  m_isPaused = false;
 	
 	static constexpr float kMaxDeltaTime = 1.0f / 30.0f;
 

@@ -20,12 +20,17 @@ public:
 	// 毎フレーム1回、ステートの更新より前に呼ぶ
 	void Update(const float deltaTime)
 	{
+		UpdateMouseBlock();
 		UpdateMoveInput();
 		UpdateAttackInput(deltaTime);
 		UpdateGuardInput();
 		UpdateJumpInput();
 		UpdateParryInput();
 	}
+
+	// 押しているマウスのボタンを離すまで、攻撃・ガード・パリィの入力を受け付けない
+	// (設定画面を閉じるクリックなどが、そのままプレイヤーの攻撃になってしまわないようにする)
+	void BlockMouseUntilRelease() { m_isMouseBlocked = true; }
 
 	//================================
 	// 移動
@@ -71,6 +76,35 @@ public:
 
 private:
 
+	// マウスのボタンを全部離したら、受け付けない状態を解除する
+	void UpdateMouseBlock()
+	{
+		if (!m_isMouseBlocked)
+		{
+			return;
+		}
+
+		const bool isAnyMouseDown =
+			(GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0 ||
+			(GetAsyncKeyState(VK_RBUTTON) & 0x8000) != 0;
+
+		if (!isAnyMouseDown)
+		{
+			m_isMouseBlocked = false;
+		}
+	}
+
+	// マウスのボタンが押されているか (受け付けない間は、押していても false)
+	bool IsMouseButtonDown(const int key)const
+	{
+		if (m_isMouseBlocked)
+		{
+			return false;
+		}
+
+		return (GetAsyncKeyState(key) & 0x8000) != 0;
+	}
+
 	void UpdateMoveInput()
 	{
 		m_moveDir = Math::Vector3::Zero;
@@ -106,7 +140,7 @@ private:
 
 	void UpdateAttackInput(const float deltaTime)
 	{
-		const bool currentAttackButton = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+		const bool currentAttackButton = IsMouseButtonDown(VK_LBUTTON);
 
 		m_attackTrigger = currentAttackButton && !m_attackDown;
 		m_attackDown = currentAttackButton;
@@ -130,7 +164,7 @@ private:
 
 	void UpdateGuardInput()
 	{
-		const bool currentGuardButton = (GetAsyncKeyState(VK_RBUTTON) & 0x8000) != 0;
+		const bool currentGuardButton = IsMouseButtonDown(VK_RBUTTON);
 
 		m_guardTrigger = currentGuardButton && !m_guardDown;
 		m_guardDown = currentGuardButton;
@@ -138,7 +172,7 @@ private:
 
 	void UpdateParryInput()
 	{
-		const bool currentParryButton = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+		const bool currentParryButton = IsMouseButtonDown(VK_LBUTTON);
 
 		m_parryTrigger = currentParryButton && !m_parryDown;
 		m_parryDown = currentParryButton;
@@ -150,6 +184,9 @@ private:
 	}
 
 private:
+
+	// マウスのボタンを離すまで、攻撃・ガード・パリィの入力を受け付けないか
+	bool          m_isMouseBlocked = false;
 
 	// 移動
 	Math::Vector3 m_moveDir = Math::Vector3::Zero;

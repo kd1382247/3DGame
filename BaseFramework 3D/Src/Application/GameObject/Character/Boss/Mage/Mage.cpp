@@ -55,6 +55,12 @@ void Mage::Init()
 
 void Mage::Update()
 {
+	if (!m_initPos)
+	{
+		m_roomCenter = GetPos();
+		m_initPos = true;
+	}
+
 	UpdateGravity();
 
 	UpdateAttack();

@@ -123,7 +123,7 @@ std::shared_ptr<KdSoundInstance> KdAudioManager::PlayBGM(std::string_view rName,
 {
 	StopBGM();
 
-	m_bgmInstance = PlayWithVolume(rName, loop, m_bgmVolume);
+	m_bgmInstance = PlayWithVolume(rName, loop, m_bgmVolume * m_masterVolume);
 
 	return m_bgmInstance;
 }
@@ -134,7 +134,7 @@ std::shared_ptr<KdSoundInstance> KdAudioManager::PlayBGM(std::string_view rName,
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 std::shared_ptr<KdSoundInstance> KdAudioManager::PlaySE(std::string_view rName, bool loop)
 {
-	return PlayWithVolume(rName, loop, m_seVolume);
+	return PlayWithVolume(rName, loop, m_seVolume * m_masterVolume);
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -149,9 +149,24 @@ void KdAudioManager::StopBGM()
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+// マスター音量の設定
+// ・0.0〜1.0に丸める
+// ・再生中のBGMがあれば、その音量もすぐに変更する (SEは次に鳴らすものから反映)
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+void KdAudioManager::SetMasterVolume(float vol)
+{
+	m_masterVolume = std::clamp(vol, 0.0f, 1.0f);
+
+	if (m_bgmInstance)
+	{
+		m_bgmInstance->SetVolume(m_bgmVolume * m_masterVolume);
+	}
+}
+
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // BGM音量の設定
 // ・0.0〜1.0に丸める
-// ・再生中のBGMがあれば、その音量もすぐに変更する
+// ・再生中のBGMがあれば、その音量もすぐに変更する (マスター音量を掛けた値)
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void KdAudioManager::SetBGMVolume(float vol)
 {
@@ -159,7 +174,7 @@ void KdAudioManager::SetBGMVolume(float vol)
 
 	if (m_bgmInstance)
 	{
-		m_bgmInstance->SetVolume(m_bgmVolume);
+		m_bgmInstance->SetVolume(m_bgmVolume * m_masterVolume);
 	}
 }
 

@@ -24,9 +24,10 @@ namespace
 	constexpr int BarLeft    = BarCenterX - BarHalfW;
 	constexpr int BarWidth   = BarHalfW * 2;
 
-	// 上: BGM / 下: SE
-	constexpr int BGMBarY = 0;
-	constexpr int SEBarY  = -100;
+	// 上から: MASTER / BGM / SE
+	constexpr int MasterBarY = 50;
+	constexpr int BGMBarY    = -40;
+	constexpr int SEBarY     = -130;
 
 	// つまみの半径
 	constexpr int KnobRadius = 16;
@@ -48,7 +49,7 @@ namespace
 	// 画像を置く位置 (画像の中心)
 	constexpr int HeadingY        = 160;	// 「SETTING」の見出し
 	constexpr int HeadingDividerY = 108;	// 見出しの下の区切り線
-	constexpr int LabelX          = -240;	// 「BGM」「SE」のラベル
+	constexpr int LabelLeftX      = -300;	// 「MASTER」「BGM」「SE」のラベルの左端 (左揃え)
 
 	// 画面を暗くする色
 	const Math::Color DimColor = { 0.0f, 0.0f, 0.0f, 0.6f };
@@ -89,13 +90,14 @@ void Setting::Init()
 	m_isJustOpened    = false;
 	m_isHoverClose    = false;
 	m_dragSlider      = SliderType::None;
-	m_selectedItem    = MenuItem::BGM;
+	m_selectedItem    = MenuItem::Master;
 	m_keyAdjustSlider = SliderType::None;
 
 	// テクスチャの読み込み
 	InitTexture(m_spPanelTex,          "SettingsPanel.png");
 	InitTexture(m_spHeadingTex,        "HeadingSetting.png");
 	InitTexture(m_spHeadingDividerTex, "HeadingDivider.png");
+	InitTexture(m_spLabelMasterTex,    "LabelMaster.png");
 	InitTexture(m_spLabelBGMTex,       "LabelBGM.png");
 	InitTexture(m_spLabelSETex,        "LabelSE.png");
 	InitTexture(m_spBarBackTex,        "SliderBar_bg.png");
@@ -155,6 +157,10 @@ void Setting::Update()
 		{
 			Select(MenuItem::Close);
 		}
+		else if (IsHoverSlider(mousePos, MasterBarY))
+		{
+			Select(MenuItem::Master);
+		}
 		else if (IsHoverSlider(mousePos, BGMBarY))
 		{
 			Select(MenuItem::BGM);
@@ -168,7 +174,12 @@ void Setting::Update()
 	// スライダーをつかむ (押した瞬間に、どのスライダーの上にいるかを調べる)
 	if (isMouseTrigger)
 	{
-		if (IsHoverSlider(mousePos, BGMBarY))
+		if (IsHoverSlider(mousePos, MasterBarY))
+		{
+			m_dragSlider = SliderType::Master;
+			Select(MenuItem::Master);
+		}
+		else if (IsHoverSlider(mousePos, BGMBarY))
 		{
 			m_dragSlider = SliderType::BGM;
 			Select(MenuItem::BGM);
@@ -190,8 +201,8 @@ void Setting::Update()
 		}
 		else
 		{
-			// 離した時、SEなら確認用にSEを鳴らす (音量を耳で確かめられる)
-			if (m_dragSlider == SliderType::SE)
+			// 離した時、マスター・SEなら確認用にSEを鳴らす (音量を耳で確かめられる)
+			if (m_dragSlider == SliderType::Master || m_dragSlider == SliderType::SE)
 			{
 				PlayPreviewSE();
 			}
@@ -230,7 +241,11 @@ void Setting::DrawSprite()
 	sprite.DrawTex(m_spHeadingDividerTex, 0, HeadingDividerY);
 
 	// 選ばれているスライダーの行の背景
-	if (m_selectedItem == MenuItem::BGM)
+	if (m_selectedItem == MenuItem::Master)
+	{
+		sprite.DrawBox(SelectBoxX, MasterBarY, SelectBoxHalfW, SelectBoxHalfH, &SelectBoxColor);
+	}
+	else if (m_selectedItem == MenuItem::BGM)
 	{
 		sprite.DrawBox(SelectBoxX, BGMBarY, SelectBoxHalfW, SelectBoxHalfH, &SelectBoxColor);
 	}
@@ -239,10 +254,12 @@ void Setting::DrawSprite()
 		sprite.DrawBox(SelectBoxX, SEBarY, SelectBoxHalfW, SelectBoxHalfH, &SelectBoxColor);
 	}
 
-	// スライダー (上: BGM / 下: SE)
-	sprite.DrawTex(m_spLabelBGMTex, LabelX, BGMBarY);
-	sprite.DrawTex(m_spLabelSETex,  LabelX, SEBarY);
+	// スライダー (上から: MASTER / BGM / SE)
+	DrawLabel(m_spLabelMasterTex, MasterBarY);
+	DrawLabel(m_spLabelBGMTex,    BGMBarY);
+	DrawLabel(m_spLabelSETex,     SEBarY);
 
+	DrawSlider(MasterBarY, GetSliderValue(SliderType::Master), m_selectedItem == MenuItem::Master);
 	DrawSlider(BGMBarY, GetSliderValue(SliderType::BGM), m_selectedItem == MenuItem::BGM);
 	DrawSlider(SEBarY,  GetSliderValue(SliderType::SE),  m_selectedItem == MenuItem::SE);
 
@@ -256,7 +273,7 @@ void Setting::Open()
 	m_isJustOpened    = true;
 	m_isHoverClose    = false;
 	m_dragSlider      = SliderType::None;
-	m_selectedItem    = MenuItem::BGM;
+	m_selectedItem    = MenuItem::Master;
 	m_keyAdjustSlider = SliderType::None;
 }
 
@@ -278,8 +295,8 @@ void Setting::Close()
 
 bool Setting::UpdateKeyInput(bool isUpTrigger, bool isDownTrigger, bool isEnterTrigger)
 {
-	// 上下で項目を選ぶ (画面の上から ×、BGM、SE の順。端から先は反対側に回る)
-	constexpr int ItemCount = 3;
+	// 上下で項目を選ぶ (画面の上から ×、MASTER、BGM、SE の順。端から先は反対側に回る)
+	constexpr int ItemCount = 4;
 
 	int item = static_cast<int>(m_selectedItem);
 
@@ -366,8 +383,8 @@ void Setting::FinishKeyAdjust()
 		return;
 	}
 
-	// SEなら、確認用にSEを鳴らす (音量を耳で確かめられる)
-	if (m_keyAdjustSlider == SliderType::SE)
+	// マスター・SEなら、確認用にSEを鳴らす (音量を耳で確かめられる)
+	if (m_keyAdjustSlider == SliderType::Master || m_keyAdjustSlider == SliderType::SE)
 	{
 		PlayPreviewSE();
 	}
@@ -382,6 +399,8 @@ Setting::SliderType Setting::GetSelectedSlider() const
 {
 	switch (m_selectedItem)
 	{
+	case MenuItem::Master:
+		return SliderType::Master;
 	case MenuItem::BGM:
 		return SliderType::BGM;
 	case MenuItem::SE:
@@ -421,8 +440,13 @@ bool Setting::LoadVolume()
 		return false;
 	}
 
-	// BGM / SE それぞれ、数値で入っている項目だけ反映する
-	// (範囲外の値は Set〜Volume の中で 0.0〜1.0 に丸められる)
+	// マスター / BGM / SE それぞれ、数値で入っている項目だけ反映する
+	// (範囲外の値は Set〜Volume の中で 0.0〜1.0 に丸められる / 無い項目は初期値のまま)
+	if (volumeJson.contains("MasterVolume") && volumeJson["MasterVolume"].is_number())
+	{
+		KdAudioManager::Instance().SetMasterVolume(volumeJson["MasterVolume"].get<float>());
+	}
+
 	if (volumeJson.contains("BGMVolume") && volumeJson["BGMVolume"].is_number())
 	{
 		KdAudioManager::Instance().SetBGMVolume(volumeJson["BGMVolume"].get<float>());
@@ -443,6 +467,7 @@ bool Setting::SaveVolume()
 
 	// 小数第2位に丸めて保存する (0.800000011920929 のような長い数字になるのを防ぐ)
 	nlohmann::json volumeJson;
+	volumeJson["MasterVolume"] = std::round(KdAudioManager::Instance().GetMasterVolume() * 100.0) / 100.0;
 	volumeJson["BGMVolume"] = std::round(KdAudioManager::Instance().GetBGMVolume() * 100.0) / 100.0;
 	volumeJson["SEVolume"]  = std::round(KdAudioManager::Instance().GetSEVolume()  * 100.0) / 100.0;
 
@@ -473,6 +498,8 @@ float Setting::GetSliderValue(SliderType type) const
 {
 	switch (type)
 	{
+	case SliderType::Master:
+		return KdAudioManager::Instance().GetMasterVolume();
 	case SliderType::BGM:
 		return KdAudioManager::Instance().GetBGMVolume();
 	case SliderType::SE:
@@ -486,6 +513,9 @@ void Setting::SetSliderValue(SliderType type, float value)
 {
 	switch (type)
 	{
+	case SliderType::Master:
+		KdAudioManager::Instance().SetMasterVolume(value);
+		break;
 	case SliderType::BGM:
 		KdAudioManager::Instance().SetBGMVolume(value);
 		break;
@@ -549,6 +579,22 @@ void Setting::DrawSlider(int barY, float value, bool isSelected)
 	{
 		sprite.DrawTex(m_spKnobTex, knobX, barY);
 	}
+}
+
+void Setting::DrawLabel(const std::shared_ptr<KdTexture>& tex, int barY)
+{
+	if (!tex)
+	{
+		return;
+	}
+
+	KdSpriteShader& sprite = KdShaderManager::Instance().m_spriteShader;
+
+	// ラベルは左揃えで描く (基準点を画像の左端・縦の中央にして、左端の位置を揃える)
+	const int w = static_cast<int>(tex->GetWidth());
+	const int h = static_cast<int>(tex->GetHeight());
+
+	sprite.DrawTex(tex, LabelLeftX, barY, w, h, nullptr, &kWhiteColor, { 0.0f, 0.5f });
 }
 
 void Setting::DrawCloseButton()

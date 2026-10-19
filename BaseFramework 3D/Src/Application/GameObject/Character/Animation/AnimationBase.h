@@ -10,7 +10,7 @@ public:
 	void Init();
 	void Update(const float deltaTime);
 	bool IsFinished() const;
-
+	bool IsLoop()const;
 
 protected:
 

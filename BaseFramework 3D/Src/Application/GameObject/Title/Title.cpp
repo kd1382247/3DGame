@@ -56,7 +56,6 @@ void Title::Update()
 
 void Title::DrawSprite()
 {
-
 	
 	// 背景
 	KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTitleBGTex, 0, 0);
@@ -65,7 +64,6 @@ void Title::DrawSprite()
 
 	// 加算合成で描画
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
-
 
 	//----------------------------------------------------------------
 	// シャインで帯状に光らせる

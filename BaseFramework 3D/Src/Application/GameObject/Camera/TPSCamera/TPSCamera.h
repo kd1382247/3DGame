@@ -12,7 +12,8 @@ public:
 		Hold,
 		Roar,
 		Stagger,
-		Return
+		Return,
+		Stay	// 撃破演出が終わった後も、ボスを映し続ける
 	};
 
 	struct BossIntroParam
@@ -20,20 +21,21 @@ public:
 		float distance       = 5.0f;  // ボスからカメラまでの距離
 		float height         = 2.0f;  // カメラの高さ(ボスの座標から)
 		float lookHeight     = 2.0f;  // 見る点の高さ(ボスの座標から)
-		float approachSpeed  = 0.04f; // 近づく速さ
+		float approachSpeed  = 0.04f; // 近づく速さ(撃破演出では、ボスの方を向く速さ)
 		float returnSpeed    = 0.06f; // 戻る速さ
 		float shakeAmplitude = 0.3f;  // カメラの揺れの大きさ
 		float shakeDuration  = 4.0f;  // 揺れの時間(秒)
 		float shakeFrequency = 8.0f;  // 揺れる速さ
 
 		// 撃破演出用
-		float swayAngle             = 6.0f; // 左右へ回り込む角度(度)
-		float swayFrequency         = 0.25f; // 回り込む速さ(1秒に何往復か)
+		float swayAngle             = 6.0f; // ボスを見たまま、左右に振れる角度(度)
+		float swayFrequency         = 0.25f; // 左右に振れる速さ(1秒に何往復か)
 		float staggerShakeAmplitude = 0.2f; // 小刻みな揺れの大きさ
 		float staggerShakeFrequency = 8.0f; // 小刻みな揺れの速さ(1秒に何往復か)
 		float staggerShakeInterval  = 0.8f;  // 小刻みな揺れが始まる間隔(秒)
 		float staggerShakeBurst     = 0.4f;  // 1回の小刻みな揺れの長さ(秒)
-		float staggerDuration       = 1.5f;  // よろけ続ける時間(秒)
+		float staggerDuration       = 2.5f;  // 揺れ(回り込み・小刻みな揺れ)が続く時間(秒)。過ぎると揺れは止まる
+		float staggerFadeTime       = 1.0f;  // 揺れが止まる前に、少しずつ弱める時間(秒)
 	};
 
 	TPSCamera()							{}
@@ -44,17 +46,20 @@ public:
 
 	void StartBossIntro(const Math::Vector3& pos, const BossIntroParam& param);
 
-	// ボスの撃破演出(ボスの座標と、ボスの正面の向きを渡す)
-	void StartBossDefeat(const Math::Vector3& pos, const Math::Vector3& forward, const BossIntroParam& param);
+	// ボスの撃破演出(ボスの座標を渡す)
+	// カメラはプレイヤーの後ろに付いたまま、ボスの方を向き続ける(プレイヤーが動いてもボスを映す)
+	// EndBossDefeat()が呼ばれても戻らず、ボスを映し続ける
+	void StartBossDefeat(const Math::Vector3& pos, const BossIntroParam& param);
 
-	// 撃破演出の終了の合図(よろけ演出の途中でも、カメラが元の位置に戻り始める)
+	// 撃破演出の終了の合図(ボスが完全に消えたら呼ぶ)
+	// カメラはプレイヤーには戻らず、ボスを映したまま留まる(演出再生中ではなくなる)
 	void EndBossDefeat()
 	{
 		// 撃破演出の、近づき中かよろけ中の時だけ受け付ける
 		if (m_isDefeat &&
 			(m_introState == BossIntroState::Approach || m_introState == BossIntroState::Stagger))
 		{
-			m_introState = BossIntroState::Return;
+			m_introState = BossIntroState::Stay;
 		}
 	}
 
@@ -67,8 +72,8 @@ public:
 			m_introState = BossIntroState::Roar;
 		}
 	}
-	// introStateがNone以外ならtrueを返す
-	bool IsBossIntroPlaying()const { return m_introState != BossIntroState::None; }
+	// 演出の再生中ならtrueを返す(NoneとStay(撃破演出の後)の時はfalse)
+	bool IsBossIntroPlaying()const { return m_introState != BossIntroState::None && m_introState != BossIntroState::Stay; }
 
 	bool IsBossIntroHold()const { return m_introState == BossIntroState::Hold; }
 
@@ -82,10 +87,19 @@ private:
 	// 揺れの量を返す
 	float CalcShakeOffsest()const;
 
-	// 撃破演出：ボスの正面を中心に、左右へ回り込む角度(ラジアン)を返す
+	// 撃破演出：ボスの方向から、左右にずらす角度(ラジアン)を返す
 	float CalcSwayAngle()const;
 	// 撃破演出：小刻みな揺れの量(カメラの左右方向)を返す
 	float CalcStaggerShake()const;
+	// 撃破演出：揺れの強さの倍率(1.0 〜 0.0)。staggerDurationが近づくと0へ向かう
+	float CalcStaggerFade()const;
+
+	// 撃破演出の更新(ボスの方を向く、揺れの時間を進める)
+	void UpdateBossDefeat(const float deltaTime);
+	// 撃破演出：カメラの向き(Y回転)を、ボスの方向へ近づける。向ききったらtrueを返す
+	bool TurnToBoss();
+	// 撃破演出：小刻みな揺れを、カメラの位置に足す
+	void ApplyDefeatShake();
 
 	Math::Quaternion CreateLookRotation(const Math::Vector3& camPos, const float lookHeight);
 

@@ -67,6 +67,10 @@ public:
 	PlayerGuard&       GetGuard()        { return m_playerGuard; }
 	PlayerParry&       GetParry()        { return m_playerParry; }
 
+	// 押しているマウスのボタンを離すまで、攻撃・ガード・パリィの入力を受け付けない
+	// (設定画面を閉じるクリックなどが、そのままプレイヤーの攻撃にならないようにする)
+	void BlockMouseInput() { m_input.BlockMouseUntilRelease(); }
+
 	//================================
 	// アクション(体の操作)
 	//================================
@@ -118,6 +122,9 @@ public:
 
 	// アニメーションが終わったかどうかを返す
 	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
+
+	// アニメーションがループかどうか
+	bool IsAnimationLoop()const { return m_animation.IsLoop(); }
 
 	//================================
 	// その他

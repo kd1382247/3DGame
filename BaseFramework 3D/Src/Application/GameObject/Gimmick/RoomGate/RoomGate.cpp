@@ -46,11 +46,18 @@ void RoomGate::Update()
 
 	const float deltaTime = TimeManager::Instance().GetDeltaTime();
 
-
 	if (shouldClose != m_shouldClose)
 	{
 		m_shouldClose = shouldClose;
-		KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Stage/Close/Close.wav");
+
+		auto spRoom = m_wpRoom.lock();
+		if (spRoom)
+		{
+			if(spRoom->GetRoomType()!=Room::RoomType::Boss)
+			{
+				KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Stage/Close/Close.wav");
+			}
+		}
 	}
 
 	if (shouldClose)

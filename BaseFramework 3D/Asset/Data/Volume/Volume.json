@@ -1,4 +1,5 @@
 {
-    "BGMVolume": 0.4,
-    "SEVolume": 0.45
+    "BGMVolume": 0.22,
+    "MasterVolume": 0.49,
+    "SEVolume": 0.16
 }

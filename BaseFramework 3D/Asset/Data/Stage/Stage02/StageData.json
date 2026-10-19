@@ -139,7 +139,7 @@
             "Position": {
                 "x": 7.400000095367432,
                 "y": 4.5,
-                "z": 97.0
+                "z": 8.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -174,7 +174,7 @@
                 "y": 5.599999904632568,
                 "z": 39.0
             },
-            "RoomType": "Normal",
+            "RoomType": "Wave",
             "Rotation": {
                 "x": 0.0,
                 "y": 0.0,
@@ -318,7 +318,7 @@
                 "y": 10.0,
                 "z": 79.0
             },
-            "RoomType": "Normal",
+            "RoomType": "AllKill",
             "Rotation": {
                 "x": 0.0,
                 "y": 0.0,

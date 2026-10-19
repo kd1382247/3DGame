@@ -22,5 +22,8 @@ struct AttackInfo
 
 	// 反射できるか
 	bool  m_canReflect = false;
+
+	// ガードできる攻撃なのか
+	bool  m_canGuard = true;
 	
 };

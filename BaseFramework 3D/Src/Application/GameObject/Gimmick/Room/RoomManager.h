@@ -22,6 +22,9 @@ public:
 
 	bool IsBossCombat()const;
 
+	// 戦闘前の演出中かどうか(ミッションの文字・ボスの登場演出)
+	bool IsIntro()const;
+
 	// ボスの登場演出中かどうか
 	bool IsBossIntro()const;
 

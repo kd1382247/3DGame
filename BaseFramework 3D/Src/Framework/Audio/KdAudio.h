@@ -38,13 +38,16 @@ public:
 	// BGMを停止する
 	void StopBGM();
 
-	// BGM / SE の音量設定 (0.0〜1.0 に丸められる)
-	// BGMは再生中のものにも即座に反映される
+	// マスター / BGM / SE の音量設定 (0.0〜1.0 に丸められる)
+	// 実際に鳴る音量 = BGM(またはSE)の音量 × マスターの音量
+	// BGMは再生中のものにも即座に反映される (SEは次に鳴らすものから)
+	void  SetMasterVolume(float vol);
 	void  SetBGMVolume(float vol);
 	void  SetSEVolume(float vol);
 
-	float GetBGMVolume() const { return m_bgmVolume; }
-	float GetSEVolume()  const { return m_seVolume; }
+	float GetMasterVolume() const { return m_masterVolume; }
+	float GetBGMVolume()    const { return m_bgmVolume; }
+	float GetSEVolume()     const { return m_seVolume; }
 
 	void AddPlayList(const std::shared_ptr<KdSoundInstance>& rSound)
 	{
@@ -81,6 +84,9 @@ private:
 
 	// 音量を指定して2Dサウンドを再生する (PlayBGM / PlaySE の共通処理)
 	std::shared_ptr<KdSoundInstance> PlayWithVolume(std::string_view rName, bool loop, float vol);
+
+	// マスター音量 (BGM・SE全体にかかる / 1.0が100%)
+	float m_masterVolume = 1.0f;
 
 	// BGM用の音量 (1.0が100%)
 	float m_bgmVolume = 1.0f;

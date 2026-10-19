@@ -13,14 +13,17 @@ void PlayerIntroWaitState::OnStart(Player* owner)
 
 	// 鳴っていた足音を止める
 	owner->StopWalkSE();
-
-	owner->PlayAnimation(PlayerAnimationType::Idle);
 }
 
 void PlayerIntroWaitState::OnUpdate(Player* owner)
 {
+	if (owner->IsAnimationFinished()||owner->IsAnimationLoop())
+	{
+		owner->PlayAnimation(PlayerAnimationType::Idle);
+	}
+
 	// 演出が終わったら通常の操作に戻る
-	if (!RoomManager::Instance().IsBossIntro() &&
+	if (!RoomManager::Instance().IsIntro() &&
 		!RoomManager::Instance().IsBossDefeat())
 	{
 		m_pMachine->ChangeState<PlayerNormalState>();

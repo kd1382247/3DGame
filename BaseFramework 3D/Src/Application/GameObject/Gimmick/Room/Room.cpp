@@ -11,6 +11,8 @@
 #include"../../../GameObject/Character/Player/Player.h"
 #include"../../Character/Boss/BossBase.h"
 #include"../../Character/Enemy/EnemyBase.h"
+#include"../../Camera/CameraBase.h"
+#include"../../RoomIntroUI/RoomIntroUI.h"
 
 void Room::Init()
 {
@@ -76,7 +78,16 @@ void Room::Update()
 				{
 					ChangeState(RoomState::Intro);
 
+					// 演出中は、プレイヤーの視点(マウスでのカメラ回転)を動かせないようにする
+					SetCameraLock(true);
+
 					m_waitBossIntro = StartBossIntro();
+
+					// ボスの登場演出がない部屋は、ミッションの文字を出す
+					if (!m_waitBossIntro)
+					{
+						m_waitMissionUI = StartMissionIntro();
+					}
 				}
 			}
 		}
@@ -218,6 +229,7 @@ void Room::DrawInspector()
 void Room::SetUpReference()
 {
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
+	m_wpCamera = GameObjectFinder::Instance().FindObject<CameraBase>();
 }
 
 nlohmann::json Room::SaveData() const
@@ -294,15 +306,7 @@ void Room::LoadData(const nlohmann::json& json)
 
 	if (json.contains("RoomType"))
 	{
-		const std::string roomTypeName = json["RoomType"].get<std::string>();
-
-		for (int i = 0; i < std::size(m_roomTypeName); i++)
-		{
-			if (roomTypeName == m_roomTypeName[i])
-			{
-				SetRoomType(static_cast<RoomType>(i));
-			}
-		}
+		SetRoomType(json["RoomType"].get<std::string>());
 	}
 
 }
@@ -353,6 +357,14 @@ DirectX::BoundingBox Room::GetCoreBox(float margin) const
 
 void Room::SetRoomType(const std::string& typeName)
 {
+	// 古い保存データ:Normalは無くなったので、Waveとして読む
+	if (typeName == "Normal")
+	{
+		SetRoomType(RoomType::Wave);
+
+		return;
+	}
+
 	for (int i = 0; i < std::size(m_roomTypeName); i++)
 	{
 		if (typeName == m_roomTypeName[i])
@@ -414,6 +426,49 @@ void Room::ChangeState(RoomState next)
 	m_stateTimer = 0.0f;
 }
 
+bool Room::StartMissionIntro()
+{
+	// 部屋の種類ごとに、出すミッションの文字を決める
+	RoomIntroUI::Mission mission = RoomIntroUI::Mission::Wave;
+
+	switch (m_roomType)
+	{
+	case RoomType::Wave:
+		mission = RoomIntroUI::Mission::Wave;
+		break;
+
+	case RoomType::AllKill:
+		mission = RoomIntroUI::Mission::AllKill;
+		break;
+
+	default:
+		// ボス部屋など、出す文字がない部屋
+		return false;
+	}
+
+	std::shared_ptr<RoomIntroUI> missionUI = std::make_shared<RoomIntroUI>();
+	missionUI->Init();
+	missionUI->Start(mission);
+
+	SceneManager::Instance().AddObject(missionUI);
+
+	m_wpMissionUI = missionUI;
+
+	return true;
+}
+
+void Room::SetCameraLock(bool isLock)
+{
+	auto spCamera = m_wpCamera.lock();
+
+	if (!spCamera)
+	{
+		return;
+	}
+
+	spCamera->SetMouseRotateLock(isLock);
+}
+
 void Room::FinishIntro()
 {
 	// 演出中でなければ何もしない
@@ -423,6 +478,18 @@ void Room::FinishIntro()
 	}
 
 	m_waitBossIntro = false;
+	m_waitMissionUI = false;
+
+	// ミッションの文字が残っていたら消す
+	auto spMissionUI = m_wpMissionUI.lock();
+
+	if (spMissionUI)
+	{
+		spMissionUI->Destroy();
+	}
+
+	// プレイヤーの視点を動かせるように戻す
+	SetCameraLock(false);
 
 	ChangeState(RoomState::InCombat);
 }
@@ -434,7 +501,20 @@ void Room::UpdateIntro()
 		return;
 	}
 
-	// 演出の仕組みができるまでは、決めた時間が経ったら演出が終わったことにする
+	// ミッションの文字が消え終わったら、戦闘開始
+	if (m_waitMissionUI)
+	{
+		auto spMissionUI = m_wpMissionUI.lock();
+
+		if (!spMissionUI || spMissionUI->IsFinished())
+		{
+			FinishIntro();
+		}
+
+		return;
+	}
+
+	// 出す文字がない部屋は、決めた時間が経ったら演出が終わったことにする
 	m_stateTimer += TimeManager::Instance().GetDeltaTime();
 
 	if (m_stateTimer >= m_introDuration)

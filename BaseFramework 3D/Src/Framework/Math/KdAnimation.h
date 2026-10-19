@@ -65,6 +65,13 @@ public:
 		return false;
 	}
 
+	// アニメーションがループしている？
+	bool IsAnimationLoop()const
+	{
+		if (m_spAnimation == nullptr) { return true; }
+		return m_isLoop;
+	}
+
 	// アニメーションの更新
 	void AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed = 1.0f);
 

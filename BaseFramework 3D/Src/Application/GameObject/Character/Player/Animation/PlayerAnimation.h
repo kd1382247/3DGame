@@ -15,7 +15,6 @@ public:
 
 	void Play(PlayerAnimationType _animType);
 	
-
 private:
 
 	PlayerAnimationType m_currentAnimation = PlayerAnimationType::None;

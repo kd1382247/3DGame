@@ -29,3 +29,14 @@ bool AnimationBase::IsFinished() const
 	}
 	return m_spAnimator->IsAnimationEnd();
 }
+
+bool AnimationBase::IsLoop() const
+{
+
+	if (!m_spAnimator)
+	{
+		return false;
+	}
+
+	return m_spAnimator->IsAnimationLoop();
+}

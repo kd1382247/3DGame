@@ -227,9 +227,15 @@ void Player::UpdateDebugCommand()
 
 	if (GetAsyncKeyState('I') & 0x8000)
 	{
-		// ボスの撃破演出(確認用に、ボスの座標と正面の向きは仮の値)
+		// ボスの撃破演出(確認用に、ボスの座標は仮の値)
 		TPSCamera::BossIntroParam param;
-		spTpsCamera->StartBossDefeat(GetPos() + Math::Vector3(0.0f, 0.0f, 10.0f), Math::Vector3(1.0f, 0.0f, -1.0f), param);
+		spTpsCamera->StartBossDefeat(GetPos() + Math::Vector3(0.0f, 0.0f, 10.0f), param);
+	}
+
+	if (GetAsyncKeyState('O') & 0x8000)
+	{
+		// 撃破演出の終了(確認用。本番はボスが完全に消えた時に呼ぶ。カメラはボスを映したまま留まる)
+		spTpsCamera->EndBossDefeat();
 	}
 
 }
@@ -352,8 +358,9 @@ void Player::UpdateAttackMove()
 
 void Player::UpdateBossIntroLock()
 {
-	// ボスの登場演出中と、ボスを倒した演出中は、操作できないようにする
-	if (!RoomManager::Instance().IsBossIntro())
+	// 戦闘前の演出中(ミッションの文字・ボスの登場演出)は、操作できないようにする
+	if (!RoomManager::Instance().IsIntro()&&
+		!RoomManager::Instance().IsBossDefeat())
 	{
 		return;
 	}
@@ -598,9 +605,11 @@ void Player::UpdateGroundPosY()
 
 void Player::OnHit(const AttackInfo attackInfo)
 {
-	// 死んだ後と、ボスを倒した演出中は攻撃を受けない
+	// 死んだ後と、戦闘前の演出中、ボスを倒した演出中は攻撃を受けない
 	// (ゲームオーバー中に攻撃が当たり続けたり、ボスを倒した後に残った爆発などで倒されたりしないようにする)
-	if (m_health.IsDead() || RoomManager::Instance().IsBossDefeat())
+	if (m_health.IsDead() ||
+		RoomManager::Instance().IsIntro() ||
+		RoomManager::Instance().IsBossDefeat())
 	{
 		return;
 	}

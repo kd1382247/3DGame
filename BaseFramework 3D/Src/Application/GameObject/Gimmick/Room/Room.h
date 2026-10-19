@@ -4,13 +4,18 @@
 
 class Player;
 
+class CameraBase;
+
+class RoomIntroUI;
+
 class Room :public StageGimmick
 {
 public:
 
 	enum class RoomType
 	{
-		Normal,
+		Wave,		// ウェーブを耐え抜く部屋(入った時に「ウェーブを耐え抜け！」と出る)
+		AllKill,	// 敵をすべて倒す部屋(入った時に「敵をすべて倒せ！」と出る)
 		Boss,
 		Safe
 	};
@@ -63,6 +68,9 @@ public:
 	// ボス戦かどうか
 	bool IsBossCombat()const { return m_roomState == RoomState::InCombat && m_roomType == RoomType::Boss; }
 
+	// 戦闘前の演出中なのか(ミッションの文字・ボスの登場演出。プレイヤーが操作できない)
+	bool IsIntro()const { return m_roomState == RoomState::Intro; }
+
 	// ボスのイントロ中なのか
 	bool IsBossIntro()const { return m_roomState == RoomState::Intro && m_roomType == RoomType::Boss; }
 
@@ -100,6 +108,12 @@ private:
 	// ボスに登場演出の開始を伝える
 	bool StartBossIntro();
 
+	// ミッションの文字(「ウェーブを耐え抜け！」など)を出す。出す文字がない部屋(ボス部屋など)ではfalse
+	bool StartMissionIntro();
+
+	// 戦闘前の演出中、マウスでのカメラ回転を止める / 再開する
+	void SetCameraLock(bool isLock);
+
 	// 状態を変える(ログも出す)
 	void ChangeState(RoomState next);
 
@@ -118,6 +132,7 @@ private:
 	void KillAllEnemies();
 
 	std::weak_ptr<Player>m_wpPlayer;
+	std::weak_ptr<CameraBase>m_wpCamera;
 	bool m_isPlayerInside = false;
 
 	// 内側の箱(バトル開始の判定範囲)。部屋の中心からのずれと、大きさ(幅・高さ・奥行き)
@@ -130,9 +145,9 @@ private:
 	// プレイヤーの半径(Editではプレイヤーがいないので、内側の箱の表示用に初期値を入れておく)
 	float m_bodyRadius=0.5f;
 
-	RoomType m_roomType = RoomType::Normal;
+	RoomType m_roomType = RoomType::Wave;
 
-	const std::string m_roomTypeName[3] = { {"Normal"},{"Boss"},{"Safe"}};
+	const std::string m_roomTypeName[4] = { {"Wave"},{"AllKill"},{"Boss"},{"Safe"}};
 
 
 	RoomState m_roomState = RoomState::Unvisited;
@@ -146,6 +161,10 @@ private:
 	float m_stateTimer = 0.0f;
 
 	bool  m_waitBossIntro = false;
+
+	// ミッションの文字が消え終わる(戦闘開始)のを待っているか
+	bool  m_waitMissionUI = false;
+	std::weak_ptr<RoomIntroUI> m_wpMissionUI;
 
 	// ボスの撃破演出が終わる(FinishBossDefeatが呼ばれる)のを待っているか
 	bool  m_waitBossDefeat = false;
