@@ -9,15 +9,33 @@
 #include"../../../../Scene/SceneManager.h"
 
 #include"../../../EnergyBullet/EnergyBulletManager.h"
-#include"../../../MageMagicCircle/MageMagicCircleManager.h"
-#include"../../../MageMagicSector/MageMagicSectorManager.h"
-#include"../../../MageBeam/MageBeamManager.h"
+#include"MageMagicCircle/MageMagicCircleManager.h"
+#include"MageMagicSector/MageMagicSectorManager.h"
+#include"MageBeam/MageBeamManager.h"
+#include"MageBeam/MageBeamDesc.h"
 
 #include"../../../HPBar/BossHPBar/BossHPBar.h"
 
 #include"State/States/MageNormalState.h"
 #include"State/States/MageIntroState.h"
 #include"State/States/MageDieState.h"
+
+namespace
+{
+	// Parameterのエフェクト設定 → 魔法円のエフェクト設定
+	MageMagicCircleEffect ToCircleEffect(const MageParameter::EffectParam& effect)
+	{
+		MageMagicCircleEffect result;
+
+		result.fileName = effect.m_fileName;
+		result.size = effect.m_size;
+		result.speed = effect.m_speed;
+		result.startFrame = static_cast<float>(effect.m_startFrame);
+		result.endFrame = static_cast<float>(effect.m_endFrame);
+
+		return result;
+	}
+}
 
 void Mage::Init()
 {
@@ -202,8 +220,8 @@ MageAttackPattern Mage::SelectAttackPattern()
 void Mage::PrepareSummonPositions()
 {
 	// 呼び出す敵の数と、ボスを囲む円の半径(Parameterで調整できる)
-	const int enemyCount = m_parameter.GetParam().m_summonCount;
-	const float offsetRadius = m_parameter.GetParam().m_summonRadius;
+	const int enemyCount = m_parameter.GetParam().m_summon.m_count;
+	const float offsetRadius = m_parameter.GetParam().m_summon.m_radius;
 
 	m_summonPositions.clear();
 
@@ -263,13 +281,13 @@ void Mage::SpawnEnemies()
 	m_summonPositions.clear();
 }
 
-void Mage::CastTargetCircle()
+std::shared_ptr<MageMagicCircle> Mage::CastTargetCircle()
 {
 	auto spPlayer = m_wpPlayer.lock();
 
 	if (!spPlayer)
 	{
-		return;
+		return nullptr;
 	}
 
 	Math::Vector3 targetPos = spPlayer->GetPos();
@@ -279,37 +297,42 @@ void Mage::CastTargetCircle()
 		targetPos.y = spPlayer->GetGroundYPos();
 	}
 
-	const auto& param = m_parameter.GetParam();
+	const auto& param = m_parameter.GetParam().m_targetCircle;
 
-	MageMagicCircleManager::Instance().CreateMagicCircle(
-		targetPos,
-		param.m_targetCircleRadius,
-		param.m_targetCircleTelegraph,
-		param.m_attackPow,
-		"Tornado/Tornado.efkefc",
-		0.4,
-		1.0f,
-		0,
-		90);
+	MageMagicCircleDesc desc;
+
+	desc.pos = targetPos;
+	desc.radius = param.m_radius;
+	desc.telegraphTime = param.m_telegraph;
+	desc.damage = param.m_damage;
+	desc.effect = ToCircleEffect(param.m_effect);
+
+	return MageMagicCircleManager::Instance().CreateMagicCircle(desc);
 }
 
 std::shared_ptr<MageMagicSector> Mage::CastForwardSector()
 {
-	const auto& param = m_parameter.GetParam();
+	const auto& param = m_parameter.GetParam().m_forwardSector;
 
-	return MageMagicSectorManager::Instance().CreateMagicSector(
-		GetPos(),
-		m_mWorld.Backward(),
-		param.m_forwardSectorAngle,
-		param.m_forwardSectorRadius,
-		param.m_forwardSectorTelegraph,
-		param.m_forwardSectorDamage,
-		"Sword/Sword2.efkefc",
-		2.5f,
-		1.2f,
-		0,
-		80,
-		GetEffectRotation(-60));
+	MageMagicSectorDesc desc;
+
+	desc.pos = GetPos();
+	desc.dir = m_mWorld.Backward();
+	desc.angleDeg = param.m_angle;
+	desc.radius = param.m_radius;
+	desc.telegraphTime = param.m_telegraph;
+	desc.damage = param.m_damage;
+
+	const auto& effect = param.m_effect;
+
+	desc.effect.fileName = effect.m_fileName;
+	desc.effect.size = effect.m_size;
+	desc.effect.speed = effect.m_speed;
+	desc.effect.startFrame = static_cast<float>(effect.m_startFrame);
+	desc.effect.endFrame = static_cast<float>(effect.m_endFrame);
+	desc.effect.rotation = GetEffectRotation(effect.m_rotationY);
+
+	return MageMagicSectorManager::Instance().CreateMagicSector(desc);
 }
 
 void Mage::FireBolt()
@@ -321,11 +344,11 @@ void Mage::FireBolt()
 		return;
 	}
 
-	const auto& param = m_parameter.GetParam();
+	const auto& param = m_parameter.GetParam().m_bolt;
 
-	Math::Vector3 spawnPos = GetPos() + Math::Vector3(0.0f, param.m_boltSpawnHeight, 0.0f);
+	Math::Vector3 spawnPos = GetPos() + Math::Vector3(0.0f, param.m_spawnHeight, 0.0f);
 
-	Math::Vector3 dir = (spPlayer->GetPos() + Math::Vector3(0.0f, param.m_boltAimHeight, 0.0f)) - spawnPos;
+	Math::Vector3 dir = (spPlayer->GetPos() + Math::Vector3(0.0f, param.m_aimHeight, 0.0f)) - spawnPos;
 
 	if (dir.LengthSquared() > 0.000001f)
 	{
@@ -336,27 +359,26 @@ void Mage::FireBolt()
 		std::dynamic_pointer_cast<CharacterBase>(shared_from_this()),
 		spawnPos,
 		dir,
-		param.m_boltSpeed,
-		param.m_boltRadius,
-		param.m_attackPow,
-		param.m_boltKnockBack,
-		param.m_boltLifeTime);
+		param.m_speed,
+		param.m_radius,
+		param.m_damage,
+		param.m_knockBack,
+		param.m_lifeTime);
 }
 
-void Mage::CastNovaCircle()
+std::shared_ptr<MageMagicCircle> Mage::CastNovaCircle()
 {
-	const auto& param = m_parameter.GetParam();
+	const auto& param = m_parameter.GetParam().m_novaCircle;
 
-	MageMagicCircleManager::Instance().CreateMagicCircle(
-		GetPos(),
-		param.m_novaCircleRadius,
-		param.m_novaCircleTelegraph,
-		param.m_attackPow,
-		"Salamander/Salamander.efkefc",
-		0.8f,
-		1.0f,
-		0,
-		140);
+	MageMagicCircleDesc desc;
+
+	desc.pos = GetPos();
+	desc.radius = param.m_radius;
+	desc.telegraphTime = param.m_telegraph;
+	desc.damage = param.m_damage;
+	desc.effect = ToCircleEffect(param.m_effect);
+
+	return MageMagicCircleManager::Instance().CreateMagicCircle(desc);
 }
 
 Math::Vector3 Mage::GetEffectRotation(const float value)const
@@ -368,21 +390,52 @@ Math::Vector3 Mage::GetEffectRotation(const float value)const
 	return rotation;
 }
 
-std::shared_ptr<MageBeam> Mage::FireBeam(const Math::Vector3& pos, const Math::Vector3& dir, float length, float width,const Math::Vector3&effectPos)
+std::shared_ptr<MageBeam> Mage::FireBeam(const MageParameter::Beam& param)
 {
-	return MageBeamManager::Instance().CreateBeam(
-		pos,
-		dir,
-		length,
-		width,
-		m_parameter.GetParam().m_attackPow,
-		m_parameter.GetParam().m_beamDuration,
-		// TODO: 実在するレーザー系のエフェクトアセットに差し替える
-		"Beam/Beam.efkefc",
-		0.6f,
-		1.0f,
-		130,
-		250,
-		GetEffectRotation(180.0f),
-		effectPos);
+	MageBeamDesc desc;
+
+	GetBeamPose(param, desc.pos, desc.dir);
+
+	desc.length = param.m_length;
+	desc.width = param.m_width;
+	desc.damage = param.m_damage;
+	desc.duration = param.m_duration;
+	desc.hitInterval = param.m_hitInterval;
+
+	const auto& effect = param.m_beamEffect;
+
+	desc.effect.fileName = effect.m_fileName;
+	desc.effect.size = effect.m_size;
+	desc.effect.speed = effect.m_speed;
+	desc.effect.startFrame = static_cast<float>(effect.m_startFrame);
+	desc.effect.endFrame = static_cast<float>(effect.m_endFrame);
+	desc.effect.rotation = GetEffectRotation(effect.m_rotationY);
+	desc.effect.effectPos = GetAttackEffectPos(effect);
+
+	return MageBeamManager::Instance().CreateBeam(desc);
+}
+
+void Mage::GetBeamPose(const MageParameter::Beam& param, Math::Vector3& outPos, Math::Vector3& outDir)const
+{
+	// ボス中心ではなく、ボスの前方に押し出した位置を基準にする
+	outDir = m_mWorld.Backward();
+	outPos = GetPos() + outDir * param.m_forwardOffset;
+}
+
+Math::Vector3 Mage::GetAttackEffectPos(const MageParameter::EffectParam& effect)const
+{
+	return (GetPos() + Math::Vector3(0.0f, effect.m_heightOffset, 0.0f)) + m_mWorld.Backward() * effect.m_forwardOffset;
+}
+
+std::weak_ptr<KdEffekseerObject> Mage::PlayAttackEffect(const MageParameter::EffectParam& effect)const
+{
+	return KdEffekseerManager::GetInstance().Play(
+		effect.m_fileName,
+		GetAttackEffectPos(effect),
+		effect.m_size,
+		effect.m_speed,
+		false,
+		effect.m_startFrame,
+		effect.m_endFrame,
+		GetEffectRotation(effect.m_rotationY));
 }

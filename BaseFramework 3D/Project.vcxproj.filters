@@ -337,9 +337,6 @@
     <Filter Include="Src\Application\GameObject\EnergyBullet">
       <UniqueIdentifier>{c55db896-6e19-40e0-a43b-75d6cd80b3bd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\MageMagicCircle">
-      <UniqueIdentifier>{018f0cc9-fc2e-49c2-b0bd-6530dde2f1a0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Character\Boss">
       <UniqueIdentifier>{a0151253-f995-407e-8695-e2aed66ae834}</UniqueIdentifier>
     </Filter>
@@ -387,12 +384,6 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Boss\Mage\Parameter">
       <UniqueIdentifier>{a80b4287-37a2-46d3-b777-86d4d45871ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\MageMagicSector">
-      <UniqueIdentifier>{e38b4ee8-b64b-407f-99a4-6b0896401726}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\MageBeam">
-      <UniqueIdentifier>{3ee0f68e-da6e-4764-8c82-1abb93037ba5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Character\Player\SwordTrail">
       <UniqueIdentifier>{b7c5694c-c365-4225-b704-34d1c26b14c0}</UniqueIdentifier>
@@ -444,6 +435,18 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\RoomIntroUI">
       <UniqueIdentifier>{a546b915-f675-4e6f-aaae-b46528e2ff91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Mage\MageBeam">
+      <UniqueIdentifier>{3ee0f68e-da6e-4764-8c82-1abb93037ba5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle">
+      <UniqueIdentifier>{018f0cc9-fc2e-49c2-b0bd-6530dde2f1a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicSector">
+      <UniqueIdentifier>{e38b4ee8-b64b-407f-99a4-6b0896401726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Mage\ColorSphereIndicator">
+      <UniqueIdentifier>{6e906a5c-62a8-4114-a417-7a40fac433ad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1008,12 +1011,6 @@
     <ClInclude Include="Src\Application\GameObject\EnergyBullet\EnergyBulletManager.h">
       <Filter>Src\Application\GameObject\EnergyBullet</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\MageMagicCircle\MageMagicCircle.h">
-      <Filter>Src\Application\GameObject\MageMagicCircle</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\MageMagicCircle\MageMagicCircleManager.h">
-      <Filter>Src\Application\GameObject\MageMagicCircle</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\BossBase.h">
       <Filter>Src\Application\GameObject\Character\Boss</Filter>
     </ClInclude>
@@ -1068,12 +1065,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\Mage.h">
       <Filter>Src\Application\GameObject\Character\Boss\Mage</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\MageMagicSector\MageMagicSector.h">
-      <Filter>Src\Application\GameObject\MageMagicSector</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\MageMagicSector\MageMagicSectorManager.h">
-      <Filter>Src\Application\GameObject\MageMagicSector</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardSectorState.h">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClInclude>
@@ -1085,12 +1076,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBeamState.h">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\MageBeam\MageBeamManager.h">
-      <Filter>Src\Application\GameObject\MageBeam</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\MageBeam\MageBeam.h">
-      <Filter>Src\Application\GameObject\MageBeam</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Player\SwordTrail\PlayerSwordTrail.h">
       <Filter>Src\Application\GameObject\Character\Player\SwordTrail</Filter>
@@ -1190,6 +1175,33 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\GameResultUI\ResultUI.h">
       <Filter>Src\Application\GameObject\GameResultUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageBeam\MageBeam.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageBeam</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageBeam\MageBeamManager.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageBeam</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle\MageMagicCircle.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle\MageMagicCircleManager.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicSector\MageMagicSector.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicSector</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicSector\MageMagicSectorManager.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicSector</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageBeam\MageBeamDesc.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageBeam</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\ColorSphereIndicator\ColorSphereIndicator.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\ColorSphereIndicator</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicSector\MageMagicSectorDesc.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1685,12 +1697,6 @@
     <ClCompile Include="Src\Application\GameObject\EnergyBullet\EnergyBulletManager.cpp">
       <Filter>Src\Application\GameObject\EnergyBullet</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\MageMagicCircle\MageMagicCircle.cpp">
-      <Filter>Src\Application\GameObject\MageMagicCircle</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\MageMagicCircle\MageMagicCircleManager.cpp">
-      <Filter>Src\Application\GameObject\MageMagicCircle</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Boss\BossBase.cpp">
       <Filter>Src\Application\GameObject\Character\Boss</Filter>
     </ClCompile>
@@ -1736,12 +1742,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBoltState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\MageMagicSector\MageMagicSector.cpp">
-      <Filter>Src\Application\GameObject\MageMagicSector</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\MageMagicSector\MageMagicSectorManager.cpp">
-      <Filter>Src\Application\GameObject\MageMagicSector</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageForwardSectorState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClCompile>
@@ -1753,12 +1753,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageBeamState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\MageBeam\MageBeamManager.cpp">
-      <Filter>Src\Application\GameObject\MageBeam</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\MageBeam\MageBeam.cpp">
-      <Filter>Src\Application\GameObject\MageBeam</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Player\SwordTrail\PlayerSwordTrail.cpp">
       <Filter>Src\Application\GameObject\Character\Player\SwordTrail</Filter>
@@ -1849,6 +1843,24 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\GameResultUI\ResultUI.cpp">
       <Filter>Src\Application\GameObject\GameResultUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\MageBeam\MageBeam.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageBeam</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\MageBeam\MageBeamManager.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageBeam</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle\MageMagicCircle.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle\MageMagicCircleManager.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicSector\MageMagicSector.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicSector</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicSector\MageMagicSectorManager.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicSector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

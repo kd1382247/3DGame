@@ -2,10 +2,10 @@
 
 #include"MageMagicCircle.h"
 
-#include"../../../Framework/GameObject/KdGameObjectFactory.h"
-#include"../../Scene/SceneManager.h"
+#include"../../../../../../Framework/GameObject/KdGameObjectFactory.h"
+#include"../../../../../Scene/SceneManager.h"
 
-void MageMagicCircleManager::CreateMagicCircle(const Math::Vector3& pos, float radius, float telegraphTime, float damage, const std::string& fileName, float size, float speed, float startFrame, float endFrame)
+std::shared_ptr<MageMagicCircle> MageMagicCircleManager::CreateMagicCircle(const MageMagicCircleDesc& desc)
 {
 
 	auto obj = KdGameObjectFactory::Instance().CreateGameObject("MageMagicCircle");
@@ -14,14 +14,15 @@ void MageMagicCircleManager::CreateMagicCircle(const Math::Vector3& pos, float r
 
 	if (!magicCircle)
 	{
-		return;
+		return nullptr;
 	}
 
 	magicCircle->Init();
-	magicCircle->Setup(pos, radius, telegraphTime, damage);
-	magicCircle->SetEffectInfo(fileName, size, speed, startFrame, endFrame);
+	magicCircle->Setup(desc);
 
 	SceneManager::Instance().AddObject(magicCircle);
+
+	return magicCircle;
 }
 
 void MageMagicCircleManager::CancelAll()

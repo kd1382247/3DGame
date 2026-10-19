@@ -48,13 +48,13 @@
 #include"../../Application/GameObject/EnergyBullet/EnergyBullet.h"
 
 // Mageの魔法円
-#include"../../Application/GameObject/MageMagicCircle/MageMagicCircle.h"
+#include"../../Application/GameObject/Character/Boss/Mage/MageMagicCircle/MageMagicCircle.h"
 
 // Mageの扇型
-#include"../../Application/GameObject/MageMagicSector/MageMagicSector.h"
+#include"../../Application/GameObject/Character/Boss/Mage/MageMagicSector/MageMagicSector.h"
 
 // Mageのビーム
-#include"../../Application/GameObject/MageBeam/MageBeam.h"
+#include"../../Application/GameObject/Character/Boss/Mage/MageBeam/MageBeam.h"
 
 
 void KdGameObjectFactory::Init()

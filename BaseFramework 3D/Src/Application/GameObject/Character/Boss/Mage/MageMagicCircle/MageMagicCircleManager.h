@@ -1,22 +1,15 @@
 ﻿#pragma once
 
+#include"MageMagicCircleDesc.h"
+
 class MageMagicCircle;
 
 class MageMagicCircleManager
 {
 public:
 
-	// 魔法円オブジェクトを生成する(座標・半径・発動までの予備動作時間(秒)・ダメージ)
-	void CreateMagicCircle(
-		const Math::Vector3& pos,
-		float radius,
-		float telegraphTime,
-		float damage,
-		const std::string& fileName,
-		float size,
-		float speed,
-		float startFrame,
-		float endFrame);
+	// 魔法円オブジェクトを生成する(失敗した場合はnullptr)
+	std::shared_ptr<MageMagicCircle> CreateMagicCircle(const MageMagicCircleDesc& desc);
 
 
 	// 生成済みのものを全て取り消す(ボスが倒れた時など)

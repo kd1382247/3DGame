@@ -2,10 +2,10 @@
 
 #include"MageMagicSector.h"
 
-#include"../../../Framework/GameObject/KdGameObjectFactory.h"
-#include"../../Scene/SceneManager.h"
+#include"../../../../../../Framework/GameObject/KdGameObjectFactory.h"
+#include"../../../../../Scene/SceneManager.h"
 
-std::shared_ptr<MageMagicSector> MageMagicSectorManager::CreateMagicSector(const Math::Vector3& pos, const Math::Vector3& dir, float angleDeg, float radius, float telegraphTime, float damage, const std::string& fileName, float size, float speed, float startFrame, float endFrame,const Math::Vector3& rotation)
+std::shared_ptr<MageMagicSector> MageMagicSectorManager::CreateMagicSector(const MageMagicSectorDesc& desc)
 {
 
 	auto obj = KdGameObjectFactory::Instance().CreateGameObject("MageMagicSector");
@@ -18,8 +18,7 @@ std::shared_ptr<MageMagicSector> MageMagicSectorManager::CreateMagicSector(const
 	}
 
 	magicSector->Init();
-	magicSector->Setup(pos, dir, angleDeg, radius, telegraphTime, damage);
-	magicSector->SetEffectInfo(fileName, size, speed, startFrame, endFrame,rotation);
+	magicSector->Setup(desc);
 
 
 	SceneManager::Instance().AddObject(magicSector);

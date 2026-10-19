@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 class Mage;
+class MageMagicCircle;
 
 #include"../../../../StateMachine/StateBase.h"
 
@@ -17,5 +18,11 @@ private:
 
 	float m_castTimer = 0.0f;
 	bool  m_hasCast = false;
+
+	// 攻撃のアニメが終わって、円が消えるのを待っている間はtrue
+	bool  m_isWaiting = false;
+
+	// 生成した魔法円への参照(これが無くなる/終了したらNormalStateへ戻る)
+	std::weak_ptr<MageMagicCircle> m_wpMagicCircle;
 
 };

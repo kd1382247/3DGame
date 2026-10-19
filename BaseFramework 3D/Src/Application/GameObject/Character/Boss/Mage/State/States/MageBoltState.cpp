@@ -17,7 +17,7 @@ void MageBoltState::OnUpdate(Mage* mage)
 	mage->SetTargetDir();
 	mage->UpdateFacingDirection();
 
-	if (!m_hasCast && m_castTimer >= mage->GetParam().m_boltCastDelay)
+	if (!m_hasCast && m_castTimer >= mage->GetParam().m_bolt.m_castDelay)
 	{
 		mage->FireBolt();
 		m_hasCast = true;
@@ -26,7 +26,7 @@ void MageBoltState::OnUpdate(Mage* mage)
 
 	if (mage->IsAnimationFinished())
 	{
-		if (m_shotCount < mage->GetParam().m_boltShotCount)
+		if (m_shotCount < mage->GetParam().m_bolt.m_shotCount)
 		{
 			OnStart(mage);
 			// アニメーションを再再生

@@ -2,11 +2,13 @@
 
 #include"../BossBase.h"
 
+#include"MageBeam/MageBeamDesc.h"
 #include"Animation/MageAnimation.h"
 #include"Parameter/MageParameter.h"
 #include"../../StateMachine/StateMachine.h"
 
 class MageBeam;
+class MageMagicCircle;
 class MageMagicSector;
 
 class Mage :public BossBase
@@ -63,18 +65,27 @@ public:
 	// 1-2. 用意しておいた座標に敵を生成する
 	void SpawnEnemies();
 	// 2. プレイヤー位置に魔法攻撃(魔法円)
-	void CastTargetCircle();
+	std::shared_ptr<MageMagicCircle> CastTargetCircle();
 	// 3. 前方に扇形の範囲攻撃
 	std::shared_ptr<MageMagicSector> CastForwardSector();
 	// 4. プレイヤーへ単発魔法弾
 	void FireBolt();
 	// 5. ボス中心から半径数メートルの範囲攻撃(HP50%以下限定)
-	void CastNovaCircle();
+	std::shared_ptr<MageMagicCircle> CastNovaCircle();
 	// 6. レーザーを放つ(生成したMageBeamを返す)
-	std::shared_ptr<MageBeam> FireBeam(const Math::Vector3& pos, const Math::Vector3& dir, float length, float width, const Math::Vector3& effectPos);
+	std::shared_ptr<MageBeam> FireBeam(const MageParameter::Beam& param);
+
+	// ビームの発射座標・方向を求める(予告表示とビーム生成で同じ値を使うために、共通の関数にしている)
+	void GetBeamPose(const MageParameter::Beam& param, Math::Vector3& outPos, Math::Vector3& outDir)const;
 
 	// エフェクト再生用の回転値を取得(エフェクト側の初期正面とのズレを補正済み)
 	Math::Vector3 GetEffectRotation(const float value)const;
+
+	// 攻撃用エフェクトの再生座標を取得(ボスの位置から、前方・上へのずらしを足した位置)
+	Math::Vector3 GetAttackEffectPos(const MageParameter::EffectParam& effect)const;
+
+	// 攻撃用エフェクトを、Parameterの設定どおりに再生する
+	std::weak_ptr<KdEffekseerObject> PlayAttackEffect(const MageParameter::EffectParam& effect)const;
 
 	
 private:

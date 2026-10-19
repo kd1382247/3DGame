@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 class Mage;
+class MageMagicCircle;
 
 #include"../../../../StateMachine/StateBase.h"
 
@@ -19,5 +20,11 @@ private:
 	bool  m_hasCast = false;
 
 	int       m_shotCount = 0;
+
+	// 全弾撃ち終えて、最後の円が消えるのを待っている間はtrue
+	bool      m_isWaiting = false;
+
+	// 最後に生成した魔法円への参照(これが無くなる/終了したらNormalStateへ戻る)
+	std::weak_ptr<MageMagicCircle> m_wpMagicCircle;
 
 };

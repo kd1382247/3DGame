@@ -18,7 +18,7 @@ void MageSummonState::OnUpdate(Mage* mage)
 	{
 		m_castTimer += mage->GetDeltaTime();
 
-		if (m_castTimer >= mage->GetParam().m_summonCastDelay)
+		if (m_castTimer >= mage->GetParam().m_summon.m_castDelay)
 		{
 			// 出現座標を決めて、煙エフェクトを再生する
 			mage->PrepareSummonPositions();
@@ -32,7 +32,7 @@ void MageSummonState::OnUpdate(Mage* mage)
 	{
 		m_summonTimer += mage->GetDeltaTime();
 
-		if (m_summonTimer >= mage->GetParam().m_summonDelay)
+		if (m_summonTimer >= mage->GetParam().m_summon.m_delay)
 		{
 			// 用意しておいた座標に敵を生成する
 			mage->SpawnEnemies();

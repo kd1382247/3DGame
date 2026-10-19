@@ -2,7 +2,7 @@
 
 #include"../../Mage.h"
 #include"MageNormalState.h"
-#include"../../../../../MageMagicSector/MageMagicSector.h"
+#include"../../MageMagicSector/MageMagicSector.h"
 
 void MageForwardSectorState::OnStart(Mage* mage)
 {
@@ -15,7 +15,7 @@ void MageForwardSectorState::OnUpdate(Mage* mage)
 {
 	m_castTimer += mage->GetDeltaTime();
 
-	if (!m_hasCast && m_castTimer >= mage->GetParam().m_forwardSectorCastDelay)
+	if (!m_hasCast && m_castTimer >= mage->GetParam().m_forwardSector.m_castDelay)
 	{
 		m_wpMageMagicSector=mage->CastForwardSector();
 		m_hasCast = true;

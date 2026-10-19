@@ -1,16 +1,10 @@
 ﻿#include "MageBeam.h"
 
-#include"../Character/Player/Player.h"
-#include"../Character/AttackInfo.h"
+#include"../../../Player/Player.h"
+#include"../../../AttackInfo.h"
 
-#include"../../System/GameObjectFinder/GameObjectFinder.h"
-#include"../../System/TimeManager/TimeManager.h"
-
-namespace
-{
-	// 再ヒットまでの間隔(秒)
-	constexpr float kHitInterval = 0.4f;
-}
+#include"../../../../../System/GameObjectFinder/GameObjectFinder.h"
+#include"../../../../../System/TimeManager/TimeManager.h"
 
 void MageBeam::Init()
 {
@@ -22,35 +16,19 @@ void MageBeam::SetUpReference()
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
 }
 
-void MageBeam::Setup(const Math::Vector3& pos, const Math::Vector3& dir, float length, float width, float damage, float duration)
+void MageBeam::Setup(const MageBeamDesc& desc)
 {
-	SetPos(pos);
+	m_desc = desc;
 
-	m_beam.m_dir = dir;
-
-	// 受け取った時点で正規化
-	m_beam.m_dir.Normalize();
-
-	m_beam.m_length = length;
-	m_beam.m_width = width;
-
-	m_damage = damage;
-	m_duration = duration;
+	SetPos(m_desc.pos);
+	m_desc.dir.Normalize();
 
 	// 生成直後からすぐ判定できる状態にしておく
 	m_hitCooldown = 0.0f;
+
+	m_remainingTime = m_desc.duration;
 }
 
-void MageBeam::SetEffectInfo(const std::string& fileName, float size, float speed, float startFrame, float endFrame, const Math::Vector3& rotation, const Math::Vector3& pos)
-{
-	m_effectInfo.m_fileName = fileName;
-	m_effectInfo.m_pos = pos;
-	m_effectInfo.m_size = size;
-	m_effectInfo.m_speed = speed;
-	m_effectInfo.m_startFrame = startFrame;
-	m_effectInfo.m_endFrame = endFrame;
-	m_effectInfo.m_rotation = rotation;
-}
 
 
 void MageBeam::Cancel()
@@ -76,18 +54,28 @@ void MageBeam::Update()
 
 	float deltaTime = TimeManager::Instance().GetDeltaTime();
 
+	// 持続時間が切れたら、エフェクトを止めて消える
+	m_remainingTime -= deltaTime;
+
+	if (m_remainingTime <= 0.0f)
+	{
+		Cancel();
+
+		return;
+	}
+
 	if (m_effectHandle < 0)
 	{
 		// エフェクト再生(最初の1回だけ呼ぶ)
 		auto spEffekseerObj = KdEffekseerManager::GetInstance().Play(
-			m_effectInfo.m_fileName,
-			m_effectInfo.m_pos,
-			m_effectInfo.m_size,
-			m_effectInfo.m_speed,
+			m_desc.effect.fileName,
+			m_desc.effect.effectPos,
+			m_desc.effect.size,
+			m_desc.effect.speed,
 			false,
-			m_effectInfo.m_startFrame,
-			m_effectInfo.m_endFrame,
-			m_effectInfo.m_rotation).lock();
+			m_desc.effect.startFrame,
+			m_desc.effect.endFrame,
+			m_desc.effect.rotation).lock();
 
 		if (spEffekseerObj)
 		{
@@ -112,7 +100,7 @@ void MageBeam::Update()
 	if (spPlayer && m_hitCooldown <= 0.0f)
 	{
 		// ビームの前方軸・右軸(横方向)をローカル軸として作る(水平面のみで判定)
-		Math::Vector3 forward = m_beam.m_dir;
+		Math::Vector3 forward = m_desc.dir;
 		forward.y = 0.0f;
 		forward.Normalize();
 
@@ -129,17 +117,17 @@ void MageBeam::Update()
 		float r = toTarget.Dot(right);
 
 		// カラースフィア(矩形)はPosを中心に前後・左右へRectSize/2ずつ広がる作りなので、それに合わせる
-		bool inLength = (f > -(m_beam.m_length * 0.5f + targetRadius)) && (f < (m_beam.m_length * 0.5f + targetRadius));
-		bool inWidth = (r > -(m_beam.m_width * 0.5f + targetRadius)) && (r < (m_beam.m_width * 0.5f + targetRadius));
+		bool inLength = (f > -(m_desc.length * 0.5f + targetRadius)) && (f < (m_desc.length * 0.5f + targetRadius));
+		bool inWidth = (r > -(m_desc.width * 0.5f + targetRadius)) && (r < (m_desc.width * 0.5f + targetRadius));
 
 		if (inLength && inWidth)
 		{
 			AttackInfo attackInfo;
-			attackInfo.m_damage = m_damage;
+			attackInfo.m_damage = m_desc.damage;
 
 			spPlayer->OnHit(attackInfo);
 
-			m_hitCooldown = kHitInterval;
+			m_hitCooldown = m_desc.hitInterval;
 		}
 	}
 }
