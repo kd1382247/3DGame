@@ -5,11 +5,9 @@
 
 void MageSummonState::OnStart(Mage* mage)
 {
-	mage->PlayAnimation(MageAnimationType::Attack1);
+	mage->PlayAnimation(MageAnimationType::EnemySpawnerChant);
 	m_castTimer = 0.0f;
 	m_hasCast = false;
-	m_summonTimer = 0.0f;
-	m_hasSpawned = false;
 }
 
 void MageSummonState::OnUpdate(Mage* mage)
@@ -20,30 +18,19 @@ void MageSummonState::OnUpdate(Mage* mage)
 
 		if (m_castTimer >= mage->GetParam().m_summon.m_castDelay)
 		{
-			// 出現座標を決めて、煙エフェクトを再生する
-			mage->PrepareSummonPositions();
+			// スポナーに、敵の生成を頼む
+			mage->RequestSummon();
 			m_hasCast = true;
 		}
 
 		return;
 	}
 
-	if (!m_hasSpawned)
+	// 詠唱のアニメが終わったら通常状態に戻る(敵はスポナーが出し続ける)
+	if (mage->IsAnimationFinished())
 	{
-		m_summonTimer += mage->GetDeltaTime();
-
-		if (m_summonTimer >= mage->GetParam().m_summon.m_delay)
-		{
-			// 用意しておいた座標に敵を生成する
-			mage->SpawnEnemies();
-			m_hasSpawned = true;
-		}
-
-		return;
+		m_pMachine->ChangeState<MageNormalState>();
 	}
-
-	// 敵の出現が完了したら通常状態に戻る
-	m_pMachine->ChangeState<MageNormalState>();
 }
 
 void MageSummonState::OnExit(Mage* mage)

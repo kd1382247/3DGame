@@ -430,6 +430,8 @@
     <ClInclude Include="Src\Application\GameObject\GameResultUI\ResultUI.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\AreaVolume\AreaVolume.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.h" />
+    <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawnerManager.h" />
+    <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawnerRequest.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\RoomGate\RoomGate.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\Room\Room.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\Room\RoomManager.h" />
@@ -655,6 +657,7 @@
     <ClCompile Include="Src\Application\GameObject\GameResultUI\ResultUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\AreaVolume\AreaVolume.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawner.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawnerManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\RoomGate\RoomGate.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\Room\Room.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\Room\RoomManager.cpp" />

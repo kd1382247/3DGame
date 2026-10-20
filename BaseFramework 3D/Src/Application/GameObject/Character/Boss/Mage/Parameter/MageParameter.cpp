@@ -110,9 +110,8 @@ namespace
 		//---- Summon ----
 		const auto& summon = param.m_summon;
 		json["SummonCastDelay"] = summon.m_castDelay;
-		json["SummonDelay"] = summon.m_delay;
 		json["SummonCount"] = summon.m_count;
-		json["SummonRadius"] = summon.m_radius;
+		json["SummonSpawnInterval"] = summon.m_spawnInterval;
 
 		return json;
 	}
@@ -203,9 +202,8 @@ namespace
 		//---- Summon ----
 		auto& summon = param.m_summon;
 		ParameterJson::Read(json, "SummonCastDelay", summon.m_castDelay);
-		ParameterJson::Read(json, "SummonDelay", summon.m_delay);
 		ParameterJson::Read(json, "SummonCount", summon.m_count);
-		ParameterJson::Read(json, "SummonRadius", summon.m_radius);
+		ParameterJson::Read(json, "SummonSpawnInterval", summon.m_spawnInterval);
 	}
 }
 
@@ -359,9 +357,8 @@ namespace
 			auto& summon = param.m_summon;
 
 			InspectorUI::Seconds("CastDelay", summon.m_castDelay);
-			InspectorUI::Seconds("SpawnDelay", summon.m_delay);
 			InspectorUI::Count("Count", summon.m_count);
-			InspectorUI::Meter("Radius", summon.m_radius);
+			InspectorUI::Seconds("SpawnInterval", summon.m_spawnInterval);
 
 			InspectorUI::EndGroup();
 		}

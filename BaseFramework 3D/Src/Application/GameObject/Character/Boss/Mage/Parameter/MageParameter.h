@@ -114,10 +114,9 @@ public:
 	// 1. 敵を召喚
 	struct Summon
 	{
-		float m_castDelay = 0.4f;   // [秒] 詠唱開始から煙の演出が始まるまでの時間
-		float m_delay = 0.6f;       // [秒] 煙の演出が始まってから敵が出るまでの時間
-		int   m_count = 5;          // [個/回] 一度に呼び出す敵の数
-		float m_radius = 4.0f;      // [m] ボスを囲んで敵を出す円の半径
+		float m_castDelay = 0.4f;       // [秒] 詠唱開始から、スポナーに生成の合図を出すまでの時間
+		int   m_count = 5;              // [個/回] 一度に呼び出す敵の数
+		float m_spawnInterval = 0.2f;   // [秒] スポナーが、敵を1体ずつ出す間隔
 	};
 
 	struct Parameter

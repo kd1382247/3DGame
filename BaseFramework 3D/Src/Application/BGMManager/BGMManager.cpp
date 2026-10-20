@@ -146,8 +146,8 @@ void BGMManager::ApplyFadeVolume()
 		return;
 	}
 
-	// 設定の音量(Settingで変える音量)に、フェード率をかける
-	m_spSoundInst->SetVolume(m_fadeRate * KdAudioManager::Instance().GetBGMVolume());
+	// フェード率 * 現在の音量 * マスター音量　を掛ける
+	m_spSoundInst->SetVolume(m_fadeRate * KdAudioManager::Instance().GetBGMVolume()*KdAudioManager::Instance().GetMasterVolume());
 }
 
 std::string BGMManager::GetPath(const BGMType type) const

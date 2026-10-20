@@ -2,6 +2,11 @@
 
 #include "../EditorManager.h"
 
+#include"../../GameObject/Stage/StageObject.h"
+#include"../../GameObject/Gimmick/StageGimmick.h"
+
+#include<map>
+
 
 void Inspector::Draw()
 {
@@ -94,17 +99,90 @@ void Inspector::DrawCopyButton(const std::shared_ptr<KdGameObject>& obj)
 
 void Inspector::DrawDeleteButton(const std::shared_ptr<KdGameObject>& obj)
 {
-	if (!ImGui::Button("Delete"))
+	// ステージは、ギミックなども一緒に消えるので確認してから削除する
+	auto stage = std::dynamic_pointer_cast<StageObject>(obj);
+
+	if (ImGui::Button("Delete"))
+	{
+		if (stage)
+		{
+			ImGui::OpenPopup("DeleteStageConfirm");
+		}
+		else
+		{
+			DeleteObject(obj);
+		}
+	}
+
+	if (stage)
+	{
+		DrawDeleteStagePopup(stage);
+	}
+}
+
+void Inspector::DrawDeleteStagePopup(const std::shared_ptr<StageObject>& stage)
+{
+	if (!ImGui::BeginPopupModal("DeleteStageConfirm", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		return;
 	}
 
+	ImGui::Text(U8("「%s」を削除します。"), stage->GetObjectName().c_str());
+
+	// 一緒に消えるギミックを、種類ごとに数える
+	std::map<std::string, int> gimmickCounts;
+
+	for (const auto& gimmick : stage->GetOwnedGimmicks())
+	{
+		std::string className = gimmick->GetFactoryClassName();
+
+		if (className.empty())
+		{
+			className = gimmick->GetObjectName();
+		}
+
+		++gimmickCounts[className];
+	}
+
+	if (!gimmickCounts.empty())
+	{
+		ImGui::Separator();
+
+		ImGui::Text(U8("このステージのギミックも一緒に削除されます"));
+
+		for (const auto& [name, count] : gimmickCounts)
+		{
+			ImGui::BulletText("%s x %d", name.c_str(), count);
+		}
+	}
+
+	ImGui::Separator();
+
+	ImGui::Text(U8("元に戻せません。"));
+
+	if (ImGui::Button(U8("削除する"), ImVec2(120, 0)))
+	{
+		ImGui::CloseCurrentPopup();
+
+		DeleteObject(stage);
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button(U8("キャンセル"), ImVec2(120, 0)))
+	{
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::EndPopup();
+}
+
+void Inspector::DeleteObject(const std::shared_ptr<KdGameObject>& obj)
+{
 	// 選択参照を先に解除し、Inspectorが削除対象を保持し続けないようにする
 	EditorManager::Instance().SetSelectedObject(nullptr);
-
 
 	obj->Destroy();
 
 	EditorManager::Instance().MarkDirty();
-
 }

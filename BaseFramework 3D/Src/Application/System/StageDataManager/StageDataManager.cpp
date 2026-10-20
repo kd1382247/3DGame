@@ -458,6 +458,35 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 		}
 	}
 
+	// 持ち主のステージが存在しないギミック(ステージを削除したときに残ったもの)は削除する
+	{
+		std::unordered_set<std::string> stageNames;
+
+		for (const auto& stage : StageObjects)
+		{
+			stageNames.insert(stage->GetObjectName());
+		}
+
+		for (const auto& gimmick : Gimmicks)
+		{
+			// 持ち主が決まっていないものは、上で引き取り済みなので対象外
+			if (!gimmick->HasOwnerStage())
+			{
+				continue;
+			}
+
+			if (stageNames.contains(gimmick->GetOwnerStageName()))
+			{
+				continue;
+			}
+
+			KdDebugGUI::Instance().AddLog("持ち主のステージがないギミックを削除しました : %s (Stage : %s)\n",
+				gimmick->GetObjectName().c_str(), gimmick->GetOwnerStageName().c_str());
+
+			gimmick->Destroy();
+		}
+	}
+
 	// 各ステージに対応する当たり判定、ウェイポイントをロード
 	// ロードした際に持ち主(ステージ)を渡す
 	for (const auto& stage : StageObjects)

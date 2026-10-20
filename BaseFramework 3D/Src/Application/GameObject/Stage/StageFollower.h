@@ -24,6 +24,9 @@ public:
 	// 持ち主が決まっているか(名前が入っているか。ステージを探せるかは見ない)
 	bool HasStage()const { return !m_stageName.empty(); }
 
+	// 持ち主のステージの名前(ステージを探せるかは見ない)
+	const std::string& GetStageName()const { return m_stageName; }
+
 	// 追従先のステージ名を保存・読み込みする
 	void SaveData(nlohmann::json& json)const;
 	void LoadData(const nlohmann::json& json);

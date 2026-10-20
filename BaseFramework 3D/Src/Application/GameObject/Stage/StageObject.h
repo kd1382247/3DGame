@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class StageGimmick;
+
 class StageObject :public KdGameObject
 {
 
@@ -26,6 +28,9 @@ public:
 	bool IsCorridor()const { return m_stageModelName.rfind("Corridor", 0) == 0; }
 
 	void Destroy()override;
+
+	// このステージを持ち主にしているギミック(Room / RoomGate / EnemySpawner / AreaVolume など)
+	std::vector<std::shared_ptr<StageGimmick>> GetOwnedGimmicks()const;
 
 private:
 

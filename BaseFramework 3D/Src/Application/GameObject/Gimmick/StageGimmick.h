@@ -24,6 +24,9 @@ public:
 	// 持ち主が決まっているか
 	bool HasOwnerStage()const { return m_stageFollower.HasStage(); }
 
+	// 持ち主のステージの名前(ステージがあるかは見ない)
+	const std::string& GetOwnerStageName()const { return m_stageFollower.GetStageName(); }
+
 	// エディタでクリックしたときの選ばれやすさ(大きいほど優先)
 	// 重なっているギミックのうち、優先度が高いほうが先に選ばれる
 	// (Roomのように大きな箱は低くして、中にあるスポナーなどを選べるようにする)

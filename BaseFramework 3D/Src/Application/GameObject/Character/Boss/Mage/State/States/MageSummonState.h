@@ -14,12 +14,8 @@ public:
 
 private:
 
-	// 詠唱開始〜煙演出が始まるまで
+	// 詠唱開始から、スポナーに合図を出すまで
 	float m_castTimer = 0.0f;
 	bool  m_hasCast = false;
-
-	// 煙演出が始まってから、実際に敵が出現するまで
-	float m_summonTimer = 0.0f;
-	bool  m_hasSpawned = false;
 
 };

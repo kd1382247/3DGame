@@ -414,95 +414,17 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 1.0,
+                "x": 0.9999969005584717,
                 "y": 1.0,
-                "z": 1.0
+                "z": 0.9999969005584717
             },
             "StageModel": "Corridor"
-        },
-        {
-            "Class": "StageObject",
-            "Name": "CombatRoom_11x11_0",
-            "Position": {
-                "x": -4.0,
-                "y": 3.0,
-                "z": 106.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "StageModel": "CombatRoom_11x11"
-        },
-        {
-            "BossDefeatDuration": 3.0,
-            "Class": "Room",
-            "CoreOffset": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.5
-            },
-            "CoreSize": {
-                "x": 22.0,
-                "y": 13.0,
-                "z": 20.0
-            },
-            "FollowStage": "CombatRoom_11x11_0",
-            "IntroDuration": 2.0,
-            "Name": "Room_3",
-            "OutroDuration": 2.0,
-            "Position": {
-                "x": 7.0,
-                "y": 9.0,
-                "z": 117.0
-            },
-            "RoomType": "Boss",
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 22.0,
-                "y": 13.0,
-                "z": 22.0
-            }
-        },
-        {
-            "Class": "RoomGate",
-            "CloseDuration": 0.6000000238418579,
-            "FollowStage": "CombatRoom_11x11_0",
-            "LinkedRoom": "Room_3",
-            "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
-            "Name": "RoomGate_4",
-            "OpenDuration": 1.5,
-            "OpenHeight": 3.0,
-            "Position": {
-                "x": 7.0,
-                "y": 3.0,
-                "z": 106.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 2.200000047683716,
-                "y": 3.0,
-                "z": 0.5
-            }
         },
         {
             "Class": "EnemySpawner",
             "FollowStage": "CombatRoom_9x13_0",
             "LinkedRoom": "Room_1",
+            "MaxAlive": 10,
             "Name": "EnemySpawner_0",
             "Position": {
                 "x": 2.0999999046325684,
@@ -519,6 +441,7 @@
                 "y": 1.0,
                 "z": 1.0
             },
+            "SummonEnemies": [],
             "Waves": [
                 {
                     "Enemies": [
@@ -990,6 +913,7 @@
             "Class": "EnemySpawner",
             "FollowStage": "CombatRoom_9x13_0",
             "LinkedRoom": "Room_1",
+            "MaxAlive": 10,
             "Name": "EnemySpawner_1",
             "Position": {
                 "x": 13.0,
@@ -1006,6 +930,7 @@
                 "y": 1.0,
                 "z": 1.0
             },
+            "SummonEnemies": [],
             "Waves": [
                 {
                     "Enemies": [
@@ -1026,25 +951,6 @@
                     "StartDelay": 2.0
                 }
             ]
-        },
-        {
-            "Class": "Mage",
-            "Name": "Mage_0",
-            "Position": {
-                "x": 7.400000095367432,
-                "y": 3.5999999046325684,
-                "z": 121.5
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 180.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.4999994039535522,
-                "y": 1.5,
-                "z": 1.4999994039535522
-            }
         },
         {
             "Class": "AreaVolume",
@@ -1087,12 +993,12 @@
             }
         },
         {
-            "Class": "StarFish",
-            "Name": "StarFish_0",
+            "Class": "StageObject",
+            "Name": "CombatRoom_15x15_0",
             "Position": {
-                "x": 4.599999904632568,
-                "y": 3.4000000953674316,
-                "z": 3.5
+                "x": -8.0,
+                "y": 6.0,
+                "z": 118.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1103,7 +1009,214 @@
                 "x": 1.0,
                 "y": 1.0,
                 "z": 1.0
+            },
+            "StageModel": "CombatRoom_15x15"
+        },
+        {
+            "Class": "StageObject",
+            "Name": "Corridor_Stair_0",
+            "Position": {
+                "x": 4.0,
+                "y": 3.0,
+                "z": 104.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "StageModel": "Corridor_Stair"
+        },
+        {
+            "Class": "Mage",
+            "Name": "Mage_0",
+            "Position": {
+                "x": 7.0,
+                "y": 6.699999809265137,
+                "z": 137.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 180.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.4999991655349731,
+                "y": 1.5,
+                "z": 1.4999991655349731
             }
+        },
+        {
+            "Class": "RoomGate",
+            "CloseDuration": 0.6000000238418579,
+            "FollowStage": "CombatRoom_15x15_0",
+            "LinkedRoom": "Room_3",
+            "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
+            "Name": "RoomGate_4",
+            "OpenDuration": 1.5,
+            "OpenHeight": 3.0,
+            "Position": {
+                "x": 6.900000095367432,
+                "y": 6.0,
+                "z": 118.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 2.200000047683716,
+                "y": 3.0,
+                "z": 0.5
+            }
+        },
+        {
+            "BossDefeatDuration": 3.0,
+            "Class": "Room",
+            "CoreOffset": {
+                "x": 0.0,
+                "y": -0.20000000298023224,
+                "z": -8.449999809265137
+            },
+            "CoreSize": {
+                "x": 30.0,
+                "y": 15.0,
+                "z": 8.0
+            },
+            "FollowStage": "CombatRoom_15x15_0",
+            "IntroDuration": 2.0,
+            "Name": "Room_3",
+            "OutroDuration": 2.0,
+            "Position": {
+                "x": 7.0,
+                "y": 13.199999809265137,
+                "z": 133.0
+            },
+            "RoomType": "Boss",
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 30.0,
+                "y": 15.0,
+                "z": 30.0
+            }
+        },
+        {
+            "Class": "EnemySpawner",
+            "FollowStage": "CombatRoom_15x15_0",
+            "LinkedRoom": "Room_3",
+            "MaxAlive": 10,
+            "Name": "EnemySpawner_2",
+            "Position": {
+                "x": -3.0,
+                "y": 9.5,
+                "z": 123.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "SummonEnemies": [
+                "Cactas",
+                "Mushroom"
+            ],
+            "Waves": []
+        },
+        {
+            "Class": "EnemySpawner",
+            "FollowStage": "CombatRoom_15x15_0",
+            "LinkedRoom": "Room_3",
+            "MaxAlive": 10,
+            "Name": "EnemySpawner_3",
+            "Position": {
+                "x": 17.0,
+                "y": 9.5,
+                "z": 123.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "SummonEnemies": [
+                "Cactas",
+                "Mushroom"
+            ],
+            "Waves": []
+        },
+        {
+            "Class": "EnemySpawner",
+            "FollowStage": "CombatRoom_15x15_0",
+            "LinkedRoom": "Room_3",
+            "MaxAlive": 10,
+            "Name": "EnemySpawner_4",
+            "Position": {
+                "x": -3.0,
+                "y": 9.5,
+                "z": 143.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "SummonEnemies": [
+                "Cactas",
+                "Mushroom"
+            ],
+            "Waves": []
+        },
+        {
+            "Class": "EnemySpawner",
+            "FollowStage": "CombatRoom_15x15_0",
+            "LinkedRoom": "Room_3",
+            "MaxAlive": 10,
+            "Name": "EnemySpawner_5",
+            "Position": {
+                "x": 17.0,
+                "y": 9.5,
+                "z": 143.0
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "SummonEnemies": [
+                "Cactas",
+                "Mushroom"
+            ],
+            "Waves": []
         }
     ]
 }

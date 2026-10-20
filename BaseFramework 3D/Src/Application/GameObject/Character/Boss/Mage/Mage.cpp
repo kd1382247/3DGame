@@ -3,12 +3,11 @@
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
 #include"../../Player/Player.h"
-#include"../../Enemy/EnemyBase.h"
 
-#include"../../../../../Framework/GameObject/KdGameObjectFactory.h"
 #include"../../../../Scene/SceneManager.h"
 
 #include"../../../EnergyBullet/EnergyBulletManager.h"
+#include"../../../Gimmick/EnemySpawner/EnemySpawnerManager.h"
 #include"MageMagicCircle/MageMagicCircleManager.h"
 #include"MageMagicSector/MageMagicSectorManager.h"
 #include"MageBeam/MageBeamManager.h"
@@ -180,9 +179,6 @@ void Mage::CancelAllAttacks()
 	MageMagicSectorManager::Instance().CancelAll();
 	MageBeamManager::Instance().CancelAll();
 	EnergyBulletManager::Instance().CancelAll();
-
-	// 召喚の準備中だった座標も捨てる
-	m_summonPositions.clear();
 }
 
 MageAttackPattern Mage::SelectAttackPattern()
@@ -217,68 +213,17 @@ MageAttackPattern Mage::SelectAttackPattern()
 	return static_cast<MageAttackPattern>(index);
 }
 
-void Mage::PrepareSummonPositions()
+void Mage::RequestSummon()
 {
-	// 呼び出す敵の数と、ボスを囲む円の半径(Parameterで調整できる)
-	const int enemyCount = m_parameter.GetParam().m_summon.m_count;
-	const float offsetRadius = m_parameter.GetParam().m_summon.m_radius;
+	const auto& param = m_parameter.GetParam().m_summon;
 
-	m_summonPositions.clear();
+	EnemySpawnerRequest request;
 
-	for (int i = 0; i < enemyCount; i++)
-	{
-		// ボスを囲むように、円周上に等間隔で配置する
-		float angle = i * (2.0f * 3.1415926535f / enemyCount);
+	request.count = param.m_count;
+	request.interval = param.m_spawnInterval;
 
-		Math::Vector3 offset;
-		offset.x = std::sinf(angle) * offsetRadius;
-		offset.y = 0.0f;
-		offset.z = std::cosf(angle) * offsetRadius;
-
-		Math::Vector3 spawnPos = GetPos() + offset;
-
-		m_summonPositions.push_back(spawnPos);
-
-		// 出現前の煙エフェクト
-		KdEffekseerManager::GetInstance().
-			Play("Smoke/Smoke_White.efkefc", spawnPos + Math::Vector3(0.0f, 0.5f, 0.0f), 0.3f, 1.0f, false);
-	}
-}
-
-void Mage::SpawnEnemies()
-{
-	for (const auto& spawnPos : m_summonPositions)
-	{
-		std::string enemyName;
-
-		switch (KdRandom::GetInt(0, 5))
-		{
-		case 0: enemyName = "Cactas";     break;
-		case 1: enemyName = "Mushroom";   break;
-		case 2: enemyName = "Slime";      break;
-		case 3: enemyName = "TurtleShell"; break;
-		case 4: enemyName = "StarFish"; break;
-		case 5: enemyName = "Bomb"; break;
-		}
-
-		auto obj = KdGameObjectFactory::Instance().CreateGameObject(enemyName);
-
-		auto enemy = std::dynamic_pointer_cast<EnemyBase>(obj);
-
-		if (!enemy)
-		{
-			continue;
-		}
-
-		enemy->Init();
-		enemy->SetPos(spawnPos);
-		enemy->SetPrevPos(spawnPos);
-		enemy->SetUpReference();
-
-		SceneManager::Instance().AddObject(enemy);
-	}
-
-	m_summonPositions.clear();
+	// ボスのいる部屋のスポナーに、敵の生成を頼む
+	EnemySpawnerManager::Instance().RequestSpawn(GetPos(), request);
 }
 
 std::shared_ptr<MageMagicCircle> Mage::CastTargetCircle()

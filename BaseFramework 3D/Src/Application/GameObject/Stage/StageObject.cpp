@@ -10,6 +10,8 @@
 #include"../../System/StageDataManager/StageDataManager.h"
 #include"../../System/WayPointManager/WayPointManager.h"
 #include"../../Editor/EditorManager.h"
+#include"../../Scene/SceneManager.h"
+#include"../Gimmick/StageGimmick.h"
 
 void StageObject::Init()
 {
@@ -143,10 +145,36 @@ void StageObject::LoadData(const nlohmann::json& json)
 	}
 }
 
+std::vector<std::shared_ptr<StageGimmick>> StageObject::GetOwnedGimmicks()const
+{
+	std::vector<std::shared_ptr<StageGimmick>> gimmicks;
+
+	// ギミックはステージの名前で持ち主を覚えているので、名前で探す
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto gimmick = std::dynamic_pointer_cast<StageGimmick>(obj);
+
+		if (gimmick &&
+			!gimmick->IsExpired() &&
+			gimmick->GetOwnerStageName() == GetObjectName())
+		{
+			gimmicks.push_back(gimmick);
+		}
+	}
+
+	return gimmicks;
+}
+
 void StageObject::Destroy()
 {
 	// この部屋が持っているデータも消す
 	ClearOwnerData();
+
+	// この部屋のギミックも消す(残ると、持ち主のいないまま動いたり、Hierarchyから選べなくなったりする)
+	for (const auto& gimmick : GetOwnedGimmicks())
+	{
+		gimmick->Destroy();
+	}
 
 	// 編集するステージ指定されていたら解除する
 	if (EditorManager::Instance().GetActiveStage().get() == this)

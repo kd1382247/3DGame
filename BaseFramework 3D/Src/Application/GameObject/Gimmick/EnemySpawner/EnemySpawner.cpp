@@ -51,10 +51,22 @@ void EnemySpawner::Update()
 	// スポナーから出終わった敵を、押し戻し対象に戻す
 	UpdateEmergingEnemies();
 
+	// 上下の揺れの時間と、生成前の回転を進める
+	m_sinCurveTime += TimeManager::Instance().GetDeltaTime();
+	UpdateSpin();
+
 	auto spRoom = GetLinkedRoom();
 
 	if (!spRoom)
 	{
+		return;
+	}
+
+	// ボス部屋は、ウェーブではなく、ボスからの要求で敵を出す
+	// (ウェーブが無いスポナーはIsFinished()が常にtrueになるので、その判定より前に置く)
+	if (spRoom->GetRoomType() == Room::RoomType::Boss)
+	{
+		UpdateRequest(spRoom);
 		return;
 	}
 
@@ -67,7 +79,6 @@ void EnemySpawner::Update()
 	{
 		return;
 	}
-
 
 	if (m_spawnedInWave == 0)
 	{
@@ -85,6 +96,14 @@ void EnemySpawner::Update()
 	}
 
 	m_waveTimer += TimeManager::Instance().GetDeltaTime();
+
+	// 最初の1体を出す少し前に、回転を始める(1ウェーブにつき1回)
+	if (m_spawnedInWave == 0 && !m_spinTriggered &&
+		m_waitTime - m_waveTimer <= kSpinDuration)
+	{
+		StartSpin();
+		m_spinTriggered = true;
+	}
 
 	// 少しずつ敵を生成する
 	if (m_waveTimer >= m_waitTime)
@@ -106,24 +125,33 @@ void EnemySpawner::Update()
 		m_spawnedInWave = 0;
 
 		m_spawnIntroEffect = false;
+		m_spinTriggered = false;
 	}
 
 }
 
 void EnemySpawner::DrawLit()
 {
-	if (m_spModel)
+	if (!m_spModel)
 	{
-		// 選択中はリムライトで光らせる(プレイヤーなどと同じ)
-		if (IsSelected())
-		{
-			KdShaderManager::Instance().m_StandardShader.SetSelected(true);
-		}
-
-		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
-
-		KdShaderManager::Instance().m_StandardShader.SetSelected(false);
+		return;
 	}
+
+	// 選択中はリムライトで光らせる(プレイヤーなどと同じ)
+	if (IsSelected())
+	{
+		KdShaderManager::Instance().m_StandardShader.SetSelected(true);
+	}
+
+
+	Math::Matrix localMat = Math::Matrix::Identity;
+
+	UpdateSinCurve(localMat);
+
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, localMat);
+
+	KdShaderManager::Instance().m_StandardShader.SetSelected(false);
+
 }
 
 void EnemySpawner::DrawDebug()
@@ -219,6 +247,35 @@ void EnemySpawner::DrawInspectorHeader()
 
 void EnemySpawner::DrawInspector()
 {
+	// ボスなどからの生成要求で出す敵
+	if (ImGui::CollapsingHeader("Summon", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::PushID("Summon");
+
+		InspectorUI::Count("MaxAlive", m_maxAlive, 1);
+
+		for (const auto& enemyName : SpawnableEnemies::Names)
+		{
+			bool checked = m_summonEnemyNames.contains(enemyName);
+
+			if (ImGui::Checkbox(enemyName.c_str(), &checked))
+			{
+				if (checked)
+				{
+					m_summonEnemyNames.insert(enemyName);
+				}
+				else
+				{
+					m_summonEnemyNames.erase(enemyName);
+				}
+
+				EditorManager::Instance().MarkDirty();
+			}
+		}
+
+		ImGui::PopID();
+	}
+
 	ImGui::Text("Waves : %d", static_cast<int>(m_waves.size()));
 
 	// ウェーブを消す用の番号
@@ -287,6 +344,10 @@ nlohmann::json EnemySpawner::SaveData() const
 
 	roomJson["LinkedRoom"] = m_linkedRoomName;
 
+	// 要求(ボスの召喚など)で出す敵
+	roomJson["SummonEnemies"] = m_summonEnemyNames;
+	roomJson["MaxAlive"] = m_maxAlive;
+
 	roomJson["Waves"] = nlohmann::json::array();
 
 	for (const auto& wave : m_waves)
@@ -317,6 +378,18 @@ void EnemySpawner::LoadData(const nlohmann::json& json)
 	m_wpRoom.reset();
 	m_warnedMissingRoom = false;
 
+	m_summonEnemyNames.clear();
+
+	if (json.contains("SummonEnemies") && json["SummonEnemies"].is_array())
+	{
+		for (const auto& enemyName : json["SummonEnemies"])
+		{
+			m_summonEnemyNames.emplace(enemyName.get<std::string>());
+		}
+	}
+
+	m_maxAlive = json.value("MaxAlive", 10);
+
 	if (json.contains("Waves") && json["Waves"].is_array())
 	{
 		m_waves.clear();
@@ -344,35 +417,72 @@ void EnemySpawner::LoadData(const nlohmann::json& json)
 
 }
 
-void EnemySpawner::SpawnEnemy()
+void EnemySpawner::UpdateSinCurve(Math::Matrix& worldMat)
 {
-	if (!m_spawnIntroEffect)
+	Math::Vector3 localPos = GetPos();
+
+	// 上下に揺らすのはプレイ中だけ(エディタ中は、置いた位置のまま見せる)
+	// 時間を進める処理はUpdateで行っている
+	if (EditorManager::Instance().IsPlayMode())
 	{
-		m_spawnIntroEffect = true;
-		KdEffekseerManager::GetInstance().Play("EnemySpawner/smoke.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 1.2f,0.7);
-		KdEffekseerManager::GetInstance().Play("EnemySpawner/Lightning.efkefc", GetPos() + Math::Vector3(0.0f, -1.0f, 0.0f), 0.6f, 1.0f, false, 20, 90);
+		float angle = m_sinCurveTime * m_sinCurveFrequency * DirectX::XM_2PI;
 
-		KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Gimmick/EnemySpawner/Spark.wav");
-
+		localPos.y += sinf(angle) * 0.25f;
 	}
 
-	const auto& src = m_waves[m_currentWave].m_enemyNames;
+	// 行列作成(拡大 → 回転 → 移動の順)
+	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
+	Math::Matrix rotMat   = Math::Matrix::CreateRotationY(m_spinAngle);
+	Math::Matrix transMat = Math::Matrix::CreateTranslation(localPos);
 
-	std::vector<std::string>enemyNames;
+	worldMat = scaleMat * rotMat * transMat;
+}
 
-	// std::setをsstd::vectorに移動。
-	enemyNames.reserve(src.size());
-	enemyNames.insert(enemyNames.end(), src.begin(), src.end());
-
-	if (enemyNames.empty())
+void EnemySpawner::StartSpin()
+{
+	// 回っている最中なら、そのまま続ける
+	if (m_isSpinning)
 	{
 		return;
 	}
 
-	// 名前リストのサイズでランダムな数字を入れる
-	int nameIndex = KdRandom::GetInt(0, static_cast<int>(enemyNames.size() - 1));
+	m_isSpinning = true;
+	m_spinTimer  = 0.0f;
+	m_spinAngle  = 0.0f;
+}
 
-	CreateEnemy(enemyNames[nameIndex]);
+void EnemySpawner::UpdateSpin()
+{
+	if (!m_isSpinning)
+	{
+		return;
+	}
+
+	m_spinTimer += TimeManager::Instance().GetDeltaTime();
+
+	// 進み具合 0〜1
+	const float t = std::clamp(m_spinTimer / kSpinDuration, 0.0f, 1.0f);
+
+	// tをそのままlerpに渡すと一定の速さで回るので、
+	// 「最初は速く、終わりにかけてゆっくり」になる形に直す
+	const float eased = 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t);
+
+	// 0度から「kSpinTurns回転ぶん」まで、lerpで進める
+	m_spinAngle = std::lerp(0.0f, kSpinTurns * DirectX::XM_2PI, eased);
+
+	// 回り終わり:整数回転なので、0に戻しても見た目は変わらない
+	if (t >= 1.0f)
+	{
+		m_isSpinning = false;
+		m_spinAngle  = 0.0f;
+	}
+}
+
+void EnemySpawner::SpawnEnemy()
+{
+	PlayIntroEffect();
+
+	CreateEnemy(PickEnemyName(m_waves[m_currentWave].m_enemyNames));
 
 }
 
@@ -388,6 +498,64 @@ void EnemySpawner::EraseEnemy()
 		}
 	);
 }
+
+void EnemySpawner::UpdateRequest(const std::shared_ptr<Room>& room)
+{
+	// ボス戦が終わったら(倒された・部屋を出たなど)、残っている要求は捨てる
+	if (!room->IsBossCombat())
+	{
+		m_requestRemaining = 0;
+		return;
+	}
+
+	if (m_requestRemaining <= 0)
+	{
+		return;
+	}
+
+	m_requestTimer += TimeManager::Instance().GetDeltaTime();
+
+	// 間隔が空いていて、生きている敵が上限未満なら、1体出す
+	if (m_requestTimer >= m_requestInterval &&
+		static_cast<int>(m_spawnEnemyList.size()) < m_maxAlive)
+	{
+		// 要求の最初の1体のときだけ、演出を出す
+		PlayIntroEffect();
+
+		CreateEnemy(PickEnemyName(m_summonEnemyNames));
+
+		m_requestRemaining--;
+		m_requestTimer = 0.0f;
+	}
+}
+
+std::string EnemySpawner::PickEnemyName(const std::set<std::string>& names) const
+{
+	if (names.empty())
+	{
+		return std::string();
+	}
+
+	// setの先頭からランダムな番号ぶん進めた要素を選ぶ
+	const int index = KdRandom::GetInt(0, static_cast<int>(names.size()) - 1);
+
+	return *std::next(names.begin(), index);
+}
+
+void EnemySpawner::PlayIntroEffect()
+{
+	if (m_spawnIntroEffect)
+	{
+		return;
+	}
+	m_spawnIntroEffect = true;
+	KdEffekseerManager::GetInstance().Play("EnemySpawner/smoke.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 1.2f, 0.7);
+	KdEffekseerManager::GetInstance().Play("EnemySpawner/Lightning.efkefc", GetPos() + Math::Vector3(0.0f, -1.0f, 0.0f), 0.6f, 1.0f, false, 20, 90);
+
+	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Gimmick/EnemySpawner/Spark.wav");
+
+}
+
 
 Math::Vector3 EnemySpawner::CreateLaunchDir() const
 {
@@ -456,6 +624,41 @@ bool EnemySpawner::IsBlockingCharacter(const CharacterBase* character) const
 	}
 
 	return true;
+}
+
+void EnemySpawner::RequestSpawn(const EnemySpawnerRequest& request)
+{
+	if (!CanAcceptRequest())
+	{
+		return;
+	}
+
+	// 何も出していない状態からの要求なら、最初の1体はすぐ出す
+	if (m_requestRemaining <= 0)
+	{
+		// 回転が止まるころに、最初の1体が出るようにタイマーを戻しておく
+		m_requestTimer = request.interval - kSpinDuration;
+		StartSpin();
+
+		// この要求の最初の1体で、演出を出し直す
+		m_spawnIntroEffect = false;
+	}
+
+	m_requestRemaining += request.count;
+
+	m_requestInterval = request.interval;
+}
+
+bool EnemySpawner::CanAcceptRequest()
+{
+	auto spRoom = GetLinkedRoom();
+
+	if (!spRoom)
+	{
+		return false;
+	}
+	
+	return spRoom->IsBossCombat() && static_cast<int>(m_spawnEnemyList.size()) < m_maxAlive;
 }
 
 void EnemySpawner::UpdateEmergingEnemies()

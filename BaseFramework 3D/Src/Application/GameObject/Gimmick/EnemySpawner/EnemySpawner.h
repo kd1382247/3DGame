@@ -2,6 +2,7 @@
 
 #include"../StageGimmick.h"
 #include"../../Character/Enemy/SpawnableEnemies.h"
+#include"EnemySpawnerRequest.h"
 
 class Room;
 class EnemyBase;
@@ -60,7 +61,21 @@ public:
 	// このスポナーから出てきたばかりの敵は、外に出るまで押し戻さない(中から出られなくなるため)
 	bool IsBlockingCharacter(const CharacterBase* character) const;
 
+	// 生成の要求を受け取る
+	void RequestSpawn(const EnemySpawnerRequest& request);
+
+	// 生成の要求を受けれるかどうか
+	bool CanAcceptRequest();
+
 private:
+
+	void UpdateSinCurve(Math::Matrix& worldMat);
+
+	// 生成前の回転を始める
+	void StartSpin();
+
+	// 回転を進める(最初は速く、lerpで少しずつゆっくり止まる)
+	void UpdateSpin();
 
 	void SpawnEnemy();
 
@@ -68,6 +83,12 @@ private:
 
 	// スポナーから出終わった敵を、「出てきたばかり」のリストから外す
 	void UpdateEmergingEnemies();
+
+	void UpdateRequest(const std::shared_ptr<Room>& room);
+
+	std::string PickEnemyName(const std::set<std::string>& names)const;
+
+	void PlayIntroEffect();
 
 	// 飛び出す方向を決める
 	Math::Vector3 CreateLaunchDir()const;
@@ -116,5 +137,35 @@ private:
 	bool m_spawnIntroEffect = false;
 
 	bool m_isSpawnIntor = true;
+
+
+	// 要求で出す敵の種類
+	std::set<std::string>m_summonEnemyNames;
+
+	// リクエストの残り数
+	int m_requestRemaining = 0;
+
+	float m_requestInterval = 0.2f;
+	float m_requestTimer = 0.0f;
+
+
+	// 要求で出した敵が、同時に生きていられる数の上限
+	int m_maxAlive = 10;
+
+	// サインカーブの頻度
+	const float m_sinCurveFrequency = 0.4f;
+	float       m_sinCurveTime = 0.0f;
+
+	// 生成前の回転(見た目だけ。GetPos()や当たり判定は変えない)
+	static constexpr float kSpinDuration = 1.0f; // 回り始めてから止まるまでの時間(秒)
+	static constexpr float kSpinTurns    = 2.0f; // 止まるまでに回る回数
+
+	bool  m_isSpinning = false;
+	float m_spinTimer  = 0.0f;
+	float m_spinAngle  = 0.0f; // 今の回転角(ラジアン)
+
+	// ウェーブ側:今回の生成の前に、回転を始めたか
+	bool  m_spinTriggered = false;
+
 };
 

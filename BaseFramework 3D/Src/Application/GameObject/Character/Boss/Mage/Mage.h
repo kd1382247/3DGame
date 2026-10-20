@@ -59,11 +59,8 @@ public:
 	// 各攻撃パターンの実行(各AttackStateから呼ばれる)
 	//================================
 
-	// 1. 敵を召喚(5体、ボスを囲むように配置)
-	// 1-1. 出現座標を計算し、煙エフェクトを再生する
-	void PrepareSummonPositions();
-	// 1-2. 用意しておいた座標に敵を生成する
-	void SpawnEnemies();
+	// 1. 敵を召喚(敵の生成は、EnemySpawnerに合図を出して任せる)
+	void RequestSummon();
 	// 2. プレイヤー位置に魔法攻撃(魔法円)
 	std::shared_ptr<MageMagicCircle> CastTargetCircle();
 	// 3. 前方に扇形の範囲攻撃
@@ -118,8 +115,6 @@ private:
 
 	bool m_attackFlg = false;
 
-	// 召喚攻撃で使う、敵の出現予定座標(煙エフェクト再生時に計算し、敵生成時に消費する)
-	std::vector<Math::Vector3> m_summonPositions;
 
 
 };
