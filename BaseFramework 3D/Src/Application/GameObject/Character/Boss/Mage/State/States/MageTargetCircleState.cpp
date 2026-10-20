@@ -13,6 +13,9 @@ void MageTargetCircleState::OnStart(Mage* mage)
 
 void MageTargetCircleState::OnUpdate(Mage* mage)
 {
+	mage->SetTargetDir();
+	mage->UpdateFacingDirection();
+
 	m_castTimer += mage->GetDeltaTime();
 
 	if (!m_hasCast && m_castTimer >= mage->GetParam().m_targetCircle.m_castDelay)
@@ -35,21 +38,30 @@ void MageTargetCircleState::OnUpdate(Mage* mage)
 		return;
 	}
 
-	if (mage->IsAnimationFinished())
-	{
+	const auto& param = mage->GetParam().m_targetCircle;
 
-		if (m_shotCount < mage->GetParam().m_targetCircle.m_shotCount)
+	// 全弾撃ち終えている(最後の1発を撃った)かどうか
+	const bool isLastShot = (m_shotCount >= param.m_shotCount);
+
+	if (!isLastShot)
+	{
+		// 弾を出したあと、1発の開始から m_shotInterval 秒たったら、次の弾へ進む
+		// (アニメより短ければ途中で切り替わり、長ければアニメが終わったあと待機で待つ)
+		if (m_hasCast && m_castTimer >= param.m_shotInterval)
 		{
 			OnStart(mage);
 			mage->RePlayAnimation(MageAnimationType::Attack1);
 		}
-		else
+		else if (mage->IsAnimationFinished())
 		{
-			// 最後の1発の円が消えるまで、待機アニメで待つ
 			mage->PlayAnimation(MageAnimationType::Idle);
-			m_isWaiting = true;
 		}
-
+	}
+	else if (mage->IsAnimationFinished())
+	{
+		// 最後の1発の円が消えるまで、待機アニメで待つ
+		mage->PlayAnimation(MageAnimationType::Idle);
+		m_isWaiting = true;
 	}
 }
 

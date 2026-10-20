@@ -9,6 +9,12 @@ void PlayerParry::StartParry()
 
 void PlayerParry::UpdateParryWindow(const float deltaTime)
 {
+
+	if (!m_isParryActive)
+	{
+		return;
+	}
+
 	m_parryTimer += deltaTime;
 
 	// パリィの受付時間の受付時間が過ぎたらfalseにしてリターン

@@ -104,6 +104,7 @@ void Player::Update()
 	}
 	
 	m_playerGuard.UpdateTimer(m_deltaTime);
+	m_playerParry.UpdateParryWindow(m_deltaTime);
 
 	UpdateGravity();
 
@@ -614,12 +615,10 @@ void Player::OnHit(const AttackInfo attackInfo)
 		return;
 	}
 
-	
 	AttackInfo info = attackInfo;
 
 	// パリィ成功時
 	if (m_playerParry.IsParryActive() &&
-		m_stateMachine.IsState<PlayerParryState>()&&
 		m_playerGuard.IsInGuardRange(m_mWorld.Backward(), info.m_knockBackDir))
 	{
 		if(!m_playerParry.GetIsParrySuccess())
@@ -807,10 +806,8 @@ void Player::OnParrySuccess()
 	effectPos += m_mWorld.Backward() * 0.3;
 	// パリィエフェクト
 	KdEffekseerManager::GetInstance().Play("Player/Parry/Parry.efkefc", effectPos, 0.3f, 1.0f, false,0,36,GetRotation());
-	KdEffekseerManager::GetInstance().Play("Player/Parry/ShockWave1.efkefc", effectPos, 0.6f, 0.6f, false,0,36);
-	KdEffekseerManager::GetInstance().Play("Player/Parry/ShockWave2.efkefc", effectPos, 0.6f, 0.6f, false,0,36);
-
-
+	KdEffekseerManager::GetInstance().Play("Player/Parry/ShockWave1.efkefc", effectPos, 0.6f, 0.6f, false,0,36,GetRotation());
+	KdEffekseerManager::GetInstance().Play("Player/Parry/ShockWave2.efkefc", effectPos, 0.6f, 0.6f, false,0,36,GetRotation());
 
 	TimeManager::Instance().StartHitStop(parryParam.m_parryHitStop);
 

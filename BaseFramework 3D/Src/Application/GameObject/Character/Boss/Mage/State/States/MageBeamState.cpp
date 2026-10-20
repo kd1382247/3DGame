@@ -9,7 +9,7 @@
 
 void MageBeamState::OnStart(Mage* mage)
 {
-	mage->PlayAnimation(MageAnimationType::BeamST);
+	mage->PlayAnimation(MageAnimationType::BeamChant);
 
 	// ビームの設定をParameterから受け取る(詠唱中は同じ値を使い続ける)
 	m_param = mage->GetParam().m_beam;
@@ -33,10 +33,6 @@ void MageBeamState::OnUpdate(Mage* mage)
 	// 詠唱中・Beam生成後を通して、攻撃範囲(矩形)を表示し続ける
 	m_rangeIndicator.DrawRectangle(m_beamPos, m_beamDir, Math::Vector2(m_param.m_width, m_param.m_length));
 
-	if (mage->IsAnimationFinished())
-	{
-		mage->PlayAnimation(MageAnimationType::BeamRPT);
-	}
 
 	switch (m_phase)
 	{
@@ -46,6 +42,10 @@ void MageBeamState::OnUpdate(Mage* mage)
 
 	case Phase::Active:
 		UpdateActive(mage);
+		break;
+
+	case Phase::End:
+		UpdateEnd(mage);
 		break;
 	}
 }
@@ -94,14 +94,34 @@ void MageBeamState::StartActive(Mage* mage)
 	m_telegraphIndicator.Hide();
 
 	m_phase = Phase::Active;
+
+	mage->PlayAnimation(MageAnimationType::BeamRPT);
+
 }
 
 void MageBeamState::UpdateActive(Mage* mage)
 {
-	// Beam本体が無くなった(=攻撃終了した)らNormalStateへ戻る
+	// Beam本体が無くなったらEndフェーズへ
 	auto spMageBeam = m_wpMageBeam.lock();
 
+
 	if (!spMageBeam || spMageBeam->IsFinished())
+	{
+		m_phase = Phase::End;
+		m_rangeIndicator.Hide();
+
+		if (auto spEffect = m_wpEffekseerObj.lock())
+		{
+			spEffect->StopEffect();
+		}
+	}
+}
+
+void MageBeamState::UpdateEnd(Mage* mage)
+{
+	mage->PlayAnimation(MageAnimationType::BeamEND);
+
+	if (mage->IsAnimationFinished())
 	{
 		m_pMachine->ChangeState<MageNormalState>();
 	}

@@ -35,7 +35,7 @@ void SlimeAnimation::Animations(SlimeAnimationType type)
 
 	case SlimeAnimationType::Attack:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack"), false);
-		m_animSpeed = 1.0f;
+		m_animSpeed = 0.8f;
 		break;
 	case SlimeAnimationType::GetHit:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false);

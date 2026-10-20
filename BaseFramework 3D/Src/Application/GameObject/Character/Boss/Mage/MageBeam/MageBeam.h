@@ -44,6 +44,7 @@ private:
 	float m_remainingTime = 0.0f;
 
 	// 再ヒットまでの残り時間(秒)。0以下の間にプレイヤーが範囲内にいればヒットする
+	// (生成直後は、最初の判定までの待ち時間 hitDelay が入る)
 	float m_hitCooldown = 0.0f;
 
 };

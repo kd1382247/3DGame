@@ -49,6 +49,9 @@ private:
 	// 発動までの残り予備動作時間(秒)
 	float m_telegraphTime = 0.0f;
 
+	// 当たり判定が出るまでの残り時間(秒。予告が終わってエフェクトが出てから減り始める)
+	float m_hitDelayTime = 0.0f;
+
 	bool m_hitTarget = false;
 
 	// 当たり判定の有効時間(秒)

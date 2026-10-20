@@ -23,13 +23,11 @@ void MageBeam::Setup(const MageBeamDesc& desc)
 	SetPos(m_desc.pos);
 	m_desc.dir.Normalize();
 
-	// 生成直後からすぐ判定できる状態にしておく
-	m_hitCooldown = 0.0f;
+	// 最初の判定は、hitDelay秒たってから(以降は、再ヒットまでの間隔として使う)
+	m_hitCooldown = m_desc.hitDelay;
 
 	m_remainingTime = m_desc.duration;
 }
-
-
 
 void MageBeam::Cancel()
 {

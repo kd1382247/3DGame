@@ -24,6 +24,7 @@ private:
 	{
 		Cast,    // 詠唱中(予告が広がっていく)
 		Active,  // ビーム発射後(ビームが終わるのを待つ)
+		End      // 撃ち終わった後のアニメーション
 	};
 
 	// 詠唱中の更新(詠唱時間が経ったらStartActiveへ進む)
@@ -34,6 +35,8 @@ private:
 
 	// 発射後の更新(ビームが終わったらNormalStateへ戻る)
 	void UpdateActive(Mage* mage);
+
+	void UpdateEnd(Mage* mage);
 
 	Phase m_phase = Phase::Cast;
 

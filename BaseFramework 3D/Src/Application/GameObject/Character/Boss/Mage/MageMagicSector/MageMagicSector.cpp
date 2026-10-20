@@ -28,6 +28,7 @@ void MageMagicSector::Setup(const MageMagicSectorDesc& desc)
 	m_desc.dir.Normalize();
 
 	m_telegraphTime = m_desc.telegraphTime;
+	m_hitDelayTime = m_desc.hitDelay;
 
 	// エフェクトを再生する基準座標
 	m_effectPos = GetPos() + (m_desc.dir * 4.0f);
@@ -110,11 +111,29 @@ void MageMagicSector::Update()
 	// ハンドルベースでの終了判定(KdEffekseerObjectの生存期間に依存しない)
 	else if (KdEffekseerManager::GetInstance().HasEffectFinished(m_effectHandle))
 	{
+		m_rangeIndicator.Hide();
 		m_isFinished = true;
 		Destroy();
+
+		return;
 	}
 
-	if (!m_hitTarget)
+	// エフェクトの進行度が終了値に達したら、範囲の円を消して、以降は当たり判定をしない
+	auto spEffekseerObj = m_wpEffekseerObj.lock();
+
+	if (spEffekseerObj && spEffekseerObj->GetProgress() >= m_desc.hitEndProgress)
+	{
+		m_rangeIndicator.Hide();
+		m_hitTarget = true;
+	}
+
+	// エフェクトが出てから、当たり判定が出るまで待つ
+	if (m_hitDelayTime > 0.0f)
+	{
+		m_hitDelayTime -= deltaTime;
+	}
+
+	if (!m_hitTarget && m_hitDelayTime <= 0.0f)
 	{
 		auto spPlayer = m_wpPlayer.lock();
 
@@ -159,16 +178,6 @@ void MageMagicSector::Update()
 				m_hitTarget = true;
 			}
 
-		}
-	}
-
-	auto spEffekseerObj = m_wpEffekseerObj.lock();
-	if (spEffekseerObj)
-	{
-		if (spEffekseerObj->GetProgress() > 0.6f)
-		{
-			m_rangeIndicator.Hide();
-			m_hitTarget = true;
 		}
 	}
 }

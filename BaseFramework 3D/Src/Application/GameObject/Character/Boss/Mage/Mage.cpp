@@ -304,6 +304,8 @@ std::shared_ptr<MageMagicCircle> Mage::CastTargetCircle()
 	desc.pos = targetPos;
 	desc.radius = param.m_radius;
 	desc.telegraphTime = param.m_telegraph;
+	desc.hitDelay = param.m_hitDelay;
+	desc.hitEndProgress = param.m_hitEndProgress;
 	desc.damage = param.m_damage;
 	desc.effect = ToCircleEffect(param.m_effect);
 
@@ -321,6 +323,8 @@ std::shared_ptr<MageMagicSector> Mage::CastForwardSector()
 	desc.angleDeg = param.m_angle;
 	desc.radius = param.m_radius;
 	desc.telegraphTime = param.m_telegraph;
+	desc.hitDelay = param.m_hitDelay;
+	desc.hitEndProgress = param.m_hitEndProgress;
 	desc.damage = param.m_damage;
 
 	const auto& effect = param.m_effect;
@@ -374,7 +378,9 @@ std::shared_ptr<MageMagicCircle> Mage::CastNovaCircle()
 
 	desc.pos = GetPos();
 	desc.radius = param.m_radius;
-	desc.telegraphTime = param.m_telegraph;
+	desc.telegraphTime=0.0f;
+	desc.hitDelay = param.m_hitDelay;
+	desc.hitEndProgress = param.m_hitEndProgress;
 	desc.damage = param.m_damage;
 	desc.effect = ToCircleEffect(param.m_effect);
 
@@ -400,6 +406,7 @@ std::shared_ptr<MageBeam> Mage::FireBeam(const MageParameter::Beam& param)
 	desc.width = param.m_width;
 	desc.damage = param.m_damage;
 	desc.duration = param.m_duration;
+	desc.hitDelay = param.m_hitDelay;
 	desc.hitInterval = param.m_hitInterval;
 
 	const auto& effect = param.m_beamEffect;

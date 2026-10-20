@@ -55,7 +55,10 @@ namespace
 		json["TargetCircleRadius"] = targetCircle.m_radius;
 		json["TargetCircleTelegraph"] = targetCircle.m_telegraph;
 		json["TargetCircleShotCount"] = targetCircle.m_shotCount;
+		json["TargetCircleShotInterval"] = targetCircle.m_shotInterval;
 		json["TargetCircleDamage"] = targetCircle.m_damage;
+		json["TargetCircleHitDelay"] = targetCircle.m_hitDelay;
+		json["TargetCircleHitEndProgress"] = targetCircle.m_hitEndProgress;
 		WriteEffect(json, "TargetCircleEffect", targetCircle.m_effect);
 
 		//---- ForwardSector ----
@@ -65,6 +68,8 @@ namespace
 		json["ForwardSectorRadius"] = forwardSector.m_radius;
 		json["ForwardSectorTelegraph"] = forwardSector.m_telegraph;
 		json["ForwardSectorDamage"] = forwardSector.m_damage;
+		json["ForwardSectorHitDelay"] = forwardSector.m_hitDelay;
+		json["ForwardSectorHitEndProgress"] = forwardSector.m_hitEndProgress;
 		WriteEffect(json, "ForwardSectorEffect", forwardSector.m_effect);
 
 		//---- Bolt ----
@@ -85,6 +90,8 @@ namespace
 		json["NovaCircleRadius"] = novaCircle.m_radius;
 		json["NovaCircleTelegraph"] = novaCircle.m_telegraph;
 		json["NovaCircleDamage"] = novaCircle.m_damage;
+		json["NovaCircleHitDelay"] = novaCircle.m_hitDelay;
+		json["NovaCircleHitEndProgress"] = novaCircle.m_hitEndProgress;
 		WriteEffect(json, "NovaCircleEffect", novaCircle.m_effect);
 
 		//---- Beam ----
@@ -95,6 +102,7 @@ namespace
 		json["BeamForwardOffset"] = beam.m_forwardOffset;
 		json["BeamDuration"] = beam.m_duration;
 		json["BeamDamage"] = beam.m_damage;
+		json["BeamHitDelay"] = beam.m_hitDelay;
 		json["BeamHitInterval"] = beam.m_hitInterval;
 		WriteEffect(json, "BeamWindupEffect", beam.m_windupEffect);
 		WriteEffect(json, "BeamEffect", beam.m_beamEffect);
@@ -140,7 +148,10 @@ namespace
 		ParameterJson::Read(json, "TargetCircleRadius", targetCircle.m_radius);
 		ParameterJson::Read(json, "TargetCircleTelegraph", targetCircle.m_telegraph);
 		ParameterJson::Read(json, "TargetCircleShotCount", targetCircle.m_shotCount);
+		ParameterJson::Read(json, "TargetCircleShotInterval", targetCircle.m_shotInterval);
 		ParameterJson::Read(json, "TargetCircleDamage", targetCircle.m_damage);
+		ParameterJson::Read(json, "TargetCircleHitDelay", targetCircle.m_hitDelay);
+		ParameterJson::Read(json, "TargetCircleHitEndProgress", targetCircle.m_hitEndProgress);
 		ReadEffect(json, "TargetCircleEffect", targetCircle.m_effect);
 
 		//---- ForwardSector ----
@@ -150,6 +161,8 @@ namespace
 		ParameterJson::Read(json, "ForwardSectorRadius", forwardSector.m_radius);
 		ParameterJson::Read(json, "ForwardSectorTelegraph", forwardSector.m_telegraph);
 		ParameterJson::Read(json, "ForwardSectorDamage", forwardSector.m_damage);
+		ParameterJson::Read(json, "ForwardSectorHitDelay", forwardSector.m_hitDelay);
+		ParameterJson::Read(json, "ForwardSectorHitEndProgress", forwardSector.m_hitEndProgress);
 		ReadEffect(json, "ForwardSectorEffect", forwardSector.m_effect);
 
 		//---- Bolt ----
@@ -170,6 +183,8 @@ namespace
 		ParameterJson::Read(json, "NovaCircleRadius", novaCircle.m_radius);
 		ParameterJson::Read(json, "NovaCircleTelegraph", novaCircle.m_telegraph);
 		ParameterJson::Read(json, "NovaCircleDamage", novaCircle.m_damage);
+		ParameterJson::Read(json, "NovaCircleHitDelay", novaCircle.m_hitDelay);
+		ParameterJson::Read(json, "NovaCircleHitEndProgress", novaCircle.m_hitEndProgress);
 		ReadEffect(json, "NovaCircleEffect", novaCircle.m_effect);
 
 		//---- Beam ----
@@ -180,6 +195,7 @@ namespace
 		ParameterJson::Read(json, "BeamForwardOffset", beam.m_forwardOffset);
 		ParameterJson::Read(json, "BeamDuration", beam.m_duration);
 		ParameterJson::Read(json, "BeamDamage", beam.m_damage);
+		ParameterJson::Read(json, "BeamHitDelay", beam.m_hitDelay);
 		ParameterJson::Read(json, "BeamHitInterval", beam.m_hitInterval);
 		ReadEffect(json, "BeamWindupEffect", beam.m_windupEffect);
 		ReadEffect(json, "BeamEffect", beam.m_beamEffect);
@@ -263,7 +279,10 @@ namespace
 			InspectorUI::Meter("Radius", targetCircle.m_radius);
 			InspectorUI::Seconds("Telegraph", targetCircle.m_telegraph);
 			InspectorUI::Count("ShotCount", targetCircle.m_shotCount);
+			InspectorUI::Seconds("ShotInterval", targetCircle.m_shotInterval);
 			InspectorUI::Damage("Damage", targetCircle.m_damage);
+			InspectorUI::Seconds("HitDelay", targetCircle.m_hitDelay);
+			ImGui::DragFloat("HitEndProgress", &targetCircle.m_hitEndProgress, 0.01f, 0.0f, 1.0f);
 			DrawEffect_("Effect", targetCircle.m_effect, false, false);
 
 			InspectorUI::EndGroup();
@@ -278,6 +297,8 @@ namespace
 			InspectorUI::Meter("Radius", forwardSector.m_radius);
 			InspectorUI::Seconds("Telegraph", forwardSector.m_telegraph);
 			InspectorUI::Damage("Damage", forwardSector.m_damage);
+			InspectorUI::Seconds("HitDelay", forwardSector.m_hitDelay);
+			ImGui::DragFloat("HitEndProgress", &forwardSector.m_hitEndProgress, 0.01f, 0.0f, 1.0f);
 			DrawEffect_("Effect", forwardSector.m_effect, true, false);
 
 			InspectorUI::EndGroup();
@@ -308,6 +329,8 @@ namespace
 			InspectorUI::Meter("Radius", novaCircle.m_radius);
 			InspectorUI::Seconds("Telegraph", novaCircle.m_telegraph);
 			InspectorUI::Damage("Damage", novaCircle.m_damage);
+			InspectorUI::Seconds("HitDelay", novaCircle.m_hitDelay);
+			ImGui::DragFloat("HitEndProgress", &novaCircle.m_hitEndProgress, 0.01f, 0.0f, 1.0f);
 			DrawEffect_("Effect", novaCircle.m_effect, false, false);
 
 			InspectorUI::EndGroup();
@@ -323,6 +346,7 @@ namespace
 			InspectorUI::Meter("ForwardOffset", beam.m_forwardOffset);
 			InspectorUI::Seconds("Duration", beam.m_duration);
 			InspectorUI::Damage("Damage", beam.m_damage);
+			InspectorUI::Seconds("HitDelay", beam.m_hitDelay);
 			InspectorUI::Seconds("HitInterval", beam.m_hitInterval);
 			DrawEffect_("WindupEffect", beam.m_windupEffect, true, true);
 			DrawEffect_("BeamEffect", beam.m_beamEffect, true, true);

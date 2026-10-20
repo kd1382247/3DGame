@@ -25,6 +25,7 @@ void MageMagicCircle::Setup(const MageMagicCircleDesc& desc)
 	SetPos(m_desc.pos);
 
 	m_telegraphTime = m_desc.telegraphTime;
+	m_hitDelayTime = m_desc.hitDelay;
 
 	m_telegraphIndicator.Show();
 	m_rangeIndicator.Show();
@@ -106,15 +107,29 @@ void MageMagicCircle::Update()
 	// ハンドルベースでの終了判定(KdEffekseerObjectの生存期間に依存しない)
 	else if (KdEffekseerManager::GetInstance().HasEffectFinished(m_effectHandle))
 	{
-		// 消える時は、地面に出している円も必ず消す
-		// (エフェクトが先に終わると、下の「進行度で消す」処理に届かないまま消えてしまい、範囲の円だけが残る)
 		m_telegraphIndicator.Hide();
 		m_rangeIndicator.Hide();
-
 		Destroy();
+		return;
 	}
 
-	if (!m_hitTarget)
+	// エフェクトの進行度が終了値に達したら、表示円を消して、以降は当たり判定をしない
+	auto spEffekseerObj = m_wpEffekseerObj.lock();
+
+	if (spEffekseerObj && spEffekseerObj->GetProgress() >= m_desc.hitEndProgress)
+	{
+		m_telegraphIndicator.Hide();
+		m_rangeIndicator.Hide();
+		m_hitTarget = true;
+	}
+
+	// エフェクトが出てから、当たり判定が出るまで待つ
+	if (m_hitDelayTime > 0.0f)
+	{
+		m_hitDelayTime -= deltaTime;
+	}
+
+	if (!m_hitTarget && m_hitDelayTime <= 0.0f)
 	{
 		auto spPlayer = m_wpPlayer.lock();
 
@@ -137,16 +152,6 @@ void MageMagicCircle::Update()
 
 				m_hitTarget = true;
 			}
-		}
-	}
-
-	auto spEffekseerObj = m_wpEffekseerObj.lock();
-	if (spEffekseerObj)
-	{
-		if (spEffekseerObj->GetProgress() > 0.8f)
-		{
-			m_rangeIndicator.Hide();
-			m_hitTarget = true;
 		}
 	}
 }

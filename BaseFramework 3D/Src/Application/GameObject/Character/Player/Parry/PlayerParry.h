@@ -23,6 +23,7 @@ public:
 
 	bool IsParryActive()const { return m_isParryActive; }
 
+	void EndParry() { m_isParryActive = false; }
 
 private:
 

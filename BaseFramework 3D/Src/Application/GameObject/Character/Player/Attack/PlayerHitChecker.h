@@ -101,12 +101,14 @@ public:
 				attackInfo.m_SlowScale           = hitParam.m_SlowScale;
 				attackInfo.m_SlowDuration        = hitParam.m_SlowDuration;
 
-
 				target->OnHit(attackInfo);
 				m_hitTargets.emplace_back(target);
 
-				// SEを流す
-				KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/Hit/Hit2.wav");
+				if(attackInfo.m_damage>0)
+				{
+					// SEを流す
+					KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/Hit/Hit.wav");
+				}
 
 			}
 		}

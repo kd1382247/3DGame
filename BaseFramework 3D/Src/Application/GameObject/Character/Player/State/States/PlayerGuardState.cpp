@@ -43,7 +43,10 @@ void PlayerGuardState::OnUpdate(Player * owner)
 		!guard.IsGuardHit()&&
 		!guard.IsGuardBreak())
 	{
+
+		owner->GetParry().StartParry();
 		m_pMachine->ChangeState<PlayerParryState>();
+
 		return;
 	}
 

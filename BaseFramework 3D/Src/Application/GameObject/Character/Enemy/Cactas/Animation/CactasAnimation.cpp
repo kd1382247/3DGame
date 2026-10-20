@@ -4,7 +4,6 @@ void CactasAnimation::Init(std::shared_ptr<KdModelWork>& model)
 {
 	m_spModel = model;
 	m_spAnimator = std::make_shared<KdAnimator>();
-
 }
 
 void CactasAnimation::Play(CactasAnimationType type)
@@ -33,7 +32,7 @@ void CactasAnimation::Animations(CactasAnimationType type)
 		break;
 	case CactasAnimationType::Attack:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack"), false);
-		m_animSpeed = 1.0f;
+		m_animSpeed = 0.8f;
 		break;
 	case CactasAnimationType::GetHit:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false);

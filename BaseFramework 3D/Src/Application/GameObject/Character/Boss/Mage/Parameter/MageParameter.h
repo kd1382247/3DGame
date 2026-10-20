@@ -44,7 +44,10 @@ public:
 		float m_radius = 2.5f;      // [m] 魔法円の半径
 		float m_telegraph = 0.8f;   // [秒] 魔法円の予告から発動までの時間
 		int   m_shotCount = 5;      // [個/回] 連続で撃つ回数
+		float m_shotInterval = 0.8f;   // [秒] 1発の詠唱開始から、次の弾の詠唱開始までの時間(m_castDelay より短くしても、弾が出るのを待ってから次へ進む)
 		float m_damage = 10.0f;     // 魔法円のダメージ
+		float m_hitDelay = 0.15f;   // [秒] 予告が終わってエフェクトが出てから、当たり判定が出るまでの時間
+		float m_hitEndProgress = 0.8f;   // [0〜1] エフェクトがこの進行度に達したら、当たり判定を終えて範囲の円も消す
 
 		EffectParam m_effect{ "Tornado/Tornado.efkefc", 0.4f, 1.0f, 0, 90 };
 	};
@@ -57,6 +60,8 @@ public:
 		float m_radius = 6.5f;       // [m] 扇形の半径
 		float m_telegraph = 0.8f;    // [秒] 予告から発動までの時間
 		float m_damage = 10.0f;      // 扇形の魔法のダメージ
+		float m_hitDelay = 0.15f;   // [秒] 予告が終わってエフェクトが出てから、当たり判定が出るまでの時間
+		float m_hitEndProgress = 0.6f;   // [0〜1] エフェクトがこの進行度に達したら、当たり判定を終えて範囲の円も消す
 
 		EffectParam m_effect{ "Sword/Sword2.efkefc", 2.5f, 1.2f, 0, 80, -60.0f };
 	};
@@ -82,8 +87,10 @@ public:
 		float m_radius = 6.0f;      // [m] 全方位魔法の半径
 		float m_telegraph = 1.2f;   // [秒] 予告から発動までの時間
 		float m_damage = 10.0f;     // 全方位魔法のダメージ
+		float m_hitDelay = 0.15f;   // [秒] 予告が終わってエフェクトが出てから、当たり判定が出るまでの時間
+		float m_hitEndProgress = 0.8f;   // [0〜1] エフェクトがこの進行度に達したら、当たり判定を終えて範囲の円も消す
 
-		EffectParam m_effect{ "Salamander/Salamander.efkefc", 0.8f, 1.0f, 0, 140 };
+		EffectParam m_effect{ "Salamander/Salamander.efkefc", 0.8f, 1.0f, 0, 90 };
 	};
 
 	// 6. レーザー(ビーム)
@@ -95,6 +102,7 @@ public:
 		float m_forwardOffset = 7.0f;   // [m] ビームの基準位置を、正面へどれだけ前に出すか
 		float m_duration = 3.0f;        // [秒] ビームが出続ける時間(エフェクトが先に終わったら、そこで終わる)
 		float m_damage = 10.0f;         // ビームのダメージ
+		float m_hitDelay = 0.15f;       // [秒] ビームが出てから、最初の当たり判定が出るまでの時間(m_duration の中に含まれる)
 		float m_hitInterval = 0.4f;     // [秒] ビームが当たり続けている間の、再ヒットまでの間隔
 
 		// 詠唱中に再生する予告(windup)エフェクト

@@ -22,6 +22,12 @@ struct MageMagicCircleDesc
 	// 発動までの予備動作時間(秒)
 	float telegraphTime = 0.0f;
 
+	// 予告が終わってエフェクトが出てから、当たり判定が出るまでの時間(秒)
+	float hitDelay = 0.0f;
+
+	// エフェクトがこの進行度(0〜1)に達したら、当たり判定を終えて範囲の円も消す
+	float hitEndProgress = 0.8f;
+
 	float damage = 0.0f;
 
 	MageMagicCircleEffect effect = {};
