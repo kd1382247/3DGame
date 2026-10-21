@@ -206,6 +206,14 @@ void Title::UpdateButtonInput()
 
 void Title::Select(ButtonType button)
 {
+	if (m_selectedButton == button)
+	{
+		return;
+	}
+
+	// SEを再生
+	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/System/Select.wav", false);
+
 	m_selectedButton = button;
 }
 
@@ -217,6 +225,8 @@ void Title::Decide(ButtonType button)
 
 		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Game);
 
+		// SEを再生
+		KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/System/Confirm.wav", false);
 		break;
 
 	case ButtonType::Setting:

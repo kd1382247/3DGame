@@ -3,6 +3,8 @@
 #include"CollisionLayer/CollisionLayer.h"
 #include"CollisionRegistry/CollisionRegistry.h"
 
+#include<unordered_set>
+
 class KdGameObject;
 class CharacterBase;
 
@@ -108,6 +110,14 @@ private:
 		const Math::Vector3& sourceMove,
 		bool updateGroundState);
 
+	// 下り坂などで地面から離れてしまった場合に、真下の歩行可能面へ吸い付かせる
+	// (前フレーム接地 かつ 今フレーム未接地 かつ 上昇中でない 場合だけ働く)
+	// sourceMove: このフレームの元の移動量(水平移動量から吸い付く距離を決める)
+	void SnapToGround(
+		const std::shared_ptr<CharacterBase>& character,
+		Math::Vector3& currentPos,
+		const Math::Vector3& sourceMove);
+
 	//==============================
 	// キャラリストを取得
 	//==============================
@@ -195,6 +205,12 @@ private:
 
 
 	CollisionRegistry m_registry;
+
+	// 接地したキャラの記録(SnapToGroundで「前フレームに接地していたか」を判定するため)
+	// m_groundedPrev: 前フレームに接地していたキャラ
+	// m_groundedCurr: 今フレーム接地したキャラ
+	std::unordered_set<const CharacterBase*> m_groundedPrev;
+	std::unordered_set<const CharacterBase*> m_groundedCurr;
 
 	std::unique_ptr<KdDebugWireFrame>m_pDebugWire=nullptr;
 

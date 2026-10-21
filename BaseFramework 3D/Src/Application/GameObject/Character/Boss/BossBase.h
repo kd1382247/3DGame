@@ -62,9 +62,6 @@ public:
 
 	void PlayDeathSmoke();
 
-private:
-
-	
 
 
 protected:

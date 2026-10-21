@@ -9,6 +9,7 @@ void MageTargetCircleState::OnStart(Mage* mage)
 	mage->PlayAnimation(MageAnimationType::Attack1);
 	m_castTimer = 0.0f;
 	m_hasCast = false;
+
 }
 
 void MageTargetCircleState::OnUpdate(Mage* mage)

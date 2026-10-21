@@ -50,6 +50,9 @@ public:
 		float m_hitEndProgress = 0.8f;   // [0〜1] エフェクトがこの進行度に達したら、当たり判定を終えて範囲の円も消す
 
 		EffectParam m_effect{ "Tornado/Tornado.efkefc", 0.4f, 1.0f, 0, 90 };
+
+		// 魔法円のエフェクトが出るときに鳴らすSEのファイルパス(空なら鳴らさない。ファイル名はコード側で固定する)
+		std::string m_sePath = "Asset/Data/Sound/SE/Boss/Mage/Attack/FireMagic.wav";
 	};
 
 	// 3. 前方に扇形の範囲攻撃
@@ -91,6 +94,9 @@ public:
 		float m_hitEndProgress = 0.8f;   // [0〜1] エフェクトがこの進行度に達したら、当たり判定を終えて範囲の円も消す
 
 		EffectParam m_effect{ "Salamander/Salamander.efkefc", 0.8f, 1.0f, 0, 90 };
+
+		// 魔法円のエフェクトが出るときに鳴らすSEのファイルパス(空なら鳴らさない。ファイル名はコード側で固定する)
+		std::string m_sePath = "Asset/Data/Sound/SE/Boss/Mage/Attack/WideAreaAttack.wav";
 	};
 
 	// 6. レーザー(ビーム)

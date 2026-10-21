@@ -448,6 +448,12 @@
     <Filter Include="Src\Application\GameObject\Character\Boss\Mage\ColorSphereIndicator">
       <UniqueIdentifier>{6e906a5c-62a8-4114-a417-7a40fac433ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Gimmick\Checkpoint">
+      <UniqueIdentifier>{1c4647f0-f47a-4358-a8c5-e940a4ab92ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Mage\MageBolt">
+      <UniqueIdentifier>{b847991f-18d0-4fde-908c-8dabd22fc740}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1200,14 +1206,32 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\ColorSphereIndicator\ColorSphereIndicator.h">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\ColorSphereIndicator</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicSector\MageMagicSectorDesc.h">
-      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawnerRequest.h">
       <Filter>Src\Application\GameObject\Gimmick\EnemySpawner</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawnerManager.h">
       <Filter>Src\Application\GameObject\Gimmick\EnemySpawner</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Gimmick\Checkpoint\CheckPoint.h">
+      <Filter>Src\Application\GameObject\Gimmick\Checkpoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Gimmick\Checkpoint\CheckPointManager.h">
+      <Filter>Src\Application\GameObject\Gimmick\Checkpoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageBolt\MageBolt.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageBolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageBolt\MageBoltDesc.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageBolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageBolt\MageBoltManager.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageBolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicSector\MageMagicSectorDesc.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicSector</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle\MageMagicCircleDesc.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1870,6 +1894,18 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawnerManager.cpp">
       <Filter>Src\Application\GameObject\Gimmick\EnemySpawner</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Gimmick\Checkpoint\CheckPoint.cpp">
+      <Filter>Src\Application\GameObject\Gimmick\Checkpoint</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Gimmick\Checkpoint\CheckPointManager.cpp">
+      <Filter>Src\Application\GameObject\Gimmick\Checkpoint</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\MageBolt\MageBolt.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageBolt</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\MageBolt\MageBoltManager.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Mage\MageBolt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

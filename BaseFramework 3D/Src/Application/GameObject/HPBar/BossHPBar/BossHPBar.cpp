@@ -26,6 +26,12 @@ void BossHPBar::Update()
 		return;
 	}
 
+	if (spBoss->GetHealth().GetCurrentHP() <= 0)
+	{
+		m_isOutro = true;
+	}
+
+
 	m_hpRate = spBoss->GetHealth().GetHPRate();
 
 	// ダメージバーを減少
@@ -53,15 +59,23 @@ void BossHPBar::DrawSprite()
 		return;
 	}
 
-	if (m_alpha < 1.0f)
+	if(m_isIntro)
 	{
-		m_alpha += 0.02f;
-		if (m_alpha >= 1.0f)
+		if (m_alpha < 1.0f)
 		{
-			m_alpha = 1.0f;
+			m_alpha += 0.02f;
+			if (m_alpha >= 1.0f)
+			{
+				m_alpha = 1.0f;
+				m_isIntro = false;
+			}
 		}
 	}
 
+	if (m_isOutro)
+	{
+
+	}
 
 	DrawNamePrate();
 

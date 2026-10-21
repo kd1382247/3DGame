@@ -6,8 +6,8 @@
                 "g": 6.0,
                 "r": 10.0
             },
-            "ID": 12,
-            "Name": "PointLight_12",
+            "ID": 10,
+            "Name": "PointLight_10",
             "Position": {
                 "x": 0.5,
                 "y": 3.5,
@@ -21,8 +21,8 @@
                 "g": 6.0,
                 "r": 10.0
             },
-            "ID": 13,
-            "Name": "PointLight_13",
+            "ID": 11,
+            "Name": "PointLight_11",
             "Position": {
                 "x": 5.5,
                 "y": 3.5,

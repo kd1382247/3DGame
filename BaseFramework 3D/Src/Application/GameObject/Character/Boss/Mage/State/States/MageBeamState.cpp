@@ -104,6 +104,11 @@ void MageBeamState::UpdateActive(Mage* mage)
 	// Beam本体が無くなったらEndフェーズへ
 	auto spMageBeam = m_wpMageBeam.lock();
 
+	if (!m_isPlaySE)
+	{
+		m_isPlaySE = true;
+		KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Boss/Mage/Attack/Beam.wav");
+	}
 
 	if (!spMageBeam || spMageBeam->IsFinished())
 	{

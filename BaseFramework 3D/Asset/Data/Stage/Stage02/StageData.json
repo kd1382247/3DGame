@@ -137,9 +137,9 @@
             "Class": "Player",
             "Name": "Player_0",
             "Position": {
-                "x": 7.400000095367432,
-                "y": 4.5,
-                "z": 95.0
+                "x": 7.0,
+                "y": 6.0,
+                "z": 97.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -163,7 +163,7 @@
             "CoreSize": {
                 "x": 18.0,
                 "y": 13.0,
-                "z": 24.0
+                "z": 19.649999618530273
             },
             "FollowStage": "CombatRoom_9x13_0",
             "IntroDuration": 2.0,
@@ -1127,13 +1127,15 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 1.0,
+                "x": 0.9999982118606567,
                 "y": 1.0,
-                "z": 1.0
+                "z": 0.9999982118606567
             },
             "SummonEnemies": [
                 "Cactas",
-                "Mushroom"
+                "Mushroom",
+                "Slime",
+                "StarFish"
             ],
             "Waves": []
         },
@@ -1160,7 +1162,9 @@
             },
             "SummonEnemies": [
                 "Cactas",
-                "Mushroom"
+                "Mushroom",
+                "StarFish",
+                "TurtleShell"
             ],
             "Waves": []
         },
@@ -1186,8 +1190,10 @@
                 "z": 1.0
             },
             "SummonEnemies": [
+                "Bomb",
                 "Cactas",
-                "Mushroom"
+                "Mushroom",
+                "TurtleShell"
             ],
             "Waves": []
         },
@@ -1208,15 +1214,59 @@
                 "z": 0.0
             },
             "Scale": {
+                "x": 0.9999992251396179,
+                "y": 1.0,
+                "z": 0.9999992251396179
+            },
+            "SummonEnemies": [
+                "Bomb",
+                "Mushroom",
+                "Slime",
+                "StarFish"
+            ],
+            "Waves": []
+        },
+        {
+            "Class": "CheckPoint",
+            "Name": "CheckPoint_0",
+            "Order": 0,
+            "Position": {
+                "x": 7.0,
+                "y": 3.5,
+                "z": 60.0
+            },
+            "Radius": 3.0,
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
                 "x": 1.0,
                 "y": 1.0,
                 "z": 1.0
+            }
+        },
+        {
+            "Class": "CheckPoint",
+            "Name": "CheckPoint_1",
+            "Order": 1,
+            "Position": {
+                "x": 7.0,
+                "y": 3.5,
+                "z": 103.0
             },
-            "SummonEnemies": [
-                "Cactas",
-                "Mushroom"
-            ],
-            "Waves": []
+            "Radius": 3.0,
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
         }
     ]
 }

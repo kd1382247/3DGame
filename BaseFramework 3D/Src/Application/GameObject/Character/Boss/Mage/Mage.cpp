@@ -6,12 +6,13 @@
 
 #include"../../../../Scene/SceneManager.h"
 
-#include"../../../EnergyBullet/EnergyBulletManager.h"
 #include"../../../Gimmick/EnemySpawner/EnemySpawnerManager.h"
 #include"MageMagicCircle/MageMagicCircleManager.h"
 #include"MageMagicSector/MageMagicSectorManager.h"
 #include"MageBeam/MageBeamManager.h"
 #include"MageBeam/MageBeamDesc.h"
+#include"MageBolt/MageBoltManager.h"
+#include"MageBolt/MageBoltDesc.h"
 
 #include"../../../HPBar/BossHPBar/BossHPBar.h"
 
@@ -78,6 +79,17 @@ void Mage::Update()
 		m_initPos = true;
 	}
 
+	// デバッグキー
+	if(!m_stateMachine.IsState<MageIntroState>()&&
+		!m_stateMachine.IsState<MageDieState>())
+	{
+		if (GetAsyncKeyState('1') & 0x8000)
+		{
+			m_stateMachine.ChangeState<MageDieState>();
+			m_health.Kill();
+		}
+	}
+
 	UpdateGravity();
 
 	UpdateAttack();
@@ -109,7 +121,6 @@ void Mage::CreateHPBar()
 	hpBar->SetBoss(std::dynamic_pointer_cast<BossBase>(shared_from_this()));
 
 	SceneManager::Instance().AddObject(hpBar);
-
 }
 
 void Mage::DrawParameterInspector()
@@ -178,7 +189,7 @@ void Mage::CancelAllAttacks()
 	MageMagicCircleManager::Instance().CancelAll();
 	MageMagicSectorManager::Instance().CancelAll();
 	MageBeamManager::Instance().CancelAll();
-	EnergyBulletManager::Instance().CancelAll();
+	MageBoltManager::Instance().CancelAll();
 }
 
 MageAttackPattern Mage::SelectAttackPattern()
@@ -196,12 +207,8 @@ MageAttackPattern Mage::SelectAttackPattern()
 	if (!HasReachedTarget())
 	{
 		weights[static_cast<size_t>(MageAttackPattern::ForwardSector)] = 0.0f;
-		weights[static_cast<size_t>(MageAttackPattern::NovaCircle)] = 0.0f;
 	}
-	else
-	{
-		weights[static_cast<size_t>(MageAttackPattern::Bolt)] = 0.0f;
-	}
+	
 
 	int index = LotteryPattern(weights);
 
@@ -237,10 +244,7 @@ std::shared_ptr<MageMagicCircle> Mage::CastTargetCircle()
 
 	Math::Vector3 targetPos = spPlayer->GetPos();
 
-	if (!spPlayer->IsGrounded())
-	{
-		targetPos.y = spPlayer->GetGroundYPos();
-	}
+	targetPos.y = GetPos().y;
 
 	const auto& param = m_parameter.GetParam().m_targetCircle;
 
@@ -253,6 +257,7 @@ std::shared_ptr<MageMagicCircle> Mage::CastTargetCircle()
 	desc.hitEndProgress = param.m_hitEndProgress;
 	desc.damage = param.m_damage;
 	desc.effect = ToCircleEffect(param.m_effect);
+	desc.sePath = param.m_sePath;
 
 	return MageMagicCircleManager::Instance().CreateMagicCircle(desc);
 }
@@ -304,15 +309,19 @@ void Mage::FireBolt()
 		dir.Normalize();
 	}
 
-	EnergyBulletManager::Instance().CreateEnergyBullet(
+	MageBoltDesc desc;
+
+	desc.pos = spawnPos;
+	desc.dir = dir;
+	desc.speed = param.m_speed;
+	desc.radius = param.m_radius;
+	desc.damage = param.m_damage;
+	desc.knockBackPower = param.m_knockBack;
+	desc.lifeTime = param.m_lifeTime;
+
+	MageBoltManager::Instance().CreateBolt(
 		std::dynamic_pointer_cast<CharacterBase>(shared_from_this()),
-		spawnPos,
-		dir,
-		param.m_speed,
-		param.m_radius,
-		param.m_damage,
-		param.m_knockBack,
-		param.m_lifeTime);
+		desc);
 }
 
 std::shared_ptr<MageMagicCircle> Mage::CastNovaCircle()
@@ -328,6 +337,7 @@ std::shared_ptr<MageMagicCircle> Mage::CastNovaCircle()
 	desc.hitEndProgress = param.m_hitEndProgress;
 	desc.damage = param.m_damage;
 	desc.effect = ToCircleEffect(param.m_effect);
+	desc.sePath = param.m_sePath;
 
 	return MageMagicCircleManager::Instance().CreateMagicCircle(desc);
 }

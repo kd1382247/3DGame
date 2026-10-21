@@ -74,6 +74,12 @@ void MageMagicSector::Update()
 		return;
 	}
 
+	if (!m_isPlaySE)
+	{
+		m_isPlaySE = true;
+		KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Boss/Attack/SectorAttack.wav");
+	}
+
 	float deltaTime = TimeManager::Instance().GetDeltaTime();
 
 	UpdateIndicators();

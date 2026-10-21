@@ -61,6 +61,10 @@ void MageAnimation::Animations(MageAnimationType animType)
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("AreaWideMagic"), false);
 		m_animSpeed = 1.0f;
 		break;
+		case MageAnimationType::EnemySpawnChant:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("EnemySpawnChant"), false);
+		m_animSpeed = 1.0f;
+		break;
 	case MageAnimationType::GetHit:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), true);
 		m_animSpeed = 1.0f;

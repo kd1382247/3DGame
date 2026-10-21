@@ -101,7 +101,6 @@ void ChestMonster::DrawParameterInspector()
 void ChestMonster::UpdateSpawnEnemy()
 {
 
-
 	if (m_animFrameCount <= m_spawnTiming.spawnStart || m_animFrameCount >= m_spawnTiming.spawnEnd)
 	{
 		return;

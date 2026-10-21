@@ -3,6 +3,7 @@
 #include"../SceneManager.h"
 #include"../../BGMManager/BGMManager.h"
 #include"../../GameObject/GameResultUI/ResultUI.h"
+#include"../../GameObject/Gimmick/Checkpoint/CheckPointManager.h"
 
 void ResultScene::Event()
 {
@@ -34,6 +35,9 @@ void ResultScene::Event()
 
 void ResultScene::Init()
 {
+	// クリアしたので、チェックポイントの記録を消す (リザルトのリトライは、最初から始める)
+	CheckPointManager::Instance().Reset();
+
 	// リザルトのBGMを流す(シーンが切り替わるときにBGMManager::Reset()で解除される)
 	BGMManager::Instance().SetOverride(BGMManager::BGMType::Result);
 

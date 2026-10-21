@@ -5,7 +5,7 @@
 
 void MageSummonState::OnStart(Mage* mage)
 {
-	mage->PlayAnimation(MageAnimationType::EnemySpawnerChant);
+	mage->PlayAnimation(MageAnimationType::EnemySpawnChant);
 	m_castTimer = 0.0f;
 	m_hasCast = false;
 }

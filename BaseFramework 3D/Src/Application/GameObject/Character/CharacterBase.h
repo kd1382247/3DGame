@@ -127,6 +127,9 @@ public:
 
 	const Health& GetHealth()const { return m_health; }
 
+	// HPを回復する (上限は最大HP。倒れた後に復活させる用途には使わない)
+	void Heal(const int amount) { m_health.Heal(amount); }
+
 private:
 
 	// 解放処理

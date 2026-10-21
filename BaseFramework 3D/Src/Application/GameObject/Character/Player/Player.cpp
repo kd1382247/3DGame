@@ -106,12 +106,18 @@ void Player::Update()
 	m_playerGuard.UpdateTimer(m_deltaTime);
 	m_playerParry.UpdateParryWindow(m_deltaTime);
 
-	UpdateGravity();
-
-	if (!IsGrounded())
+	// デバッグキー
+	if(GetAsyncKeyState('2')&0x8000)
 	{
-		UpdateGroundPosY();
+		if (!m_stateMachine.IsState<PlayerIntroWaitState>() &&
+			!m_stateMachine.IsState<PlayerDieState>())
+		{
+			m_health.Kill();
+			m_stateMachine.ChangeState<PlayerDieState>();
+		}
 	}
+
+	UpdateGravity();
 }
 
 void Player::PostUpdate()
@@ -545,58 +551,6 @@ void Player::UpdateCameraFade()
 	if (m_fadeRate < 0.001f)
 	{
 		m_fadeRate = 0.0f;
-	}
-}
-
-
-void Player::UpdateGroundPosY()
-{
-	KdCollider::RayInfo rayInfo;
-	// レイの発射位置を設定
-	rayInfo.m_pos = GetPos();
-
-	// 少し高いところから飛ばす(段差の許容範囲)
-	rayInfo.m_pos.y += m_parameter.GetBody().m_stepHeight;
-
-	// レイの発射方向を設定
-	rayInfo.m_dir = Math::Vector3::Down;
-	// レイの長さを設定
-	rayInfo.m_range = m_parameter.GetBody().m_groundRayLength;
-
-	// 当たり判定をしたいタイプを設定
-	rayInfo.m_type =  KdCollider::TypeBump;
-
-	std::vector<const std::vector< std::weak_ptr<KdGameObject>>*>lists;
-
-	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::AABB));
-	lists.push_back(&CollisionManager::Instance().GetObjects(CollisionLayer::OBB));
-	
-
-	for (const auto& objList : lists)
-	{
-		for (const auto wpGameObj : *objList)
-		{
-			std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
-			if (spGameObj)
-			{
-				std::list<KdCollider::CollisionResult> retRayList;
-				spGameObj->Intersects(rayInfo, &retRayList);
-
-				// レイに当たったリストから一番近いオブジェクトを検出
-				float maxOverLap = 0;
-				Math::Vector3 hitPos = {};
-				for (auto& ret : retRayList)
-				{
-					// レイを遮断しオーバーした長さが
-					// 一番長いものを探す
-					if (maxOverLap < ret.m_overlapDistance)
-					{
-						maxOverLap = ret.m_overlapDistance;
-						SetGroundYPos(ret.m_hitPos.y);
-					}
-				}
-			}
-		}
 	}
 }
 

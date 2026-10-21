@@ -35,9 +35,10 @@
 #include"../../Application/GameObject/Gimmick/Room/Room.h"
 #include"../../Application/GameObject/Gimmick/RoomGate/RoomGate.h"
 #include"../../Application/GameObject/Gimmick/AreaVolume/AreaVolume.h"
+#include"../../Application/GameObject/Gimmick/Checkpoint/CheckPoint.h"
+
 
 // エフェクト
-
 #include"../../Application/GameObject/Effect/Stun/StunEffect.h"
 #include"../../Application/GameObject/Effect/HitEffect/HitEffect.h"
 
@@ -55,6 +56,9 @@
 
 // Mageのビーム
 #include"../../Application/GameObject/Character/Boss/Mage/MageBeam/MageBeam.h"
+
+// Mageの魔法弾
+#include"../../Application/GameObject/Character/Boss/Mage/MageBolt/MageBolt.h"
 
 
 void KdGameObjectFactory::Init()
@@ -77,32 +81,32 @@ void KdGameObjectFactory::Init()
 	//===================================================================
 
 	// Beholder
-	Register<Beholder>    ("Beholder", KdGameObject::ObjectCategory::Character);
+	Register<Beholder>    ("Beholder",     KdGameObject::ObjectCategory::Character);
 	// Bomb
-	Register<Bomb>        ("Bomb", KdGameObject::ObjectCategory::Character);
+	Register<Bomb>        ("Bomb",         KdGameObject::ObjectCategory::Character);
 	// Cactas
-	Register<Cactas>      ("Cactas", KdGameObject::ObjectCategory::Character);
+	Register<Cactas>      ("Cactas",       KdGameObject::ObjectCategory::Character);
 	// ChestMonster
 	Register<ChestMonster>("ChestMonster", KdGameObject::ObjectCategory::Character);
 	// Golem
-	Register<Golem>       ("Golem", KdGameObject::ObjectCategory::Character);
+	Register<Golem>       ("Golem",        KdGameObject::ObjectCategory::Character);
 	// Mage
-	Register<Mage>        ("Mage", KdGameObject::ObjectCategory::Character);
+	Register<Mage>        ("Mage",         KdGameObject::ObjectCategory::Character);
 	// Mushroom
-	Register<Mushroom>    ("Mushroom", KdGameObject::ObjectCategory::Character);
+	Register<Mushroom>    ("Mushroom",     KdGameObject::ObjectCategory::Character);
 	// Slime
-	Register<Slime>       ("Slime", KdGameObject::ObjectCategory::Character);
+	Register<Slime>       ("Slime",        KdGameObject::ObjectCategory::Character);
 	// StarFish
-	Register<StarFish>    ("StarFish", KdGameObject::ObjectCategory::Character);
+	Register<StarFish>    ("StarFish",     KdGameObject::ObjectCategory::Character);
 	// TurtleShell
-	Register<TurtleShell> ("TurtleShell", KdGameObject::ObjectCategory::Character);
+	Register<TurtleShell> ("TurtleShell",  KdGameObject::ObjectCategory::Character);
 
 	//===================================================================
 	// ステージ
 	//===================================================================
 
 	// Stage01
-	Register<StageObject>  ("StageObject", KdGameObject::ObjectCategory::Stage);
+	Register<StageObject>  ("StageObject",   KdGameObject::ObjectCategory::Stage);
 
 	//===================================================================
 	// 当たり判定
@@ -112,12 +116,12 @@ void KdGameObjectFactory::Init()
 	Register<AABBCollision>("AABBCollision", KdGameObject::ObjectCategory::None);
 
 	// OBB
-	Register<OBBCollision> ("OBBCollision", KdGameObject::ObjectCategory::None);
+	Register<OBBCollision> ("OBBCollision",  KdGameObject::ObjectCategory::None);
 
 	//===================================================================
 	// ウェイポイント
 	//===================================================================
-	Register<WayPoint>     ("WayPoint", KdGameObject::ObjectCategory::None);
+	Register<WayPoint>     ("WayPoint",      KdGameObject::ObjectCategory::None);
 
 	//===================================================================
 	// ギミック
@@ -127,27 +131,33 @@ void KdGameObjectFactory::Init()
 	Register<EnemySpawner>("EnemySpawner", KdGameObject::ObjectCategory::Gimmick);
 
 	// 各部屋
-	Register<Room>        ("Room", KdGameObject::ObjectCategory::Gimmick);
+	Register<Room>        ("Room",         KdGameObject::ObjectCategory::Gimmick);
 
 	// 部屋に対応するゲート
-	Register<RoomGate>    ("RoomGate", KdGameObject::ObjectCategory::Gimmick);
+	Register<RoomGate>    ("RoomGate",     KdGameObject::ObjectCategory::Gimmick);
+
 
 	//===================================================================
 	// エリアボリューム(Gimmickとは別カテゴリ。ウェイポイントの範囲)
 	//===================================================================
-	Register<AreaVolume>  ("AreaVolume", KdGameObject::ObjectCategory::AreaVolume);
+	Register<AreaVolume>  ("AreaVolume",   KdGameObject::ObjectCategory::AreaVolume);
+
+	//===================================================================
+	// チェックポイント(Gimmickとは別カテゴリ。ステージのクリアに関係なく、通った場所を記録する)
+	//===================================================================
+	Register<CheckPoint>  ("CheckPoint",   KdGameObject::ObjectCategory::CheckPoint);
 
 	//===================================================================
 	// エフェクト
 	//===================================================================
-	Register<StunEffect>("Stun", KdGameObject::ObjectCategory::Effect);
-	Register<HitEffect> ("HitEffect", KdGameObject::ObjectCategory::Effect);
+	Register<StunEffect>     ("Stun",            KdGameObject::ObjectCategory::Effect);
+	Register<HitEffect>      ("HitEffect",       KdGameObject::ObjectCategory::Effect);
 
 	// Explosion(爆発の当たり判定専用オブジェクト)
-	Register<Explosion> ("Explosion", KdGameObject::ObjectCategory::Effect);
+	Register<Explosion>      ("Explosion",       KdGameObject::ObjectCategory::Effect);
 
 	// EnergyBullet(StarFishなどの遠隔攻撃弾)
-	Register<EnergyBullet>   ("EnergyBullet", KdGameObject::ObjectCategory::Effect);
+	Register<EnergyBullet>   ("EnergyBullet",    KdGameObject::ObjectCategory::Effect);
 
 	// MageMagicCircle(Mageの魔法円攻撃の当たり判定)
 	Register<MageMagicCircle>("MageMagicCircle", KdGameObject::ObjectCategory::Effect);
@@ -156,7 +166,10 @@ void KdGameObjectFactory::Init()
 	Register<MageMagicSector>("MageMagicSector", KdGameObject::ObjectCategory::Effect);
 
 	// MageBeam(Mageのビーム攻撃の当たり判定)
-	Register<MageBeam>       ("MageBeam", KdGameObject::ObjectCategory::Effect);
+	Register<MageBeam>       ("MageBeam",        KdGameObject::ObjectCategory::Effect);
+
+	// MageBolt(Mageの魔法弾。弾の当たり判定・移動)
+	Register<MageBolt>       ("MageBolt",        KdGameObject::ObjectCategory::Effect);
 
 
 }

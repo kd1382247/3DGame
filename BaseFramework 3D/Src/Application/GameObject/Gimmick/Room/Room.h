@@ -80,6 +80,23 @@ public:
 	RoomState GetRoomState()const { return m_roomState; }
 	bool IsCleared()const { return m_roomState == RoomState::Cleared; }
 
+	// クリア条件を満たしたか (戦闘を終えて、扉が開く演出中か、クリア済み)
+	// ・ボス部屋は、条件を満たした時点でゲームクリアになるので、対象外
+	// ・Safe部屋は、戦闘がないので、対象外
+	bool IsClearConditionMet()const
+	{
+		if (m_roomType == RoomType::Boss || m_roomType == RoomType::Safe)
+		{
+			return false;
+		}
+
+		return m_roomState == RoomState::Outro || m_roomState == RoomState::Cleared;
+	}
+
+	// クリア済みの状態にする (チェックポイントから再開するとき、クリアしていた部屋に使う)
+	// 演出は飛ばして、部屋の中に置いてある敵は、倒した後なので消す
+	void RestoreCleared();
+
 	// 戦闘前の演出が終わったことを知らせる(演出の仕組みができたら、そこから呼ぶ)
 	void FinishIntro();
 

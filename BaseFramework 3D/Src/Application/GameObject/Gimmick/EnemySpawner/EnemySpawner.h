@@ -8,6 +8,8 @@ class Room;
 class EnemyBase;
 class CharacterBase;
 
+class CameraBase;
+
 class EnemySpawner :public StageGimmick
 {
 public:
@@ -26,6 +28,8 @@ public:
 	void Init()override;
 	void Update()override;
 	void DrawLit()override;
+
+	void SetUpReference()override;
 
 	void DrawDebug()override;
 
@@ -103,11 +107,13 @@ private:
 
 private:
 
+	void UpdateCameraFade();
 
 	std::shared_ptr<KdModelWork>m_spModel = nullptr;
 
 	std::vector<Wave>m_waves;
 
+	std::weak_ptr<CameraBase>m_wpCamera;
 
 	// 部屋の情報
 	std::weak_ptr<Room>m_wpRoom;
@@ -167,5 +173,7 @@ private:
 	// ウェーブ側:今回の生成の前に、回転を始めたか
 	bool  m_spinTriggered = false;
 
+
+	float m_fadeRate = 0.0f;
 };
 

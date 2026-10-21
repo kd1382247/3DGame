@@ -605,6 +605,31 @@ void Room::FinishOutro()
 	ChangeState(RoomState::Cleared);
 }
 
+void Room::RestoreCleared()
+{
+	// 部屋の中に置いてある敵は、倒した後なので消す (ボスは、ボス部屋だけなので対象外)
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		const auto enemy = std::dynamic_pointer_cast<EnemyBase>(obj);
+
+		if (!enemy)
+		{
+			continue;
+		}
+
+		// 部屋の外にいる敵は消さない
+		if (!IsInside(enemy->GetPos()))
+		{
+			continue;
+		}
+
+		enemy->Destroy();
+	}
+
+	// 演出は飛ばして、クリア済みにする (柵は、クリア済みなら開いた状態になる)
+	ChangeState(RoomState::Cleared);
+}
+
 void Room::UpdateOutro()
 {
 	// 演出の仕組みができるまでは、決めた時間が経ったら演出が終わったことにする

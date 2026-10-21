@@ -83,7 +83,6 @@ public:
 
 	// 攻撃用エフェクトを、Parameterの設定どおりに再生する
 	std::weak_ptr<KdEffekseerObject> PlayAttackEffect(const MageParameter::EffectParam& effect)const;
-
 	
 private:
 

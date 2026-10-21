@@ -42,8 +42,8 @@ namespace
 	constexpr float ButtonDimBrightness = 0.6f;
 
 	// 効果音のファイル名 (素材ができたら入れる。空のままなら鳴らさない)
-	const std::string MoveSE   = "";	// 選んでいる項目が変わった時
-	const std::string DecideSE = "";	// 決定した時
+	const std::string MoveSE = "Asset/Data/Sound/SE/System/Select.wav";	// 選んでいる項目が変わった時
+	const std::string DecideSE = "Asset/Data/Sound/SE/System/Confirm.wav";	// 決定した時
 
 	// テクスチャの置き場
 	const std::string TexFilePath = "Asset/Textures/Result/";

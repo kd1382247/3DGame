@@ -14,4 +14,21 @@ namespace SpawnableEnemies
 	{
 		"Bomb", "Cactas", "Mushroom", "Slime", "StarFish", "TurtleShell"
 	};
+
+	// 先読みする敵のモデルのパス (GameScene が、シーンの開始時に読み込んでおく)
+	// 各敵の Init() で InitCharacterModel() に渡しているパスと、同じ文字列にする
+	// ・Mushroom は見た目が2種類あるので、2つ入れる
+	// ・Slime は大きさが違っても同じモデルなので、1つで足りる
+	// ・ChestMonster はステージに置く敵で、ステージの読み込みの時に読み込まれるので入れない
+	// 敵を増やした時は、Names と、ここの両方に足す
+	inline const std::array<std::string, 7> ModelPaths =
+	{
+		"Asset/Models/Enemy/Bomb/Bomb.gltf",
+		"Asset/Models/Enemy/Cactas/Cactas.gltf",
+		"Asset/Models/Enemy/Mushroom/MushroomAngry/MushroomAngry.gltf",
+		"Asset/Models/Enemy/Mushroom/MushroomSmile/MushroomSmile.gltf",
+		"Asset/Models/Enemy/Slime/Slime.gltf",
+		"Asset/Models/Enemy/StarFish/StarFish.gltf",
+		"Asset/Models/Enemy/TurtleShell/TurtleShell.gltf"
+	};
 }

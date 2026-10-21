@@ -171,6 +171,8 @@ void Setting::Update()
 		}
 	}
 
+
+
 	// スライダーをつかむ (押した瞬間に、どのスライダーの上にいるかを調べる)
 	if (isMouseTrigger)
 	{
@@ -275,6 +277,9 @@ void Setting::Open()
 	m_dragSlider      = SliderType::None;
 	m_selectedItem    = MenuItem::Master;
 	m_keyAdjustSlider = SliderType::None;
+
+	// SEを再生
+	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/System/Confirm.wav", false);
 }
 
 void Setting::Close()
@@ -291,6 +296,9 @@ void Setting::Close()
 	m_isJustOpened = false;
 	m_isHoverClose = false;
 	m_dragSlider   = SliderType::None;
+
+	// SEを再生
+	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/System/Confirm.wav", false);
 }
 
 bool Setting::UpdateKeyInput(bool isUpTrigger, bool isDownTrigger, bool isEnterTrigger)
@@ -318,7 +326,6 @@ bool Setting::UpdateKeyInput(bool isUpTrigger, bool isDownTrigger, bool isEnterT
 		if (isEnterTrigger)
 		{
 			Close();
-
 			return true;
 		}
 
@@ -369,6 +376,9 @@ void Setting::Select(MenuItem item)
 	{
 		return;
 	}
+
+	// SEを再生
+	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/System/Select.wav", false);
 
 	// 音量を変えている途中で別の項目に移ったら、そこで調節を終える
 	FinishKeyAdjust();

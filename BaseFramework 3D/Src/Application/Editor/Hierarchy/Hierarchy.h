@@ -11,6 +11,7 @@ public:
 		Stage,
 		Gimmick,
 		AreaVolume,
+		CheckPoint,
 		AABB,
 		OBB,
 		AIBlock,
@@ -39,6 +40,7 @@ private:
 	void AddStage();
 	void AddGimmick();
 	void AddAreaVolume();
+	void AddCheckPoint();
 	void AddAABB();
 	void AddOBB();
 	void AddAIBlock();
@@ -56,6 +58,7 @@ private:
 	void DrawStage();
 	void DrawGimmick();
 	void DrawAreaVolume();
+	void DrawCheckPoint();
 	void DrawAABB();
 	void DrawOBB();
 	void DrawAIBlock();

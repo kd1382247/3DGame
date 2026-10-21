@@ -3,6 +3,7 @@
 #include"../../GameObject/Title/Title.h"
 #include"../Setting/Setting.h"
 #include"../../BGMManager/BGMManager.h"
+#include"../../GameObject/Gimmick/Checkpoint/CheckPointManager.h"
 
 void TitleScene::Event()
 {
@@ -11,6 +12,9 @@ void TitleScene::Event()
 
 void TitleScene::Init()
 {
+	// タイトルから始めるゲームは最初からなので、チェックポイントの記録を消す
+	CheckPointManager::Instance().Reset();
+
 	// タイトルのBGMを流す(シーンが切り替わるときにBGMManager::Reset()で解除される)
 	BGMManager::Instance().SetOverride(BGMManager::BGMType::Title);
 

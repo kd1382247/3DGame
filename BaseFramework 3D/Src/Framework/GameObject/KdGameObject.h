@@ -26,7 +26,8 @@ public:
 		Stage,
 		Gimmick,
 		Effect,
-		AreaVolume
+		AreaVolume,
+		CheckPoint
 	};
 
 	KdGameObject() {}

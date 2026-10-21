@@ -131,9 +131,35 @@ std::shared_ptr<KdSoundInstance> KdAudioManager::PlayBGM(std::string_view rName,
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // SEの再生
 // ・SE用の音量で再生する (SEは短く何度も鳴るので、インスタンスは覚えない)
+// ・ループしないSEは、同じ名前を kSESameTimeInterval 秒以内に1回だけ鳴らす (重なって音が大きくなるのを防ぐ)
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 std::shared_ptr<KdSoundInstance> KdAudioManager::PlaySE(std::string_view rName, bool loop)
 {
+	// 同じSEがほぼ同時に重なると音が大きくなるので、直前に鳴らしていたら鳴らさない
+	// (ループSEは戻り値を覚えて後で止めるので、対象から外す)
+	if (!loop)
+	{
+		const auto now = std::chrono::steady_clock::now();
+
+		auto it = m_lastSEPlayTime.find(std::string(rName));
+
+		if (it != m_lastSEPlayTime.end())
+		{
+			const float elapsed = std::chrono::duration<float>(now - it->second).count();
+
+			if (elapsed < kSESameTimeInterval)
+			{
+				return nullptr;
+			}
+
+			it->second = now;
+		}
+		else
+		{
+			m_lastSEPlayTime.emplace(std::string(rName), now);
+		}
+	}
+
 	return PlayWithVolume(rName, loop, m_seVolume * m_masterVolume);
 }
 

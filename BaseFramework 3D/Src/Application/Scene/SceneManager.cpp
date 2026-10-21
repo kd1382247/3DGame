@@ -18,8 +18,21 @@
 
 void SceneManager::PreUpdate()
 {
+	// 新しいシーンの読み込みが終わるまで、暗転のまま待つ
+	// (待っている間も IsBlackOut() は true のままなので、else if にして、
+	//  下のシーンの切り替えが毎フレーム繰り返されないようにしている)
+	if (m_isWaitingLoad)
+	{
+		if (!m_currentScene->IsLoading())
+		{
+			m_isWaitingLoad = false;
+
+			// 読み込みが終わったらFadeIn
+			m_transition.StartFadeIn();
+		}
+	}
 	// 暗転してからシーンを切り替える
-	if (m_transition.IsBlackOut())
+	else if (m_transition.IsBlackOut())
 	{
 		// 前のシーンの情報を持ち越さないようにリセットする
 		// (新しいシーンを作る前に行う。後だと新シーンが登録した情報まで消えてしまう)
@@ -27,8 +40,16 @@ void SceneManager::PreUpdate()
 
 		ChangeScene(m_nextSceneType);
 
-		// シーンが切り替わったらFadeIn
-		m_transition.StartFadeIn();
+		if (m_currentScene->IsLoading())
+		{
+			// 読み込みが必要なシーンは、終わるまで暗転のまま待つ
+			m_isWaitingLoad = true;
+		}
+		else
+		{
+			// シーンが切り替わったらFadeIn
+			m_transition.StartFadeIn();
+		}
 	}
 
 	m_currentScene->PreUpdate();

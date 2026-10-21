@@ -1,3 +1,364 @@
 {
-    "PointLights": []
+    "PointLights": [
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 70,
+            "Name": "PointLight_70",
+            "Position": {
+                "x": 13.0,
+                "y": 2.0,
+                "z": -0.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 71,
+            "Name": "PointLight_71",
+            "Position": {
+                "x": 17.0,
+                "y": 2.0,
+                "z": -0.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 72,
+            "Name": "PointLight_72",
+            "Position": {
+                "x": 17.0,
+                "y": 2.0,
+                "z": 0.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 73,
+            "Name": "PointLight_73",
+            "Position": {
+                "x": 13.0,
+                "y": 2.0,
+                "z": 0.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 74,
+            "Name": "PointLight_74",
+            "Position": {
+                "x": 15.0,
+                "y": 8.0,
+                "z": 0.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 75,
+            "Name": "PointLight_75",
+            "Position": {
+                "x": 9.0,
+                "y": 8.0,
+                "z": 0.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 76,
+            "Name": "PointLight_76",
+            "Position": {
+                "x": 3.0,
+                "y": 8.0,
+                "z": 0.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 77,
+            "Name": "PointLight_77",
+            "Position": {
+                "x": 0.5,
+                "y": 8.0,
+                "z": 3.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 78,
+            "Name": "PointLight_78",
+            "Position": {
+                "x": 0.5,
+                "y": 8.0,
+                "z": 9.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 79,
+            "Name": "PointLight_79",
+            "Position": {
+                "x": 0.5,
+                "y": 8.0,
+                "z": 15.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 80,
+            "Name": "PointLight_80",
+            "Position": {
+                "x": 0.5,
+                "y": 8.0,
+                "z": 21.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 81,
+            "Name": "PointLight_81",
+            "Position": {
+                "x": 0.5,
+                "y": 8.0,
+                "z": 27.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 82,
+            "Name": "PointLight_82",
+            "Position": {
+                "x": 3.0,
+                "y": 8.0,
+                "z": 29.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 83,
+            "Name": "PointLight_83",
+            "Position": {
+                "x": 9.0,
+                "y": 8.0,
+                "z": 29.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 84,
+            "Name": "PointLight_84",
+            "Position": {
+                "x": 15.0,
+                "y": 8.0,
+                "z": 29.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 85,
+            "Name": "PointLight_85",
+            "Position": {
+                "x": 21.0,
+                "y": 8.0,
+                "z": 29.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 86,
+            "Name": "PointLight_86",
+            "Position": {
+                "x": 27.0,
+                "y": 8.0,
+                "z": 29.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 87,
+            "Name": "PointLight_87",
+            "Position": {
+                "x": 29.5,
+                "y": 8.0,
+                "z": 27.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 88,
+            "Name": "PointLight_88",
+            "Position": {
+                "x": 29.5,
+                "y": 8.0,
+                "z": 21.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 89,
+            "Name": "PointLight_89",
+            "Position": {
+                "x": 29.5,
+                "y": 8.0,
+                "z": 15.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 90,
+            "Name": "PointLight_90",
+            "Position": {
+                "x": 29.5,
+                "y": 8.0,
+                "z": 9.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 91,
+            "Name": "PointLight_91",
+            "Position": {
+                "x": 29.5,
+                "y": 8.0,
+                "z": 3.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 92,
+            "Name": "PointLight_92",
+            "Position": {
+                "x": 27.0,
+                "y": 8.0,
+                "z": 0.5
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 93,
+            "Name": "PointLight_93",
+            "Position": {
+                "x": 21.0,
+                "y": 8.0,
+                "z": 0.5
+            },
+            "Range": 3.0
+        }
+    ]
 }

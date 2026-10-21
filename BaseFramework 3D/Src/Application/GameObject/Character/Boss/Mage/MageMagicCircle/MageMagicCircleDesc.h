@@ -31,4 +31,7 @@ struct MageMagicCircleDesc
 	float damage = 0.0f;
 
 	MageMagicCircleEffect effect = {};
+
+	// 魔法円のエフェクトが出るときに鳴らすSEのファイルパス(空なら鳴らさない)
+	std::string sePath = {};
 };

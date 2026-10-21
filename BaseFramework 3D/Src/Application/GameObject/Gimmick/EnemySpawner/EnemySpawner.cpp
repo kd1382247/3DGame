@@ -1,6 +1,7 @@
 ﻿#include "EnemySpawner.h"
 
 #include"../../../System/TimeManager/TimeManager.h"
+#include"../../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../../Scene/SceneManager.h"
 
 #include"../../Character/Enemy/EnemyBase.h"
@@ -8,12 +9,31 @@
 #include"../../../System/ReferenceManager/ReferenceManager.h"
 #include"../../../../Framework/GameObject/KdGameObjectFactory.h"
 
+#include"../../Camera/CameraBase.h"
+
 #include"../../../System/CollisionManager/CollisionManager.h"
 #include"../../../System/CollisionManager/CollisionMath/CollisionMath.h"
 
 #include"../../../Editor/InspectorWidgets.h"
 
 #include"../Room/Room.h"
+
+#include"../../../Scene/GameScene/GameScene.h"
+
+namespace
+{
+	// カメラが近い時にプレイヤーを透けさせる設定
+	// この距離より遠いと不透明。近づくほど透け始める
+	constexpr float kFadeStartDist = 2.5f;
+	// この距離以下で完全に透明になる
+	constexpr float kFadeEndDist = 1.0f;
+	// 透け具合の変化の速さ(0～1、小さいほどゆっくり)
+	constexpr float kFadeSpeed = 0.15f;
+	// カメラとの距離を測る、プレイヤーの足元からの高さ
+	constexpr float kFadePivotHeight = 0.5f;
+	// 透明度の上限
+	constexpr float kFadeMaxRate = 0.8f;
+}
 
 void EnemySpawner::Init()
 {
@@ -34,6 +54,10 @@ void EnemySpawner::Init()
 			KdCollider::TypeEvent|KdCollider::TypeBump);
 
 		CollisionManager::Instance().RegisterObject(CollisionLayer::Gimmick,shared_from_this());
+
+		// 上下の揺れの開始位置をずらす(複数のスポナーが同じ動きにならないように)
+		// 1周期ぶんの範囲でランダムにする
+		m_sinCurveTime = KdRandom::GetFloat(0.0f, 1.0f / m_sinCurveFrequency);
 	}
 
 	SetObjectName("EnemySpawner");
@@ -47,6 +71,8 @@ void EnemySpawner::Update()
 {
 	// 倒された敵をリストから削除
 	EraseEnemy();
+
+	UpdateCameraFade();
 
 	// スポナーから出終わった敵を、押し戻し対象に戻す
 	UpdateEmergingEnemies();
@@ -148,10 +174,24 @@ void EnemySpawner::DrawLit()
 
 	UpdateSinCurve(localMat);
 
+	// カメラが近い時はプレイヤーを透けさせる(描画後に自動で元に戻る)
+	if (m_fadeRate > 0.0f)
+	{
+		KdShaderManager::Instance().m_StandardShader.SetDitherRate(m_fadeRate);
+	}
+
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, localMat);
 
 	KdShaderManager::Instance().m_StandardShader.SetSelected(false);
 
+}
+
+void EnemySpawner::SetUpReference()
+{
+	if(!m_wpCamera.lock())
+	{
+		m_wpCamera = GameObjectFinder::Instance().FindObject<CameraBase>();
+	}
 }
 
 void EnemySpawner::DrawDebug()
@@ -423,7 +463,8 @@ void EnemySpawner::UpdateSinCurve(Math::Matrix& worldMat)
 
 	// 上下に揺らすのはプレイ中だけ(エディタ中は、置いた位置のまま見せる)
 	// 時間を進める処理はUpdateで行っている
-	if (EditorManager::Instance().IsPlayMode())
+	if (EditorManager::Instance().IsPlayMode()||
+		SceneManager::Instance().GetCurrentScene<GameScene>())
 	{
 		float angle = m_sinCurveTime * m_sinCurveFrequency * DirectX::XM_2PI;
 
@@ -735,6 +776,38 @@ std::shared_ptr<Room> EnemySpawner::GetLinkedRoom()
 	}
 
 	return nullptr;
+}
+
+void EnemySpawner::UpdateCameraFade()
+{
+
+	float targetRate = 0.0f;
+
+	auto spCamera = m_wpCamera.lock();
+	if (spCamera)
+	{
+		// プレイヤーの体の中心とカメラとの距離
+		const Math::Vector3 center = GetPos() + Math::Vector3(0.0f, kFadePivotHeight, 0.0f);
+		const float dist = (spCamera->GetPos() - center).Length();
+
+		// 遠い(開始距離以上)なら0、近い(終了距離以下)なら1になる割合
+		const float rate = (dist - kFadeEndDist) / (kFadeStartDist - kFadeEndDist);
+		targetRate = 1.0f - std::clamp(rate, 0.0f, 1.0f);
+	}
+
+	// 急に変わらないよう、少しずつ目標へ近づける
+	m_fadeRate += (targetRate - m_fadeRate) * kFadeSpeed;
+
+	if (m_fadeRate > kFadeMaxRate)
+	{
+		m_fadeRate = kFadeMaxRate;
+	}
+
+	// ほぼ0なら0にして、シェーダー側の処理を省く
+	if (m_fadeRate < 0.001f)
+	{
+		m_fadeRate = 0.0f;
+	}
 }
 
 

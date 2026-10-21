@@ -67,6 +67,9 @@ private:
 	float m_namePrateHeight = 0.0f;
 
 
+	bool  m_isIntro = true;
+	bool  m_isOutro = false;
+
 	float m_alpha = 0.0f;
 
 

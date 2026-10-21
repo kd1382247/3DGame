@@ -23,6 +23,14 @@ public :
 		return true;
 	}
 
+	// シーンの読み込み中か
+	// true の間は、SceneManager がフェードインを始めずに、暗転のまま待つ
+	// (読み込みに時間のかかるシーンだけが、オーバーライドする)
+	virtual bool IsLoading()const
+	{
+		return false;
+	}
+
 	virtual void EditorUpdate();
 
 	// オブジェクトリストを取得

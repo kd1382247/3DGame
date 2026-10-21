@@ -103,6 +103,13 @@ void MageMagicCircle::Update()
 			m_effectHandle = spEffekseerObj->GetHandle();
 			m_wpEffekseerObj = spEffekseerObj;
 		}
+
+		// エフェクトが出るのに合わせて、SEを1回だけ鳴らす(パスが指定されているときだけ)
+		if (!m_isPlaySE && !m_desc.sePath.empty())
+		{
+			KdAudioManager::Instance().PlaySE(m_desc.sePath.c_str());
+			m_isPlaySE = true;
+		}
 	}
 	// ハンドルベースでの終了判定(KdEffekseerObjectの生存期間に依存しない)
 	else if (KdEffekseerManager::GetInstance().HasEffectFinished(m_effectHandle))

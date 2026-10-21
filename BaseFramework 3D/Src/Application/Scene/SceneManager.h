@@ -84,6 +84,9 @@ private:
 	// シーン遷移
 	SceneTransition m_transition;
 
+	// 新しいシーンの読み込みが終わるのを、暗転のまま待っているか
+	bool m_isWaitingLoad = false;
+
 private:
 
 	SceneManager() { Init(); }

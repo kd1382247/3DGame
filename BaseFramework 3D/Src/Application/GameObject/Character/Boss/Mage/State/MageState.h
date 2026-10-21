@@ -9,7 +9,7 @@ enum class MageAnimationType
 	BeamST,
 	BeamRPT,
 	BeamEND,
-	EnemySpawnerChant,
+	EnemySpawnChant,
 	AreaWideMagic,
 	GetHit,
 	Roar,

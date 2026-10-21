@@ -119,6 +119,7 @@ void Hierarchy::DrawCategorySelector()
 		CategorySelectItem("Stage",      HierarchyCategory::Stage);
 		CategorySelectItem("Gimmick",    HierarchyCategory::Gimmick);
 		CategorySelectItem("AreaVolume", HierarchyCategory::AreaVolume);
+		CategorySelectItem("CheckPoint", HierarchyCategory::CheckPoint);
 		CategorySelectItem("WayPoint",   HierarchyCategory::WayPoint);
 		CategorySelectItem("AABB",       HierarchyCategory::AABB);
 		CategorySelectItem("OBB",        HierarchyCategory::OBB);
@@ -156,6 +157,7 @@ const char* Hierarchy::GetCategoryLabel(HierarchyCategory category)
 	case HierarchyCategory::Stage:        return "Stage";
 	case HierarchyCategory::Gimmick:      return "Gimmick";
 	case HierarchyCategory::AreaVolume:   return "AreaVolume";
+	case HierarchyCategory::CheckPoint:   return "CheckPoint";
 	case HierarchyCategory::WayPoint:     return "WayPoint";
 	case HierarchyCategory::AABB:         return "AABB";
 	case HierarchyCategory::OBB:          return "OBB";
@@ -263,6 +265,9 @@ void Hierarchy::DrawAddButtons()
 		break;
 	case HierarchyCategory::AreaVolume:
 		AddAreaVolume();
+		break;
+	case HierarchyCategory::CheckPoint:
+		AddCheckPoint();
 		break;
 	case HierarchyCategory::AABB:
 		AddAABB();
@@ -419,6 +424,28 @@ void Hierarchy::AddAreaVolume()
 	if (ImGui::Checkbox("Debug", &isDebug))
 	{
 		EditorManager::Instance().SetAreaVolumeDebug(isDebug);
+	}
+}
+
+void Hierarchy::AddCheckPoint()
+{
+	// CheckPointを新規作成(種類は1つだけなので、ボタンを押すとそのまま作る)
+	// ステージには属さないので、Active Stageが無くても作れる
+	if (ImGui::Button("Add CheckPoint"))
+	{
+		EditorManager::Instance().CreateGameObject("CheckPoint");
+
+		EditorManager::Instance().MarkDirty();
+	}
+
+	ImGui::SameLine();
+
+	// CheckPointのデバッグ表示のON/OFF(Gimmickとは別)
+	bool isDebug = EditorManager::Instance().IsCheckPointDebug();
+
+	if (ImGui::Checkbox("Debug", &isDebug))
+	{
+		EditorManager::Instance().SetCheckPointDebug(isDebug);
 	}
 }
 
@@ -597,6 +624,10 @@ void Hierarchy::DrawSelectedCategoryList()
 		DrawAreaVolume();
 		break;
 
+	case HierarchyCategory::CheckPoint:
+		DrawCheckPoint();
+		break;
+
 	case HierarchyCategory::AABB:
 		DrawAABB();
 		break;
@@ -696,6 +727,21 @@ void Hierarchy::DrawAreaVolume()
 
 		if (areaVolume &&
 			areaVolume->GetOwnerStage() != activeStage)
+		{
+			continue;
+		}
+
+		SelectHierarchyObject(obj);
+	}
+}
+
+void Hierarchy::DrawCheckPoint()
+{
+	// ステージには属さないので、Active Stageに関係なく全部出す
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (!obj ||
+			obj->GetObjectCategory() != KdGameObject::ObjectCategory::CheckPoint)
 		{
 			continue;
 		}

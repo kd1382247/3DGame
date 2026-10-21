@@ -62,4 +62,6 @@ private:
 
 	float m_castTimer = 0.0f;
 
+	bool m_isPlaySE = false;
+
 };

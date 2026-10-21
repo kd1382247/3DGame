@@ -27,7 +27,7 @@ namespace
 	{
 		return minA.x <= maxB.x && maxA.x >= minB.x
 			&& minA.y <= maxB.y && maxA.y >= minB.y
-			&& minA.z <= maxB.z && maxB.z >= minB.z;		
+			&& minA.z <= maxB.z && maxA.z >= minB.z;		
 	}
 
 }
@@ -64,6 +64,11 @@ void CollisionManager::Resolve()
 
 	// このフレームで使うキャラリストは1回だけ取得して使い回す
 	const std::vector<std::shared_ptr<CharacterBase>> characters = GetCharacters();
+
+	// 前フレームの接地記録を引き継ぎ、今フレーム分を空にする
+	// (SetIsGrounded(false)で消える前の接地状態を、吸い付き判定に使うため)
+	m_groundedPrev = std::move(m_groundedCurr);
+	m_groundedCurr.clear();
 
 	// まず全キャラクターを非接地状態にする
 	for (const auto& character : characters)
@@ -641,6 +646,7 @@ void CollisionManager::UpdateCharacterSurfaceState(const std::shared_ptr<Charact
 	{
 		character->SetGravity(0.0f);
 		character->SetIsGrounded(true);
+		m_groundedCurr.insert(character.get());
 	}
 
 	// 天井
@@ -998,11 +1004,93 @@ Math::Vector3 CollisionManager::ResolveCharacterDisplacement(const std::shared_p
 			move,
 			updateGroundState);
 
+
+
 		continue;
 		
 	}
 
+	// =====================================
+	// 下り坂などで地面から離れたら、真下の坂に吸い付かせる
+	// (ノックバックやキャラ同士の押し戻しでは行わない)
+	// =====================================
+	if (updateGroundState)
+	{
+		SnapToGround(character, currentPos, move);
+	}
+
 	return currentPos;
+}
+
+void CollisionManager::SnapToGround(
+	const std::shared_ptr<CharacterBase>& character,
+	Math::Vector3& currentPos,
+	const Math::Vector3& sourceMove)
+{
+	if (!character)
+	{
+		return;
+	}
+
+	// 前フレームに接地していなかった(ジャンプ中・落下中)なら吸い付かない
+	if (m_groundedPrev.find(character.get()) == m_groundedPrev.end())
+	{
+		return;
+	}
+
+	// 今フレームすでに接地している
+	if (m_groundedCurr.find(character.get()) != m_groundedCurr.end())
+	{
+		return;
+	}
+
+	// 上昇中(ジャンプ直後など)は吸い付かない
+	if (sourceMove.y > 0.0f)
+	{
+		return;
+	}
+
+	constexpr float snapMargin = 0.05f;      // 吸い付く距離の余裕
+	constexpr float maxSnapDistance = 0.5f;  // 吸い付く距離の上限(段差から飛び降りた時に引き戻さないため)
+	constexpr float skin = 0.001f;           // 面からわずかに離す量
+
+	// 登れる最大角度の坂を水平に進んだ時の高低差 = 水平移動量 * tan(最大歩行角度)
+	const float horizontalLength =
+		std::sqrt(sourceMove.x * sourceMove.x + sourceMove.z * sourceMove.z);
+
+	const float maxSlopeRadian =
+		DirectX::XMConvertToRadians(character->GetMaxWalkableSlopeAngle());
+
+	const float snapDistance =
+		std::min(horizontalLength * std::tan(maxSlopeRadian) + snapMargin, maxSnapDistance);
+
+	const Math::Vector3 snapMove(0.0f, -snapDistance, 0.0f);
+
+	// 今の位置から真下へバンプスフィアを飛ばして、地面を探す
+	const SweepResult sweepResult = FindSweepContacts(character, currentPos, snapMove);
+
+	if (!sweepResult.m_hit)
+	{
+		return;
+	}
+
+	for (const auto& normal : sweepResult.m_normals)
+	{
+		// 壁や急な面には吸い付かない
+		if (!IsWalkableSurface(normal, character))
+		{
+			continue;
+		}
+
+		// 接触位置まで真下へ移動し、面からわずかに離す
+		currentPos += snapMove * sweepResult.m_toi;
+		currentPos.y += normal.y * skin;
+
+		// 接地フラグONと重力リセット(snapMove.y < 0 なので接地扱いになる)
+		UpdateCharacterSurfaceState(character, normal, snapMove, true);
+
+		return;
+	}
 }
 
 void CollisionManager::ResolveCharacterCollision(const std::vector<std::shared_ptr<CharacterBase>>& characters)

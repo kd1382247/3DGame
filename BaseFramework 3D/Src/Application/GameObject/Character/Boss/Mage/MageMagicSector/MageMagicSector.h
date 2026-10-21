@@ -65,4 +65,6 @@ private:
 
 	// 攻撃予測用のカラースフィア(発動に近づくにつれて、範囲いっぱいまで広がっていく)
 	ColorSphereIndicator m_telegraphIndicator;
+
+	bool m_isPlaySE = false;
 };

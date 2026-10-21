@@ -1,3 +1,94 @@
 {
-    "PointLights": []
+    "PointLights": [
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 94,
+            "Name": "PointLight_94",
+            "Position": {
+                "x": 0.5,
+                "y": 5.0,
+                "z": 1.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 95,
+            "Name": "PointLight_95",
+            "Position": {
+                "x": 5.5,
+                "y": 5.0,
+                "z": 1.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 96,
+            "Name": "PointLight_96",
+            "Position": {
+                "x": 5.5,
+                "y": 5.0,
+                "z": 7.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 97,
+            "Name": "PointLight_97",
+            "Position": {
+                "x": 0.5,
+                "y": 5.0,
+                "z": 7.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 98,
+            "Name": "PointLight_98",
+            "Position": {
+                "x": 5.5,
+                "y": 8.0,
+                "z": 13.0
+            },
+            "Range": 3.0
+        },
+        {
+            "Color": {
+                "b": 0.0,
+                "g": 6.0,
+                "r": 10.0
+            },
+            "ID": 99,
+            "Name": "PointLight_99",
+            "Position": {
+                "x": 0.5,
+                "y": 8.0,
+                "z": 13.0
+            },
+            "Range": 3.0
+        }
+    ]
 }

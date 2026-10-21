@@ -110,6 +110,7 @@ private:
 
 	// ドラッグ中のスライダー
 	SliderType m_dragSlider = SliderType::None;
+	SliderType m_preDragSlider = SliderType::None;
 
 	// 確認用SEのファイル名
 	std::string m_previewSEName = "";
@@ -129,4 +130,5 @@ private:
 	std::shared_ptr<KdTexture> m_spCloseButtonTex    = nullptr;	// 閉じるボタン
 
 	const std::string TexFilePath = "Asset/Textures/Setting/Volume/";
+
 };

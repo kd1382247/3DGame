@@ -1,4 +1,5 @@
 ﻿#include "GameScene.h"
+#include <chrono>
 #include"../SceneManager.h"
 
 #include"../../GameObject/GameResultUI/GameOverUI.h"
@@ -8,10 +9,12 @@
 #include"../../System/ReferenceManager/ReferenceManager.h"
 #include"../../BGMManager/BGMManager.h"
 #include"../../GameObject/Character/Enemy/EnemyBase.h"
+#include"../../GameObject/Character/Enemy/SpawnableEnemies.h"
 #include"../../GameObject/Character/Boss/BossBase.h"
 #include"../../GameObject/Character/Player/Player.h"
 #include"../../GameObject/Gimmick/Room/Room.h"
 #include"../../GameObject/Gimmick/Room/RoomManager.h"
+#include"../../GameObject/Gimmick/Checkpoint/CheckPointManager.h"
 #include"../../System/TimeManager/TimeManager.h"
 #include"../../System/GameResult/GameResult.h"
 #include"../../GameObject/Camera/CameraBase.h"
@@ -83,6 +86,15 @@ void GameScene::Event()
 		LoadStage();
 	}
 
+	// ステージの読み込みに失敗した時は、タイトルへ戻る
+	// (暗転が明けるまでは SetNextScene が受け付けられないので、受け付けられるまで毎フレーム頼む)
+	if (m_isLoadFailed)
+	{
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
+
+		return;
+	}
+
 	// 設定画面(Tabで開く)
 	UpdatePause();
 
@@ -101,12 +113,18 @@ void GameScene::Event()
 		}
 	}
 
-	if (GetAsyncKeyState('G') & 0x8000)
+	// ---------------------デバッグキー----------------------//
+
+	// タイトル画面
+	if (GetAsyncKeyState('T') & 0x8000)
 	{
 		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 	}
 
-
+	if (GetAsyncKeyState('R') & 0x8000)
+	{
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Result);
+	}
 }
 
 void GameScene::Init()
@@ -149,15 +167,25 @@ void GameScene::LoadStage()
 	if (!StageDataManager::Instance().Load(StageName))
 	{
 		// 読み込みに失敗したらタイトルへ戻る
+		// (ここで SetNextScene を呼んでも、暗転の最中なので受け付けられない。Event() が、受け付けられるまで頼み直す)
 		KdDebugGUI::Instance().AddErrorLog("Stage load failed : '%s'\n", StageName.c_str());
 
-		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
+		m_isLoadFailed = true;
 
 		return;
 	}
 
+	// 敵のモデルを先読みする
+	// (ゲーム中に初めて敵が出てきた時に、モデルの読み込みで処理が止まらないようにする。
+	//  シーンが切り替わった直後は、暗転のまま読み込みが終わるのを待っているので、時間がかかっても見えない)
+	PreloadEnemyAssets();
+
 	// 全てのオブジェクトを生成した後に関連付け (エディタのPlayと同じ)
 	ReferenceManager::Instance().AssociateObjects(m_objList);
+
+	// チェックポイントを通っていたら、その時点の状態からやり直す
+	// (プレイヤーは、最初のPreUpdateより前に移す。PreUpdateが「移動前の位置」として、移した後の位置を覚える)
+	RestoreFromCheckPoint();
 
 	// 読み込んだオブジェクトに、最初のPreUpdateを実行する
 	// (読み込みはUpdateの途中なので、このフレームのPreUpdateはもう終わっていて、そのままだと飛ばされる。
@@ -178,6 +206,81 @@ void GameScene::LoadStage()
 
 	// ゲーム中はマウスカーソルを隠す
 	SetCursorVisible(false);
+}
+
+void GameScene::PreloadEnemyAssets()
+{
+	using Clock = std::chrono::steady_clock;
+
+	const Clock::time_point totalStart = Clock::now();
+
+	m_preloadedModels.clear();
+	m_preloadedModels.reserve(SpawnableEnemies::ModelPaths.size());
+
+	for (const std::string& path : SpawnableEnemies::ModelPaths)
+	{
+		const Clock::time_point start = Clock::now();
+
+		// KdModelWork::SetModelData(ファイル名) の中で行っているのと同じ読み込み
+		// (読み込み済みのモデルなら、すぐに返ってくる)
+		const std::shared_ptr<KdModelData> spModelData = KdAssets::Instance().m_modeldatas.GetData(path);
+
+		if (!spModelData)
+		{
+			KdDebugGUI::Instance().AddErrorLog("Enemy model preload failed : '%s'\n", path.c_str());
+
+			continue;
+		}
+
+		// 持っておく (敵を生成する時に、読み込み済みのデータが解放されたままにならないようにする)
+		m_preloadedModels.push_back(spModelData);
+
+		// どのモデルが重いかを調べるための、読み込み時間のログ
+		const float ms = std::chrono::duration<float, std::milli>(Clock::now() - start).count();
+
+		KdDebugGUI::Instance().AddLog("Preload : %s (%.1f ms)\n", path.c_str(), ms);
+	}
+
+	const float totalMs = std::chrono::duration<float, std::milli>(Clock::now() - totalStart).count();
+
+	KdDebugGUI::Instance().AddLog("Preload total : %.1f ms\n", totalMs);
+}
+
+void GameScene::RestoreFromCheckPoint()
+{
+	const CheckPointManager& checkPointManager = CheckPointManager::Instance();
+
+	// 1つも通っていなければ、ステージに置いた状態から始める
+	if (!checkPointManager.HasCheckPoint())
+	{
+		return;
+	}
+
+	// プレイ時間を、チェックポイントに着いた時点に戻す
+	m_playTime = checkPointManager.GetPlayTime();
+
+	for (const auto& obj : m_objList)
+	{
+		// プレイヤーは、チェックポイントの位置へ移す
+		if (const auto player = std::dynamic_pointer_cast<Player>(obj))
+		{
+			// 移動前の位置も同じにする (離れたままだと、最初のフレームで移動したことになる)
+			player->SetPos(checkPointManager.GetRespawnPos());
+			player->SetPrevPos(checkPointManager.GetRespawnPos());
+
+			continue;
+		}
+
+		// クリア条件を満たしていた部屋は、クリア済みの状態にする
+		// (倒した敵が元に戻ったり、扉が閉じて、また戦闘が始まったりしないようにする)
+		if (const auto room = std::dynamic_pointer_cast<Room>(obj))
+		{
+			if (checkPointManager.IsRoomCleared(room->GetObjectName()))
+			{
+				room->RestoreCleared();
+			}
+		}
+	}
 }
 
 void GameScene::UpdatePause()

@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <chrono>
+#include <unordered_map>
+
 class KdSoundEffect;
 class KdSoundInstance;
 class KdSoundInstance3D;
@@ -33,6 +36,8 @@ public:
 	std::shared_ptr<KdSoundInstance> PlayBGM(std::string_view rName, bool loop = true);
 
 	// SE再生 (SE用の音量が適用される)
+	// 同じSEをほぼ同時に何度も鳴らすと、音が重なって大きくなるため、
+	// ループしないSEは「同じ名前は kSESameTimeInterval 秒以内に1回だけ」鳴らす (間に合わない分は何もせず nullptr を返す)
 	std::shared_ptr<KdSoundInstance> PlaySE(std::string_view rName, bool loop = false);
 
 	// BGMを停止する
@@ -84,6 +89,12 @@ private:
 
 	// 音量を指定して2Dサウンドを再生する (PlayBGM / PlaySE の共通処理)
 	std::shared_ptr<KdSoundInstance> PlayWithVolume(std::string_view rName, bool loop, float vol);
+
+	// 同じSEを「ほぼ同時」とみなす時間(秒) (1フレームより少し長く、60fpsで約1.2フレーム)
+	static constexpr float kSESameTimeInterval = 0.02f;
+
+	// SEごとの、最後に鳴らした時刻 (同じSEの重ね鳴らしを防ぐ。Updateの呼び出しに頼らない)
+	std::unordered_map<std::string, std::chrono::steady_clock::time_point> m_lastSEPlayTime;
 
 	// マスター音量 (BGM・SE全体にかかる / 1.0が100%)
 	float m_masterVolume = 1.0f;

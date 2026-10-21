@@ -148,8 +148,6 @@ private:
 
 	void UpdateAnimation();
 
-	void UpdateGroundPosY();
-
 	// カメラとの距離に応じて、プレイヤーを透けさせる度合い(フェード率)を更新する
 	void UpdateCameraFade();
 

@@ -22,6 +22,7 @@
 
 #include"../GameObject/Stage/StageObject.h"
 #include"../GameObject/Gimmick/StageGimmick.h"
+#include"../GameObject/Gimmick/Checkpoint/CheckPointManager.h"
 
 #include"../System/ReferenceManager/ReferenceManager.h"
 #include "../Scene/SceneManager.h"
@@ -153,6 +154,9 @@ void EditorManager::StartPlayMode()
 
 	// 作り直されたステージの中から、編集中だったステージを選び直す
 	RestoreActiveStageByName(activeStageName);
+
+	// 前のPlayで通ったチェックポイントの記録を消す (Playは毎回、最初から)
+	CheckPointManager::Instance().Reset();
 
 	// モードを切り替える
 	SetEditorMode(EditorMode::Play);
@@ -456,6 +460,10 @@ void EditorManager::UpdateMouseSelection()
 		SelectAreaVolumeByMouse();
 		break;
 
+	case Hierarchy::HierarchyCategory::CheckPoint:
+		SelectCheckPointByMouse();
+		break;
+
 	case Hierarchy::HierarchyCategory::WayPoint:
 		SelectWayPointByMouse();
 		break;
@@ -607,6 +615,21 @@ void EditorManager::SelectAreaVolumeByMouse()
 			auto areaVolume = std::dynamic_pointer_cast<StageGimmick>(obj);
 
 			return areaVolume && areaVolume->GetOwnerStage() == activeStage;
+		});
+
+	SetSelectedObject(selectedObj);
+}
+
+void EditorManager::SelectCheckPointByMouse()
+{
+	// CheckPointだけが対象なので、Roomなど他のギミックに遮られない
+	// (ステージには属さないので、Active Stageに関係なく選べる。Hierarchyの一覧と同じ)
+	auto selectedObj = SelectClosestByMouse(
+		SceneManager::Instance().GetObjList(),
+		KdCollider::TypeBump,
+		[](const std::shared_ptr<KdGameObject>& obj)
+		{
+			return obj->GetObjectCategory() == KdGameObject::ObjectCategory::CheckPoint;
 		});
 
 	SetSelectedObject(selectedObj);
@@ -815,7 +838,8 @@ bool EditorManager::CanCopyObject(const std::shared_ptr<KdGameObject>& obj) cons
 		|| std::dynamic_pointer_cast<AABBCollision>(obj)
 		|| std::dynamic_pointer_cast<OBBCollision>(obj)
 		|| std::dynamic_pointer_cast<AIBlock>(obj)
-		|| std::dynamic_pointer_cast<PointLightObject>(obj);
+		|| std::dynamic_pointer_cast<PointLightObject>(obj)
+		|| obj->GetObjectCategory() == KdGameObject::ObjectCategory::CheckPoint;
 }
 
 std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<KdGameObject>& src)
@@ -912,6 +936,49 @@ std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<Kd
 		copy->SetRange(srcLight->GetRange());
 
 		copy->UpdateWorldPos();
+
+		return copy;
+	}
+
+	//------------------------------------------------------------
+	// CheckPoint: 同じクラスを作り、保存データ(SaveData)の内容を読み込ませて写す
+	// (ステージには属さないので、持ち主は写さない)
+	//------------------------------------------------------------
+	if (src->GetObjectCategory() == KdGameObject::ObjectCategory::CheckPoint)
+	{
+		const std::string className = src->GetFactoryClassName();
+
+		// 未登録のクラス名はファクトリーがassertで止まってしまうので、先に調べる
+		if (!KdGameObjectFactory::Instance().GetCreateFunctions().contains(className))
+		{
+			KdDebugGUI::Instance().AddErrorLog("Copy failed : unknown class '%s'\n", className.c_str());
+			return nullptr;
+		}
+
+		auto copy = KdGameObjectFactory::Instance().CreateGameObject(className);
+
+		if (!copy)
+		{
+			KdDebugGUI::Instance().AddErrorLog("Copy failed : create object\n");
+			return nullptr;
+		}
+
+		copy->Init();
+
+		copy->SetFactoryClassName(className);
+
+		// 表示名は、空いている最小の番号で付ける
+		copy->SetObjectName(MakeUniqueObjectName(className));
+
+		// 位置・大きさ・回転を元と同じにする
+		copy->SetScale(src->GetScale());
+		copy->SetRotation(src->GetRotation());
+		copy->SetPos(src->GetPos());
+
+		// 順番・半径を写す
+		copy->LoadData(src->SaveData());
+
+		SceneManager::Instance().AddObject(copy);
 
 		return copy;
 	}

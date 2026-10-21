@@ -9,8 +9,18 @@
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
 
+
+#include"../SceneManager.h"
+
 void EditorScene::PreDraw()
 {
+
+
+	if (GetAsyncKeyState('T') & 0x8000)
+	{
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
+	}
+
 	// EditModeならSceneViewへ描画
 	if (EditorManager::Instance().IsEditMode())
 	{

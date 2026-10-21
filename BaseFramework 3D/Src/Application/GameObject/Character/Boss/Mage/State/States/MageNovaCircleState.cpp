@@ -67,7 +67,6 @@ void MageNovaCircleState::UpdateCast(Mage* mage)
 	{
 		StartActive(mage);
 	}
-
 }
 
 void MageNovaCircleState::StartActive(Mage * mage)

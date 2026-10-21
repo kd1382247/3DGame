@@ -90,6 +90,10 @@ public:
 	bool IsAreaVolumeDebug() const { return m_isAreaVolumeDebug; }
 	void SetAreaVolumeDebug(bool isDebug) { m_isAreaVolumeDebug = isDebug; }
 
+	// CheckPointのデバッグ表示のON/OFF(Gimmickとは別)
+	bool IsCheckPointDebug() const { return m_isCheckPointDebug; }
+	void SetCheckPointDebug(bool isDebug) { m_isCheckPointDebug = isDebug; }
+
 	// 今のアクティブステージで、AABB/OBB/WayPointを編集できるか
 	// (アクティブステージが「最初のステージ」ならtrue。ステージが1つもない場合もtrue)
 	bool CanEditStageData() const;
@@ -133,6 +137,9 @@ private:
 
 	// AreaVolumeを選択
 	void SelectAreaVolumeByMouse();
+
+	// CheckPointを選択
+	void SelectCheckPointByMouse();
 
 	// ウェイポイントを選択
 	void SelectWayPointByMouse();
@@ -184,6 +191,9 @@ private:
 
 	// AreaVolumeのデバッグ表示(選択中のAreaVolumeは、OFFでも表示する)
 	bool m_isAreaVolumeDebug = false;
+
+	// CheckPointのデバッグ表示(選択中のCheckPointは、OFFでも表示する)
+	bool m_isCheckPointDebug = false;
 
 
 private: // シングルトンパターン
