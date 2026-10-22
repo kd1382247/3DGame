@@ -4,6 +4,7 @@
 
 class GameOverUI;
 class Setting;
+class PauseMenu;
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // ゲームシーン (ステージを読み込んで、ゲームを進める)
@@ -15,7 +16,8 @@ class Setting;
 // ・ゲームオーバー : PlayerDieState が、死亡モーションの終わりに NotifyGameOver() で知らせる
 // ・ゲームクリア   : ボス部屋が Cleared になったこと(ボスの撃破演出の終わり)を、毎フレームの確認で見つけて、
 //                    演出は挟まずにすぐリザルトへ移動する
-// Tabキーで設定画面(Setting)を開く。開いている間は、設定画面以外の更新と時間を止めて、マウスカーソルを出す
+// Tabキーでポーズメニュー(PauseMenu: CONTROLS / SETTING)を開く。もう一度Tabを押すと1つ前の画面へ戻る
+// 開いている間は、メニューと設定画面(Setting)以外の更新と時間を止めて、マウスカーソルを出す
 // エディタのPlayでは GameScene が使われない (GetCurrentScene<GameScene>() が nullptr になる)ので、
 // NotifyGameOver() を呼んでも何も起きない
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -50,7 +52,7 @@ private:
 	void Event() override;
 	void Init()  override;
 
-	// 設定画面を開いている間は、設定画面以外の更新を止める
+	// ポーズメニューを開いている間は、メニューと設定画面以外の更新を止める
 	// ゲームオーバー中は、敵とボスの更新を止める (倒されている途中のものは、やられモーションを進めるので止めない)
 	bool IsUpdateSkipped(const std::shared_ptr<KdGameObject>& obj)const override;
 
@@ -68,13 +70,13 @@ private:
 	// ・クリア条件を満たしていた部屋を、クリア済みの状態にする
 	void RestoreFromCheckPoint();
 
-	// 設定画面(Tabで開く)の毎フレームの処理
+	// ポーズメニュー(Tabで開く)の毎フレームの処理
 	void UpdatePause();
 
-	// 設定画面を開けるか (ゲームオーバーの演出中や、部屋の演出中は開けない)
+	// ポーズメニューを開けるか (ゲームオーバーの演出中や、部屋の演出中は開けない)
 	bool CanOpenSetting()const;
 
-	// 設定画面の開閉に合わせて、ゲームを止める / 動かす (時間・カーソル・カメラ)
+	// ポーズメニューの開閉に合わせて、ゲームを止める / 動かす (時間・カーソル・カメラ)
 	void SetPaused(bool isPaused);
 
 	// 状態ごとの毎フレームの処理
@@ -120,7 +122,7 @@ private:
 	// マウスカーソルを隠しているか
 	bool m_isCursorHidden = false;
 
-	// 設定画面を開いて、ゲームを止めているか
+	// ポーズメニューを開いて、ゲームを止めているか
 	bool m_isPaused = false;
 
 	// 前フレームでTabキーが押されていたか (「押した瞬間」を取るため)
@@ -133,7 +135,10 @@ private:
 	// ゲームオーバーのUI (オブジェクトリストにも入っている。選択結果を聞くために持っておく)
 	std::shared_ptr<GameOverUI>  m_spGameOverUI  = nullptr;
 
-	// 設定画面 (オブジェクトリストにも入っている。開閉を見るために持っておく)
+	// 設定画面 (オブジェクトリストにも入っている。ポーズメニューの SETTING から開かれる)
 	std::shared_ptr<Setting>     m_spSetting     = nullptr;
+
+	// ポーズメニュー (オブジェクトリストにも入っている。開閉を見るために持っておく)
+	std::shared_ptr<PauseMenu>   m_spPauseMenu   = nullptr;
 
 };

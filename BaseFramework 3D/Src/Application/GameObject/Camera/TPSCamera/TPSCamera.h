@@ -77,6 +77,9 @@ public:
 
 	bool IsBossIntroHold()const { return m_introState == BossIntroState::Hold; }
 
+	void SetIsTargetGrounded(const bool flg) { m_isTargetGrounded=flg; }
+
+	void SetFovWide(const bool flg) { m_isFovWide = flg; }
 
 private:
 
@@ -103,7 +106,6 @@ private:
 
 	Math::Quaternion CreateLookRotation(const Math::Vector3& camPos, const float lookHeight);
 
-
 	// マウスでの回転とターゲットへの追従で、カメラのワールド行列を更新する
 	void UpdateCameraMatrix(const std::shared_ptr<const KdGameObject>& spTarget);
 
@@ -113,6 +115,10 @@ private:
 	// カメラ位置にスフィアを置き、壁に近すぎたら押し戻す
 	void PushOutBySphere();
 
+	// FOVを更新
+	void UpdateFov();
+
+
 	// カメラとの距離
 	float m_cameraDist = -1.0f;
 
@@ -121,9 +127,16 @@ private:
 
 	bool          m_isSmoothTargetInit = false;
 
+	// 追従する対象が地面に着いているか
+	bool          m_isTargetGrounded = true;
+
+	// 今のFOV(初期値は元のFOVを入れる)
+	float         m_currentFov = 0.0f;
+
+	bool          m_isFovWide = false;
+
 
 	// ボスの登場演出用変数
-
 	BossIntroState m_introState = BossIntroState::None;
 	BossIntroParam m_introParam = {};
 

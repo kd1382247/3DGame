@@ -88,6 +88,8 @@ void Mage::Update()
 			m_stateMachine.ChangeState<MageDieState>();
 			m_health.Kill();
 		}
+
+		UpdateDebugPatternKey();
 	}
 
 	UpdateGravity();
@@ -192,8 +194,67 @@ void Mage::CancelAllAttacks()
 	MageBoltManager::Instance().CancelAll();
 }
 
+void Mage::UpdateDebugPatternKey()
+{
+	// 4〜9キーに、攻撃パターンをMageAttackPatternの並び順で割り当てる
+	static const char* kPatternNames[] =
+	{
+		"Summon", "TargetCircle", "ForwardSector", "Bolt", "NovaCircle", "Beam"
+	};
+
+	static_assert(sizeof(kPatternNames) / sizeof(kPatternNames[0]) == static_cast<size_t>(MageAttackPattern::Num),
+		"MageAttackPatternを増減したら、kPatternNamesも合わせる");
+
+	// 0キー : 固定を解除して、通常の抽選に戻す
+	if (GetAsyncKeyState('0') & 0x8000)
+	{
+		if (m_debugFixedPattern.has_value())
+		{
+			m_debugFixedPattern.reset();
+
+			KdDebugGUI::Instance().AddLog("Mage debug : attack pattern = Random\n");
+		}
+
+		return;
+	}
+
+	// 4〜9キー : そのパターンに固定する
+	for (int i = 0; i < static_cast<int>(MageAttackPattern::Num); ++i)
+	{
+		// 9キーまでしか割り当てられない
+		if ('4' + i > '9')
+		{
+			break;
+		}
+
+		if (!(GetAsyncKeyState('4' + i) & 0x8000))
+		{
+			continue;
+		}
+
+		const auto pattern = static_cast<MageAttackPattern>(i);
+
+		// 押しっぱなしの間にログが出続けないよう、変わったときだけ出す
+		if (m_debugFixedPattern != pattern)
+		{
+			m_debugFixedPattern = pattern;
+
+			KdDebugGUI::Instance().AddLog("Mage debug : attack pattern = %s\n", kPatternNames[i]);
+		}
+
+		return;
+	}
+}
+
 MageAttackPattern Mage::SelectAttackPattern()
 {
+	// デバッグキーで固定されているときは、抽選せずにそのパターンを返す
+	// (HP50%以下限定などの条件も無視する)
+	if (m_debugFixedPattern.has_value())
+	{
+		return *m_debugFixedPattern;
+	}
+
 	std::vector<float> weights(static_cast<size_t>(MageAttackPattern::Num), 1.0f);
 
 	// HP50%を超えている間は、後半専用パターンを除外する
@@ -301,6 +362,8 @@ void Mage::FireBolt()
 	const auto& param = m_parameter.GetParam().m_bolt;
 
 	Math::Vector3 spawnPos = GetPos() + Math::Vector3(0.0f, param.m_spawnHeight, 0.0f);
+
+	spawnPos += m_mWorld.Backward() * 1.5f;
 
 	Math::Vector3 dir = (spPlayer->GetPos() + Math::Vector3(0.0f, param.m_aimHeight, 0.0f)) - spawnPos;
 

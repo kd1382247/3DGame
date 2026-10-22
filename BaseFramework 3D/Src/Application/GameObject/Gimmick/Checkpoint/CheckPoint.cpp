@@ -21,6 +21,11 @@ void CheckPoint::Init()
 	m_pCollider = std::make_unique<KdCollider>();
 	m_pCollider->RegisterCollisionShape("CheckPoint", Math::Vector3(0, 0, 0), kRadius, KdCollider::TypeBump);
 
+	if (!m_spModel)
+	{
+		m_spModel = std::make_shared<KdModelData>();
+		m_spModel->Load("Asset/Models/Gimmick/CheckPoint/CheckPoint.gltf");
+	}
 }
 
 void CheckPoint::Update()
@@ -30,12 +35,22 @@ void CheckPoint::Update()
 	// 到達済みか (ゲームオーバーのリトライでシーンが作り直されても、記録から分かる)
 	m_isReached = manager.HasCheckPoint() && manager.GetReachedOrder() >= m_order;
 
+	
+	auto spPlayer = m_wpPlayer.lock();
+
+	Math::Vector3 pos = spPlayer->GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
+
+	auto effekseerObj = m_wpEffekseerObj.lock();
+
+	if (effekseerObj)
+	{
+		effekseerObj->SetPos(pos);
+	}
+
 	if (m_isReached)
 	{
 		return;
 	}
-
-	auto spPlayer = m_wpPlayer.lock();
 
 	// プレイヤーが倒れている間は、記録も回復もしない
 	if (!spPlayer || spPlayer->GetHealth().IsDead())
@@ -67,6 +82,22 @@ void CheckPoint::Update()
 
 	// 記録できたときだけ、HPを全回復する (一度だけ)
 	spPlayer->Heal(spPlayer->GetHealth().GetMaxHP());
+	
+	// 回復SEを再生
+	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/Heal/Heal.wav");
+
+	// 回復エフェクト再生
+	m_wpEffekseerObj = KdEffekseerManager::GetInstance().Play("Player/Heal/Heal.efkefc",pos,0.6f);
+}
+
+void CheckPoint::DrawLit()
+{
+	if (!m_spModel)
+	{
+		return;
+	}
+	
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
 
 bool CheckPoint::ShouldDrawDebug()

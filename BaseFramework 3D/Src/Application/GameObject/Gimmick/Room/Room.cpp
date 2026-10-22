@@ -630,6 +630,37 @@ void Room::RestoreCleared()
 	ChangeState(RoomState::Cleared);
 }
 
+void Room::DebugForceClear()
+{
+	// ボス部屋は、クリアがゲームクリア(リザルト)になるので、対象外
+	// Safe部屋は、戦闘がないので、対象外
+	if (m_roomType == RoomType::Boss || m_roomType == RoomType::Safe)
+	{
+		return;
+	}
+
+	// すでにクリア後の流れに入っている部屋は、何もしない
+	if (m_roomState == RoomState::Outro || m_roomState == RoomState::Cleared)
+	{
+		return;
+	}
+
+	// 戦闘前の演出中なら、先に演出を終わらせる (ミッションの文字を消して、カメラの回転を戻す)
+	if (m_roomState == RoomState::Intro)
+	{
+		FinishIntro();
+	}
+
+	// 部屋の中の敵を、全員倒す (倒れるモーションを見せる)
+	KillAllEnemies();
+
+	// クリア後の流れへ進める (扉が開く演出 → クリア済み)
+	// 戦闘中ではなくなるので、スポナーは次の敵を出さなくなる
+	ChangeState(RoomState::Outro);
+
+	KdDebugGUI::Instance().AddLog("Room : debug clear : %s\n", GetObjectName().c_str());
+}
+
 void Room::UpdateOutro()
 {
 	// 演出の仕組みができるまでは、決めた時間が経ったら演出が終わったことにする

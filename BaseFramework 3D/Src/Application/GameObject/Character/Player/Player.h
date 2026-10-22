@@ -32,7 +32,6 @@ class Player : public CharacterBase
 {
 public:
 
-
 	Player() {}
 	~Player()				override {}
 
@@ -150,6 +149,12 @@ private:
 
 	// カメラとの距離に応じて、プレイヤーを透けさせる度合い(フェード率)を更新する
 	void UpdateCameraFade();
+
+	// 地面に着いているか
+	void UpdateIsGrounded();
+
+	// 視野角を広げるかどうか
+	void UpdateIsFovWide();
 
 	// 攻撃判定・トレイルのフレーム区間をセットする
 	void ApplyActionTiming(const PlayerActionTiming& timing);

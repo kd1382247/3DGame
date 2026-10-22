@@ -4,6 +4,7 @@
 
 #include"../../GameObject/GameResultUI/GameOverUI.h"
 #include"../Setting/Setting.h"
+#include"../Setting/PauseMenu.h"
 
 #include"../../System/StageDataManager/StageDataManager.h"
 #include"../../System/ReferenceManager/ReferenceManager.h"
@@ -95,10 +96,10 @@ void GameScene::Event()
 		return;
 	}
 
-	// 設定画面(Tabで開く)
+	// ポーズメニュー(Tabで開く)
 	UpdatePause();
 
-	// 設定画面を開いている間は、ゲームの状態(ゲームオーバー・クリアの判定)を進めない
+	// ポーズメニューを開いている間は、ゲームの状態(ゲームオーバー・クリアの判定)を進めない
 	if (!m_isPaused)
 	{
 		switch (m_gameState)
@@ -123,6 +124,10 @@ void GameScene::Event()
 
 	if (GetAsyncKeyState('R') & 0x8000)
 	{
+		// 今までのプレイ時間を、クリアタイムとして渡す
+		// (渡さないと、GameResultに前の記録(または初期値の0)が残ったまま、リザルトに表示される)
+		GameResult::Instance().SetClearTime(m_playTime);
+
 		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Result);
 	}
 }
@@ -136,10 +141,10 @@ void GameScene::Init()
 
 bool GameScene::IsUpdateSkipped(const std::shared_ptr<KdGameObject>& obj) const
 {
-	// 設定画面を開いている間は、設定画面だけ更新する
+	// ポーズメニューを開いている間は、メニューと設定画面だけ更新する
 	if (m_isPaused)
 	{
-		return obj != m_spSetting;
+		return obj != m_spSetting && obj != m_spPauseMenu;
 	}
 
 	if (m_gameState != GameState::GameOver)
@@ -203,6 +208,14 @@ void GameScene::LoadStage()
 	m_spSetting->Init();
 
 	AddObject(m_spSetting);
+
+	// ポーズメニュー (Tabで開く。最初は閉じている)
+	// (設定画面の後に追加する。同じフレームで、設定画面が閉じたことをメニューが見つけられるようにするため)
+	m_spPauseMenu = std::make_shared<PauseMenu>();
+	m_spPauseMenu->Init();
+	m_spPauseMenu->SetSetting(m_spSetting);
+
+	AddObject(m_spPauseMenu);
 
 	// ゲーム中はマウスカーソルを隠す
 	SetCursorVisible(false);
@@ -291,27 +304,42 @@ void GameScene::UpdatePause()
 
 	m_isPrevTabKey = isTabKey;
 
-	if (!m_spSetting)
+	if (!m_spPauseMenu || m_isNextSceneRequested)
 	{
 		return;
 	}
 
-	// Tabで、設定画面を開く / 閉じる
+	// Tabで、ポーズメニューを開く / 1つ前の画面へ戻る
+	// (操作説明・設定画面 → メニュー → ゲーム)
 	if (isTabTrigger)
 	{
-		if (m_spSetting->IsOpen())
+		if (m_spPauseMenu->IsOpen())
 		{
-			m_spSetting->Close();
+			m_spPauseMenu->Back();
 		}
 		else if (CanOpenSetting())
 		{
-			m_spSetting->Open();
+			m_spPauseMenu->Open();
 		}
 	}
 
-	// 設定画面の開閉に合わせて、止める / 動かす
-	// (設定画面の×ボタンで閉じた時も、ここで気づく)
-	const bool isOpen = m_spSetting->IsOpen();
+	// メニューで TITLE が選ばれたら、タイトルへ移動する
+	if (m_spPauseMenu->IsTitleRequested())
+	{
+		m_isNextSceneRequested = true;
+
+		// 時間が止まったままシーンを移動しないようにする
+		// (ゲームの更新は、m_isPaused が true のままなので、動かない)
+		TimeManager::Instance().SetPause(false);
+
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
+
+		return;
+	}
+
+	// ポーズメニューの開閉に合わせて、止める / 動かす
+	// (設定画面の×ボタンで閉じた時は、メニューへ戻るだけなので、止めたまま)
+	const bool isOpen = m_spPauseMenu->IsOpen();
 
 	if (isOpen != m_isPaused)
 	{
@@ -369,8 +397,9 @@ void GameScene::UpdatePlaying()
 {
 	// クリアタイムを計る (ボスを倒した瞬間に止める)
 	// ・設定画面を開いている間は、この関数が呼ばれないので、進まない
+	// ・部屋に入った時の演出中(ミッションの文字・ボスの登場演出)は、進めない
 	// ・ヒットストップやスローの影響を受けないように、実時間の経過を使う
-	if (!RoomManager::Instance().IsBossDefeat())
+	if (!RoomManager::Instance().IsIntro() && !RoomManager::Instance().IsBossDefeat())
 	{
 		m_playTime += TimeManager::Instance().GetUnscaleeDeltaTime();
 	}

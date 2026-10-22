@@ -27,3 +27,19 @@ void PlayerParry::UpdateParryWindow(const float deltaTime)
 	m_isParryActive = true;
 }
 
+void PlayerParry::UpdateIncincibility(const float deltaTime)
+{
+	if (!IsInvincibility())
+	{
+		m_parryInvincibleTime = m_parryIFrameDuration;
+		return;
+	}
+
+	m_parryInvincibleTime -= deltaTime;
+
+	if (m_parryInvincibleTime <= 0)
+	{
+		SetInvincibility(false);
+	}
+}
+

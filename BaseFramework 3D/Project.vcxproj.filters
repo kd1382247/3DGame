@@ -1233,6 +1233,9 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle\MageMagicCircleDesc.h">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\MageMagicCircle</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Scene\Setting\PauseMenu.h">
+      <Filter>Src\Application\Scene\Setting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1906,6 +1909,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\MageBolt\MageBoltManager.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\MageBolt</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Scene\Setting\PauseMenu.cpp">
+      <Filter>Src\Application\Scene\Setting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -25,6 +25,7 @@ public:
 
 	void Init()override;
 	void Update()override;
+	void DrawLit()override;
 
 	void DrawDebug()override;
 
@@ -72,6 +73,10 @@ private:
 
 	// 到達済みか(デバッグ線の色を変えるために覚えておく)
 	bool m_isReached = false;
+
+	std::weak_ptr< KdEffekseerObject>m_wpEffekseerObj;
+
+	std::shared_ptr<KdModelData>m_spModel = nullptr;
 
 	// プレイヤー(範囲に入ったかの判定と、回復に使う)
 	std::weak_ptr<Player> m_wpPlayer;

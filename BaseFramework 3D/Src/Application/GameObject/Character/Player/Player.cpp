@@ -24,6 +24,7 @@
 #include"State/States/PlayerIntroWaitState.h"
 
 #include"../../Gimmick/Room/RoomManager.h"
+#include"../../Gimmick/Room/Room.h"
 
 #include"../../../System/TimeManager/TimeManager.h"
 
@@ -105,6 +106,8 @@ void Player::Update()
 	
 	m_playerGuard.UpdateTimer(m_deltaTime);
 	m_playerParry.UpdateParryWindow(m_deltaTime);
+	m_playerParry.UpdateIncincibility(m_deltaTime);
+
 
 	// デバッグキー
 	if(GetAsyncKeyState('2')&0x8000)
@@ -127,6 +130,10 @@ void Player::PostUpdate()
 	UpdateAnimation();
 
 	CharacterBase::PostUpdate();
+
+	UpdateIsGrounded();
+
+	UpdateIsFovWide();
 
 	m_playerSwordTrail.UpdateTrail(m_spModel,m_mWorld,GetAnimFrame());
 
@@ -211,6 +218,28 @@ void Player::UpdateDebugCommand()
 	else
 	{
 		key = false;
+	}
+
+	// 3キー : 今いる部屋をクリアにする (敵は倒れて、扉が開く。スポナーも止まる)
+	static bool isRoomClearKey = false;
+
+	if (GetAsyncKeyState('3') & 0x8000)
+	{
+		if (!isRoomClearKey)
+		{
+			const auto room = RoomManager::Instance().GetCurrentRoom();
+
+			if (room)
+			{
+				room->DebugForceClear();
+			}
+
+			isRoomClearKey = true;
+		}
+	}
+	else
+	{
+		isRoomClearKey = false;
 	}
 
 	auto spTpsCamera = std::dynamic_pointer_cast<TPSCamera>( m_wpCamera.lock());
@@ -554,6 +583,41 @@ void Player::UpdateCameraFade()
 	}
 }
 
+void Player::UpdateIsGrounded()
+{
+	auto spTPSCamera = std::dynamic_pointer_cast<TPSCamera>(m_wpCamera.lock());
+	
+	if (!spTPSCamera)
+	{
+		return;
+	}
+
+	// TPSCameraに今地面に着いているのかを教える
+	spTPSCamera->SetIsTargetGrounded(IsGrounded());
+}
+
+void Player::UpdateIsFovWide()
+{
+
+	auto spTPSCamera = std::dynamic_pointer_cast<TPSCamera>(m_wpCamera.lock());
+
+	if (!spTPSCamera)
+	{
+		return;
+	}
+
+	bool isFovWide = false;
+
+	if (m_stateMachine.IsState<PlayerSpecialMoveState>())
+	{
+		isFovWide = true;
+	}
+
+	// カメラに視野角を広げるか知らせる
+	spTPSCamera->SetFovWide(isFovWide);
+
+}
+
 //================================
 // 被弾
 //================================
@@ -565,6 +629,12 @@ void Player::OnHit(const AttackInfo attackInfo)
 	if (m_health.IsDead() ||
 		RoomManager::Instance().IsIntro() ||
 		RoomManager::Instance().IsBossDefeat())
+	{
+		return;
+	}
+
+	// パリィ成功時は無敵
+	if (m_playerParry.GetIsParrySuccess())
 	{
 		return;
 	}
@@ -603,7 +673,6 @@ void Player::OnHit(const AttackInfo attackInfo)
 			KdEffekseerManager::GetInstance().Play("Player/GuardBreak/GuardBreak.efkefc", effectPos, 0.3f, 0.6f, false);
 			KdAudioManager::Instance().Play("Asset/Data/Sound/SE/Player/Guard/GuardBreak.wav");
 		}
-
 
 		// ノックバック量を減らす
 		info.m_knockBackPower *= m_playerGuard.GetParam().m_guardKnockBackRate;
@@ -753,7 +822,6 @@ void Player::OnParrySuccess()
 
 	// 範囲内の相手にノックバックさせる
 	m_hitChecker.Check(*this, sphere, hitParam);
-
 
 	Math::Vector3 effectPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
 

@@ -88,6 +88,9 @@ private:
 
 	void UpdateAnimation();
 
+	// デバッグキーで攻撃パターンを固定する(4〜9キー:固定 / 0キー:通常の抽選に戻す)
+	void UpdateDebugPatternKey();
+
 	// 攻撃のクールダウン更新(0になったら攻撃フラグを立てる)
 	void UpdateAttack();
 
@@ -113,6 +116,9 @@ private:
 	float m_attackCooldownDuration = 0.0f;
 
 	bool m_attackFlg = false;
+
+	// デバッグキーで固定した攻撃パターン(空なら、通常の抽選をする)
+	std::optional<MageAttackPattern> m_debugFixedPattern;
 
 
 

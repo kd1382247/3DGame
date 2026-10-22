@@ -8,6 +8,9 @@
 
 #include"../../StateMachine/StateMachine.h"
 
+// Mageの魔法円と同じ、攻撃範囲・予告の表示に使うカラースフィア
+#include"../../Boss/Mage/ColorSphereIndicator/ColorSphereIndicator.h"
+
 
 class Bomb :public EnemyBase
 {
@@ -46,8 +49,10 @@ public:
 	// 爆発する(専用のExplosionオブジェクトを生成して当たり判定を任せ、自分は消える)
 	void Explode();
 
-	// 爆発範囲の表示(ステージの色を変えるエフェクト)の表示/非表示
+	// 爆発範囲・予告の表示(ステージの色を変えるエフェクト)の表示/非表示
 	// 当たり判定と同じ座標・半径を使うことで、見た目と実際の範囲を一致させる
+	// ・範囲の円 : ためている間と爆発のモーションが終わるまで、爆発の半径のまま表示する
+	// ・予告の円 : ための進み具合に合わせて、範囲いっぱいまで広がっていく(ため終わったら消える)
 	void CreateExplosionRange();
 	void UpdateExplosionRange();
 	void HideExplosionRange();
@@ -81,6 +86,9 @@ private:
 	// ためモーションの長さ(秒)(Parameterの値をInitでセットする)
 	float m_chargeDuration = 0.0f;
 
-	// カラースフィアのスロット番号保存用
-	int m_colorSphereHandle = -1;
+	// 爆発範囲用のカラースフィア(ため始めてから、爆発のモーションが終わるまで表示する)
+	ColorSphereIndicator m_rangeIndicator;
+
+	// 爆発予告用のカラースフィア(ためている間だけ、範囲いっぱいまで広がっていく)
+	ColorSphereIndicator m_telegraphIndicator;
 };

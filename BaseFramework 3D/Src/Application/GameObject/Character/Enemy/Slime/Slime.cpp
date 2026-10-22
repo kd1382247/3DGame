@@ -146,6 +146,9 @@ void Slime::Split()
 		// 分裂した小さいスライムを飛び散らせる(速さ・勢いはParameterで調整できる)
 		slime->Launch(m_launchDir[i] * m_parameter.GetSplitLaunchSpeed(), m_parameter.GetSplitLaunchPower());
 
+		// 自分を出したスポナーを引き継ぐ(ウェーブが、分裂した小スライムの全滅まで次に進まないようにする)
+		InheritSpawnerTo(slime);
+
 		SceneManager::Instance().AddObject(slime);
 	}
 }

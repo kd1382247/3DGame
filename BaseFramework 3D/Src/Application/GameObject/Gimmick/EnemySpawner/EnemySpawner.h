@@ -71,6 +71,10 @@ public:
 	// 生成の要求を受けれるかどうか
 	bool CanAcceptRequest();
 
+	// 生成した敵を、このスポナーの生存リストに登録する
+	// (スポナーが出した敵のほか、その敵から生まれた敵(スライムの分裂など)も登録する)
+	void RegisterSpawnedEnemy(const std::shared_ptr<EnemyBase>& enemy);
+
 private:
 
 	void UpdateSinCurve(Math::Matrix& worldMat);
@@ -163,8 +167,8 @@ private:
 	float       m_sinCurveTime = 0.0f;
 
 	// 生成前の回転(見た目だけ。GetPos()や当たり判定は変えない)
-	static constexpr float kSpinDuration = 1.0f; // 回り始めてから止まるまでの時間(秒)
-	static constexpr float kSpinTurns    = 2.0f; // 止まるまでに回る回数
+	static constexpr float kSpinDuration = 2.0f; // 回り始めてから止まるまでの時間(秒)
+	static constexpr float kSpinTurns    = 3.0f; // 止まるまでに回る回数
 
 	bool  m_isSpinning = false;
 	float m_spinTimer  = 0.0f;

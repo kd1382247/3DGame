@@ -1,5 +1,7 @@
 ﻿#include "Bomb.h"
 
+#include<algorithm>
+
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
@@ -139,37 +141,36 @@ void Bomb::Explode()
 
 void Bomb::CreateExplosionRange()
 {
-	if (m_colorSphereHandle != -1)
-	{
-		return;
-	}
-	// 爆発範囲を表示するカラースフィアを作る
-	m_colorSphereHandle = KdShaderManager::Instance().CreateColorSphere();
+	// 爆発範囲と予告を表示するカラースフィアを作る(表示中なら何もしない)
+	m_rangeIndicator.Show();
+	m_telegraphIndicator.Show();
 }
 
 void Bomb::UpdateExplosionRange()
 {
-	if (m_colorSphereHandle != -1)
+	// 爆発範囲(爆発の当たり判定と同じ座標・半径)
+	m_rangeIndicator.DrawCircle(GetPos(), m_explosionRadius);
+
+	// ため終わったら、予告の円は役目を終える(爆発範囲の表示は、爆発が終わるまで残す)
+	if (IsChargeFinished())
 	{
-		KdShaderManager::Instance().WriteCBColorSphereCircle(
-			m_colorSphereHandle,
-			GetPos(),
-			m_explosionRadius,
-			Math::Vector3(2.0f, 0.0f, 0.0f));
+		m_telegraphIndicator.Hide();
+		return;
 	}
+
+	// 予告は、ためが進むにつれて範囲いっぱいまで広がっていく
+	// (ため時間が0の場合は、最初から満ちているものとして扱う)
+	float progress = (m_chargeDuration > 0.0f) ? (1.0f - (m_chargeTimer / m_chargeDuration)) : 1.0f;
+	progress = std::clamp(progress, 0.0f, 1.0f);
+
+	m_telegraphIndicator.DrawCircle(GetPos(), m_explosionRadius * progress);
 }
 
 void Bomb::HideExplosionRange()
 {
-	if (m_colorSphereHandle == -1)
-	{
-		return;
-	}
-
-	// 表示を消す
-	KdShaderManager::Instance().ReleaseColorSphere(m_colorSphereHandle);
-
-	m_colorSphereHandle = -1;
+	// 表示を消す(どちらも、消えている場合は何もしない)
+	m_rangeIndicator.Hide();
+	m_telegraphIndicator.Hide();
 }
 
 void Bomb::OnHit(const AttackInfo attackInfo)

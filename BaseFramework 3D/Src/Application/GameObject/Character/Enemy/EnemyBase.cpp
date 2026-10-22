@@ -14,6 +14,8 @@
 
 #include"../Player/Player.h"
 
+#include"../../Gimmick/EnemySpawner/EnemySpawner.h"
+
 #include"../../FlyText/FlyTextManager.h"
 
 void EnemyBase::Init()
@@ -46,6 +48,28 @@ void EnemyBase::DrawInspector()
 void EnemyBase::SetUpReference()
 {
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
+}
+
+void EnemyBase::InheritSpawnerTo(const std::shared_ptr<EnemyBase>& child)const
+{
+	if (!child)
+	{
+		return;
+	}
+
+	auto spSpawner = m_wpSpawner.lock();
+
+	// スポナー経由でない敵(ステージに直置きなど)は、引き継ぐものがない
+	if (!spSpawner)
+	{
+		return;
+	}
+
+	child->SetSpawner(spSpawner);
+
+	// 自分が消える前に、子をスポナーの生存リストへ入れる
+	// (順番が逆だと、リストが空になった瞬間に次のウェーブへ進んでしまう)
+	spSpawner->RegisterSpawnedEnemy(child);
 }
 
 void EnemyBase::StartAttack()

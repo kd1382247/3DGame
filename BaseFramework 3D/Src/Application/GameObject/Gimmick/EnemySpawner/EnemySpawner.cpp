@@ -24,7 +24,7 @@ namespace
 {
 	// カメラが近い時にプレイヤーを透けさせる設定
 	// この距離より遠いと不透明。近づくほど透け始める
-	constexpr float kFadeStartDist = 2.5f;
+	constexpr float kFadeStartDist = 5.0f;
 	// この距離以下で完全に透明になる
 	constexpr float kFadeEndDist = 1.0f;
 	// 透け具合の変化の速さ(0～1、小さいほどゆっくり)
@@ -643,13 +643,26 @@ void EnemySpawner::CreateEnemy(const std::string& enemyName)
 	// 関連付け
 	enemy->SetUpReference();
 
+	// 生成元をスポナー(自分)にして、分裂などで生まれた敵にも引き継げるようにする
+	enemy->SetSpawner(std::dynamic_pointer_cast<EnemySpawner>(shared_from_this()));
+
 	SceneManager::Instance().AddObject(enemy);
 
-	m_spawnEnemyList.push_back(enemy);
+	RegisterSpawnedEnemy(enemy);
 
 	// スポナーの当たり判定の中から出てくるので、外に出るまでは押し戻さない
 	m_emergingEnemies.push_back(enemy);
 
+}
+
+void EnemySpawner::RegisterSpawnedEnemy(const std::shared_ptr<EnemyBase>& enemy)
+{
+	if (!enemy)
+	{
+		return;
+	}
+
+	m_spawnEnemyList.push_back(enemy);
 }
 
 bool EnemySpawner::IsBlockingCharacter(const CharacterBase* character) const

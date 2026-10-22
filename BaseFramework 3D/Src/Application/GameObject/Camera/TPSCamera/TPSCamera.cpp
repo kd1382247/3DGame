@@ -18,12 +18,27 @@ namespace
 	// 追う速さ
 	constexpr float kFollowSpeed = 0.3f;
 
+	// カメラの追従を始める閾値
+	const float   kFollowWindowHeight = 1.5f;
+
 	// カメラが対象に到着した判定
 	constexpr float kArriveThreshold = 0.99f; // Approachの到着判定
 	constexpr float kLeaveThreshold = 0.01f;  // Returnの到着判定
 
 	// 撃破演出：ボスの方を向ききったとみなす角度(度)
 	constexpr float kYawArriveDeg = 1.0f;
+
+	// 通常のFOV
+	constexpr float kNormalFov = 60.0f;
+
+	// 広げた時のFOV
+	constexpr float kWideFov = 80.0f;
+
+	// 広げる速さ
+	constexpr float kFovWidenSpeed = 0.15f;
+
+	// 戻る速さ
+	constexpr float kFovReturnSpeed = 0.08f;
 
 	using ObjectList = std::vector<std::weak_ptr<KdGameObject>>;
 	using ObstacleLists = std::vector<const ObjectList*>;
@@ -83,6 +98,8 @@ void TPSCamera::Init()
 	m_shakeTime = 0.0f;
 	m_isDefeat = false;
 
+	m_currentFov = kNormalFov;
+	m_isFovWide = false;
 }
 
 void TPSCamera::PostUpdate()
@@ -94,6 +111,8 @@ void TPSCamera::PostUpdate()
 
 	// カメラの回転とワールド行列の更新
 	UpdateCameraMatrix(spTarget);
+
+	UpdateFov();
 
 	// ターゲットがいない場合は補正しない
 	if (!spTarget)
@@ -509,7 +528,20 @@ void TPSCamera::UpdateCameraMatrix(const std::shared_ptr<const KdGameObject>& sp
 		}
 		else
 		{
-			m_smoothTargetPos = Math::Vector3::Lerp(m_smoothTargetPos, spTarget->GetPos(), kFollowSpeed);
+
+			float keepY = m_smoothTargetPos.y;
+			float targetY    = spTarget->GetPos().y;
+
+			m_smoothTargetPos = Math::Vector3::Lerp(m_smoothTargetPos,spTarget->GetPos(), kFollowSpeed);
+
+			// 空中にいるとき
+			if (!m_isTargetGrounded)
+			{
+				float windowBottom = targetY - kFollowWindowHeight;
+
+				m_smoothTargetPos.y = std::clamp(keepY, windowBottom, targetY);
+			}
+
 		}
 
 		targetMat = Math::Matrix::CreateTranslation(m_smoothTargetPos);
@@ -630,4 +662,43 @@ void TPSCamera::PushOutBySphere()
 	{
 		SetPos(GetPos() + pushDir * sphereOverlap);
 	}
+}
+
+void TPSCamera::UpdateFov()
+{
+
+	float targetFov = 0.0f;
+	float fovSpeed = 0.0f;
+
+	// 目標値をセット
+	if (m_isFovWide)
+	{
+		targetFov = kWideFov;
+		fovSpeed    = kFovWidenSpeed;
+	}
+	else
+	{
+		targetFov = kNormalFov;
+		fovSpeed    = kFovReturnSpeed;
+	}
+
+	float oldFov = m_currentFov;
+
+	m_currentFov = std::lerp(m_currentFov, targetFov, fovSpeed);
+
+	if (std::abs( m_currentFov- targetFov)<=0.01f)
+	{
+		m_currentFov = targetFov;
+	}
+
+	if (oldFov != m_currentFov)
+	{
+		auto camera = WorkCamera();
+
+		if (camera)
+		{
+			camera->SetProjectionMatrix(m_currentFov);
+		}
+	}
+
 }

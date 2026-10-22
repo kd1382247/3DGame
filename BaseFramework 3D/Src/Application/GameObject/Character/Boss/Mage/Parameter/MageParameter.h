@@ -79,7 +79,7 @@ public:
 		float m_damage = 10.0f;       // 魔法弾のダメージ
 		float m_knockBack = 0.15f;    // 魔法弾が当たった時のノックバックの強さ
 		float m_lifeTime = 4.0f;      // [秒] 魔法弾が消えるまでの時間
-		float m_spawnHeight = 0.8f;   // [m] 魔法弾を出す高さ
+		float m_spawnHeight = 1.0f;   // [m] 魔法弾を出す高さ
 		float m_aimHeight = 0.8f;     // [m] 狙う位置の高さ(プレイヤーの足元からの高さ)
 	};
 

@@ -39,4 +39,6 @@ void PlayerParryState::OnExit(Player* owner)
 	parry.EndParry();
 
 	parry.SetIsParrySuccess(false);
+
+	parry.SetInvincibility(true);
 }

@@ -5,7 +5,7 @@
     "BulletFireFrame": 16.0,
     "BulletKnockBack": 0.07999999821186066,
     "BulletLifeTime": 4.0,
-    "BulletRadius": 0.05000000074505806,
+    "BulletRadius": 0.30000001192092896,
     "BulletSpawnForward": 0.30000001192092896,
     "BulletSpawnHeight": 0.800000011920929,
     "BulletSpeed": 0.07999999821186066,

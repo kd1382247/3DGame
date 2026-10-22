@@ -12,6 +12,7 @@
 #include"../../Player/Player.h"
 
 #include"State/States/TurtleShellNormalState.h"
+#include"State/States/TurtleShellDizzyState.h"
 #include"State/States/TurtleShellDamageState.h"
 #include"State/States/TurtleShellDieState.h"
 
@@ -167,6 +168,17 @@ void TurtleShell::UpdateAttackCollision()
 
 void TurtleShell::OnHit(const AttackInfo attackInfo)
 {
+
+	AttackInfo info = attackInfo;
+
+	// ダメージが0
+	if (info.m_damage <= 0.0f)
+	{
+		m_stateMachine.ChangeState<TurtleShellDizzyState>();
+		ApplyDamage(info);
+		return;
+	}
+
 	if (ApplyDamage(attackInfo))
 	{
 		m_stateMachine.ChangeState<TurtleShellDieState>();

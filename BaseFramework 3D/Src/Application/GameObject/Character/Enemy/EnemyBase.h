@@ -6,6 +6,8 @@ class Player;
 
 class WayPoint;
 
+class EnemySpawner;
+
 class EnemyBase :public CharacterBase
 {
 public:
@@ -60,6 +62,17 @@ public:
 
 	// ForceKillで倒されたか(スライムの分裂など、倒れた後に増える処理をしないために使う)
 	bool IsForceKilled()const { return m_isForceKilled; }
+
+	// この敵を生成したスポナーを覚える(スポナーが生成した直後にセットする)
+	void SetSpawner(const std::shared_ptr<EnemySpawner>& spawner) { m_wpSpawner = spawner; }
+
+	// この敵を生成したスポナー(スポナー経由でない敵はnullptr)
+	std::shared_ptr<EnemySpawner> GetSpawner()const { return m_wpSpawner.lock(); }
+
+	// 自分の生成元のスポナーを、自分から生まれた敵(スライムの分裂など)にも引き継ぐ
+	// 子をスポナーの生存リストに登録するので、ウェーブは子が全滅するまで次に進まない
+	// (スポナー経由でない敵が呼んでも、何もしない)
+	void InheritSpawnerTo(const std::shared_ptr<EnemyBase>& child)const;
 
 	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
 	float GetReachDistance()const { return m_reachDistance; }
@@ -157,6 +170,9 @@ protected:
 
 	// ForceKillで倒されたか
 	bool m_isForceKilled = false;
+
+	// この敵を生成したスポナー(スポナー経由でない敵は空)
+	std::weak_ptr<EnemySpawner> m_wpSpawner;
 
 	// 飛び出す方向と勢い
 	Math::Vector3 m_launchVec;
