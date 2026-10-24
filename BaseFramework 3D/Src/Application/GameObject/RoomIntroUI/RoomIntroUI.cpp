@@ -21,7 +21,7 @@ namespace
 	constexpr float TextStartScale = 1.1f;
 
 	// 画像の置き場とファイル名
-	const std::string TexFilePath    = "Asset/Textures/Stage/Intro/";
+	const std::string TexFilePath    = "Asset/Textures/UI/Stage/Intro/";
 	const std::string WaveTexFile    = "MissionWave.png";
 	const std::string AllKillTexFile = "MissionKillAll.png";
 }

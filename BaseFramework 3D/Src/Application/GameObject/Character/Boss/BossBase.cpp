@@ -238,7 +238,7 @@ void BossBase::PlayDeathSmoke()
 {
 
 	KdEffekseerManager::GetInstance().
-		Play("Smoke/Smoke2.efkefc", GetPos(), 1.0f, 0.7f, false);
+		Play("Common/Smoke/Smoke_purple.efkefc", GetPos(), 1.0f, 0.7f, false);
 
 	// SEを流す
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Enemy/Death/Death.wav");
@@ -315,11 +315,11 @@ void BossBase::PlayHitEffect()
 
 
 	KdEffekseerManager::GetInstance().
-		Play("Hit/Hit2.efkefc",effectPos, 0.3f, 0.8f, false);
+		Play("Common/Hit/Star_hit.efkefc",effectPos, 0.3f, 0.8f, false);
 
 	KdEffekseerManager::GetInstance().
-		Play("Hit/Hit3.efkefc", effectPos, 0.3f, 0.6f, false);
+		Play("Common/Hit/Slath_hit.efkefc", effectPos, 0.3f, 0.6f, false);
 
 	KdEffekseerManager::GetInstance().
-		Play("Hit/Hit.efkefc", effectPos, 0.4f, 0.6f, false);
+		Play("Common/Hit/Flash_hit.efkefc", effectPos, 0.4f, 0.6f, false);
 }

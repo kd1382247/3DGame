@@ -55,7 +55,7 @@ void PlayerChargeAttackState::OnUpdate(Player * owner)
 		if (!spEffekseerObj || !spEffekseerObj->IsPlaying())
 		{
 			m_wpEffekseerObj = KdEffekseerManager::GetInstance().
-				Play("Player/Charge.efkefc", owner->GetPos() + Math::Vector3(0.0f, 0.0f, 0.0f), 0.8f, 2.5f, false, 30, 90);
+				Play("Player/Charge/Charge.efkefc", owner->GetPos() + Math::Vector3(0.0f, 0.0f, 0.0f), 0.8f, 2.5f, false, 30, 90);
 		}
 	}
 

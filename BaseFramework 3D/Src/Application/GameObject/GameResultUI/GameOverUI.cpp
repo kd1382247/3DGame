@@ -45,7 +45,7 @@ namespace
 	const std::string DecideSE = "Asset/Data/Sound/SE/System/Confirm.wav";	// 決定した時
 
 	// テクスチャの置き場
-	const std::string TexFilePath = "Asset/Textures/Result/";
+	const std::string TexFilePath = "Asset/Textures/UI/Result/";
 
 	std::shared_ptr<KdTexture> LoadTexture(const std::string& fileName)
 	{

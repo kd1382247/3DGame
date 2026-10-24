@@ -4,7 +4,7 @@ void PlayerSwordTrail::Init()
 {
 	m_spTrailPolygon = std::make_shared<KdTrailPolygon>();
 
-	 m_spTrailPolygon->SetMaterial("Asset/Textures/SwordTrail/SwordTrail2.png");
+	 m_spTrailPolygon->SetMaterial("Asset/Textures/Effect/SwordTrail/SwordTrail2.png");
 
 	m_spTrailPolygon->SetPattern(KdTrailPolygon::Trail_Pattern::eVertices);
 

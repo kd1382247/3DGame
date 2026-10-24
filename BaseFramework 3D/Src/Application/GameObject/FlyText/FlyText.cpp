@@ -11,7 +11,7 @@ void FlyText::Init(int damage, const Math::Vector3& spawnPos, const std::string 
 	{
 		m_spPolygon = std::make_shared<KdSquarePolygon>();
 
-		m_spPolygon->SetMaterial("Asset/Textures/DamageNumber/"+filePath);
+		m_spPolygon->SetMaterial("Asset/Textures/UI/HUD/DamageNumber/"+filePath);
 		m_spPolygon->SetSplit(10, 1);
 		m_spPolygon->SetScale(0.5f);
 

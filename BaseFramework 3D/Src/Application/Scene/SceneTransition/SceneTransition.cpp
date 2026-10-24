@@ -5,7 +5,7 @@ void SceneTransition::Init()
 	if (!m_spBlackFadeMask)
 	{
 		m_spBlackFadeMask = std::make_shared<KdTexture>();
-		m_spBlackFadeMask->Load("Asset/Textures/BlackFadeMask/BlackFadeMask.png");
+		m_spBlackFadeMask->Load("Asset/Textures/System/BlackFadeMask.png");
 	}
 }
 

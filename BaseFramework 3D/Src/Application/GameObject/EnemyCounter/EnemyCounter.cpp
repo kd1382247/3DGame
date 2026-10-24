@@ -9,8 +9,8 @@
 
 void EnemyCounter::Init()
 {
-	InitTexture(m_spEnemyIconTex, "Asset/Textures/EnemyCounter/EnemyIcon.png");
-	InitTexture(m_spNumberTex, "Asset/Textures/EnemyCounter/Numbers.png");
+	InitTexture(m_spEnemyIconTex, "Asset/Textures/UI/HUD/EnemyCounter/EnemyIcon.png");
+	InitTexture(m_spNumberTex, "Asset/Textures/UI/HUD/EnemyCounter/Numbers.png");
 
 }
 

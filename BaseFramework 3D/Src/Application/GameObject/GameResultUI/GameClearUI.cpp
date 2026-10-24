@@ -25,7 +25,7 @@ namespace
 	constexpr float TextStartScale = 1.2f;
 
 	// テクスチャの置き場
-	const std::string TexFilePath = "Asset/Textures/Result/";
+	const std::string TexFilePath = "Asset/Textures/UI/Result/";
 }
 
 void GameClearUI::Init()

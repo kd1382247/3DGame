@@ -60,5 +60,5 @@ private:
 	static constexpr float DamageBarDepth = -0.0001f;
 	static constexpr float HPBarDepth = -0.0002f;
 
-	const std::string FilePath = "Asset/Textures/HP/Enemy/";
+	const std::string FilePath = "Asset/Textures/UI/HUD/HP/Enemy/";
 };

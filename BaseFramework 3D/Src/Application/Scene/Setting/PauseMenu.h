@@ -96,12 +96,12 @@ private:
 	// 設定画面
 	std::weak_ptr<Setting> m_wpSetting;
 
-	// テクスチャ (Asset/Textures/Setting/Controls/)
+	// テクスチャ (Asset/Textures/UI/Setting/Controls/)
 	std::shared_ptr<KdTexture> m_spControlsButtonTex = nullptr;	// 「CONTROLS」のボタン
 	std::shared_ptr<KdTexture> m_spSettingButtonTex  = nullptr;	// 「SETTING」のボタン
 	std::shared_ptr<KdTexture> m_spTitleButtonTex    = nullptr;	// 「TITLE」のボタン
 	std::shared_ptr<KdTexture> m_spControlsPanelTex  = nullptr;	// 操作説明のパネル
 
-	const std::string TexFilePath = "Asset/Textures/Setting/Controls/";
+	const std::string TexFilePath = "Asset/Textures/UI/Setting/Controls/";
 
 };

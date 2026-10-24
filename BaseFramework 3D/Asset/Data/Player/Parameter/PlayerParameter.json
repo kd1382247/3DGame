@@ -28,7 +28,7 @@
     "GuardHitResetTime": 2.0,
     "GuardKnockBackRate": 0.30000001192092896,
     "JumpPower": 0.30000001192092896,
-    "MaxHP": 100,
+    "MaxHP": 300,
     "MaxWalkableSlopeAngle": 45.0,
     "MoveSpeed": 0.12999999523162842,
     "ParryHitStop": 0.30000001192092896,

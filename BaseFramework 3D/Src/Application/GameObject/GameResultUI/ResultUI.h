@@ -74,7 +74,7 @@ private:
 	POINT m_prevMousePos    = {};
 
 	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
-	// テクスチャ (Asset/Textures/Result/)
+	// テクスチャ (Asset/Textures/UI/Result/)
 	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 	std::shared_ptr<KdTexture> m_spBackTex        = nullptr;	// 背景
 	std::shared_ptr<KdTexture> m_spResultTextTex  = nullptr;	// 「Result」の文字

@@ -46,7 +46,7 @@ namespace
 	const std::string DecideSE = "Asset/Data/Sound/SE/System/Confirm.wav";	// 決定した時
 
 	// テクスチャの置き場
-	const std::string TexFilePath = "Asset/Textures/Result/";
+	const std::string TexFilePath = "Asset/Textures/UI/Result/";
 
 	std::shared_ptr<KdTexture> LoadTexture(const std::string& fileName)
 	{
@@ -83,11 +83,11 @@ namespace
 void ResultUI::Init()
 {
 	m_spBackTex        = LoadTexture("Result_bg.png");
-	m_spResultTextTex  = LoadTexture("result_text.png");
+	m_spResultTextTex  = LoadTexture("Result_text.png");
 	m_spFrameTex       = LoadTexture("ClearTime_frame.png");
-	m_spTimeTextTex    = LoadTexture("cleartime_text.png");
-	m_spDigitsTex      = LoadTexture("white_digits.png");
-	m_spColonTex       = LoadTexture("white_colon.png");
+	m_spTimeTextTex    = LoadTexture("ClearTime_text.png");
+	m_spDigitsTex      = LoadTexture("White_digits.png");
+	m_spColonTex       = LoadTexture("White_colon.png");
 	m_spRetryButtonTex = LoadTexture("RetryButton.png");
 	m_spTitleButtonTex = LoadTexture("TitleButton.png");
 

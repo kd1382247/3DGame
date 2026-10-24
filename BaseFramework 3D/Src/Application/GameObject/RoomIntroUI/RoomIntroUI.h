@@ -37,6 +37,6 @@ private:
 	bool m_isPlaying  = false;
 	bool m_isFinished = false;
 
-	// 文字の画像 (Asset/Textures/Stage/Intro/)
+	// 文字の画像 (Asset/Textures/UI/Stage/Intro/)
 	std::shared_ptr<KdTexture> m_spTextTex = nullptr;
 };

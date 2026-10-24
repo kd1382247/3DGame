@@ -9,12 +9,13 @@
     "Scale": 2.0,
     "SpawnEndFrame": 60.0,
     "SpawnEnemies": [
+        "Bomb",
+        "Cactas",
         "Mushroom",
-        "Slime",
-        "TurtleShell"
+        "StarFish"
     ],
     "SpawnHeight": 2.0,
-    "SpawnInterval": 2.0,
+    "SpawnInterval": 3.0,
     "SpawnLaunchPower": 0.20000000298023224,
     "SpawnLaunchSpeed": 0.03999999910593033,
     "SpawnStartFrame": 40.0,

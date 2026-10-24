@@ -49,7 +49,7 @@ private:
 	// Barの位置
 	Math::Vector2 m_barOffset = {-500.0f,-300.0f};
 
-	const std::string FilePath = "Asset/Textures/HP/Player/";
+	const std::string FilePath = "Asset/Textures/UI/HUD/HP/Player/";
 
 	float m_alpha = 0.0f;
 

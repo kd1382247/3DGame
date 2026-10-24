@@ -49,7 +49,7 @@ public:
 		float m_hitDelay = 0.15f;   // [秒] 予告が終わってエフェクトが出てから、当たり判定が出るまでの時間
 		float m_hitEndProgress = 0.8f;   // [0〜1] エフェクトがこの進行度に達したら、当たり判定を終えて範囲の円も消す
 
-		EffectParam m_effect{ "Tornado/Tornado.efkefc", 0.4f, 1.0f, 0, 90 };
+		EffectParam m_effect{ "Boss/Mage/Tornado/Tornado.efkefc", 0.4f, 1.0f, 0, 90 };
 
 		// 魔法円のエフェクトが出るときに鳴らすSEのファイルパス(空なら鳴らさない。ファイル名はコード側で固定する)
 		std::string m_sePath = "Asset/Data/Sound/SE/Boss/Mage/Attack/FireMagic.wav";
@@ -66,7 +66,7 @@ public:
 		float m_hitDelay = 0.15f;   // [秒] 予告が終わってエフェクトが出てから、当たり判定が出るまでの時間
 		float m_hitEndProgress = 0.6f;   // [0〜1] エフェクトがこの進行度に達したら、当たり判定を終えて範囲の円も消す
 
-		EffectParam m_effect{ "Sword/Sword2.efkefc", 2.5f, 1.2f, 0, 80, -60.0f };
+		EffectParam m_effect{ "Boss/Mage/Sword/Sword2.efkefc", 2.5f, 1.2f, 0, 80, -60.0f };
 	};
 
 	// 4. プレイヤーへ単発魔法弾
@@ -93,7 +93,7 @@ public:
 		float m_hitDelay = 0.15f;   // [秒] 予告が終わってエフェクトが出てから、当たり判定が出るまでの時間
 		float m_hitEndProgress = 0.8f;   // [0〜1] エフェクトがこの進行度に達したら、当たり判定を終えて範囲の円も消す
 
-		EffectParam m_effect{ "Salamander/Salamander.efkefc", 0.8f, 1.0f, 0, 90 };
+		EffectParam m_effect{ "Boss/Mage/Salamander/Salamander.efkefc", 0.8f, 1.0f, 0, 90 };
 
 		// 魔法円のエフェクトが出るときに鳴らすSEのファイルパス(空なら鳴らさない。ファイル名はコード側で固定する)
 		std::string m_sePath = "Asset/Data/Sound/SE/Boss/Mage/Attack/WideAreaAttack.wav";
@@ -112,9 +112,9 @@ public:
 		float m_hitInterval = 0.4f;     // [秒] ビームが当たり続けている間の、再ヒットまでの間隔
 
 		// 詠唱中に再生する予告(windup)エフェクト
-		EffectParam m_windupEffect{ "Beam/Beam.efkefc", 1.0f, 1.0f, 0, 120, 180.0f, 1.8f, 1.5f };
+		EffectParam m_windupEffect{ "Boss/Mage/Beam/Beam.efkefc", 1.0f, 1.0f, 0, 120, 180.0f, 1.8f, 1.5f };
 		// ビーム本体のエフェクト
-		EffectParam m_beamEffect{ "Beam/Beam.efkefc", 0.6f, 1.0f, 130, 250, 180.0f, 1.8f, 1.5f };
+		EffectParam m_beamEffect{ "Boss/Mage/Beam/Beam.efkefc", 0.6f, 1.0f, 130, 250, 180.0f, 1.8f, 1.5f };
 	};
 
 	// 1. 敵を召喚

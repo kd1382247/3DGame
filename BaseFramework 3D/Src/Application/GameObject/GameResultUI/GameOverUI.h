@@ -67,7 +67,7 @@ private:
 	POINT m_prevMousePos    = {};
 
 	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
-	// テクスチャ (Asset/Textures/GameScene/)
+	// テクスチャ (Asset/Textures/UI/Result/)
 	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 	std::shared_ptr<KdTexture> m_spTextTex        = nullptr;	// 「GAME OVER」の文字
 	std::shared_ptr<KdTexture> m_spRetryButtonTex = nullptr;	// 「RETRY」のボタン

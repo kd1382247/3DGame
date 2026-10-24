@@ -116,7 +116,7 @@ private:
 	std::string m_previewSEName = "";
 
 	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
-	// テクスチャ (Asset/Textures/Setting/Volume/)
+	// テクスチャ (Asset/Textures/UI/Setting/Volume/)
 	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 	std::shared_ptr<KdTexture> m_spPanelTex          = nullptr;	// パネル(背景)
 	std::shared_ptr<KdTexture> m_spHeadingTex        = nullptr;	// 「SETTING」の見出し
@@ -129,6 +129,6 @@ private:
 	std::shared_ptr<KdTexture> m_spKnobTex           = nullptr;	// スライダーのつまみ
 	std::shared_ptr<KdTexture> m_spCloseButtonTex    = nullptr;	// 閉じるボタン
 
-	const std::string TexFilePath = "Asset/Textures/Setting/Volume/";
+	const std::string TexFilePath = "Asset/Textures/UI/Setting/Volume/";
 
 };

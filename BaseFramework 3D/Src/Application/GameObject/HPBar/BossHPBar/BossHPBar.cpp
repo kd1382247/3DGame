@@ -12,7 +12,7 @@ void BossHPBar::Init()
 
 	m_spNamePrateTex = std::make_shared<KdTexture>();
 
-	std::string filePath = "Asset/Textures/BossName/NamePrate_";
+	std::string filePath = "Asset/Textures/UI/HUD/BossName/NamePlate_";
 	m_spNamePrateTex->Load(filePath+m_bossName);
 
 }

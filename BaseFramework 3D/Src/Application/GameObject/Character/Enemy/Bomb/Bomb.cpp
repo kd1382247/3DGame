@@ -134,7 +134,7 @@ void Bomb::Explode()
 
 	// 爆発エフェクト
 	KdEffekseerManager::GetInstance().
-		Play("Explosion/Explosion.efkefc", explosionPos, 0.6f, 1.4f, false);
+		Play("Enemy/Explosion/Explosion.efkefc", explosionPos, 0.6f, 1.4f, false);
 
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Enemy/Explosion/Explosion.wav");
 }

@@ -590,8 +590,8 @@ void EnemySpawner::PlayIntroEffect()
 		return;
 	}
 	m_spawnIntroEffect = true;
-	KdEffekseerManager::GetInstance().Play("EnemySpawner/smoke.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 1.2f, 0.7);
-	KdEffekseerManager::GetInstance().Play("EnemySpawner/Lightning.efkefc", GetPos() + Math::Vector3(0.0f, -1.0f, 0.0f), 0.6f, 1.0f, false, 20, 90);
+	KdEffekseerManager::GetInstance().Play("Enemy/EnemySpawner/Smoke_spawner.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 1.2f, 0.7);
+	KdEffekseerManager::GetInstance().Play("Enemy/EnemySpawner/Lightning_spawner.efkefc", GetPos() + Math::Vector3(0.0f, -1.0f, 0.0f), 0.6f, 1.0f, false, 20, 90);
 
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Gimmick/EnemySpawner/Spark.wav");
 

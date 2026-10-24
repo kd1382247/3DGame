@@ -26,7 +26,7 @@ private:
 	float m_timer = 0.0f;
 
 	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
-	// テクスチャ (Asset/Textures/GameScene/)
+	// テクスチャ (Asset/Textures/UI/Result/)
 	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 	std::shared_ptr<KdTexture> m_spTextTex = nullptr;	// 「STAGE CLEAR」の文字
 };

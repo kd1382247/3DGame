@@ -58,7 +58,7 @@ private:
 	// Barの位置
 	Math::Vector2 m_barOffset = { -380.0f,300.0f };
 
-	const std::string FilePath = "Asset/Textures/HP/Boss/";
+	const std::string FilePath = "Asset/Textures/UI/HUD/HP/Boss/";
 
 	std::string m_bossName = {};
 

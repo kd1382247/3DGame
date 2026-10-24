@@ -99,6 +99,6 @@ private:
 
 
 
-	const std::string FilePath = "Asset/Textures/Title/";
+	const std::string FilePath = "Asset/Textures/UI/Title/";
 
 };
