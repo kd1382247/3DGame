@@ -828,8 +828,6 @@ void Player::OnParrySuccess()
 	effectPos += m_mWorld.Backward() * 0.3;
 	// パリィエフェクト
 	KdEffekseerManager::GetInstance().Play("Player/Parry/Parry.efkefc", effectPos, 0.3f, 1.0f, false,0,36,GetRotation());
-	//KdEffekseerManager::GetInstance().Play("Player/Parry/ShockWave1.efkefc", effectPos, 0.6f, 0.6f, false,0,36,GetRotation());
-	//KdEffekseerManager::GetInstance().Play("Player/Parry/ShockWave2.efkefc", effectPos, 0.6f, 0.6f, false,0,36,GetRotation());
 
 	TimeManager::Instance().StartHitStop(parryParam.m_parryHitStop);
 

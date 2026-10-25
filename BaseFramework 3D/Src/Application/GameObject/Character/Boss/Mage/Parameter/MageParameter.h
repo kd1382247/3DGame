@@ -66,7 +66,7 @@ public:
 		float m_hitDelay = 0.15f;   // [秒] 予告が終わってエフェクトが出てから、当たり判定が出るまでの時間
 		float m_hitEndProgress = 0.6f;   // [0〜1] エフェクトがこの進行度に達したら、当たり判定を終えて範囲の円も消す
 
-		EffectParam m_effect{ "Boss/Mage/Sword/Sword2.efkefc", 2.5f, 1.2f, 0, 80, -60.0f };
+		EffectParam m_effect{ "Boss/Mage/Sword/Sword.efkefc", 2.5f, 1.2f, 0, 80, -60.0f };
 	};
 
 	// 4. プレイヤーへ単発魔法弾

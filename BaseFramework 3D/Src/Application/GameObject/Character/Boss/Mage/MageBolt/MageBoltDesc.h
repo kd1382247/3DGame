@@ -4,7 +4,7 @@
 // (初期値は、これまで使っていたEnergyBulletと同じ)
 struct MageBoltEffect
 {
-	std::string fileName   = "Boss/Mage/Bolt.efkefc";
+	std::string fileName   = "Boss/Mage/Bolt/Bolt.efkefc";
 	float       size       = 0.5f;
 	float       speed      = 0.8f;
 	float       startFrame = 20.0f;

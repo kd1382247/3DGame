@@ -48,8 +48,7 @@ void MageIntroState::OnUpdate(Mage * mage)
 			// 咆哮SEを再生
 			KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Boss/Mage/Roar/Roar.wav");
 
-			// 咆哮エフェクト再生
-			KdEffekseerManager::GetInstance().Play("Boss/Mage/Roar.efkefc",mage->GetPos()+Math::Vector3(0.0f,1.4f,1.5f), 1.0f, 0.3f);
+			KdEffekseerManager::GetInstance().Play("Boss/Mage/Roar/Roar.efkefc",mage->GetPos()+Math::Vector3(0.0f,1.4f,1.5f), 1.0f, 0.3f);
 
 			m_isRoar = true;
 		}

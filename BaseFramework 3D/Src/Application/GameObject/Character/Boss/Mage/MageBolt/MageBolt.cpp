@@ -257,7 +257,7 @@ void MageBolt::Vanish()
 		spEffect->StopEffect();
 	}
 
-	KdEffekseerManager::GetInstance().Play("Boss/Mage/BoltBreak.efkefc",GetPos(),0.5f);
+	KdEffekseerManager::GetInstance().Play("Boss/Mage/Bolt/BoltBreak.efkefc",GetPos(),0.5f);
 
 	Destroy();
 }
