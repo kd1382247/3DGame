@@ -206,6 +206,26 @@ bool KdEffekseerManager::HasEffectFinished(const Effekseer::Handle& handle) cons
 	return m_efkManager->GetInstanceCount(handle) == 0;
 }
 
+void KdEffekseerManager::LoadEffekseer(const std::string& fileName)
+{
+	std::shared_ptr<KdEffekseerObject> spEfkObject = std::make_shared<KdEffekseerObject>();
+
+	std::string loadFileName = EffekseerPath + fileName;
+
+	// エフェクト新規生成
+	auto effect = Effekseer::Effect::Create(m_efkManager,
+		(const EFK_CHAR*)sjis_to_wide(loadFileName).c_str());
+
+	if (effect == nullptr)
+	{
+		assert(0 && "Effekseerのエフェクト作成失敗");
+	}
+
+	spEfkObject->SetEffect(effect);
+	m_effectMap[fileName] = spEfkObject;
+}
+
+
 std::weak_ptr<KdEffekseerObject> KdEffekseerManager::Play(const PlayEfkInfo& info)
 {
 	// 渡された座標をEffekseerの座標に置き換え

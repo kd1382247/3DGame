@@ -13,12 +13,14 @@
 #include"../../GameObject/Character/Enemy/SpawnableEnemies.h"
 #include"../../GameObject/Character/Boss/BossBase.h"
 #include"../../GameObject/Character/Player/Player.h"
+#include"../../GameObject/EffekseerAssets/EffekseerAssets.h"
 #include"../../GameObject/Gimmick/Room/Room.h"
 #include"../../GameObject/Gimmick/Room/RoomManager.h"
 #include"../../GameObject/Gimmick/Checkpoint/CheckPointManager.h"
 #include"../../System/TimeManager/TimeManager.h"
 #include"../../System/GameResult/GameResult.h"
 #include"../../GameObject/Camera/CameraBase.h"
+#include"../../System/Mouse/CursorVisibility.h"
 
 namespace
 {
@@ -47,9 +49,6 @@ namespace
 
 GameScene::~GameScene()
 {
-	// 隠したままシーンを移動すると、タイトルなどでカーソルが見えなくなるので戻す
-	SetCursorVisible(true);
-
 	// 設定画面を開いたままシーンを移動しても、時間が止まったままにならないようにする
 	TimeManager::Instance().SetPause(false);
 }
@@ -185,6 +184,9 @@ void GameScene::LoadStage()
 	//  シーンが切り替わった直後は、暗転のまま読み込みが終わるのを待っているので、時間がかかっても見えない)
 	PreloadEnemyAssets();
 
+	// エフェクトをロードする
+	PreloadEffekseerAssets();
+
 	// 全てのオブジェクトを生成した後に関連付け (エディタのPlayと同じ)
 	ReferenceManager::Instance().AssociateObjects(m_objList);
 
@@ -216,9 +218,6 @@ void GameScene::LoadStage()
 	m_spPauseMenu->SetSetting(m_spSetting);
 
 	AddObject(m_spPauseMenu);
-
-	// ゲーム中はマウスカーソルを隠す
-	SetCursorVisible(false);
 }
 
 void GameScene::PreloadEnemyAssets()
@@ -257,6 +256,15 @@ void GameScene::PreloadEnemyAssets()
 	const float totalMs = std::chrono::duration<float, std::milli>(Clock::now() - totalStart).count();
 
 	KdDebugGUI::Instance().AddLog("Preload total : %.1f ms\n", totalMs);
+}
+
+void GameScene::PreloadEffekseerAssets()
+{
+	// ファイルパスからエフェクトをロード
+	for (const auto& fileName : EffekseerAssets::EffekseerPaths)
+	{
+		KdEffekseerManager::GetInstance().LoadEffekseer(fileName);
+	}
 }
 
 void GameScene::RestoreFromCheckPoint()
@@ -372,7 +380,7 @@ void GameScene::SetPaused(bool isPaused)
 	// 時間を止める / 動かす
 	TimeManager::Instance().SetPause(isPaused);
 
-	// 開いている間はカーソルを出す (カメラは毎フレームカーソルを画面中央へ戻すので、回転も止める)
+	// ポーズ中はカーソルを表示、ゲームに戻る時は消す
 	SetCursorVisible(isPaused);
 
 	SetCameraRotateLock(isPaused);
@@ -436,12 +444,20 @@ void GameScene::UpdateGameOver()
 		return;
 	}
 
-	// ボタンを選べるようになったら、カーソルを出してカメラの回転を止める (1回だけ)
+	// 次のシーンへ進むことを頼んだ後は、何もしない
+	// (シーンが切り替わるまでの間も、この関数は呼ばれる。
+	//  ここでカーソルを出し直すと、リトライで消したカーソルが残ってしまう)
+	if (m_isNextSceneRequested)
+	{
+		return;
+	}
+
+	// ボタンを選べるようになったら、カーソルを出してカメラの回転を止める
 	// (カメラは毎フレームカーソルを画面中央へ戻すので、止めないとボタンを押せない)
-	if (m_spGameOverUI->IsMenuOpen() && m_isCursorHidden)
+	// (SetCursorVisible は、毎フレーム呼んでも状態が変わらない)
+	if (m_spGameOverUI->IsMenuOpen())
 	{
 		SetCursorVisible(true);
-
 		SetCameraRotateLock(true);
 	}
 
@@ -457,8 +473,12 @@ void GameScene::UpdateGameOver()
 
 	if (choice == GameOverUI::Choice::Retry)
 	{
+		// リトライでゲームに戻るので、カーソルを消す
+		SetCursorVisible(false);
+
 		// 同じシーンでも、新しく作り直される (前の状態は ResetSystems() で消える)
 		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Game);
+		
 	}
 	else
 	{
@@ -530,17 +550,4 @@ void GameScene::SetCameraRotateLock(bool isLock)
 			camera->SetMouseRotateLock(isLock);
 		}
 	}
-}
-
-void GameScene::SetCursorVisible(bool isVisible)
-{
-	// 今の状態と同じなら何もしない (ShowCursorの回数がずれないようにする)
-	if (m_isCursorHidden == !isVisible)
-	{
-		return;
-	}
-
-	ShowCursor(isVisible);
-
-	m_isCursorHidden = !isVisible;
 }

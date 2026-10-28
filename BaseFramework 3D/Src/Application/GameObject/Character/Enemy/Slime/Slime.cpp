@@ -60,6 +60,8 @@ void Slime::Init()
 void Slime::Update()
 {
 
+
+
 	UpdateGravity();
 
 	m_stateMachine.Update();
@@ -134,7 +136,6 @@ void Slime::Split()
 
 	for(int i=0;i<spawnNum;i++)
 	{
-
 		std::shared_ptr<Slime>slime = std::make_shared<Slime>();
 		slime->SetSlimeSize(SlimeSize::Small);
 		slime->Init();

@@ -4,6 +4,7 @@
 #include"../../BGMManager/BGMManager.h"
 #include"../../GameObject/GameResultUI/ResultUI.h"
 #include"../../GameObject/Gimmick/Checkpoint/CheckPointManager.h"
+#include"../../System/Mouse/CursorVisibility.h"
 
 void ResultScene::Event()
 {
@@ -24,6 +25,9 @@ void ResultScene::Event()
 
 	if (choice == ResultUI::Choice::Retry)
 	{
+		// リトライでゲームに戻るので、カーソルを消す
+		SetCursorVisible(false);
+
 		// 同じシーンでも、新しく作り直される (前の状態は ResetSystems() で消える)
 		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Game);
 	}
@@ -35,6 +39,10 @@ void ResultScene::Event()
 
 void ResultScene::Init()
 {
+	// リザルトではマウスカーソルを表示する
+	// (ゲーム中は消えているので、ここで必ず見える状態にする)
+	SetCursorVisible(true);
+
 	// クリアしたので、チェックポイントの記録を消す (リザルトのリトライは、最初から始める)
 	CheckPointManager::Instance().Reset();
 

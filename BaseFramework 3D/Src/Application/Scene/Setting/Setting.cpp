@@ -91,7 +91,6 @@ void Setting::Init()
 	m_isHoverClose    = false;
 	m_dragSlider      = SliderType::None;
 	m_selectedItem    = MenuItem::Master;
-	m_keyAdjustSlider = SliderType::None;
 
 	// テクスチャの読み込み
 	InitTexture(m_spPanelTex,          "SettingsPanel.png");
@@ -111,21 +110,12 @@ void Setting::Update()
 	// 入力の状態
 	// 閉じている間も毎フレーム更新しておく (開いた瞬間に「押した瞬間」を正しく判定するため)
 	const bool  isMouseDown = IsKeyDown(VK_LBUTTON);
-	const bool  isUpKey     = IsKeyDown('W') || IsKeyDown(VK_UP);
-	const bool  isDownKey   = IsKeyDown('S') || IsKeyDown(VK_DOWN);
-	const bool  isEnterKey  = IsKeyDown(VK_RETURN);
 	const POINT mousePos    = Mouse::Instance().Get2DMousePos();
 
 	const bool isMouseTrigger = isMouseDown && !m_isPrevMouseDown;
-	const bool isUpTrigger    = isUpKey      && !m_isPrevUpKey;
-	const bool isDownTrigger  = isDownKey    && !m_isPrevDownKey;
-	const bool isEnterTrigger = isEnterKey   && !m_isPrevEnterKey;
 	const bool isMouseMoved   = mousePos.x != m_prevMousePos.x || mousePos.y != m_prevMousePos.y;
 
 	m_isPrevMouseDown = isMouseDown;
-	m_isPrevUpKey     = isUpKey;
-	m_isPrevDownKey   = isDownKey;
-	m_isPrevEnterKey  = isEnterKey;
 	m_prevMousePos    = mousePos;
 
 	if (!m_isOpen)
@@ -215,12 +205,6 @@ void Setting::Update()
 			SaveVolume();
 		}
 	}
-
-	// キー操作 (マウスでつかんでいる間は受け付けない)
-	if (m_dragSlider == SliderType::None)
-	{
-		UpdateKeyInput(isUpTrigger, isDownTrigger, isEnterTrigger);
-	}
 }
 
 void Setting::DrawSprite()
@@ -276,7 +260,6 @@ void Setting::Open()
 	m_isHoverClose    = false;
 	m_dragSlider      = SliderType::None;
 	m_selectedItem    = MenuItem::Master;
-	m_keyAdjustSlider = SliderType::None;
 
 	// SEを再生
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/System/Confirm.wav", false);
@@ -284,14 +267,6 @@ void Setting::Open()
 
 void Setting::Close()
 {
-	// キーで音量を変えている途中なら、閉じる前に保存する
-	if (m_keyAdjustSlider != SliderType::None)
-	{
-		m_keyAdjustSlider = SliderType::None;
-
-		SaveVolume();
-	}
-
 	m_isOpen       = false;
 	m_isJustOpened = false;
 	m_isHoverClose = false;
@@ -299,75 +274,6 @@ void Setting::Close()
 
 	// SEを再生
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/System/Confirm.wav", false);
-}
-
-bool Setting::UpdateKeyInput(bool isUpTrigger, bool isDownTrigger, bool isEnterTrigger)
-{
-	// 上下で項目を選ぶ (画面の上から ×、MASTER、BGM、SE の順。端から先は反対側に回る)
-	constexpr int ItemCount = 4;
-
-	int item = static_cast<int>(m_selectedItem);
-
-	if (isUpTrigger)
-	{
-		item = (item + ItemCount - 1) % ItemCount;
-	}
-
-	if (isDownTrigger)
-	{
-		item = (item + 1) % ItemCount;
-	}
-
-	Select(static_cast<MenuItem>(item));
-
-	// ×を選んでいる時は、Enterで閉じる
-	if (m_selectedItem == MenuItem::Close)
-	{
-		if (isEnterTrigger)
-		{
-			Close();
-			return true;
-		}
-
-		return false;
-	}
-
-	// 左右のキーで音量を変える (押している間、少しずつ変わる)
-	const bool isLeftKey  = IsKeyDown('A') || IsKeyDown(VK_LEFT);
-	const bool isRightKey = IsKeyDown('D') || IsKeyDown(VK_RIGHT);
-
-	float direction = 0.0f;
-
-	if (isRightKey)
-	{
-		direction += 1.0f;
-	}
-
-	if (isLeftKey)
-	{
-		direction -= 1.0f;
-	}
-
-	const SliderType slider = GetSelectedSlider();
-
-	if (direction != 0.0f)
-	{
-		// ヒットストップなどの影響を受けないように、実時間の経過を使う
-		const float deltaTime = TimeManager::Instance().GetUnscaleeDeltaTime();
-
-		const float value = GetSliderValue(slider) + direction * VolumeKeySpeed * deltaTime;
-
-		SetSliderValue(slider, std::clamp(value, 0.0f, 1.0f));
-
-		m_keyAdjustSlider = slider;
-	}
-	else
-	{
-		// キーを離した
-		FinishKeyAdjust();
-	}
-
-	return false;
 }
 
 void Setting::Select(MenuItem item)
@@ -380,29 +286,7 @@ void Setting::Select(MenuItem item)
 	// SEを再生
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/System/Select.wav", false);
 
-	// 音量を変えている途中で別の項目に移ったら、そこで調節を終える
-	FinishKeyAdjust();
-
 	m_selectedItem = item;
-}
-
-void Setting::FinishKeyAdjust()
-{
-	if (m_keyAdjustSlider == SliderType::None)
-	{
-		return;
-	}
-
-	// マスター・SEなら、確認用にSEを鳴らす (音量を耳で確かめられる)
-	if (m_keyAdjustSlider == SliderType::Master || m_keyAdjustSlider == SliderType::SE)
-	{
-		PlayPreviewSE();
-	}
-
-	m_keyAdjustSlider = SliderType::None;
-
-	// キーを離した時に保存する (毎フレームは保存しない)
-	SaveVolume();
 }
 
 Setting::SliderType Setting::GetSelectedSlider() const

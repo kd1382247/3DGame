@@ -18,7 +18,6 @@
 #include"../../GameObject/PointLight/PointLightManager.h"
 #include"../../System/StageLoder/StageLoder.h"
 
-
 namespace
 {
 	// PointLightのデータファイルのパス

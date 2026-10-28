@@ -118,9 +118,16 @@ void CharacterBase::SetRotation(const Math::Vector3& rotation)
 
 DirectX::BoundingSphere CharacterBase::GetBumpSphere() const
 {
+	return GetBumpSphereAt(GetPos());
+}
+
+DirectX::BoundingSphere CharacterBase::GetBumpSphereAt(const Math::Vector3& pos) const
+{
+	constexpr float BumpSphereOffsetY = 0.5f;
+
 	DirectX::BoundingSphere sphere;
 
-	sphere.Center = GetPos() + Math::Vector3(0, 0.5, 0);
+	sphere.Center = pos + Math::Vector3(0.0f, BumpSphereOffsetY, 0.0f);
 	sphere.Radius = m_bumpSphereRadius;
 
 	return sphere;

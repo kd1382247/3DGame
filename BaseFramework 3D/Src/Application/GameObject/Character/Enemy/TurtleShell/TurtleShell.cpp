@@ -171,23 +171,16 @@ void TurtleShell::OnHit(const AttackInfo attackInfo)
 
 	AttackInfo info = attackInfo;
 
-	// ダメージが0
-	if (info.m_damage <= 0.0f)
-	{
-		m_stateMachine.ChangeState<TurtleShellDizzyState>();
-		ApplyDamage(info);
-		return;
-	}
-
 	if (ApplyDamage(attackInfo))
 	{
 		m_stateMachine.ChangeState<TurtleShellDieState>();
 	}
-	else if (!IsAttack())
+	else
 	{
 		m_stateMachine.ChangeState<TurtleShellDamageState>();
 		RePlayAnimation(TurtleShellAnimationType::GetHit);
 	}
+	
 }
 
 

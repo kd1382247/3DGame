@@ -315,10 +315,10 @@ void BossBase::PlayHitEffect()
 
 
 	KdEffekseerManager::GetInstance().
-		Play("Common/Hit/Star_hit.efkefc",effectPos, 0.3f, 0.8f, false);
+		Play("Common/Hit/Slash_hit.efkefc", effectPos, 0.3f, 0.8f, false);
 
 	KdEffekseerManager::GetInstance().
-		Play("Common/Hit/Slash_hit.efkefc", effectPos, 0.3f, 0.6f, false);
+		Play("Common/Hit/Star_hit.efkefc", effectPos, 0.3f, 0.6f, false);
 
 	KdEffekseerManager::GetInstance().
 		Play("Common/Hit/Flash_hit.efkefc", effectPos, 0.4f, 0.6f, false);

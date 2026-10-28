@@ -63,6 +63,9 @@ private:
 	// ゲーム中に初めて敵が出てきた時に、モデルの読み込みで重くならないようにする
 	void PreloadEnemyAssets();
 
+	// エフェクトをロード
+	void PreloadEffekseerAssets();
+
 	// チェックポイントを通っていたら、その時点の状態に合わせる
 	// (ゲームオーバーのリトライで作り直されたとき、チェックポイントから再開する)
 	// ・プレイヤーを、チェックポイントの位置へ移す
@@ -95,10 +98,6 @@ private:
 	// カメラのマウス回転を止める / 再開する
 	void SetCameraRotateLock(bool isLock);
 
-	// マウスカーソルの表示 / 非表示
-	// (ShowCursorは呼んだ回数だけ増減するので、今の状態を覚えておいて回数を合わせる)
-	void SetCursorVisible(bool isVisible);
-
 	// 今のゲームの状態
 	GameState m_gameState = GameState::Playing;
 
@@ -118,9 +117,6 @@ private:
 	// 先読みした敵のモデルデータ
 	// (持っている間は、読み込み済みのデータが解放されない。シーンが終わると一緒に解放される)
 	std::vector<std::shared_ptr<KdModelData>> m_preloadedModels;
-
-	// マウスカーソルを隠しているか
-	bool m_isCursorHidden = false;
 
 	// ポーズメニューを開いて、ゲームを止めているか
 	bool m_isPaused = false;

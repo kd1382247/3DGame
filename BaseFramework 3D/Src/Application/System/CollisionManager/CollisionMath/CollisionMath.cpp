@@ -635,3 +635,44 @@ bool CollisionMath::SphereSweepVsCylinder(const Math::Vector3& start, const Math
 
 	return true;
 }
+
+
+// 2つのAABBが重なっているか
+bool CollisionMath::AABBVsAABB(const Math::Vector3& minA, const Math::Vector3& maxA,const Math::Vector3& minB, const Math::Vector3& maxB)
+{
+	return minA.x <= maxB.x && maxA.x >= minB.x
+		&& minA.y <= maxB.y && maxA.y >= minB.y
+		&& minA.z <= maxB.z && maxA.z >= minB.z;
+}
+
+void CollisionMath::PreserveHorizontalSpeedOnSlope(const Math::Vector3& preProjectMove, const Math::Vector3& normal, Math::Vector3& move)
+{
+
+	// 法線のY成分が無いと平面の方程式が解けないため補正しない
+	// (歩行可能面はIsWalkableSurfaceで角度チェック済みのため通常は発生しない)
+	if (std::abs(normal.y) <= 0.000001f)
+	{
+		return;
+	}
+
+	const float dx = preProjectMove.x;
+	const float dz = preProjectMove.z;
+
+	// 元々水平方向の移動が無かった(重力のみ等)場合は補正しない
+	if (dx * dx + dz * dz <= 0.000001f)
+	{
+		return;
+	}
+
+	// 坂の平面上の移動ベクトルは法線と直交する
+	// (normal.x*dx + normal.y*dy + normal.z*dz = 0)ので、
+	// 元の水平移動量(dx, dz)をそのまま保ったまま
+	// 坂の平面に乗るために必要な高さdyを直接求める
+	const float slopeY = -(normal.x * dx + normal.z * dz) / normal.y;
+
+	move.x = dx;
+	move.y = slopeY;
+	move.z = dz;
+
+}
+

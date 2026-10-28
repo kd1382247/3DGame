@@ -18,12 +18,30 @@
 
 #include"../../FlyText/FlyTextManager.h"
 
+#include"../../Gimmick/Room/RoomManager.h"
+#include"../../Gimmick/Room/Room.h"
+
 void EnemyBase::Init()
 {
 	// カテゴリーをセット
 	SetObjectCategory(ObjectCategory::Character);
 
 	m_bumpPushRate = 1.0f;
+}
+
+void EnemyBase::PreUpdate()
+{
+	CharacterBase::PreUpdate();
+
+	auto room = RoomManager::Instance().GetCurrentRoom();
+	if (room)
+	{
+		// クリアした部屋に敵が生きている場合再度確認
+		if (room->IsOutro()||room->IsBossDefeat())
+		{
+			room->KillAllEnemies();
+		}
+	}
 }
 
 void EnemyBase::Update()
@@ -134,15 +152,15 @@ void EnemyBase::PlayHitEffect()
 	// ボスから見てプレイヤーの方向に、エフェクトの位置を持っていく
 	Math::Vector3 effectPos = GetPos() + bossDir * m_effectDist + Math::Vector3(0.0f, 0.8f, 0.0f);
 
+	KdEffekseerManager::GetInstance().
+		Play("Common/Hit/Slash_hit.efkefc", effectPos, 0.3f, 0.8f, false);
 
 	KdEffekseerManager::GetInstance().
-		Play("Common/Hit/Star_hit.efkefc", effectPos, 0.3f, 0.8f, false);
-
-	KdEffekseerManager::GetInstance().
-		Play("Common/Hit/Slash_hit.efkefc", effectPos, 0.3f, 0.6f, false);
+		Play("Common/Hit/Star_hit.efkefc", effectPos, 0.3f, 0.6f, false);
 
 	KdEffekseerManager::GetInstance().
 		Play("Common/Hit/Flash_hit.efkefc", effectPos, 0.4f, 0.6f, false);
+
 }
 
 void EnemyBase::UpdateDirectChase()

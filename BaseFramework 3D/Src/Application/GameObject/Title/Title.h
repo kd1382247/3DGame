@@ -27,7 +27,8 @@ private:
 	enum class ButtonType
 	{
 		Start,
-		Setting
+		Setting,
+		None
 	};
 
 	// ボタンの操作 (キー・マウス)
@@ -63,9 +64,6 @@ private:
 
 	// 前フレームの入力 (「押した瞬間」「マウスが動いた」を取るため)
 	bool  m_isPrevMouseDown = false;
-	bool  m_isPrevLeftKey   = false;
-	bool  m_isPrevRightKey  = false;
-	bool  m_isPrevEnterKey  = false;
 	POINT m_prevMousePos    = {};
 
 	const Math::Vector2 ButtonTexSize = { 410.0f,70.0f };

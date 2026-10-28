@@ -63,6 +63,8 @@ public:
 		m_wpCamera = camera;
 	}
 
+	void LoadEffekseer(const std::string& fileName);
+
 private:
 
 	const Effekseer::Vector3D GetEfkVec3D(const Math::Vector3& vec) const

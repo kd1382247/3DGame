@@ -71,6 +71,8 @@ public:
 	// 戦闘前の演出中なのか(ミッションの文字・ボスの登場演出。プレイヤーが操作できない)
 	bool IsIntro()const { return m_roomState == RoomState::Intro; }
 
+	bool IsOutro()const { return m_roomState == RoomState::Outro; }
+
 	// ボスのイントロ中なのか
 	bool IsBossIntro()const { return m_roomState == RoomState::Intro && m_roomType == RoomType::Boss; }
 
@@ -125,6 +127,9 @@ public:
 	}
 
 
+	// 部屋の箱の中にいる敵を、全員倒す(ボスは含まない)
+	void KillAllEnemies();
+
 private:
 
 	// ボスに登場演出の開始を伝える
@@ -149,9 +154,6 @@ private:
 
 	// 部屋の箱の中にいる、生きている敵の数を数える
 	int CountAliveEnemies()const;
-
-	// 部屋の箱の中にいる敵を、全員倒す(ボスは含まない)
-	void KillAllEnemies();
 
 	std::weak_ptr<Player>m_wpPlayer;
 	std::weak_ptr<CameraBase>m_wpCamera;

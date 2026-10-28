@@ -36,6 +36,7 @@ public:
 
 	// スフィア情報
 	DirectX::BoundingSphere GetBumpSphere()const;
+	DirectX::BoundingSphere GetBumpSphereAt(const Math::Vector3& pos)const;
 
 	// 当たり判定(押し戻し)球の半径
 	float GetBumpSphereRadius()const { return m_bumpSphereRadius; }

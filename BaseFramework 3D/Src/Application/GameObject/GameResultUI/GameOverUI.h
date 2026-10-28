@@ -44,7 +44,7 @@ private:
 	Choice GetHoverButton(const POINT& mousePos)const;
 
 	// 画像を描く (x,y は画像の中心。scale は大きさの倍率)
-	void DrawImage(std::shared_ptr<KdTexture> tex, int x, int y, float scale, float alpha, float brightness);
+	void DrawImage(std::shared_ptr<KdTexture> tex, int x, int y, float scale, float alpha);
 
 	// ボタンを描く
 	void DrawButton(Choice choice, std::shared_ptr<KdTexture> tex, float alpha);
@@ -60,9 +60,6 @@ private:
 	Choice m_choice   = Choice::None;
 
 	// 前フレームの入力 (「押した瞬間」「マウスが動いた」を取るため)
-	bool  m_isPrevLeftKey   = false;
-	bool  m_isPrevRightKey  = false;
-	bool  m_isPrevEnterKey  = false;
 	bool  m_isPrevMouseDown = false;
 	POINT m_prevMousePos    = {};
 

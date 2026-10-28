@@ -7,7 +7,6 @@
 // 音量の値そのものは KdAudioManager が持っているので、シーンが変わっても保持される
 // Open() で開き、閉じるボタンか Close() で閉じる。開いている間だけ更新・描画される
 // 操作 : マウス(スライダーをドラッグ・×をクリック)
-//        W,S,↑,↓ で項目(MASTER / BGM / SE / ×)を選ぶ・A,D,←,→ で音量を変える・×を選んでEnterで閉じる
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 class Setting : public KdGameObject
 {
@@ -52,15 +51,8 @@ private:
 		SE
 	};
 
-	// キー操作 (上下で項目を選ぶ / 左右で音量を変える / ×を選んでEnterで閉じる)
-	// 戻り値: 設定画面を閉じたらtrue
-	bool UpdateKeyInput(bool isUpTrigger, bool isDownTrigger, bool isEnterTrigger);
-
 	// 項目を選ぶ
 	void Select(MenuItem item);
-
-	// キーでの音量調節を終える (マスター・SEなら確認用のSEを鳴らし、音量を保存する)
-	void FinishKeyAdjust();
 
 	// 選ばれている項目のスライダー (×を選んでいる時は SliderType::None)
 	SliderType GetSelectedSlider()const;
@@ -99,13 +91,7 @@ private:
 	// 今選ばれている項目
 	MenuItem m_selectedItem = MenuItem::Master;
 
-	// キーで音量を変えている途中のスライダー
-	SliderType m_keyAdjustSlider = SliderType::None;
-
 	// 前フレームの入力 (「押した瞬間」「マウスが動いた」を取るため)
-	bool  m_isPrevUpKey    = false;
-	bool  m_isPrevDownKey  = false;
-	bool  m_isPrevEnterKey = false;
 	POINT m_prevMousePos   = {};
 
 	// ドラッグ中のスライダー

@@ -422,6 +422,7 @@
     <ClInclude Include="Src\Application\GameObject\Effect\EffectManager.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Stun\StunEffect.h" />
+    <ClInclude Include="Src\Application\GameObject\EffekseerAssets\EffekseerAssets.h" />
     <ClInclude Include="Src\Application\GameObject\EnemyCounter\EnemyCounter.h" />
     <ClInclude Include="Src\Application\GameObject\EnergyBullet\EnergyBullet.h" />
     <ClInclude Include="Src\Application\GameObject\EnergyBullet\EnergyBulletManager.h" />
@@ -468,12 +469,17 @@
     <ClInclude Include="Src\Application\Scene\Setting\PauseMenu.h" />
     <ClInclude Include="Src\Application\Scene\Setting\Setting.h" />
     <ClInclude Include="Src\Application\Scene\TitleScene\TitleScene.h" />
+    <ClInclude Include="Src\Application\System\CollisionManager\CharacterMover\CharacterMover.h" />
+    <ClInclude Include="Src\Application\System\CollisionManager\CharacterPusher\CharacterPusher.h" />
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionLayer\CollisionLayer.h" />
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionManager.h" />
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionMath\CollisionMath.h" />
+    <ClInclude Include="Src\Application\System\CollisionManager\CollisionProfiler\CollisionProfiler.h" />
     <ClInclude Include="Src\Application\System\CollisionManager\CollisionRegistry\CollisionRegistry.h" />
+    <ClInclude Include="Src\Application\System\CollisionManager\IObstacle\IObstacle.h" />
     <ClInclude Include="Src\Application\System\CombatCollisionManager\CombatCollisionManager.h" />
     <ClInclude Include="Src\Application\System\GameObjectFinder\GameObjectFinder.h" />
+    <ClInclude Include="Src\Application\System\Mouse\CursorVisibility.h" />
     <ClInclude Include="Src\Application\System\Mouse\Mouse.h" />
     <ClInclude Include="Src\Application\System\ReferenceManager\ReferenceManager.h" />
     <ClInclude Include="Src\Application\System\StageDataManager\StageDataManager.h" />
@@ -699,8 +705,11 @@
     <ClCompile Include="Src\Application\Scene\Setting\PauseMenu.cpp" />
     <ClCompile Include="Src\Application\Scene\Setting\Setting.cpp" />
     <ClCompile Include="Src\Application\Scene\TitleScene\TitleScene.cpp" />
+    <ClCompile Include="Src\Application\System\CollisionManager\CharacterMover\CharacterMover.cpp" />
+    <ClCompile Include="Src\Application\System\CollisionManager\CharacterPusher\CharacterPusher.cpp" />
     <ClCompile Include="Src\Application\System\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="Src\Application\System\CollisionManager\CollisionMath\CollisionMath.cpp" />
+    <ClCompile Include="Src\Application\System\CollisionManager\CollisionProfiler\CollisionProfiler.cpp" />
     <ClCompile Include="Src\Application\System\CollisionManager\CollisionRegistry\CollisionRegistry.cpp" />
     <ClCompile Include="Src\Application\System\CombatCollisionManager\CombatCollisionManager.cpp" />
     <ClCompile Include="Src\Application\System\GameObjectFinder\GameObjectFinder.cpp" />

@@ -445,28 +445,49 @@
             "Waves": [
                 {
                     "Enemies": [
-                        "Cactas",
-                        "Mushroom"
+                        "Slime"
                     ],
-                    "SpawnCount": 6,
+                    "SpawnCount": 5,
                     "SpawnInterval": 0.05000000074505806,
                     "StartDelay": 1.0
                 },
                 {
                     "Enemies": [
-                        "Slime",
-                        "StarFish"
+                        "Mushroom"
                     ],
-                    "SpawnCount": 6,
+                    "SpawnCount": 5,
                     "SpawnInterval": 0.20000000298023224,
                     "StartDelay": 2.0
                 },
                 {
                     "Enemies": [
-                        "Bomb",
+                        "Slime"
+                    ],
+                    "SpawnCount": 5,
+                    "SpawnInterval": 0.20000000298023224,
+                    "StartDelay": 2.0
+                },
+                {
+                    "Enemies": [
+                        "Bomb"
+                    ],
+                    "SpawnCount": 5,
+                    "SpawnInterval": 0.20000000298023224,
+                    "StartDelay": 2.0
+                },
+                {
+                    "Enemies": [
+                        "StarFish"
+                    ],
+                    "SpawnCount": 5,
+                    "SpawnInterval": 0.20000000298023224,
+                    "StartDelay": 2.0
+                },
+                {
+                    "Enemies": [
                         "TurtleShell"
                     ],
-                    "SpawnCount": 6,
+                    "SpawnCount": 5,
                     "SpawnInterval": 0.20000000298023224,
                     "StartDelay": 2.0
                 }
@@ -537,7 +558,7 @@
                     "StarFish"
                 ],
                 "SpawnHeight": 2.0,
-                "SpawnInterval": 3.0,
+                "SpawnInterval": 2.0,
                 "SpawnLaunchPower": 0.20000000298023224,
                 "SpawnLaunchSpeed": 0.03999999910593033,
                 "SpawnStartFrame": 40.0,
@@ -581,7 +602,7 @@
                     "StarFish"
                 ],
                 "SpawnHeight": 2.0,
-                "SpawnInterval": 3.5,
+                "SpawnInterval": 2.0,
                 "SpawnLaunchPower": 0.20000000298023224,
                 "SpawnLaunchSpeed": 0.03999999910593033,
                 "SpawnStartFrame": 40.0,
@@ -625,7 +646,7 @@
                     "TurtleShell"
                 ],
                 "SpawnHeight": 2.0,
-                "SpawnInterval": 2.5,
+                "SpawnInterval": 2.0,
                 "SpawnLaunchPower": 0.20000000298023224,
                 "SpawnLaunchSpeed": 0.03999999910593033,
                 "SpawnStartFrame": 40.0,
@@ -994,7 +1015,7 @@
             "Position": {
                 "x": 7.0,
                 "y": 9.5,
-                "z": 137.0
+                "z": 145.0
             },
             "Rotation": {
                 "x": 0.0,

@@ -27,9 +27,6 @@ namespace
 	// 選ばれているボタンの大きさの倍率
 	constexpr float ButtonSelectScale = 1.1f;
 
-	// 選ばれていないボタンの明るさ
-	constexpr float ButtonDimBrightness = 0.6f;
-
 	// 効果音のファイル名
 	const std::string MoveSE   = "Asset/Data/Sound/SE/System/Select.wav";	// 選んでいる項目が変わった時
 	const std::string DecideSE = "Asset/Data/Sound/SE/System/Confirm.wav";	// 決定した時
@@ -71,21 +68,12 @@ void PauseMenu::Update()
 {
 	// 入力の状態
 	// 閉じている間も毎フレーム更新しておく (開いた瞬間に「押した瞬間」を正しく判定するため)
-	const bool  isUpKey     = IsKeyDown('W') || IsKeyDown(VK_UP);
-	const bool  isDownKey   = IsKeyDown('S') || IsKeyDown(VK_DOWN);
-	const bool  isEnterKey  = IsKeyDown(VK_RETURN);
 	const bool  isMouseDown = IsKeyDown(VK_LBUTTON);
 	const POINT mousePos    = Mouse::Instance().Get2DMousePos();
 
-	const bool isUpTrigger    = isUpKey     && !m_isPrevUpKey;
-	const bool isDownTrigger  = isDownKey   && !m_isPrevDownKey;
-	const bool isEnterTrigger = isEnterKey  && !m_isPrevEnterKey;
 	const bool isMouseTrigger = isMouseDown && !m_isPrevMouseDown;
 	const bool isMouseMoved   = mousePos.x != m_prevMousePos.x || mousePos.y != m_prevMousePos.y;
 
-	m_isPrevUpKey     = isUpKey;
-	m_isPrevDownKey   = isDownKey;
-	m_isPrevEnterKey  = isEnterKey;
 	m_isPrevMouseDown = isMouseDown;
 	m_prevMousePos    = mousePos;
 
@@ -116,7 +104,7 @@ void PauseMenu::Update()
 
 	if (m_page == Page::Menu)
 	{
-		UpdateMenu(isUpTrigger, isDownTrigger, isEnterTrigger, isMouseTrigger, isMouseMoved, mousePos);
+		UpdateMenu(isMouseTrigger, isMouseMoved, mousePos);
 	}
 }
 
@@ -187,37 +175,28 @@ void PauseMenu::Back()
 	}
 }
 
-void PauseMenu::UpdateMenu(bool isUpTrigger, bool isDownTrigger, bool isEnterTrigger, bool isMouseTrigger, bool isMouseMoved, const POINT& mousePos)
+void PauseMenu::UpdateMenu(bool isMouseTrigger, bool isMouseMoved, const POINT& mousePos)
 {
-	// W,S,↑,↓ で選ぶ (押した瞬間だけ。端で止まる)
-	const int selectedIndex = static_cast<int>(m_selected);
-
-	if (isUpTrigger)
-	{
-		Select(static_cast<Item>(std::max(selectedIndex - 1, 0)));
-	}
-
-	if (isDownTrigger)
-	{
-		Select(static_cast<Item>(std::min(selectedIndex + 1, ItemCount - 1)));
-	}
 
 	// マウスは、動いた時だけ、乗っているボタンを選ぶ
 	// (止まっている間も選ぶと、キーで選んだ項目をすぐ上書きしてしまう)
 	Item hoverItem = Item::Controls;
 	const bool isHover = GetHoverItem(mousePos, hoverItem);
 
+	if (!isHover)
+	{
+		m_selected = Item::None;
+		return;
+	}
+
 	if (isMouseMoved && isHover)
 	{
 		Select(hoverItem);
 	}
 
-	// 決定 (Enter か、ボタンの上でクリック)
-	if (isEnterTrigger)
-	{
-		Decide(m_selected);
-	}
-	else if (isMouseTrigger && isHover)
+	// ボタンの上でクリック
+
+	if (isMouseTrigger && isHover)
 	{
 		Decide(hoverItem);
 	}
@@ -303,16 +282,14 @@ void PauseMenu::DrawButton(Item item, const std::shared_ptr<KdTexture>& tex)
 	const bool isSelected = (item == m_selected);
 
 	const float scale      = isSelected ? ButtonSelectScale : 1.0f;
-	const float brightness = isSelected ? 1.0f : ButtonDimBrightness;
 
 	const int texW = static_cast<int>(tex->GetWidth());
 	const int texH = static_cast<int>(tex->GetHeight());
 
 	const Math::Rectangle srcRect = { 0, 0, texW, texH };
-	const Math::Color     color   = { brightness, brightness, brightness, 1.0f };
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(
 		tex, 0, GetButtonY(static_cast<int>(item)),
 		static_cast<int>(texW * scale), static_cast<int>(texH * scale),
-		&srcRect, &color);
+		&srcRect);
 }

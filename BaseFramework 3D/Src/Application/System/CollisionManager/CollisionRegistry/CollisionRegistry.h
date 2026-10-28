@@ -20,8 +20,6 @@ public:
 
 	void Clear();
 
-
-
 private:
 
 	// レイヤーのサイズを取得

@@ -3,7 +3,9 @@
 #include"OBBCollisionManager.h"
 
 #include"../../../../Editor/EditorManager.h"
+
 #include"../../../../System/CollisionManager/CollisionManager.h"
+#include"../../../../System/CollisionManager/CollisionMath/CollisionMath.h"
 
 void OBBCollision::Init()
 {
@@ -36,6 +38,44 @@ void OBBCollision::DrawDebug()
 
 	KdGameObject::DrawDebug();
 
+}
+
+void OBBCollision::GetWorldBounds(Math::Vector3& outMin, Math::Vector3& outMax) const
+{
+	DirectX::BoundingOrientedBox box = GetBox();
+
+	static constexpr int CornerNum = 8;
+
+	DirectX::XMFLOAT3 corners[CornerNum];
+
+	// 8つの角をとる
+	box.GetCorners( &corners[0]);
+
+	// 要素0で初期化
+	Math::Vector3 cornerMin = corners[0];
+	Math::Vector3 cornerMax = corners[0];
+
+
+	for (int i = 0; i < CornerNum; i++)
+	{
+		Math::Vector3 corner = corners[i];
+
+		cornerMin = Math::Vector3::Min(cornerMin, corner);
+		cornerMax = Math::Vector3::Max(cornerMax, corner);
+	}
+
+	outMin = cornerMin;
+	outMax = cornerMax;
+}
+
+bool OBBCollision::OverlapSphere(const DirectX::BoundingSphere & sphere, Math::Vector3 & outPush, Math::Vector3 & outNormal) const
+{
+	return CollisionMath::SphereVsOBB(sphere,GetBox(),outPush,outNormal);
+}
+
+bool OBBCollision::SweepSphere(const Math::Vector3& start, const Math::Vector3& move, float radius, float& outToi, Math::Vector3& outNormal) const
+{
+	return CollisionMath::SphereSweepVsOBB(start,move,radius,GetBox(),outToi,outNormal);
 }
 
 void OBBCollision::SetCollisionType(const std::string& typeName)

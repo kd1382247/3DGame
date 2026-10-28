@@ -127,7 +127,7 @@ void GameOverUI::DrawSprite()
 	{
 		const float scale = TextStartScale + (1.0f - TextStartScale) * textRate;
 
-		DrawImage(m_spTextTex, 0, TextY, scale, textRate, 1.0f);
+		DrawImage(m_spTextTex, 0, TextY, scale, textRate);
 	}
 
 	// ボタン
@@ -145,9 +145,6 @@ void GameOverUI::OpenMenu()
 	m_isMenuOpen = true;
 
 	// 開いた時に押されていたキーやボタンで、いきなり決定されないようにする
-	m_isPrevLeftKey   = IsKeyDown('A') || IsKeyDown(VK_LEFT);
-	m_isPrevRightKey  = IsKeyDown('D') || IsKeyDown(VK_RIGHT);
-	m_isPrevEnterKey  = IsKeyDown(VK_RETURN);
 	m_isPrevMouseDown = IsKeyDown(VK_LBUTTON);
 	m_prevMousePos    = Mouse::Instance().Get2DMousePos();
 }
@@ -163,20 +160,14 @@ void GameOverUI::UpdateMenu()
 	// 決定した後は、入力を受け付けない
 	if (m_choice == Choice::None)
 	{
-		// 左右のキーで選ぶ (押した瞬間だけ)
-		if (isLeftKey && !m_isPrevLeftKey)
-		{
-			Select(Choice::Retry);
-		}
-
-		if (isRightKey && !m_isPrevRightKey)
-		{
-			Select(Choice::Title);
-		}
-
 		// マウスは、動いた時だけ、乗っているボタンを選ぶ
 		// (止まっている間も選ぶと、キーで選んだ項目をすぐ上書きしてしまう)
 		const Choice hover = GetHoverButton(mousePos);
+
+		if (hover == Choice::None)
+		{
+			m_selected = Choice::None;
+		}
 
 		const bool isMouseMoved = mousePos.x != m_prevMousePos.x || mousePos.y != m_prevMousePos.y;
 
@@ -185,20 +176,13 @@ void GameOverUI::UpdateMenu()
 			Select(hover);
 		}
 
-		// 決定 (Enter か、ボタンの上でクリック)
-		if (isEnterKey && !m_isPrevEnterKey)
-		{
-			Decide(m_selected);
-		}
-		else if (isMouseDown && !m_isPrevMouseDown && hover != Choice::None)
+		// ボタンの上でクリック)
+		if (isMouseDown && !m_isPrevMouseDown && hover != Choice::None)
 		{
 			Decide(hover);
 		}
 	}
 
-	m_isPrevLeftKey   = isLeftKey;
-	m_isPrevRightKey  = isRightKey;
-	m_isPrevEnterKey  = isEnterKey;
 	m_isPrevMouseDown = isMouseDown;
 	m_prevMousePos    = mousePos;
 }
@@ -244,7 +228,7 @@ GameOverUI::Choice GameOverUI::GetHoverButton(const POINT& mousePos) const
 	return Choice::None;
 }
 
-void GameOverUI::DrawImage(std::shared_ptr<KdTexture> tex, int x, int y, float scale, float alpha, float brightness)
+void GameOverUI::DrawImage(std::shared_ptr<KdTexture> tex, int x, int y, float scale, float alpha)
 {
 	if (!tex)
 	{
@@ -255,7 +239,7 @@ void GameOverUI::DrawImage(std::shared_ptr<KdTexture> tex, int x, int y, float s
 	const int texH = static_cast<int>(tex->GetHeight());
 
 	const Math::Rectangle srcRect = { 0, 0, texW, texH };
-	const Math::Color     color   = { brightness, brightness, brightness, alpha };
+	const Math::Color     color   = { 1,1,1, alpha };
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(
 		tex, x, y,
@@ -269,7 +253,6 @@ void GameOverUI::DrawButton(Choice choice, std::shared_ptr<KdTexture> tex, float
 	const bool isSelected = (choice == m_selected);
 
 	const float scale      = isSelected ? ButtonSelectScale : 1.0f;
-	const float brightness = isSelected ? 1.0f : ButtonDimBrightness;
 
-	DrawImage(tex, GetButtonX(choice), ButtonY, scale, alpha, brightness);
+	DrawImage(tex, GetButtonX(choice), ButtonY, scale, alpha);
 }

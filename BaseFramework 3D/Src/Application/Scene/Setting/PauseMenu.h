@@ -55,11 +55,12 @@ private:
 	{
 		Controls,
 		Setting,
-		Title
+		Title,
+		None
 	};
 
 	// メニューの入力処理
-	void UpdateMenu(bool isUpTrigger, bool isDownTrigger, bool isEnterTrigger, bool isMouseTrigger, bool isMouseMoved, const POINT& mousePos);
+	void UpdateMenu(bool isMouseTrigger, bool isMouseMoved, const POINT& mousePos);
 
 	// 項目を選ぶ / 決定する
 	void Select(Item item);
@@ -87,9 +88,6 @@ private:
 	bool m_isIgnoreInput = false;
 
 	// 前フレームの入力 (「押した瞬間」「マウスが動いた」を取るため。閉じている間も毎フレーム更新する)
-	bool  m_isPrevUpKey     = false;
-	bool  m_isPrevDownKey   = false;
-	bool  m_isPrevEnterKey  = false;
 	bool  m_isPrevMouseDown = false;
 	POINT m_prevMousePos    = {};
 

@@ -454,6 +454,21 @@
     <Filter Include="Src\Application\GameObject\Character\Boss\Mage\MageBolt">
       <UniqueIdentifier>{b847991f-18d0-4fde-908c-8dabd22fc740}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\EffekseerAssets">
+      <UniqueIdentifier>{264b5aa1-c261-4d5e-be08-0dafe70628cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\CollisionManager\CollisionProfiler">
+      <UniqueIdentifier>{f2c8401a-1569-43b5-8722-d6cd596d91d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\CollisionManager\CharacterMover">
+      <UniqueIdentifier>{b0603df5-4204-41b7-8367-7db319d9d7b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\CollisionManager\CharacterPusher">
+      <UniqueIdentifier>{d7df13fd-7fde-4f55-9e5e-9c698a84a6dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\CollisionManager\IObstacle">
+      <UniqueIdentifier>{0b187aa7-6660-4ee4-9486-0ebdb75d5f44}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1236,6 +1251,24 @@
     <ClInclude Include="Src\Application\Scene\Setting\PauseMenu.h">
       <Filter>Src\Application\Scene\Setting</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\EffekseerAssets\EffekseerAssets.h">
+      <Filter>Src\Application\GameObject\EffekseerAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\CollisionManager\CollisionProfiler\CollisionProfiler.h">
+      <Filter>Src\Application\System\CollisionManager\CollisionProfiler</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\CollisionManager\CharacterMover\CharacterMover.h">
+      <Filter>Src\Application\System\CollisionManager\CharacterMover</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\CollisionManager\CharacterPusher\CharacterPusher.h">
+      <Filter>Src\Application\System\CollisionManager\CharacterPusher</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\CollisionManager\IObstacle\IObstacle.h">
+      <Filter>Src\Application\System\CollisionManager\IObstacle</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\Mouse\CursorVisibility.h">
+      <Filter>Src\Application\System\Mouse</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1912,6 +1945,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Scene\Setting\PauseMenu.cpp">
       <Filter>Src\Application\Scene\Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\CollisionManager\CollisionProfiler\CollisionProfiler.cpp">
+      <Filter>Src\Application\System\CollisionManager\CollisionProfiler</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\CollisionManager\CharacterMover\CharacterMover.cpp">
+      <Filter>Src\Application\System\CollisionManager\CharacterMover</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\CollisionManager\CharacterPusher\CharacterPusher.cpp">
+      <Filter>Src\Application\System\CollisionManager\CharacterPusher</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

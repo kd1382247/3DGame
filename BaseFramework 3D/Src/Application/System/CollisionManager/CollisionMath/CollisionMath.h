@@ -60,5 +60,18 @@ namespace CollisionMath
 		Math::Vector3& outNormal);
 
 
+	bool AABBVsAABB(
+		const Math::Vector3& minA, const Math::Vector3& maxA,
+		const Math::Vector3& minB, const Math::Vector3& maxB);
+
+
+	// 歩行可能面(坂)では、水平方向(X,Z)の移動量は入力のまま保ち、
+	// 坂の平面の方程式から必要な高さ(Y)だけを再計算することで、
+	// 斜め移動時も方向を歪ませずに水平速度を保つ
+	void PreserveHorizontalSpeedOnSlope(
+		const Math::Vector3& preProjectMove,
+		const Math::Vector3& normal,
+		Math::Vector3& move);
+
 
 }

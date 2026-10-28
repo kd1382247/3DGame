@@ -3,6 +3,7 @@
 #include "../../Scene/SceneManager.h"
 
 #include"../../System/Mouse/Mouse.h"
+#include"../../System/Mouse/CursorVisibility.h"
 
 #include"../../Scene/Setting/Setting.h"
 
@@ -19,6 +20,10 @@ namespace
 
 void Title::Init()
 {
+	// タイトルではマウスカーソルを表示する
+	// (ゲーム・ゲームオーバー・リザルトのどこから戻ってきても、必ず見える状態にする)
+	SetCursorVisible(true);
+
 	// 各テクスチャを初期化
 	InitTexture(m_spTitleBGTex,       "TitleBG.png");
 	InitTexture(m_spTitleLogoTex,     "TitleLogo2.png");
@@ -28,12 +33,7 @@ void Title::Init()
 
 	// 前のシーンで押していたキーで、いきなり決定されないようにする
 	m_isPrevMouseDown = IsKeyDown(VK_LBUTTON);
-	m_isPrevLeftKey   = IsKeyDown('A') || IsKeyDown(VK_LEFT);
-	m_isPrevRightKey  = IsKeyDown('D') || IsKeyDown(VK_RIGHT);
-	m_isPrevEnterKey  = IsKeyDown(VK_RETURN);
 	m_prevMousePos    = Mouse::Instance().Get2DMousePos();
-
-
 }
 
 void Title::Update()
@@ -134,21 +134,12 @@ void Title::UpdateButtonInput()
 {
 	// 入力の状態 (「押した瞬間」を取るため、毎フレーム更新する)
 	const bool  isMouseDown = IsKeyDown(VK_LBUTTON);
-	const bool  isLeftKey   = IsKeyDown('W') || IsKeyDown(VK_UP);
-	const bool  isRightKey  = IsKeyDown('S') || IsKeyDown(VK_DOWN);
-	const bool  isEnterKey  = IsKeyDown(VK_RETURN);
 	const POINT mousePos    = Mouse::Instance().Get2DMousePos();
 
 	const bool isMouseTrigger = isMouseDown && !m_isPrevMouseDown;
-	const bool isLeftTrigger  = isLeftKey    && !m_isPrevLeftKey;
-	const bool isRightTrigger = isRightKey   && !m_isPrevRightKey;
-	const bool isEnterTrigger = isEnterKey   && !m_isPrevEnterKey;
 	const bool isMouseMoved   = mousePos.x != m_prevMousePos.x || mousePos.y != m_prevMousePos.y;
 
 	m_isPrevMouseDown = isMouseDown;
-	m_isPrevLeftKey   = isLeftKey;
-	m_isPrevRightKey  = isRightKey;
-	m_isPrevEnterKey  = isEnterKey;
 	m_prevMousePos    = mousePos;
 
 	// 設定画面が開いている間は、タイトルのボタンを操作できないようにする
@@ -158,19 +149,15 @@ void Title::UpdateButtonInput()
 		return;
 	}
 
-	// 左右のキーで選ぶ (押した瞬間だけ。左: スタート / 右: セッティング)
-	if (isLeftTrigger)
-	{
-		Select(ButtonType::Start);
-	}
 
-	if (isRightTrigger)
-	{
-		Select(ButtonType::Setting);
-	}
-
-	const bool isHoverStart   = IsHoverButton(mousePos, m_startButtonPos);
+	const bool isHoverStart = IsHoverButton(mousePos, m_startButtonPos);
 	const bool isHoverSetting = IsHoverButton(mousePos, m_settingButtonPos);
+
+	if (!isHoverStart && !isHoverSetting)
+	{
+		m_selectedButton = ButtonType::None;
+		return;
+	}
 
 	// マウスは、動いた時だけ、乗っているボタンを選ぶ
 	// (止まっている間も選ぶと、キーで選んだボタンをすぐ上書きしてしまう)
@@ -186,12 +173,8 @@ void Title::UpdateButtonInput()
 		}
 	}
 
-	// 決定 (Enter か、ボタンの上でクリック)
-	if (isEnterTrigger)
-	{
-		Decide(m_selectedButton);
-	}
-	else if (isMouseTrigger)
+	// ボタンの上でクリック
+	if (isMouseTrigger)
 	{
 		if (isHoverStart)
 		{
@@ -224,6 +207,8 @@ void Title::Decide(ButtonType button)
 	case ButtonType::Start:
 
 		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Game);
+		// ゲーム中はカーソルを消す
+		SetCursorVisible(false);
 
 		// SEを再生
 		KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/System/Confirm.wav", false);

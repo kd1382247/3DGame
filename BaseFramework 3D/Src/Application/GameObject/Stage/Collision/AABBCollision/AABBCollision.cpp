@@ -4,6 +4,8 @@
 
 #include"../../../../Editor/EditorManager.h"
 #include"../../../../System/CollisionManager/CollisionManager.h"
+#include"../../../../System/CollisionManager/CollisionMath/CollisionMath.h"
+
 
 void AABBCollision::Init()
 {
@@ -36,6 +38,32 @@ void AABBCollision::DrawDebug()
 
 	KdGameObject::DrawDebug();
 
+}
+
+void AABBCollision::GetWorldBounds(Math::Vector3& outMin, Math::Vector3& outMax) const
+{
+	DirectX::BoundingBox box = GetBox();
+
+	Math::Vector3 boxCenter = box.Center;
+	Math::Vector3 boxExtents = box.Extents;
+
+	outMin = boxCenter - boxExtents;
+	outMax = boxCenter + boxExtents;
+}
+
+bool AABBCollision::OverlapSphere(const DirectX::BoundingSphere & sphere, Math::Vector3 & outPush, Math::Vector3 & outNormal) const
+{
+	return CollisionMath::SphereVsAABB(sphere,GetBox(),outPush,outNormal);
+}
+
+bool AABBCollision::SweepSphere(const Math::Vector3& start, const Math::Vector3& move, float radius, float& outToi, Math::Vector3& outNormal) const
+{
+	Math::Vector3 outMin = {};
+	Math::Vector3 outMax = {};
+
+	GetWorldBounds(outMin, outMax);
+
+	return CollisionMath::SphereSweepVsAABB(start, radius, move, outMin, outMax, outToi, outNormal);
 }
 
 DirectX::BoundingBox AABBCollision::GetBox() const

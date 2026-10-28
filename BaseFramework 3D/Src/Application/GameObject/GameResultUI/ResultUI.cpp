@@ -121,17 +121,17 @@ void ResultUI::Update()
 void ResultUI::DrawSprite()
 {
 	// 背景 (画面いっぱい。1280x720)
-	DrawImage(m_spBackTex, 0, 0, 1.0f, 1.0f, 1.0f);
+	DrawImage(m_spBackTex, 0, 0, 1.0f, 1.0f);
 
 	// 「Result」の文字と、クリアタイムの枠・文字・数字 (だんだん濃くなる)
 	const float frameRate = std::clamp((m_timer - FrameStartTime) / FrameFadeTime, 0.0f, 1.0f);
 
 	if (frameRate > 0.0f)
 	{
-		DrawImage(m_spResultTextTex, 0, ResultTextY, 1.0f, frameRate, 1.0f);
+		DrawImage(m_spResultTextTex, 0, ResultTextY, 1.0f, frameRate);
 
-		DrawImage(m_spFrameTex,    0, FrameY,    1.0f, frameRate, 1.0f);
-		DrawImage(m_spTimeTextTex, 0, TimeTextY, 1.0f, frameRate, 1.0f);
+		DrawImage(m_spFrameTex,    0, FrameY,    1.0f, frameRate);
+		DrawImage(m_spTimeTextTex, 0, TimeTextY, 1.0f, frameRate);
 
 		DrawClearTime(DigitY, frameRate);
 	}
@@ -151,38 +151,27 @@ void ResultUI::OpenMenu()
 	m_isMenuOpen = true;
 
 	// 開いた時に押されていたキーやボタンで、いきなり決定されないようにする
-	m_isPrevLeftKey   = IsKeyDown('A') || IsKeyDown(VK_LEFT);
-	m_isPrevRightKey  = IsKeyDown('D') || IsKeyDown(VK_RIGHT);
-	m_isPrevEnterKey  = IsKeyDown(VK_RETURN);
 	m_isPrevMouseDown = IsKeyDown(VK_LBUTTON);
 	m_prevMousePos    = Mouse::Instance().Get2DMousePos();
 }
 
 void ResultUI::UpdateMenu()
 {
-	const bool  isLeftKey   = IsKeyDown('A') || IsKeyDown(VK_LEFT);
-	const bool  isRightKey  = IsKeyDown('D') || IsKeyDown(VK_RIGHT);
-	const bool  isEnterKey  = IsKeyDown(VK_RETURN);
 	const bool  isMouseDown = IsKeyDown(VK_LBUTTON);
 	const POINT mousePos    = Mouse::Instance().Get2DMousePos();
 
 	// 決定した後は、入力を受け付けない
 	if (m_choice == Choice::None)
 	{
-		// 左右のキーで選ぶ (押した瞬間だけ)
-		if (isLeftKey && !m_isPrevLeftKey)
-		{
-			Select(Choice::Retry);
-		}
-
-		if (isRightKey && !m_isPrevRightKey)
-		{
-			Select(Choice::Title);
-		}
-
 		// マウスは、動いた時だけ、乗っているボタンを選ぶ
 		// (止まっている間も選ぶと、キーで選んだ項目をすぐ上書きしてしまう)
 		const Choice hover = GetHoverButton(mousePos);
+
+		// ボタンに乗っていない場合
+		if (hover==Choice::None)
+		{
+			m_selected = Choice::None;
+		}
 
 		const bool isMouseMoved = mousePos.x != m_prevMousePos.x || mousePos.y != m_prevMousePos.y;
 
@@ -191,20 +180,13 @@ void ResultUI::UpdateMenu()
 			Select(hover);
 		}
 
-		// 決定 (Enter か、ボタンの上でクリック)
-		if (isEnterKey && !m_isPrevEnterKey)
-		{
-			Decide(m_selected);
-		}
-		else if (isMouseDown && !m_isPrevMouseDown && hover != Choice::None)
+		// ボタンの上でクリック
+		if (isMouseDown && !m_isPrevMouseDown && hover != Choice::None)
 		{
 			Decide(hover);
 		}
 	}
 
-	m_isPrevLeftKey   = isLeftKey;
-	m_isPrevRightKey  = isRightKey;
-	m_isPrevEnterKey  = isEnterKey;
 	m_isPrevMouseDown = isMouseDown;
 	m_prevMousePos    = mousePos;
 }
@@ -250,7 +232,7 @@ ResultUI::Choice ResultUI::GetHoverButton(const POINT& mousePos) const
 	return Choice::None;
 }
 
-void ResultUI::DrawImage(std::shared_ptr<KdTexture> tex, int x, int y, float scale, float alpha, float brightness)
+void ResultUI::DrawImage(std::shared_ptr<KdTexture> tex, int x, int y, float scale, float alpha)
 {
 	if (!tex)
 	{
@@ -261,7 +243,7 @@ void ResultUI::DrawImage(std::shared_ptr<KdTexture> tex, int x, int y, float sca
 	const int texH = static_cast<int>(tex->GetHeight());
 
 	const Math::Rectangle srcRect = { 0, 0, texW, texH };
-	const Math::Color     color   = { brightness, brightness, brightness, alpha };
+	const Math::Color     color   = { 1,1,1,alpha };
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(
 		tex, x, y,
@@ -275,9 +257,8 @@ void ResultUI::DrawButton(Choice choice, std::shared_ptr<KdTexture> tex, float a
 	const bool isSelected = (choice == m_selected);
 
 	const float scale      = isSelected ? ButtonSelectScale : 1.0f;
-	const float brightness = isSelected ? 1.0f : ButtonDimBrightness;
 
-	DrawImage(tex, GetButtonX(choice), ButtonY, scale, alpha, brightness);
+	DrawImage(tex, GetButtonX(choice), ButtonY, scale, alpha);
 }
 
 void ResultUI::DrawClearTime(int y, float alpha)
@@ -318,7 +299,7 @@ void ResultUI::DrawClearTime(int y, float alpha)
 	{
 		if (item < 0)
 		{
-			DrawImage(m_spColonTex, x + colonW / 2, y, 1.0f, alpha, 1.0f);
+			DrawImage(m_spColonTex, x + colonW / 2, y, 1.0f, alpha);
 
 			x += colonW;
 		}
