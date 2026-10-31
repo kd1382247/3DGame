@@ -16,6 +16,8 @@ namespace
 		nlohmann::json json;
 
 		json["MaxHP"] = param.m_maxHP;
+		json["BumpSphereRadius"] = param.m_bumpSphereRadius;
+		json["BumpSphereOffsetY"] = param.m_bumpSphereOffsetY;
 		json["Scale"] = param.m_scale;
 		json["MoveSpeed"] = param.m_moveSpeed;
 		json["TurnSpeed"] = param.m_turnSpeed;
@@ -31,6 +33,8 @@ namespace
 	void FromJson(const nlohmann::json& json, GolemParameter::Parameter& param)
 	{
 		ParameterJson::Read(json, "MaxHP", param.m_maxHP);
+		ParameterJson::Read(json, "BumpSphereRadius", param.m_bumpSphereRadius);
+		ParameterJson::Read(json, "BumpSphereOffsetY", param.m_bumpSphereOffsetY);
 		ParameterJson::Read(json, "Scale", param.m_scale);
 		ParameterJson::Read(json, "MoveSpeed", param.m_moveSpeed);
 		ParameterJson::Read(json, "TurnSpeed", param.m_turnSpeed);
@@ -55,6 +59,14 @@ namespace
 		{
 			InspectorUI::HP("MaxHP", param.m_maxHP);
 			InspectorUI::Scale("Scale", param.m_scale);
+
+			InspectorUI::EndGroup();
+		}
+
+		if (InspectorUI::BeginGroup("Collision"))
+		{
+			InspectorUI::Meter("BumpSphereRadius", param.m_bumpSphereRadius);
+			InspectorUI::Meter("BumpSphereOffsetY", param.m_bumpSphereOffsetY);
 
 			InspectorUI::EndGroup();
 		}

@@ -42,30 +42,7 @@ void OBBCollision::DrawDebug()
 
 void OBBCollision::GetWorldBounds(Math::Vector3& outMin, Math::Vector3& outMax) const
 {
-	DirectX::BoundingOrientedBox box = GetBox();
-
-	static constexpr int CornerNum = 8;
-
-	DirectX::XMFLOAT3 corners[CornerNum];
-
-	// 8つの角をとる
-	box.GetCorners( &corners[0]);
-
-	// 要素0で初期化
-	Math::Vector3 cornerMin = corners[0];
-	Math::Vector3 cornerMax = corners[0];
-
-
-	for (int i = 0; i < CornerNum; i++)
-	{
-		Math::Vector3 corner = corners[i];
-
-		cornerMin = Math::Vector3::Min(cornerMin, corner);
-		cornerMax = Math::Vector3::Max(cornerMax, corner);
-	}
-
-	outMin = cornerMin;
-	outMax = cornerMax;
+	CollisionMath::OBBtoAABB(GetBox(), outMin, outMax);
 }
 
 bool OBBCollision::OverlapSphere(const DirectX::BoundingSphere & sphere, Math::Vector3 & outPush, Math::Vector3 & outNormal) const

@@ -20,18 +20,21 @@ void TurtleShell::Init()
 {
 	if (!m_spModel)
 	{
-		InitCharacterModel("Asset/Models/Enemy/TurtleShell/TurtleShell.gltf", "TurtleShell",
-			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "TurtleShell");
-
-		// アニメーションクラス初期化
-		m_animation.Init(m_spModel);
-
-		// パラメータクラス初期化
+		// パラメータ初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
 		m_parameter.Init();
 
 		const auto& param = m_parameter.GetParam();
 
+		InitCharacterModel("Asset/Models/Enemy/TurtleShell/TurtleShell.gltf", "TurtleShell",
+			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "TurtleShell");
+
+		// アニメーションクラス初期化
+		m_animation.Init(m_spModel);
+
 		m_health.Init(param.m_maxHP);
+
+		// 当たり判定(押し戻し)球の大きさをパラメータから反映
+		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
 
 		m_reachDistance = param.m_reachDistance;
 		m_attackCooldownDuration = param.m_attackCooldown;
@@ -70,7 +73,7 @@ void TurtleShell::PostUpdate()
 
 void TurtleShell::DrawDebug()
 {
-	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
+	DrawBumpDebugSphere();
 
 	// 追加したデバッグ線を描画して消す(描画しないと頂点が溜まり続ける)
 	m_pDebugWire->Draw();
@@ -79,6 +82,10 @@ void TurtleShell::DrawDebug()
 void TurtleShell::DrawParameterInspector()
 {
 	m_parameter.DrawInspecter();
+
+	// 当たり判定球の変更をすぐに反映
+	const auto& bumpParam = m_parameter.GetParam();
+	SetBumpSphere(bumpParam.m_bumpSphereOffsetY, bumpParam.m_bumpSphereRadius);
 }
 
 void TurtleShell::SetUpReference()
@@ -230,8 +237,8 @@ void TurtleShell::UpdateSpinAttackMove()
 
 		bool hit = CollisionMath::SphereSweepVsAABB(
 			GetBumpSphere().Center,
-			GetBumpSphere().Radius,
 			move,
+			GetBumpSphere().Radius,
 			boxMin,
 			boxMax,
 			toi,

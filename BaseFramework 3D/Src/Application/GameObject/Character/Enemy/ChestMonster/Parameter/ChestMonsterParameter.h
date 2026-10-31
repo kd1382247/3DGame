@@ -38,6 +38,10 @@ public:
 		float m_spawnHeight = 2.0f;   // [m] 敵を出す高さ(自分の位置から)
 		float m_spawnLaunchPower = 0.2f;   // 出した敵が飛び上がる勢い
 		float m_spawnLaunchSpeed = 0.04f;   // [m/F] 出した敵が正面へ飛び出す速さ
+
+		//---- Collision ----
+		float m_bumpSphereRadius = 0.8f;   // [m] 押し戻し判定の球の半径
+		float m_bumpSphereOffsetY = 0.8f;   // [m] 足元から、押し戻し判定の球の中心までの高さ(地面に立たせるなら半径と同じ値)
 	};
 
 	const Parameter& GetParam()const { return m_param; }

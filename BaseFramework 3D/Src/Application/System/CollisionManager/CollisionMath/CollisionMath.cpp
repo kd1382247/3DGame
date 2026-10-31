@@ -210,8 +210,8 @@ bool CollisionMath::SphereSweepVsOBB(const Math::Vector3& start, const Math::Vec
 
 	if (!SphereSweepVsAABB(
 		localStart,
-		radius,
 		localMove,
+		radius,
 		boxMin,
 		boxMax,
 		outTOI,
@@ -233,7 +233,7 @@ bool CollisionMath::SphereSweepVsOBB(const Math::Vector3& start, const Math::Vec
 	
 }
 
-bool CollisionMath::SphereSweepVsAABB(const Math::Vector3& start, float radius, const Math::Vector3& move, const Math::Vector3& boxMin, const Math::Vector3& boxMax, float& outTOI, Math::Vector3& outNormal)
+bool CollisionMath::SphereSweepVsAABB(const Math::Vector3& start, const Math::Vector3& move, float radius, const Math::Vector3& boxMin, const Math::Vector3& boxMax, float& outTOI, Math::Vector3& outNormal)
 {
 
 	Math::Vector3 radiusVec(radius, radius, radius);
@@ -643,6 +643,34 @@ bool CollisionMath::AABBVsAABB(const Math::Vector3& minA, const Math::Vector3& m
 	return minA.x <= maxB.x && maxA.x >= minB.x
 		&& minA.y <= maxB.y && maxA.y >= minB.y
 		&& minA.z <= maxB.z && maxA.z >= minB.z;
+}
+
+void CollisionMath::OBBtoAABB(const DirectX::BoundingOrientedBox& obb, Math::Vector3& outMin, Math::Vector3& outMax)
+{
+	DirectX::BoundingOrientedBox box = obb;
+
+	static constexpr int CornerNum = 8;
+
+	DirectX::XMFLOAT3 corners[CornerNum];
+
+	// 8つの角をとる
+	box.GetCorners(&corners[0]);
+
+	// 要素0で初期化
+	Math::Vector3 cornerMin = corners[0];
+	Math::Vector3 cornerMax = corners[0];
+
+
+	for (int i = 0; i < CornerNum; i++)
+	{
+		Math::Vector3 corner = corners[i];
+
+		cornerMin = Math::Vector3::Min(cornerMin, corner);
+		cornerMax = Math::Vector3::Max(cornerMax, corner);
+	}
+
+	outMin = cornerMin;
+	outMax = cornerMax;
 }
 
 void CollisionMath::PreserveHorizontalSpeedOnSlope(const Math::Vector3& preProjectMove, const Math::Vector3& normal, Math::Vector3& move)

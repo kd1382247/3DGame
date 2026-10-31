@@ -16,6 +16,8 @@ namespace
 		nlohmann::json json;
 
 		json["MaxHP"] = param.m_maxHP;
+		json["BumpSphereRadius"] = param.m_bumpSphereRadius;
+		json["BumpSphereOffsetY"] = param.m_bumpSphereOffsetY;
 		json["MoveSpeed"] = param.m_moveSpeed;
 		json["TurnSpeed"] = param.m_turnSpeed;
 		json["ReachDistance"] = param.m_reachDistance;
@@ -30,6 +32,8 @@ namespace
 	void FromJson(const nlohmann::json& json, BeholderParameter::Parameter& param)
 	{
 		ParameterJson::Read(json, "MaxHP", param.m_maxHP);
+		ParameterJson::Read(json, "BumpSphereRadius", param.m_bumpSphereRadius);
+		ParameterJson::Read(json, "BumpSphereOffsetY", param.m_bumpSphereOffsetY);
 		ParameterJson::Read(json, "MoveSpeed", param.m_moveSpeed);
 		ParameterJson::Read(json, "TurnSpeed", param.m_turnSpeed);
 		ParameterJson::Read(json, "ReachDistance", param.m_reachDistance);
@@ -52,6 +56,14 @@ namespace
 		if (InspectorUI::BeginGroup("Status"))
 		{
 			InspectorUI::HP("MaxHP", param.m_maxHP);
+
+			InspectorUI::EndGroup();
+		}
+
+		if (InspectorUI::BeginGroup("Collision"))
+		{
+			InspectorUI::Meter("BumpSphereRadius", param.m_bumpSphereRadius);
+			InspectorUI::Meter("BumpSphereOffsetY", param.m_bumpSphereOffsetY);
 
 			InspectorUI::EndGroup();
 		}

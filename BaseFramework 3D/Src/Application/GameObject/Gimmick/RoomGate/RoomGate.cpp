@@ -4,6 +4,7 @@
 
 #include"../../../Editor/EditorManager.h"
 #include"../../../System/CollisionManager/CollisionManager.h"
+#include"../../../System/CollisionManager/CollisionMath/CollisionMath.h"
 #include"../../../System/TimeManager/TimeManager.h"
 #include"../../../Scene/SceneManager.h"
 
@@ -283,6 +284,21 @@ DirectX::BoundingOrientedBox RoomGate::GetCollisionBox() const
 	};
 
 	return box;
+}
+
+void RoomGate::GetWorldBounds(Math::Vector3& outMin, Math::Vector3& outMax) const
+{
+	CollisionMath::OBBtoAABB(GetCollisionBox(), outMin, outMax);
+}
+
+bool RoomGate::OverlapSphere(const DirectX::BoundingSphere & sphere, Math::Vector3 & outPush, Math::Vector3 & outNormal) const
+{
+	return CollisionMath::SphereVsOBB(sphere, GetCollisionBox(), outPush, outNormal);
+}
+
+bool RoomGate::SweepSphere(const Math::Vector3& start, const Math::Vector3& move, float radius, float& outToi, Math::Vector3& outNormal) const
+{
+	return CollisionMath::SphereSweepVsOBB(start, move, radius, GetCollisionBox(), outToi, outNormal);
 }
 
 

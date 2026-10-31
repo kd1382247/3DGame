@@ -28,6 +28,10 @@ public:
 		float m_hitEndFrame = 20.0f;   // [F] 攻撃判定が消えるフレーム(攻撃アニメーション開始から)
 		float m_hitRadius = 0.6f;   // [m] 攻撃判定の球の半径
 		float m_hitForwardOffset = 0.8f;   // [m] 攻撃判定の球を、正面へどれだけ前に出すか
+
+		//---- Collision ----
+		float m_bumpSphereRadius = 0.5f;   // [m] 押し戻し判定の球の半径
+		float m_bumpSphereOffsetY = 0.5f;   // [m] 足元から、押し戻し判定の球の中心までの高さ(地面に立たせるなら半径と同じ値)
 	};
 
 	// スライムの大きさ(大きさごとに違う値を持たせる)

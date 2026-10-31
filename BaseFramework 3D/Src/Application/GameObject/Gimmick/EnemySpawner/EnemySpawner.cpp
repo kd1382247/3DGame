@@ -211,7 +211,7 @@ void EnemySpawner::DrawDebug()
 		color = kRedColor + kGreenColor;
 	}
 
-	m_pDebugWire->AddDebugSphere(GetColliderCenter(), kColliderRadius, color);
+	m_pDebugWire->AddDebugSphere(GetPos(), kColliderRadius, color);
 
 	KdGameObject::DrawDebug();
 }
@@ -368,6 +368,26 @@ void EnemySpawner::DrawInspector()
 		EditorManager::Instance().MarkDirty();
 	}
 
+}
+
+void EnemySpawner::GetWorldBounds(Math::Vector3& outMin, Math::Vector3& outMax) const
+{
+	Math::Vector3 sphereCenter = GetPos();
+
+	float r = GetColliderRadius();
+
+	outMin = sphereCenter - Math::Vector3(r, r, r);
+	outMax = sphereCenter + Math::Vector3(r, r, r);
+}
+
+bool EnemySpawner::OverlapSphere(const DirectX::BoundingSphere & sphere, Math::Vector3 & outPush, Math::Vector3 & outNormal) const
+{
+	return CollisionMath::SphereVsCylinder(sphere, GetPos(), GetColliderRadius(), GetColliderRadius(), outPush, outNormal);
+}
+
+bool EnemySpawner::SweepSphere(const Math::Vector3& start, const Math::Vector3& move, float radius, float& outToi, Math::Vector3& outNormal) const
+{
+	return CollisionMath::SphereSweepVsCylinder(start,move, radius,GetPos(),GetColliderRadius(),GetColliderRadius(), outToi, outNormal);
 }
 
 bool EnemySpawner::IsFinished() const
@@ -733,7 +753,7 @@ void EnemySpawner::UpdateEmergingEnemies()
 			// スポナーの当たり判定と重ならなくなったら、出終わったとみなす
 			return !CollisionMath::SphereVsCylinder(
 				spEnemy->GetBumpSphere(),
-				GetColliderCenter(),
+				GetPos(),
 				kColliderRadius,
 				kColliderRadius,
 				push,

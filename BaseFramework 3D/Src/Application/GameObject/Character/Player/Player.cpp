@@ -49,8 +49,13 @@ void Player::Init()
 	if (!m_spModel)
 	{
 
+		// パラメータークラス初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
+		m_parameter.Init();
+
+		const auto& body = m_parameter.GetBody();
+
 		InitCharacterModel("Asset/Models/Player/Player.gltf", "Player"
-			, Math::Vector3(0, 0.5, 0), 0.5, "Player");
+			, Math::Vector3(0.0f, body.m_bumpSphereOffsetY, 0.0f), body.m_bumpSphereRadius, "Player");
 
 		// カテゴリーをセット
 		SetObjectCategory(ObjectCategory::Character);
@@ -61,9 +66,6 @@ void Player::Init()
 		// 剣の軌跡クラス初期化
 		m_playerSwordTrail.Init();
 
-		// パラメータークラス初期化
-		m_parameter.Init();
-
 		// 各アクションクラスには、自分に必要なパラメータだけを渡す
 		m_playerAttack.     Init(m_parameter.GetAttack());
 		m_playerSpecialMove.Init(m_parameter.GetSpecialMove());
@@ -72,6 +74,9 @@ void Player::Init()
 		
 		m_health.           Init(m_parameter.GetBody().m_maxHP);
 		m_bumpPushRate = m_parameter.GetBody().m_bumpPushRate;
+
+		// 当たり判定(押し戻し)球の大きさをパラメータから反映
+		SetBumpSphere(m_parameter.GetBody().m_bumpSphereOffsetY, m_parameter.GetBody().m_bumpSphereRadius);
 
 		// ステートマシンに持ち主をセット
 		m_stateMachine.Start(this);
@@ -191,7 +196,7 @@ void Player::DrawDebug()
 {
 	CollisionManager::Instance().DrawDebug();
 
-	m_pDebugWire->AddDebugSphere(GetPos() + Math::Vector3(0, 0.5, 0), 0.5, GetAreaDebugColor());
+	DrawBumpDebugSphere();
 	m_pDebugWire->Draw();
 }
 
@@ -200,6 +205,9 @@ void Player::DrawInspector()
 	CharacterBase::DrawInspector();
 	// パラメーター変更
 	m_parameter.DrawInspecter();
+
+	// 当たり判定球の変更をすぐに反映
+	SetBumpSphere(m_parameter.GetBody().m_bumpSphereOffsetY, m_parameter.GetBody().m_bumpSphereRadius);
 }
 
 void Player::UpdateDebugCommand()
@@ -654,7 +662,7 @@ void Player::OnHit(const AttackInfo attackInfo)
 	}
 	else if(m_stateMachine.IsState<PlayerGuardState>()&&
 		    m_playerGuard.IsInGuardRange(m_mWorld.Backward(),info.m_knockBackDir)&&
-			!m_playerGuard.IsGuardBreak())
+			m_playerGuard.IsDefend())
 	{
 		// ガード中に攻撃を受けた回数をカウント、上限値をこえたらガードを強制終了
 		m_playerGuard.NotifyGuardHit();
@@ -706,7 +714,6 @@ void Player::OnHit(const AttackInfo attackInfo)
 	
 	// SEを流す
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/Damage/Damage.wav");
-
 
 }
 

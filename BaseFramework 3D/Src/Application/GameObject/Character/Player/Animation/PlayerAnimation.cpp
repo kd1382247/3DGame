@@ -55,6 +55,14 @@ void PlayerAnimation::Play(PlayerAnimationType _animType)
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("ChargeAttackRGT"), true);
 		m_animSpeed = 1.0f;
 		break;
+	case PlayerAnimationType::GuardStart:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GuardStart"), false);
+		m_animSpeed = 10.0f;
+		break;
+	case PlayerAnimationType::GuardEnd:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GuardEnd"),false);
+		m_animSpeed = 5.0f;
+		break;
 	case PlayerAnimationType::GuardIDLE:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GuardIDLE"), true);
 		m_animSpeed = 1.4f;

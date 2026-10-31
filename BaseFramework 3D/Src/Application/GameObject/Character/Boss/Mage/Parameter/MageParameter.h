@@ -148,6 +148,10 @@ public:
 		NovaCircle    m_novaCircle;
 		Beam          m_beam;
 		Summon        m_summon;
+
+		//---- Collision ----
+		float m_bumpSphereRadius = 0.7f;   // [m] 押し戻し判定の球の半径
+		float m_bumpSphereOffsetY = 0.7f;   // [m] 足元から、押し戻し判定の球の中心までの高さ(地面に立たせるなら半径と同じ値)
 	};
 
 	const Parameter& GetParam()const { return m_param; }

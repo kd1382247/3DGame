@@ -12,10 +12,22 @@ void PlayerParryState::OnStart(Player* owner)
 	PlayerParry& parry = owner->GetParry();
 
 	owner->PlayAnimation(PlayerAnimationType::Parry);
+
+	m_isParryEnd = false;
 }
 
 void PlayerParryState::OnUpdate(Player* owner)
 {
+	// パリィ終了後にガードしない場合
+	if (m_isParryEnd)
+	{
+		if(owner->IsAnimationFinished())
+		{
+			m_pMachine->ChangeState<PlayerNormalState>();
+		}
+		return;
+	}
+
 
 	if (owner->IsAnimationFinished())
 	{
@@ -26,7 +38,8 @@ void PlayerParryState::OnUpdate(Player* owner)
 		}
 		else
 		{
-			m_pMachine->ChangeState<PlayerNormalState>();
+			owner->PlayAnimation(PlayerAnimationType::GuardEnd);
+			m_isParryEnd = true;
 		}	
 	}
 

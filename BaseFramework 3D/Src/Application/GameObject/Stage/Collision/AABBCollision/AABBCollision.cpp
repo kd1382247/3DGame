@@ -63,7 +63,7 @@ bool AABBCollision::SweepSphere(const Math::Vector3& start, const Math::Vector3&
 
 	GetWorldBounds(outMin, outMax);
 
-	return CollisionMath::SphereSweepVsAABB(start, radius, move, outMin, outMax, outToi, outNormal);
+	return CollisionMath::SphereSweepVsAABB(start, move, radius, outMin, outMax, outToi, outNormal);
 }
 
 DirectX::BoundingBox AABBCollision::GetBox() const

@@ -41,6 +41,12 @@ public:
 	// 当たり判定(押し戻し)球の半径
 	float GetBumpSphereRadius()const { return m_bumpSphereRadius; }
 
+	// 当たり判定(押し戻し)球の、足元からの高さ
+	float GetBumpSphereOffsetY()const { return m_bumpSphereOffsetY; }
+
+	// 当たり判定(押し戻し)球の大きさをセットする(各キャラのInitで、パラメータの値を渡す)
+	void SetBumpSphere(float offsetY, float radius);
+
 	float GetMaxWalkableSlopeAngle()const { return m_maxWalkableSlopeAngle; }
 
 
@@ -144,8 +150,8 @@ protected:
 	void InitCharacterModel(const std::string& modelPath, const std::string& colliderName,
 		const Math::Vector3& colliderOffset, float colliderRadius, const std::string& objectName);
 
-	// デバッグ用の当たり判定球を描画する
-	void DrawBumpDebugSphere(const Math::Vector3& offset, float radius);
+	// デバッグ用に、当たり判定(押し戻し)球を描画する
+	void DrawBumpDebugSphere();
 
 	// 重力を加算して、落下分の移動量を追加する(毎フレーム、ステートの更新より前に呼ぶ)
 	void UpdateGravity();
@@ -197,6 +203,9 @@ protected:
 
 	// 当たり判定(押し戻し)球の半径
 	float m_bumpSphereRadius = 0.5f;
+
+	// 当たり判定(押し戻し)球の、足元からの高さ
+	float m_bumpSphereOffsetY = 0.5f;
 
 	// キャラの点滅
 	float m_overlayTime          = 0.0f;

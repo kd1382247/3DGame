@@ -35,6 +35,8 @@ void PlayerParameter::DrawInspecter()
 			InspectorUI::Degree        ("MaxSlopeAngle",   m_body.m_maxWalkableSlopeAngle);
 			InspectorUI::Meter         ("StepHeight",      m_body.m_stepHeight);
 			InspectorUI::Meter         ("GroundRayLength", m_body.m_groundRayLength);
+			InspectorUI::Meter         ("BumpSphereRadius",  m_body.m_bumpSphereRadius);
+			InspectorUI::Meter         ("BumpSphereOffsetY", m_body.m_bumpSphereOffsetY);
 
 			InspectorUI::EndGroup();
 		}
@@ -136,6 +138,8 @@ void PlayerParameter::SaveToJson()
 	paramJson["MaxWalkableSlopeAngle"] = m_body.m_maxWalkableSlopeAngle;
 	paramJson["StepHeight"]            = m_body.m_stepHeight;
 	paramJson["GroundRayLength"]       = m_body.m_groundRayLength;
+	paramJson["BumpSphereRadius"]      = m_body.m_bumpSphereRadius;
+	paramJson["BumpSphereOffsetY"]     = m_body.m_bumpSphereOffsetY;
 
 	paramJson["MoveSpeed"]             = m_move.m_moveSpeed;
 
@@ -256,6 +260,8 @@ void PlayerParameter::LoadFromJson()
 		ParameterJson::Read(paramJson, "MaxWalkableSlopeAngle", m_body.m_maxWalkableSlopeAngle);
 		ParameterJson::Read(paramJson, "StepHeight",            m_body.m_stepHeight);
 		ParameterJson::Read(paramJson, "GroundRayLength",       m_body.m_groundRayLength);
+		ParameterJson::Read(paramJson, "BumpSphereRadius",      m_body.m_bumpSphereRadius);
+		ParameterJson::Read(paramJson, "BumpSphereOffsetY",     m_body.m_bumpSphereOffsetY);
 
 		ParameterJson::Read(paramJson, "MoveSpeed",             m_move.m_moveSpeed);
 

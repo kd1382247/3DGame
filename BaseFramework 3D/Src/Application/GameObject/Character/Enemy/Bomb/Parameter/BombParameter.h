@@ -25,6 +25,10 @@ public:
 		float m_explosionRadius = 3.0f;   // [m] 爆発の半径
 		float m_chargeDuration = 1.5f;   // [秒] 爆発前のため(予告)時間
 		float m_explosionKnockBack = 0.5f;   // 爆発が当たった時のノックバックの強さ
+
+		//---- Collision ----
+		float m_bumpSphereRadius = 0.5f;   // [m] 押し戻し判定の球の半径
+		float m_bumpSphereOffsetY = 0.5f;   // [m] 足元から、押し戻し判定の球の中心までの高さ(地面に立たせるなら半径と同じ値)
 	};
 
 	const Parameter& GetParam()const { return m_param; }

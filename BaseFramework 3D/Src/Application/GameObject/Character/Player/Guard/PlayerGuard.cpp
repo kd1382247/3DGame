@@ -19,6 +19,9 @@ PlayerAnimationType PlayerGuard::GetGuardAnimation() const
 {
 	switch (m_guardState)
 	{
+	case GuardState::GuardStart:
+		return PlayerAnimationType::GuardStart;
+
 	case GuardState::Guard:
 		return PlayerAnimationType::GuardIDLE;
 
@@ -27,6 +30,9 @@ PlayerAnimationType PlayerGuard::GetGuardAnimation() const
 
 	case GuardState::GuardBreak:
 		return PlayerAnimationType::GuardBreak;
+
+	case GuardState::GuardEnd:
+		return PlayerAnimationType::GuardEnd;
 
 	default:
 		return PlayerAnimationType::GuardIDLE;
@@ -59,6 +65,7 @@ void PlayerGuard::NotifyGuardHit()
 		m_guardHitCount = 0;
 		m_guardState = GuardState::GuardBreak;
 	}
+
 }
 
 PlayerAnimationType PlayerGuard::GetGuardMoveAnimation(const PlayerInput::MoveType moveType) const

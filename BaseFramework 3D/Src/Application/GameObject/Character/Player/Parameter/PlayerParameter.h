@@ -24,6 +24,9 @@ public:
 
 		float m_stepHeight = 0.2f;                  // [m]  越えられる段差の高さ(地面判定のレイを出す高さ)
 		float m_groundRayLength = 100.0f;           // [m]  地面を探すレイの長さ
+
+		float m_bumpSphereRadius  = 0.5f;           // [m]  押し戻し判定の球の半径
+		float m_bumpSphereOffsetY = 0.5f;           // [m]  足元から、押し戻し判定の球の中心までの高さ(地面に立たせるなら半径と同じ値)
 	};
 
 	// 通常移動

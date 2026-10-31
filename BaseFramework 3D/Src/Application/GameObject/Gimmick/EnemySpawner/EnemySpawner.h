@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include"../StageGimmick.h"
+#include"../../../System/CollisionManager/IObstacle/IObstacle.h"
 #include"../../Character/Enemy/SpawnableEnemies.h"
 #include"EnemySpawnerRequest.h"
 
@@ -10,7 +11,7 @@ class CharacterBase;
 
 class CameraBase;
 
-class EnemySpawner :public StageGimmick
+class EnemySpawner :public StageGimmick,public IObstacle
 {
 public:
 	
@@ -39,6 +40,35 @@ public:
 	// スクロール側:スポナーのパラメータ
 	void DrawInspector()override;
 
+
+	//=====================================================
+	// 当たり判定
+	//=====================================================
+
+	// ワールドのBoxのMinとMaxを求める
+	void GetWorldBounds(
+		Math::Vector3& outMin,
+		Math::Vector3& outMax)const override;
+
+	// 球とのめり込み判定
+	bool OverlapSphere(
+		const DirectX::BoundingSphere& sphere,
+		Math::Vector3& outPush,
+		Math::Vector3& outNormal)const override;
+
+	// 動く球が最初に当たる時刻と法線
+	bool SweepSphere(
+		const Math::Vector3& start,
+		const Math::Vector3& move,
+		float radius,
+		float& outToi,
+		Math::Vector3& outNormal)const override;
+
+	// このキャラに対して有効か
+	bool IsActiveFor(const CharacterBase* character)const override { return IsBlockingCharacter(character); }
+
+
+
 	// 最大ウェーブ数まで到達したら生成終了
 	bool IsFinished()const;
 	// 敵が全滅しているか
@@ -54,12 +84,6 @@ public:
 	static constexpr float kColliderRadius  = 1.0f;
 
 	float GetColliderRadius() const { return kColliderRadius; }
-
-	// 当たり判定の球の中心(ワールド座標)
-	Math::Vector3 GetColliderCenter() const
-	{
-		return GetPos();
-	}
 
 	// このキャラを押し戻すか(CollisionManagerが見る)
 	// このスポナーから出てきたばかりの敵は、外に出るまで押し戻さない(中から出られなくなるため)

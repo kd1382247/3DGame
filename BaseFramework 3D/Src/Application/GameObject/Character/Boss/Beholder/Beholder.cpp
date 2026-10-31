@@ -8,18 +8,20 @@ void Beholder::Init()
 {
 	if (!m_spModel)
 	{
-		InitCharacterModel("Asset/Models/Boss/Beholder/Beholder.gltf", "Beholder",
-			Math::Vector3(0, 1.5, 0), 0.5f, "Beholder");
-
-		// アニメーションクラス初期化
-		m_animation.Init(m_spModel);
-		// パラメータクラス初期化
+		// パラメータ初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
 		m_parameter.Init();
-
 
 		const auto& param = m_parameter.GetParam();
 
+		InitCharacterModel("Asset/Models/Boss/Beholder/Beholder.gltf", "Beholder",
+			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "Beholder");
+
+		// アニメーションクラス初期化
+		m_animation.Init(m_spModel);
 		m_health.Init(param.m_maxHP);
+
+		// 当たり判定(押し戻し)球の大きさをパラメータから反映
+		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
 
 		m_reachDistance = param.m_reachDistance;
 		m_reachDistanceMargin = param.m_reachDistanceMargin;
@@ -47,7 +49,7 @@ void Beholder::PostUpdate()
 
 	UpdateAnimation();
 
-	DrawBumpDebugSphere(Math::Vector3(0, 1.5, 0), 0.5f);
+	DrawBumpDebugSphere();
 
 }
 
@@ -64,4 +66,8 @@ void Beholder::PlayAnimation(BeholderAnimationType type)
 void Beholder::DrawParameterInspector()
 {
 	m_parameter.DrawInspecter();
+
+	// 当たり判定球の変更をすぐに反映
+	const auto& bumpParam = m_parameter.GetParam();
+	SetBumpSphere(bumpParam.m_bumpSphereOffsetY, bumpParam.m_bumpSphereRadius);
 }

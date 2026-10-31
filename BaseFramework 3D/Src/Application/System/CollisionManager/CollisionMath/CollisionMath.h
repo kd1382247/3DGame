@@ -25,8 +25,9 @@ namespace CollisionMath
 		Math::Vector3& outNormal);
 
 	bool SphereSweepVsAABB(
-		const Math::Vector3& sphereCenter,
-		float radius, const Math::Vector3& move,
+		const Math::Vector3& sphereCenter, 
+		const Math::Vector3& move,
+		float radius, 
 		const Math::Vector3& boxMin, const Math::Vector3& boxMax,
 		float& outTOI,
 		Math::Vector3& outNormal);
@@ -63,6 +64,8 @@ namespace CollisionMath
 	bool AABBVsAABB(
 		const Math::Vector3& minA, const Math::Vector3& maxA,
 		const Math::Vector3& minB, const Math::Vector3& maxB);
+
+	void OBBtoAABB(const DirectX::BoundingOrientedBox& obb, Math::Vector3& outMin, Math::Vector3& outMax);
 
 
 	// 歩行可能面(坂)では、水平方向(X,Z)の移動量は入力のまま保ち、

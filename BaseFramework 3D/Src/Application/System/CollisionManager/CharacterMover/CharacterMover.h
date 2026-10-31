@@ -3,6 +3,8 @@
 class CharacterBase;
 class CollisionRegistry;
 
+class IObstacle;
+
 #include<unordered_set>
 
 class CharacterMover
@@ -32,6 +34,8 @@ public:
 
 private:
 
+	void CollectObstacles();
+
 
 	struct SweepResult
 	{
@@ -45,35 +49,21 @@ private:
 	// めり込みを解決
 	//==============================
 
-	void ResolveAABBStartOverlap(
-		const std::shared_ptr<CharacterBase>& character,
-		Math::Vector3& currentPos,
-		Math::Vector3& remainingMove);
-
-	void ResolveOBBStartOverlap(
-		const std::shared_ptr<CharacterBase>& character,
-		Math::Vector3& currentPos,
-		Math::Vector3& remainingMove);
-
-	// 部屋の柵(RoomGate)とのめり込みを解決
-	void ResolveGateStartOverlap(
-		const std::shared_ptr<CharacterBase>& character,
-		Math::Vector3& currentPos,
-		Math::Vector3& remainingMove);
-
-	// 敵のスポナー(EnemySpawner)とのめり込みを解決
-	void ResolveSpawnerStartOverlap(
-		const std::shared_ptr<CharacterBase>& character,
-		Math::Vector3& currentPos,
-		Math::Vector3& remainingMove);
-
-
+	// 1つの障害物と当たったと分かった後に
+	// 位置を押し戻して、移動量を直す
 	void ResolveStartOverlapContact(
 		const Math::Vector3& push,
 		const Math::Vector3& normal,
 		Math::Vector3& currentPos,
 		Math::Vector3& remainingMove,
 		bool isWalkable);
+
+	// 全ての障害物をforで順に調べる
+	void ResolveObstacleOverlap(
+		const std::shared_ptr<CharacterBase>& character,
+		Math::Vector3& currentPos,
+		Math::Vector3& remainingMove);
+
 
 	//==============================
 	// スウィープ判定
@@ -122,7 +112,7 @@ private:
 	//==========================
 
 	// 坂用(Walkable)OBBとの接触を無視すべきか判定する
-	// (FindSweepContacts/ResolveOBBStartOverlapで共通利用)
+	// (FindSweepContacts/ResolveObstacleOverlapで共通利用)
 	// isObbTypeWalkable: そのOBB自体がWalkable種別かどうか
 	// outIsWalkable    : 登れる角度の歩行可能面としての接触だったか
 	bool ShouldSkipWalkableObbContact(
@@ -164,5 +154,7 @@ private:
 	// 調べる範囲の余白
 	static constexpr float CullMargin = 0.05f;
 
+	// 当たり判定をするオブジェクトリスト
+	std::vector<const IObstacle*>m_obstacles;
 
 };

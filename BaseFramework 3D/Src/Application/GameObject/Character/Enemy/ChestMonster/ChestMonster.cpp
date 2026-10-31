@@ -14,14 +14,16 @@ void ChestMonster::Init()
 {
 	if (!m_spModel)
 	{
+		// パラメータ初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
+		m_parameter.Init();
+
+		const auto& param = m_parameter.GetParam();
+
 		InitCharacterModel("Asset/Models/Enemy/ChestMonster/ChestMonster.gltf", "ChestMonster",
-			Math::Vector3(0.0f, 0.8f, 0.0f), 0.8f, "ChestMonster");
+			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "ChestMonster");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
-		// パラメータクラス初期化
-		m_parameter.Init();
-
 		// Parameterの値を反映(HP・到達距離・召喚間隔)
 		ApplyParameter();
 
@@ -71,7 +73,7 @@ void ChestMonster::PostUpdate()
 
 	UpdateAnimation();
 
-	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
+	DrawBumpDebugSphere();
 
 }
 
@@ -96,6 +98,10 @@ void ChestMonster::SetUpReference()
 void ChestMonster::DrawParameterInspector()
 {
 	m_parameter.DrawInspecter();
+
+	// 当たり判定球の変更をすぐに反映
+	const auto& bumpParam = m_parameter.GetParam();
+	SetBumpSphere(bumpParam.m_bumpSphereOffsetY, bumpParam.m_bumpSphereRadius);
 }
 
 void ChestMonster::UpdateSpawnEnemy()
@@ -351,6 +357,9 @@ void ChestMonster::ApplyParameter()
 	const auto& param = m_parameter.GetParam();
 
 	m_health.Init(param.m_maxHP);
+
+	// 当たり判定(押し戻し)球の大きさをパラメータから反映
+	SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
 
 	m_reachDistance = param.m_reachDistance;
 

@@ -1,14 +1,14 @@
 ﻿#pragma once
 
 #include"../StageGimmick.h"
-
+#include"../../../System/CollisionManager/IObstacle/IObstacle.h"
 class Room;
 
 // 部屋の入口・出口に置く柵
 // 紐づけた部屋(Room)の状態に合わせて、上下に動いて開閉する
 //   閉じる:戦闘前の演出が始まったとき
 //   開く  :戦闘が終わって、扉が開く演出が始まったとき
-class RoomGate :public StageGimmick
+class RoomGate :public StageGimmick,public IObstacle
 {
 public:
 
@@ -29,6 +29,35 @@ public:
 
 	// 当たり判定の箱(回転あり)
 	DirectX::BoundingOrientedBox GetCollisionBox()const;
+
+
+	//=====================================================
+	// 当たり判定
+	//=====================================================
+
+	// ワールドのBoxのMinとMaxを求める
+	void GetWorldBounds(
+		Math::Vector3& outMin,
+		Math::Vector3& outMax)const override;
+
+	// 球とのめり込み判定
+	bool OverlapSphere(
+		const DirectX::BoundingSphere& sphere,
+		Math::Vector3& outPush,
+		Math::Vector3& outNormal)const override;
+
+	// 動く球が最初に当たる時刻と法線
+	bool SweepSphere(
+		const Math::Vector3& start,
+		const Math::Vector3& move,
+		float radius,
+		float& outToi,
+		Math::Vector3& outNormal)const override;
+
+	// このキャラに対して有効か
+	bool IsActiveFor(const CharacterBase* character)const override{ return IsBlocking(); }
+
+
 
 private:
 

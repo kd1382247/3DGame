@@ -21,15 +21,18 @@ void Mushroom::Init()
 			"Asset/Models/Enemy/Mushroom/MushroomAngry/MushroomAngry.gltf" :
 			"Asset/Models/Enemy/Mushroom/MushroomSmile/MushroomSmile.gltf";
 
+		const auto& param = m_parameter.GetParam(m_mushroomType);
+
 		InitCharacterModel(modelPath, "Mushroom",
-			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "Mushroom");
+			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "Mushroom");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 
-		const auto& param = m_parameter.GetParam(m_mushroomType);
-
 		m_health.Init(param.m_maxHP);
+
+		// 当たり判定(押し戻し)球の大きさをパラメータから反映
+		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
 
 		m_reachDistance = param.m_reachDistance;
 		m_attackCooldownDuration = param.m_attackCooldown;
@@ -75,7 +78,7 @@ void Mushroom::PostUpdate()
 
 void Mushroom::DrawDebug()
 {
-	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
+	DrawBumpDebugSphere();
 
 	// 追加したデバッグ線を描画して消す(描画しないと頂点が溜まり続ける)
 	m_pDebugWire->Draw();
@@ -84,6 +87,10 @@ void Mushroom::DrawDebug()
 void Mushroom::DrawParameterInspector()
 {
 	m_parameter.DrawInspecter();
+
+	// 当たり判定球の変更をすぐに反映
+	const auto& bumpParam = m_parameter.GetParam(m_mushroomType);
+	SetBumpSphere(bumpParam.m_bumpSphereOffsetY, bumpParam.m_bumpSphereRadius);
 }
 
 void Mushroom::SetUpReference()

@@ -12,4 +12,9 @@ public:
 	void OnUpdate(Player* owner)override;
 	void OnExit(Player* owner)override;
 
+
+private:
+
+	bool m_isParryEnd = false;
+
 };

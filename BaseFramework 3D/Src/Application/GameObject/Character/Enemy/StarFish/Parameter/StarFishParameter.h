@@ -30,6 +30,10 @@ public:
 		float m_bulletSpawnHeight = 0.8f;   // [m] 発射位置の高さ(口元)
 		float m_bulletSpawnForward = 0.3f;   // [m] 発射位置を、正面へどれだけ前に出すか
 		float m_bulletAimHeight = 0.8f;   // [m] 狙う位置の高さ(プレイヤーの足元からの高さ)
+
+		//---- Collision ----
+		float m_bumpSphereRadius = 0.5f;   // [m] 押し戻し判定の球の半径
+		float m_bumpSphereOffsetY = 0.5f;   // [m] 足元から、押し戻し判定の球の中心までの高さ(地面に立たせるなら半径と同じ値)
 	};
 
 	const Parameter& GetParam()const { return m_param; }

@@ -4,8 +4,8 @@
 #include"../CollisionMath/CollisionMath.h"
 #include"../CollisionRegistry/CollisionRegistry.h"
 
-
 #include"../../../../Framework/GameObject/KdGameObject.h"
+#include"../IObstacle/IObstacle.h"
 #include"../../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../../../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
 
@@ -13,8 +13,6 @@
 #include"../../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 
 #include"../../../GameObject/Character/CharacterBase.h"
-#include"../../../GameObject/Gimmick/RoomGate/RoomGate.h"
-#include"../../../GameObject/Gimmick/EnemySpawner/EnemySpawner.h"
 
 
 void CharacterMover::ApplyKnockBack(const std::shared_ptr<CharacterBase>& character)
@@ -45,6 +43,56 @@ void CharacterMover::ApplyKnockBack(const std::shared_ptr<CharacterBase>& charac
 	character->SetPos(finalPos);
 
 	character->SetKnockBack(knockBack);
+
+}
+
+void CharacterMover::CollectObstacles()
+{
+	m_obstacles.clear();
+
+	for (const auto& aabb : AABBCollisionManager::Instance().GetAABBCollisionList())
+	{
+		if (!aabb)
+		{
+			continue;
+		}
+
+		m_obstacles.push_back(aabb.get());
+	}
+
+	for (const auto& obb : OBBCollisionManager::Instance().GetOBBCollisionList())
+	{
+		if (!obb)
+		{
+			continue;
+		}
+
+		m_obstacles.push_back(obb.get());
+	}
+
+	for (const auto& weakObj : m_registry.GetObjects(CollisionLayer::Gate))
+	{
+		auto obstacle = dynamic_cast<const IObstacle*>(weakObj.lock().get());
+
+		if (!obstacle)
+		{
+			continue;
+		}
+
+		m_obstacles.push_back(obstacle);
+	}
+
+	for (const auto& weakObj : m_registry.GetObjects(CollisionLayer::Gimmick))
+	{
+		auto obstacle = dynamic_cast<const IObstacle*>(weakObj.lock().get());
+
+		if (!obstacle)
+		{
+			continue;
+		}
+
+		m_obstacles.push_back(obstacle);
+	}
 
 }
 
@@ -101,164 +149,68 @@ CharacterMover::SweepResult CharacterMover::FindSweepContacts(const std::shared_
 		return result;
 	}
 
+	//============================================
+	// Sweep判定の準備
+	//============================================
+
+	// 移動量の長さ
 	const float moveLength = remainingMove.Length();
 
+	// 判定を始める位置
 	Math::Vector3 sweepStart = character->GetBumpSphereAt(currentPos).Center;
 
-	// 球が今回動く範囲(AABB)
 	const float radius = character->GetBumpSphereRadius();
+
+	// 球の動く範囲
 	const Math::Vector3 sweepEnd = sweepStart + remainingMove;
+
 	const Math::Vector3 reach(radius + CullMargin, radius + CullMargin, radius + CullMargin);
 	const Math::Vector3 sweepMin = Math::Vector3::Min(sweepStart, sweepEnd) - reach;
 	const Math::Vector3 sweepMax = Math::Vector3::Max(sweepStart, sweepEnd) + reach;
 
 
-	const auto& walls =AABBCollisionManager::Instance().GetAABBCollisionList();
+	// ===========================================================
+	// 判定開始
+	// ===========================================================
 
-	for (const auto& wall : walls)
+	for (const auto& obstacle : m_obstacles)
 	{
-		if (!wall)
+		
+		if (!obstacle->IsActiveFor(character.get()))
 		{
 			continue;
 		}
 
-		const auto& box = wall->GetBox();
+		// ボックスの範囲を求める
+		Math::Vector3 boxMin = {};
+		Math::Vector3 boxMax = {};
 
-		Math::Vector3 center = box.Center;
-		Math::Vector3 extents = box.Extents;
+		obstacle->GetWorldBounds(boxMin, boxMax);
 
-		Math::Vector3 boxMin = center - extents;
-
-		Math::Vector3 boxMax = center + extents;
-
-		// 動く範囲と重なっていない壁は、詳しい判定をしない
-		if (!CollisionMath::AABBVsAABB(sweepMin, sweepMax, boxMin, boxMax))
+		// 重なっていなければ飛ばす
+		if (!CollisionMath::AABBVsAABB(sweepMin,sweepMax,boxMin,boxMax))
 		{
 			continue;
 		}
 
-		float toi = 0.0f;
-		Math::Vector3 normal = Math::Vector3::Zero;
+		float toi = {};
+		Math::Vector3 normal = {};
 
-		bool hit =
-			CollisionMath::SphereSweepVsAABB(
-				sweepStart,
-				character->GetBumpSphereRadius(),
-				remainingMove,
-				boxMin,
-				boxMax,
-				toi,
-				normal);
+		// 当たっていなければ飛ばす
+		if (!obstacle->SweepSphere(sweepStart, remainingMove, radius, toi, normal))
+		{
+			continue;
+		}
 
-		if (!hit)
+		bool isWalkable = false;
+
+		if (ShouldSkipWalkableObbContact(obstacle->IsWalkableOnly(), normal, character, isWalkable))
 		{
 			continue;
 		}
 
 		AddSweepContact(result, toi, normal, moveLength);
-	}
 
-	const auto& obbs = OBBCollisionManager::Instance().GetOBBCollisionList();
-
-	for (const auto& obbCollision : obbs)
-	{
-		if (!obbCollision)
-		{
-			continue;
-		}
-
-		float toi = 0.0f;
-
-		Math::Vector3 normal = Math::Vector3::Zero;
-
-		bool hit =
-			CollisionMath::SphereSweepVsOBB(
-				sweepStart,
-				remainingMove,
-				character->GetBumpSphereRadius(),
-				obbCollision->GetBox(),
-				toi,
-				normal);
-
-		if (!hit)
-		{
-			continue;
-		}
-
-		// 坂用OBBは歩行可能面だけ
-		bool isWalkableContact = false;
-		const bool isObbTypeWalkable = (obbCollision->GetCollisionType() == OBBCollision::OBBCollisionType::Walkable);
-
-		if (ShouldSkipWalkableObbContact(isObbTypeWalkable, normal, character, isWalkableContact))
-		{
-			continue;
-		}
-
-		AddSweepContact(result, toi, normal, moveLength);
-	}
-
-	// 部屋の柵(RoomGate)。閉じている間・動いている間だけ壁として扱う
-	for (const auto& weakGate : m_registry.GetObjects(CollisionLayer::Gate))
-	{
-		auto gate = std::dynamic_pointer_cast<RoomGate>(weakGate.lock());
-
-		if (!gate || !gate->IsBlocking())
-		{
-			continue;
-		}
-
-		float toi = 0.0f;
-
-		Math::Vector3 normal = Math::Vector3::Zero;
-
-		bool hit =
-			CollisionMath::SphereSweepVsOBB(
-				sweepStart,
-				remainingMove,
-				character->GetBumpSphereRadius(),
-				gate->GetCollisionBox(),
-				toi,
-				normal);
-
-		if (!hit)
-		{
-			continue;
-		}
-
-		AddSweepContact(result, toi, normal, moveLength);
-	}
-
-	// 敵のスポナー(EnemySpawner)。動かない障害物として扱う
-	for (const auto& weakObj : m_registry.GetObjects(CollisionLayer::Gimmick))
-	{
-		auto spawner = std::dynamic_pointer_cast<EnemySpawner>(weakObj.lock());
-
-		if (!spawner || !spawner->IsBlockingCharacter(character.get()))
-		{
-			continue;
-		}
-
-		float toi = 0.0f;
-
-		Math::Vector3 normal = Math::Vector3::Zero;
-
-		bool hit =
-			CollisionMath::SphereSweepVsCylinder(
-				sweepStart,
-				remainingMove,
-				radius,
-				spawner->GetColliderCenter(),
-				spawner->GetColliderRadius(),
-				spawner->GetColliderRadius(),
-				toi,
-				normal);
-
-		if (!hit)
-		{
-			continue;
-		}
-
-		AddSweepContact(result, toi, normal, moveLength);
 	}
 
 	return result;
@@ -358,6 +310,58 @@ void CharacterMover::ResolveStartOverlapContact(const Math::Vector3& push, const
 		{
 			remainingMove -= contactNormal * into;
 		}
+	}
+}
+
+void CharacterMover::ResolveObstacleOverlap(const std::shared_ptr<CharacterBase>& character, Math::Vector3& currentPos, Math::Vector3& remainingMove)
+{
+
+	const float radius = character->GetBumpSphereRadius();
+	const Math::Vector3 reach(radius + CullMargin, radius + CullMargin, radius + CullMargin);
+
+	for (const auto& obstacle : m_obstacles)
+	{
+		if (!obstacle->IsActiveFor(character.get()))
+		{
+			continue;
+		}
+
+		DirectX::BoundingSphere sphere = character->GetBumpSphereAt(currentPos);
+		
+		// 球の範囲を求める
+		Math::Vector3 sphereMin = sphere.Center - reach;
+		Math::Vector3 sphereMax = sphere.Center + reach;
+
+		// ボックスの範囲を求める
+		Math::Vector3 boxMin = {};
+		Math::Vector3 boxMax = {};
+
+		obstacle->GetWorldBounds(boxMin, boxMax);
+
+		// 重なっているか調べる
+		if (!CollisionMath::AABBVsAABB(sphereMin,sphereMax,boxMin,boxMax))
+		{
+			continue;
+		}
+
+
+		Math::Vector3 push = Math::Vector3::Zero;
+		Math::Vector3 normal = Math::Vector3::Zero;
+
+		if (!obstacle->OverlapSphere(sphere,push,normal))
+		{
+			continue;
+		}
+
+		bool isWalkable = false;
+
+		// 歩ける面かどうか
+		if (ShouldSkipWalkableObbContact(obstacle->IsWalkableOnly(), normal, character,isWalkable))
+		{
+			continue;
+		}
+
+		ResolveStartOverlapContact(push, normal, currentPos, remainingMove, isWalkable);
 	}
 }
 
@@ -509,145 +513,6 @@ void CharacterMover::UpdateCharacterSurfaceState(const std::shared_ptr<Character
 	}
 }
 
-void CharacterMover::ResolveAABBStartOverlap(const std::shared_ptr<CharacterBase>& character, Math::Vector3& currentPos, Math::Vector3& remainingMove)
-{
-	const auto& walls =
-		AABBCollisionManager::Instance().GetAABBCollisionList();
-
-	const float radius = character->GetBumpSphereRadius();
-	const Math::Vector3 reach(radius + CullMargin, radius + CullMargin, radius + CullMargin);
-
-
-	for (const auto& wall : walls)
-	{
-		if (!wall)
-		{
-			continue;
-		}
-
-		// 球の周りの範囲と重なっていない壁は詳しい判定をしない。
-		DirectX::BoundingSphere sphere = character->GetBumpSphereAt(currentPos);
-		const auto& box = wall->GetBox();
-		const Math::Vector3 boxMin = Math::Vector3(box.Center) - Math::Vector3(box.Extents);
-		const Math::Vector3 boxMax = Math::Vector3(box.Center) + Math::Vector3(box.Extents);
-
-		if (!CollisionMath::AABBVsAABB(sphere.Center - reach, sphere.Center + reach, boxMin, boxMax))
-		{
-			continue;
-		}
-
-		Math::Vector3 push = Math::Vector3::Zero;
-		Math::Vector3 normal = Math::Vector3::Zero;
-
-		if(!CollisionMath::SphereVsAABB(sphere,wall->GetBox(),push,normal))
-		{
-			continue;
-		}
-
-		// 壁(AABB)は歩行可能面としては扱わない
-		ResolveStartOverlapContact(push,normal,currentPos,remainingMove,false);
-
-	}
-}
-
-void CharacterMover::ResolveOBBStartOverlap(const std::shared_ptr<CharacterBase>& character, Math::Vector3& currentPos, Math::Vector3& remainingMove)
-{
-	const auto& obbs = OBBCollisionManager::Instance().GetOBBCollisionList();
-
-
-	for (const auto& obbCollision : obbs)
-	{
-		if (!obbCollision)
-		{
-			continue;
-		}
-
-		DirectX::BoundingSphere sphere = character->GetBumpSphereAt(currentPos);
-
-		Math::Vector3 push = Math::Vector3::Zero;
-		Math::Vector3 normal = Math::Vector3::Zero;
-
-
-		if (!CollisionMath::SphereVsOBB(sphere, obbCollision->GetBox(), push, normal))
-		{
-			continue;
-		}
-
-		// =====================================
-		// 坂用OBBは歩行可能面だけを処理
-		// =====================================
-		bool isWalkableContact = false;
-		const bool isObbTypeWalkable = (obbCollision->GetCollisionType() == OBBCollision::OBBCollisionType::Walkable);
-
-		if (ShouldSkipWalkableObbContact(isObbTypeWalkable, normal, character, isWalkableContact))
-		{
-			continue;
-		}
-
-		ResolveStartOverlapContact(push, normal, currentPos, remainingMove, isWalkableContact);
-
-	}
-}
-
-void CharacterMover::ResolveGateStartOverlap(const std::shared_ptr<CharacterBase>& character, Math::Vector3& currentPos, Math::Vector3& remainingMove)
-{
-	for (const auto& weakGate : m_registry.GetObjects(CollisionLayer::Gate))
-	{
-		auto gate = std::dynamic_pointer_cast<RoomGate>(weakGate.lock());
-
-		if (!gate || !gate->IsBlocking())
-		{
-			continue;
-		}
-
-		DirectX::BoundingSphere sphere = character->GetBumpSphereAt(currentPos);
-
-		Math::Vector3 push = Math::Vector3::Zero;
-		Math::Vector3 normal = Math::Vector3::Zero;
-
-		if (!CollisionMath::SphereVsOBB(sphere, gate->GetCollisionBox(), push, normal))
-		{
-			continue;
-		}
-
-		// 柵は歩行可能面としては扱わない
-		ResolveStartOverlapContact(push, normal, currentPos, remainingMove, false);
-	}
-}
-
-void CharacterMover::ResolveSpawnerStartOverlap(const std::shared_ptr<CharacterBase>& character, Math::Vector3& currentPos, Math::Vector3& remainingMove)
-{
-	for (const auto& weakObj : m_registry.GetObjects(CollisionLayer::Gimmick))
-	{
-		auto spawner = std::dynamic_pointer_cast<EnemySpawner>(weakObj.lock());
-
-		// 出てきたばかりの敵は、スポナーから出るまで押し戻さない
-		if (!spawner || !spawner->IsBlockingCharacter(character.get()))
-		{
-			continue;
-		}
-
-		DirectX::BoundingSphere sphere = character->GetBumpSphereAt(currentPos);
-
-		Math::Vector3 push = Math::Vector3::Zero;
-		Math::Vector3 normal = Math::Vector3::Zero;
-
-		if (!CollisionMath::SphereVsCylinder(
-			sphere,
-			spawner->GetColliderCenter(),
-			spawner->GetColliderRadius(),
-			spawner->GetColliderRadius(),
-			push,
-			normal))
-		{
-			continue;
-		}
-
-		// スポナーは歩行可能面としては扱わない
-		ResolveStartOverlapContact(push, normal, currentPos, remainingMove, false);
-	}
-}
-
 bool CharacterMover::IsWalkableSurface(const Math::Vector3& normal, const std::shared_ptr<CharacterBase>& character) const
 {
 	if(!character)
@@ -767,6 +632,10 @@ void CharacterMover::BeginFrame(const std::vector<std::shared_ptr<CharacterBase>
 
 		character->SetIsGrounded(false);
 	}
+
+	// 当たり判定オブジェクトを更新
+	CollectObstacles();
+
 }
 
 void CharacterMover::ResolveCharacterMovement(const std::vector<std::shared_ptr<CharacterBase>>& characters)
@@ -799,13 +668,7 @@ Math::Vector3 CharacterMover::ResolveCharacterDisplacement(const std::shared_ptr
 	// =====================================
 	// 移動開始時のめり込みだけ最初に解消
 	// =====================================
-	ResolveAABBStartOverlap(character, currentPos, remainingMove);
-
-	ResolveOBBStartOverlap(character, currentPos, remainingMove);
-
-	ResolveGateStartOverlap(character, currentPos, remainingMove);
-
-	ResolveSpawnerStartOverlap(character, currentPos, remainingMove);
+	ResolveObstacleOverlap(character, currentPos, remainingMove);
 
 	// =====================================
 	// 以降はSweepだけで移動を解決

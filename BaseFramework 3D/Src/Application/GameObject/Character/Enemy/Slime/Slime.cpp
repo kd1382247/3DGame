@@ -15,8 +15,13 @@ void Slime::Init()
 {
 	if (!m_spModel)
 	{
+		// パラメータ初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
+		m_parameter.Init();
+
+		const auto& param = m_parameter.GetParam(m_slimeSize);
+
 		InitCharacterModel("Asset/Models/Enemy/Slime/Slime.gltf", "Slime",
-			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "Slime");
+			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "Slime");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
@@ -24,12 +29,10 @@ void Slime::Init()
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<SlimeNormalState>();
 
-		// パラメータクラス初期化
-		m_parameter.Init();
-
-		const auto& param = m_parameter.GetParam(m_slimeSize);
-
 		m_health.Init(param.m_maxHP);
+
+		// 当たり判定(押し戻し)球の大きさをパラメータから反映
+		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
 
 		m_reachDistance = param.m_reachDistance;
 		m_attackCooldownDuration = param.m_attackCooldown;
@@ -89,7 +92,7 @@ void Slime::SetUpReference()
 
 void Slime::DrawDebug()
 {
-	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
+	DrawBumpDebugSphere();
 
 	// 追加したデバッグ線を描画して消す(描画しないと頂点が溜まり続ける)
 	m_pDebugWire->Draw();
@@ -106,6 +109,10 @@ void Slime::SetScale(const Math::Vector3&)
 void Slime::DrawParameterInspector()
 {
 	m_parameter.DrawInspecter();
+
+	// 当たり判定球の変更をすぐに反映
+	const auto& bumpParam = m_parameter.GetParam(m_slimeSize);
+	SetBumpSphere(bumpParam.m_bumpSphereOffsetY, bumpParam.m_bumpSphereRadius);
 	
 	// パラメータ調整中に大きさをいじった時にScaleをすぐに反映
 	SetScale(Math::Vector3::Zero);

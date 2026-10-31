@@ -16,18 +16,21 @@ void StarFish::Init()
 {
 	if (!m_spModel)
 	{
-		InitCharacterModel("Asset/Models/Enemy/StarFish/StarFish.gltf", "StarFish",
-			Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f, "StarFish");
-
-		// アニメーションクラス初期化
-		m_animation.Init(m_spModel);
-
-		// パラメータークラス初期化
+		// パラメータ初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
 		m_parameter.Init();
 
 		const auto& param = m_parameter.GetParam();
 
+		InitCharacterModel("Asset/Models/Enemy/StarFish/StarFish.gltf", "StarFish",
+			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "StarFish");
+
+		// アニメーションクラス初期化
+		m_animation.Init(m_spModel);
+
 		m_health.Init(param.m_maxHP);
+
+		// 当たり判定(押し戻し)球の大きさをパラメータから反映
+		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
 
 		m_attackCooldownDuration = param.m_attackCooldown;
 
@@ -61,13 +64,17 @@ void StarFish::PostUpdate()
 
 	UpdateAnimation();
 
-	DrawBumpDebugSphere(Math::Vector3(0.0f, 0.5f, 0.0f), 0.4f);
+	DrawBumpDebugSphere();
 
 }
 
 void StarFish::DrawParameterInspector()
 {
 	m_parameter.DrawInspecter();
+
+	// 当たり判定球の変更をすぐに反映
+	const auto& bumpParam = m_parameter.GetParam();
+	SetBumpSphere(bumpParam.m_bumpSphereOffsetY, bumpParam.m_bumpSphereRadius);
 }
 
 void StarFish::SetUpReference()

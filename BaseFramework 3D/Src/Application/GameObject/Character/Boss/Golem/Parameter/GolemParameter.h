@@ -21,6 +21,10 @@ public:
 
 		//---- Attack ----
 		float m_attackPow = 10.0f;   // 攻撃力
+
+		//---- Collision ----
+		float m_bumpSphereRadius = 0.5f;   // [m] 押し戻し判定の球の半径
+		float m_bumpSphereOffsetY = 0.5f;   // [m] 足元から、押し戻し判定の球の中心までの高さ(地面に立たせるなら半径と同じ値)
 	};
 
 	const Parameter& GetParam()const { return m_param; }

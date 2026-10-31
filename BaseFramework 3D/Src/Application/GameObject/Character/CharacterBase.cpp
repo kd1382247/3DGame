@@ -92,13 +92,7 @@ void CharacterBase::DrawInspectorHeader()
 
 void CharacterBase::DrawInspector()
 {
-	if (InspectorUI::BeginGroup("Collision"))
-	{
-		// 当たり判定(押し戻し)球の半径
-		InspectorUI::Float("BumpSphereRadius", m_bumpSphereRadius, 0.01f, 0.01f, "%.2f m");
-
-		InspectorUI::EndGroup();
-	}
+	// 当たり判定(押し戻し)球の大きさは、各キャラのパラメータクラスで編集する
 }
 
 void CharacterBase::SetRotation(const Math::Vector3& rotation)
@@ -123,14 +117,21 @@ DirectX::BoundingSphere CharacterBase::GetBumpSphere() const
 
 DirectX::BoundingSphere CharacterBase::GetBumpSphereAt(const Math::Vector3& pos) const
 {
-	constexpr float BumpSphereOffsetY = 0.5f;
-
 	DirectX::BoundingSphere sphere;
 
-	sphere.Center = pos + Math::Vector3(0.0f, BumpSphereOffsetY, 0.0f);
+	sphere.Center = pos + Math::Vector3(0.0f, m_bumpSphereOffsetY, 0.0f);
 	sphere.Radius = m_bumpSphereRadius;
 
 	return sphere;
+}
+
+void CharacterBase::SetBumpSphere(float offsetY, float radius)
+{
+	// 半径が0以下だと、衝突判定が成り立たないので下限を決めておく
+	constexpr float MinRadius = 0.01f;
+
+	m_bumpSphereOffsetY = offsetY;
+	m_bumpSphereRadius  = (radius > MinRadius) ? radius : MinRadius;
 }
 
 
@@ -176,10 +177,12 @@ void CharacterBase::InitCharacterModel(const std::string& modelPath, const std::
 	SetObjectName(objectName);
 }
 
-void CharacterBase::DrawBumpDebugSphere(const Math::Vector3& offset, float radius)
+void CharacterBase::DrawBumpDebugSphere()
 {
+	const DirectX::BoundingSphere sphere = GetBumpSphere();
+
 	// 球の色は現在のエリアIDで変える
-	m_pDebugWire->AddDebugSphere(GetPos() + offset, radius, GetAreaDebugColor());
+	m_pDebugWire->AddDebugSphere(sphere.Center, sphere.Radius, GetAreaDebugColor());
 }
 
 Math::Color CharacterBase::GetAreaDebugColor() const

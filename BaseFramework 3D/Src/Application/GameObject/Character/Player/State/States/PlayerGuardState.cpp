@@ -27,16 +27,39 @@ void PlayerGuardState::OnStart(Player* owner)
 void PlayerGuardState::OnUpdate(Player * owner)
 {
 	PlayerGuard& guard = owner->GetGuard();
-
+	
+	// ガード中の移動
 	owner->UpdateAttackMove();
 
 	// 足音再生
 	owner->UpdateWalkSE(0.5);
 
+	// ガード開始
+	if (guard.IsGuardStart())
+	{
+		if (owner->IsAnimationFinished())
+		{
+			guard.StartGuard();
+		}
+		return;
+	}
+	
+	// ガード終了
+	if (guard.IsGuardEnd())
+	{
+		if (owner->IsAnimationFinished())
+		{
+			m_pMachine->ChangeState<PlayerNormalState>();
+		}
+		return;
+	}
+
+	// 移動方向に応じて歩行アニメーションを再生
 	if(!guard.IsGuardBreak()&&!guard.IsGuardHit())
 	{
 		owner->PlayAnimation(GetGuardAnimation(owner));
 	}
+
 
 	// ガード中にパリィの入力を受けたら、ステートを変える
 	if (owner->GetInput().IsParryTrigger()&&
@@ -50,7 +73,7 @@ void PlayerGuardState::OnUpdate(Player * owner)
 		return;
 	}
 
-	// ガード解除
+	// ガード強制解除
 	if (guard.IsGuardBreak())
 	{
 		owner->PlayAnimation(PlayerAnimationType::GuardBreak);
@@ -65,7 +88,8 @@ void PlayerGuardState::OnUpdate(Player * owner)
 	
 	if (!guard.IsGuardHit() && !owner->GetInput().IsGuardDown())
 	{
-		m_pMachine->ChangeState<PlayerNormalState>();
+		guard.EndGuard();
+		owner->PlayAnimation(guard.GetGuardAnimation());
 	}
 
 	if (guard.IsGuardHit())
@@ -75,7 +99,7 @@ void PlayerGuardState::OnUpdate(Player * owner)
 
 		if (owner->IsAnimationFinished())
 		{
-			guard.ResetGuardState();
+			guard.StartGuard();
 			owner->PlayAnimation(PlayerAnimationType::GuardIDLE);
 		}
 	}
