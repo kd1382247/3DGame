@@ -58,7 +58,12 @@ void Bomb::Update()
 
 	m_stateMachine.Update();
 
-	UpdateAttack();
+	if (m_stateMachine.IsState<BombNormalState>())
+	{
+		UpdateAttack();
+	}
+
+	UpdateEmissive();
 }
 
 void Bomb::PostUpdate()

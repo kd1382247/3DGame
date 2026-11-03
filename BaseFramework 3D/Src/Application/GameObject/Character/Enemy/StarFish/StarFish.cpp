@@ -55,7 +55,13 @@ void StarFish::Update()
 
 	m_stateMachine.Update();
 
-	UpdateAttack();
+
+	if (m_stateMachine.IsState<StarFishNormalState>())
+	{
+		UpdateAttack();
+	}
+
+	UpdateEmissive();
 }
 
 void StarFish::PostUpdate()
@@ -115,6 +121,12 @@ void StarFish::StartAttack()
 	m_hitTarget = false;
 	m_hasFiredBullet = false;
 	SetAttackTiming();
+
+	Math::Vector3 effectPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
+	effectPos += m_mWorld.Backward() * 0.3f;
+
+	KdEffekseerManager::GetInstance().Play("Enemy/Shot/Shot.efkefc",effectPos , 0.3f, 1.4f);
+
 }
 
 void StarFish::UpdateAnimation()

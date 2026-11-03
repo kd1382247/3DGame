@@ -715,6 +715,12 @@ void Player::OnHit(const AttackInfo attackInfo)
 	// SEを流す
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/Damage/Damage.wav");
 
+
+	Math::Vector3 effectPos = GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f);
+	effectPos -= info.m_knockBackDir * 0.3f;
+
+	KdEffekseerManager::GetInstance().Play("Player/Damage/Damage.efkefc", effectPos,0.3f,1.2f);
+
 }
 
 //================================

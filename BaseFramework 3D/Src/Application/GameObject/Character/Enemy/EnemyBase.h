@@ -80,6 +80,7 @@ public:
 
 	void  CreateDeathSmoke();
 
+	void  UpdateEmissive();
 
 	// 攻撃系
 	void StartAttack();
@@ -91,6 +92,10 @@ protected:
 	std::weak_ptr<Player>m_wpPlayer;
 
 	void PlayHitEffect();
+
+	// エミッシブ解除
+	void EmissiveDisable() { m_emissiveEnable = false; }
+
 
 	// 被弾時の共通処理(HPを減らす・ダメージ表示・点滅・ヒットストップ・ヒットエフェクト・ノックバック)
 	// 戻り値: この攻撃で死亡したかどうか
@@ -134,6 +139,7 @@ protected:
 
 	// パラメータクラスのインスペクター描画。各Enemyが実装する
 	virtual void DrawParameterInspector() = 0;
+
 
 	// 移動状態
 	MoveState m_currentMoveState = MoveState::DirectChase;
@@ -192,5 +198,11 @@ protected:
 
 	// フライテキストのパス
 	const std::string m_flyTextPath = "DamageNumber_Orange.png";
+
+	// エミッシブで光らせるか
+	bool m_emissiveEnable = false;
+
+	float m_emissiveTime = 0.0f;
+	float m_emissivePower = 0.0f;
 
 };

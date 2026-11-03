@@ -12,5 +12,13 @@ public:
 	void OnUpdate(TurtleShell* turtleShell)override;
 	void OnExit(TurtleShell* turtleShell)override;
 
+
+private:
+
+	void UpdateEffect(TurtleShell* turtleShell);
+	void PlayEffect(const Math::Vector3& pos);
+
+	std::weak_ptr<KdEffekseerObject >m_wpEffect;
+
 };
 

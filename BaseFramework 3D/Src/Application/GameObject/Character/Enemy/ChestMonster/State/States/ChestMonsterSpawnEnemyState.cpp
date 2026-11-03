@@ -8,6 +8,8 @@ void ChestMonsterSpawnEnemyState::OnStart(ChestMonster* chestMonster)
 {
 	chestMonster->StartSpawnEnemy();
 	chestMonster->PlayAnimation(ChestMonsterAnimationType::GenerateMinion);
+
+	KdEffekseerManager::GetInstance().Play("Enemy/Smoke/Smoke.efkefc", chestMonster->GetPos()+Math::Vector3(0.0f,1.6f,0.0f), 1.0f, 0.4f, false);
 }
 
 void ChestMonsterSpawnEnemyState::OnUpdate(ChestMonster* chestMonster)

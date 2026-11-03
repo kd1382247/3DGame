@@ -499,6 +499,8 @@
             "Name": "ChestMonster_0",
             "Parameter": {
                 "AttackPower": 10.0,
+                "BumpSphereOffsetY": 0.800000011920929,
+                "BumpSphereRadius": 0.800000011920929,
                 "JumpPower": 0.4000000059604645,
                 "MaxHP": 100,
                 "MaxSpawnedAlive": 10,
@@ -543,6 +545,8 @@
             "Name": "ChestMonster_1",
             "Parameter": {
                 "AttackPower": 10.0,
+                "BumpSphereOffsetY": 0.800000011920929,
+                "BumpSphereRadius": 0.800000011920929,
                 "JumpPower": 0.4000000059604645,
                 "MaxHP": 100,
                 "MaxSpawnedAlive": 10,
@@ -587,6 +591,8 @@
             "Name": "ChestMonster_2",
             "Parameter": {
                 "AttackPower": 10.0,
+                "BumpSphereOffsetY": 0.800000011920929,
+                "BumpSphereRadius": 0.800000011920929,
                 "JumpPower": 0.4000000059604645,
                 "MaxHP": 100,
                 "MaxSpawnedAlive": 10,
@@ -631,6 +637,8 @@
             "Name": "ChestMonster_3",
             "Parameter": {
                 "AttackPower": 10.0,
+                "BumpSphereOffsetY": 0.800000011920929,
+                "BumpSphereRadius": 0.800000011920929,
                 "JumpPower": 0.4000000059604645,
                 "MaxHP": 100,
                 "MaxSpawnedAlive": 10,
@@ -1264,6 +1272,44 @@
                 "z": 1.0
             },
             "StageModel": "Corridor_Stair"
+        },
+        {
+            "Class": "Mushroom",
+            "Name": "Mushroom_0",
+            "Position": {
+                "x": 7.400000095367432,
+                "y": 2.5,
+                "z": 5.199999809265137
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        {
+            "Class": "Cactas",
+            "Name": "Cactas_0",
+            "Position": {
+                "x": 5.5,
+                "y": 0.0,
+                "z": 3.799999952316284
+            },
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
         }
     ]
 }

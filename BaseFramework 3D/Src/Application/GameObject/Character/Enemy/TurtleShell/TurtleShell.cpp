@@ -59,8 +59,12 @@ void TurtleShell::Update()
 
 	m_stateMachine.Update();
 
-	UpdateAttack();
+	if(m_stateMachine.IsState<TurtleShellNormalState>())
+	{
+		UpdateAttack();
+	}
 
+	UpdateEmissive();
 }
 
 void TurtleShell::PostUpdate()
@@ -109,6 +113,8 @@ void TurtleShell::RePlayAnimation(TurtleShellAnimationType type)
 
 void TurtleShell::StartSpinAttack()
 {
+	m_emissiveEnable = false;
+
 	// 回転攻撃の持続時間
 	m_spinAttackRemaining = m_spinAttackDuration;
 
@@ -122,6 +128,9 @@ void TurtleShell::StartSpinAttack()
 void TurtleShell::EndSpinAttack()
 {
 	m_bumpPushRate = 1.0f;
+
+	m_attackFlg = false;
+	m_attackCooldown = m_attackCooldownDuration;
 }
 
 void TurtleShell::StartDizzy()

@@ -18,6 +18,8 @@ namespace EffekseerAssets
 		"Enemy/EnemySpawner/Smoke_spawner.efkefc",
 		"Enemy/Energy/Energy.efkefc",
 		"Enemy/Explosion/Explosion.efkefc",
+		"Enemy/Spin/Spin.efkefc"
+
 
 		// Common
 		"Common/Hit/Flash_hit.efkefc",

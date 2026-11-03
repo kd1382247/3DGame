@@ -237,5 +237,7 @@ void EnergyBullet::Vanish()
 		spEffect->StopEffect();
 	}
 
+	KdEffekseerManager::GetInstance().Play("Enemy/Energy/EnergyBreak.efkefc", GetPos(),0.6,1.0f,false,30,60);
+
 	Destroy();
 }

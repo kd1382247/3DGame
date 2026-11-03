@@ -69,7 +69,7 @@ void CharacterBase::DrawLit()
 
 	KdShaderManager::Instance().m_StandardShader.SetColorOverlay(m_overlayColor, GetOverlayRate());
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, localMat);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, localMat,kWhiteColor,m_emissiveColor);
 
 	KdShaderManager::Instance().m_StandardShader.SetSelected(false);
 

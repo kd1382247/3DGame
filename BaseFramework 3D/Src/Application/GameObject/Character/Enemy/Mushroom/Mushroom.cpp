@@ -4,6 +4,7 @@
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 
 #include"State/States/MushroomNormalState.h"
+#include"State/States/MushroomAttackState.h"
 #include"State/States/MushroomDamageState.h"
 #include"State/States/MushroomDieState.h"
 
@@ -64,8 +65,13 @@ void Mushroom::Update()
 
 	m_stateMachine.Update();
 
-	UpdateAttack();
 
+	if (m_stateMachine.IsState<MushroomNormalState>())
+	{
+		UpdateAttack();
+	}
+
+	UpdateEmissive();
 }
 
 void Mushroom::PostUpdate()

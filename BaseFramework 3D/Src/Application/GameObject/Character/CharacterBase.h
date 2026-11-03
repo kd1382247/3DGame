@@ -213,4 +213,8 @@ protected:
 	float m_maxOverlayRate       = 0.0f;
 	Math::Vector3 m_overlayColor = {};
 
+
+	Math::Vector3 m_emissiveColor = {};
+
+
 };

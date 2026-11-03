@@ -5,6 +5,7 @@
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 
 #include"State/States/CactasNormalState.h"
+#include"State/States/CactasAttackState.h"
 #include"State/States/CactasDamageState.h"
 #include"State//States/CactasDieState.h"
 
@@ -59,7 +60,12 @@ void Cactas::Update()
 
 	m_stateMachine.Update();
 
-	UpdateAttack();
+	if(m_stateMachine.IsState<CactasNormalState>())
+	{
+		UpdateAttack();
+	}
+
+	UpdateEmissive();
 }
 
 void Cactas::PostUpdate()
@@ -125,6 +131,7 @@ void Cactas::PlayIdleAnimation()
 
 void Cactas::OnHit(const AttackInfo attackInfo)
 {
+
 	if (ApplyDamage(attackInfo))
 	{
 		m_stateMachine.ChangeState<CactasDieState>();

@@ -7,6 +7,7 @@
 
 #include"../../StateMachine/StateMachine.h"
 #include"State/States/SlimeNormalState.h"
+#include"State/States/SlimeAttackState.h"
 #include"State/States/SlimeDamageState.h"
 #include"State/States//SlimeDieState.h"
 
@@ -63,13 +64,16 @@ void Slime::Init()
 void Slime::Update()
 {
 
-
-
 	UpdateGravity();
 
 	m_stateMachine.Update();
 
-	UpdateAttack();
+	if (m_stateMachine.IsState<SlimeNormalState>())
+	{
+		UpdateAttack();
+	}
+
+	UpdateEmissive();
 }
 
 void Slime::PostUpdate()

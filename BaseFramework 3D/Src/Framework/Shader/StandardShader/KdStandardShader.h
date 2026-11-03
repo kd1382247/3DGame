@@ -135,7 +135,13 @@ public:
 		m_dirtyCBObj = true;
 	}
 
-
+	// 0以外の数値を入れるとエミッシブだけの色になる
+	void SetOnlyEmissive(int emissive)
+	{
+		m_cb0_Obj.Work().OnlyEmissie = emissive;
+		
+		m_dirtyCBObj = true;
+	}
 
 	// ディゾルブ設定
 	void SetDissolve(float threshold, const float* range = nullptr, const Math::Vector3* edgeColor = nullptr)

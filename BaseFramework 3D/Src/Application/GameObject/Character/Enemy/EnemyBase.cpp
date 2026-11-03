@@ -94,7 +94,7 @@ void EnemyBase::StartAttack()
 {
 	m_hitTarget = false;
 	m_animFrame = 0.0f;
-
+	m_emissiveEnable = false;
 }
 
 void EnemyBase::UpdateAttackCollision()
@@ -187,7 +187,7 @@ void EnemyBase::UpdateDirectChase()
 
 	const float distance = targetDir.Length();
 
-	float reachDistanceMargin = m_reachDistance+0.3f;
+	float reachDistanceMargin = m_reachDistance+0.5f;
 
 	if (m_hasReachedTarget)
 	{
@@ -550,6 +550,22 @@ void EnemyBase::CreateDeathSmoke()
 
 }
 
+void EnemyBase::UpdateEmissive()
+{
+	if (!m_emissiveEnable)
+	{
+		m_emissivePower = 0.0f;
+		m_emissiveTime = 0.0f;
+		m_emissiveColor = Math::Vector3::Zero;
+		return;
+	}
+
+	m_emissiveTime += m_deltaTime;
+	m_emissivePower = 0.5f + 0.5f * sinf(m_emissiveTime * 20.0f);
+
+	m_emissiveColor = { m_emissivePower,m_emissivePower ,m_emissivePower };
+}
+
 void EnemyBase::UpdateAttack()
 {
 	// ターゲットに到達したら攻撃する
@@ -564,6 +580,17 @@ void EnemyBase::UpdateAttack()
 		m_attackCooldown = 0;
 	}
 
+	if (m_attackCooldownDuration != 0)
+	{
+		float rate = m_attackCooldown / m_attackCooldownDuration;
+
+		// もうすぐ攻撃をするときにEmissiveで光らせるフラグを立てる
+		if (rate <= 0.6)
+		{
+			m_emissiveEnable = true;
+		}
+	}
+
 	// クールタイムがある場合は攻撃しない
 	if (m_attackFlg)
 	{
@@ -575,6 +602,7 @@ void EnemyBase::UpdateAttack()
 	else
 	{
 		m_attackCooldown = m_attackCooldownDuration;
+		m_emissiveEnable = false;
 	}
 }
 
@@ -658,6 +686,10 @@ void EnemyBase::EndAttack()
 
 bool EnemyBase::ApplyDamage(const AttackInfo& attackInfo)
 {
+
+
+	EmissiveDisable();
+
 	const bool isDead = m_health.TakeDamage(attackInfo.m_damage);
 
 	AddKnockBack(attackInfo.m_knockBackDir, attackInfo.m_knockBackPower);

@@ -26,10 +26,10 @@ void Title::Init()
 
 	// 各テクスチャを初期化
 	InitTexture(m_spTitleBGTex,       "TitleBG.png");
-	InitTexture(m_spTitleLogoTex,     "TitleLogo2.png");
+	InitTexture(m_spTitleLogoTex,     "TitleLogo.png");
 	InitTexture(m_spCharactersTex,    "Characters.png");
-	InitTexture(m_spStartButtonTex,   "StartButton2.png");
-	InitTexture(m_spSettingButtonTex, "SettingButton2.png");
+	InitTexture(m_spStartButtonTex,   "StartButton.png");
+	InitTexture(m_spSettingButtonTex, "SettingButton.png");
 
 	// 前のシーンで押していたキーで、いきなり決定されないようにする
 	m_isPrevMouseDown = IsKeyDown(VK_LBUTTON);
