@@ -5,12 +5,12 @@
 
 // 必殺技(突進)の状態を持つクラス
 // Playerのことは知らない。カメラの向きなど必要な情報は引数で受け取る
-class PlayerSpecialMove
+class PlayerSpinAttack
 {
 public:
 
 	// パラメータの参照を受け取る(使う側が持つ)
-	void Init(const PlayerParameter::SpecialMoveParam& param) { m_pParam = &param; }
+	void Init(const PlayerParameter::SpinAttackParam& param) { m_pParam = &param; }
 
 	// 突進する方向をセットする(必殺技の開始時に、カメラの前方向などを渡す)
 	void SetMoveDir(const Math::Vector3& dir) { m_specialMoveDir = dir; }
@@ -30,7 +30,7 @@ public:
 private:
 
 	// パラメータ(Playerが持つPlayerParameterの中身を参照する)
-	const PlayerParameter::SpecialMoveParam* m_pParam = nullptr;
+	const PlayerParameter::SpinAttackParam* m_pParam = nullptr;
 
 	Math::Vector3   m_specialMoveDir = {};
 

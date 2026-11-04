@@ -8,26 +8,24 @@ void SceneView::Init()
 	m_renderTarget.CreateRenderTarget(m_width, m_height, true);
 }
 
-void SceneView::Draw()
+void SceneView::OnDraw()
 {
-	ImGuiWindowFlags flags =
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoScrollWithMouse;
 
-	ImGui::Begin("Scene View",nullptr,flags);
+	// 描画されているフレーム番号を入れる
+	m_lastDrawFrame = ImGui::GetFrameCount();
+
 
 	// SceneView内で使えるサイズを取得
-	ImVec2 newViewSize =ImGui::GetContentRegionAvail();
+	ImVec2 newViewSize = ImGui::GetContentRegionAvail();
 
 
-	m_sizeChanged=UpdateRenderTargetSize(newViewSize);
-	
+	m_sizeChanged = UpdateRenderTargetSize(newViewSize);
+
 	// SceneView画像の左上座標
 	m_viewPos = ImGui::GetCursorScreenPos();
 
 
-	if(m_renderTarget.m_RTTexture)
+	if (m_renderTarget.m_RTTexture)
 	{
 		ImGui::Image(
 			(ImTextureID)m_renderTarget.m_RTTexture->WorkSRView(),
@@ -36,9 +34,17 @@ void SceneView::Draw()
 		// Imageにマウスが乗っているか
 		m_isHovered = ImGui::IsItemHovered();
 	}
+}
 
+ImGuiWindowFlags SceneView::GetImGuiWindowFlags() const
+{
 
-	ImGui::End();
+	ImGuiWindowFlags flags =
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoScrollWithMouse;
+
+	return flags;
 }
 
 bool SceneView::UpdateRenderTargetSize(const ImVec2& viewSize)

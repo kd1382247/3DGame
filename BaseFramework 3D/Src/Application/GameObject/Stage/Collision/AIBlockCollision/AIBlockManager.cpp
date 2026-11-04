@@ -3,6 +3,7 @@
 #include"AIBlock.h"
 
 #include"../../../../Editor/EditorManager.h"
+#include"../../../../Editor/InspectorWidgets.h"
 
 std::shared_ptr<AIBlock> AIBlockManager::CreateAIBlock()
 {
@@ -107,15 +108,15 @@ bool AIBlockManager::Save(const std::string& filePath, const std::shared_ptr<Sta
 
 		// 座標(Stageからのローカル位置)
 		const auto& pos = block->GetLocalPos();
-		blockJson["Position"]["x"] = pos.x;
-		blockJson["Position"]["y"] = pos.y;
-		blockJson["Position"]["z"] = pos.z;
+		blockJson["Position"]["x"] = InspectorUI::CeilToDigits(pos.x, 3);
+		blockJson["Position"]["y"] = InspectorUI::CeilToDigits(pos.y, 3);
+		blockJson["Position"]["z"] = InspectorUI::CeilToDigits(pos.z, 3);
 
 		// 大きさ(Stageからのローカル大きさ)
 		const auto& scale = block->GetLocalScale();
-		blockJson["Scale"]["x"] = scale.x;
-		blockJson["Scale"]["y"] = scale.y;
-		blockJson["Scale"]["z"] = scale.z;
+		blockJson["Scale"]["x"] = InspectorUI::CeilToDigits(scale.x, 3);
+		blockJson["Scale"]["y"] = InspectorUI::CeilToDigits(scale.y, 3);
+		blockJson["Scale"]["z"] = InspectorUI::CeilToDigits(scale.z, 3);
 
 		rootJson["AIBlocks"].push_back(blockJson);
 	}

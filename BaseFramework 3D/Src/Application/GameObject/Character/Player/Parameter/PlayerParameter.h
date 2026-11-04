@@ -86,7 +86,7 @@ public:
 	};
 
 	// 必殺技
-	struct SpecialMoveParam
+	struct SpinAttackParam
 	{
 		HitParam m_hitParam =
 		{ {20},{0.1f},{0.08f} };
@@ -103,7 +103,7 @@ public:
 	const MoveParam&        GetMove()        const { return m_move; }
 	const JumpParam&        GetJump()        const { return m_jump; }
 	const AttackParam&      GetAttack()      const { return m_attack; }
-	const SpecialMoveParam& GetSpecialMove() const { return m_specialMove; }
+	const SpinAttackParam&  GetSpinAttack()  const { return m_spinAttack; }
 	const GuardParam&       GetGuard()       const { return m_guard; }
 	const ParryParam&       GetParry()       const { return m_parry; }
 	void Init();
@@ -120,7 +120,7 @@ private:
 	MoveParam        m_move        = {};
 	JumpParam        m_jump        = {};
 	AttackParam      m_attack      = {};
-	SpecialMoveParam m_specialMove = {};
+	SpinAttackParam m_spinAttack = {};
 	GuardParam       m_guard       = {};
 	ParryParam       m_parry       = {};
 };

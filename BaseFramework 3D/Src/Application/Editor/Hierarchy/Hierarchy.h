@@ -1,8 +1,14 @@
 ﻿#pragma once
 
-class Hierarchy
+#include"../EditorPanel/EditorPanel.h"
+
+class Hierarchy:public EditorPanel
 {
 public:
+
+	Hierarchy() :EditorPanel("Hierarchy") {}
+	~Hierarchy()override {}
+
 
 	enum class HierarchyCategory
 	{
@@ -18,9 +24,13 @@ public:
 		PointLight
 	};
 
-	void Draw();
-
 	HierarchyCategory GetHierarchyCategory() const { return m_category; }
+
+protected:
+
+	void OnDraw()override;
+
+	ImGuiWindowFlags GetImGuiWindowFlags()const override;
 
 private:
 

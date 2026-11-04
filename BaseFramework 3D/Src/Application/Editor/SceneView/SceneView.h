@@ -1,11 +1,16 @@
 ﻿#pragma once
 
-class SceneView
+#include"../EditorPanel/EditorPanel.h"
+
+class SceneView:public EditorPanel
 {
 public:
 
+	SceneView():EditorPanel("Scene View"){}
+	~SceneView()override {}
+
+
 	void Init();
-	void Draw();
 
 	void BeginRender();
 	void EndRender();
@@ -17,12 +22,26 @@ public:
 
 	float GetAspectRatio()const;
 
+	// ウィンドウにマウスが乗っているか
 	bool IsHovered()const
 	{
-		return m_isHovered;
+		// IsHoveredがtrueかつ
+		// 現在SceneViewが描画されているか
+		return m_isHovered &&
+			m_lastDrawFrame == ImGui::GetFrameCount();
 	}
 
-	bool SizeChanged()const { return m_sizeChanged; }
+	bool SizeChanged()const
+	{
+		return m_sizeChanged&&
+			m_lastDrawFrame == ImGui::GetFrameCount();
+	}
+
+protected:
+
+	void OnDraw()override;
+
+	ImGuiWindowFlags GetImGuiWindowFlags()const override;
 
 private:
 
@@ -36,11 +55,14 @@ private:
 	int m_height = 0;
 
 	ImVec2 m_viewPos = { 0.0f,0.0f };
-	ImVec2 m_viewSize = { 0.0f,0.0f };
 	bool m_isHovered = false;
 	
 	// サイズ変更をしたか
 	bool m_sizeChanged = false;
+
+
+	// 現在のフレーム番号を入れる
+	int m_lastDrawFrame = 0;
 
 
 };

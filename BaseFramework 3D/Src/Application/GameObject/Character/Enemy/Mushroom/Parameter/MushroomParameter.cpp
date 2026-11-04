@@ -16,19 +16,19 @@ namespace
 		nlohmann::json json;
 
 		json["MaxHP"] = param.m_maxHP;
-		json["BumpSphereRadius"] = param.m_bumpSphereRadius;
-		json["BumpSphereOffsetY"] = param.m_bumpSphereOffsetY;
-		json["MoveSpeed"] = param.m_moveSpeed;
-		json["TurnSpeed"] = param.m_turnSpeed;
-		json["ReachDistance"] = param.m_reachDistance;
-		json["JumpPower"] = param.m_jumpPow;
-		json["AttackPower"] = param.m_attackPower;
-		json["AttackCooldown"] = param.m_attackCooldown;
-		json["KnockBackPower"] = param.m_knockBackPower;
-		json["HitStartFrame"] = param.m_hitStartFrame;
-		json["HitEndFrame"] = param.m_hitEndFrame;
-		json["HitRadius"] = param.m_hitRadius;
-		json["HitForwardOffset"] = param.m_hitForwardOffset;
+		json["BumpSphereRadius"] = InspectorUI::CeilToDigits(param.m_bumpSphereRadius, 2);
+		json["BumpSphereOffsetY"] = InspectorUI::CeilToDigits(param.m_bumpSphereOffsetY, 2);
+		json["MoveSpeed"] = InspectorUI::CeilToDigits(param.m_moveSpeed, 3);
+		json["TurnSpeed"] = InspectorUI::CeilToDigits(param.m_turnSpeed, 1);
+		json["ReachDistance"] = InspectorUI::CeilToDigits(param.m_reachDistance, 2);
+		json["JumpPower"] = InspectorUI::CeilToDigits(param.m_jumpPow, 3);
+		json["AttackPower"] = InspectorUI::CeilToDigits(param.m_attackPower, 1);
+		json["AttackCooldown"] = InspectorUI::CeilToDigits(param.m_attackCooldown, 2);
+		json["KnockBackPower"] = InspectorUI::CeilToDigits(param.m_knockBackPower, 3);
+		json["HitStartFrame"] = InspectorUI::CeilToDigits(param.m_hitStartFrame, 1);
+		json["HitEndFrame"] = InspectorUI::CeilToDigits(param.m_hitEndFrame, 1);
+		json["HitRadius"] = InspectorUI::CeilToDigits(param.m_hitRadius, 2);
+		json["HitForwardOffset"] = InspectorUI::CeilToDigits(param.m_hitForwardOffset, 2);
 
 		return json;
 	}

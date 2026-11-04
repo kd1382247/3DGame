@@ -3,6 +3,7 @@
 #include"OBBCollision.h"
 
 #include"../../../../Editor/EditorManager.h"
+#include"../../../../Editor/InspectorWidgets.h"
 
 std::shared_ptr<OBBCollision> OBBCollisionManager::CreateOBBCollision()
 {
@@ -113,21 +114,21 @@ bool OBBCollisionManager::Save(const std::string& filePath, const std::shared_pt
 
 		// 座標(Stageからのローカル位置)
 		const auto& pos = obb->GetLocalPos();
-		OBBCollisionJson["Position"]["x"] = pos.x;
-		OBBCollisionJson["Position"]["y"] = pos.y;
-		OBBCollisionJson["Position"]["z"] = pos.z;
+		OBBCollisionJson["Position"]["x"] = InspectorUI::CeilToDigits(pos.x, 3);
+		OBBCollisionJson["Position"]["y"] = InspectorUI::CeilToDigits(pos.y, 3);
+		OBBCollisionJson["Position"]["z"] = InspectorUI::CeilToDigits(pos.z, 3);
 
 		// 大きさ(Stageからのローカル大きさ)
 		const auto& scale = obb->GetLocalScale();
-		OBBCollisionJson["Scale"]["x"] = scale.x;
-		OBBCollisionJson["Scale"]["y"] = scale.y;
-		OBBCollisionJson["Scale"]["z"] = scale.z;
+		OBBCollisionJson["Scale"]["x"] = InspectorUI::CeilToDigits(scale.x, 3);
+		OBBCollisionJson["Scale"]["y"] = InspectorUI::CeilToDigits(scale.y, 3);
+		OBBCollisionJson["Scale"]["z"] = InspectorUI::CeilToDigits(scale.z, 3);
 
 		// 回転(Stageには追従しない、OBB自身の回転)
 		const auto& rotation = obb->GetRotation();
-		OBBCollisionJson["Rotation"]["x"] = rotation.x;
-		OBBCollisionJson["Rotation"]["y"] = rotation.y;
-		OBBCollisionJson["Rotation"]["z"] = rotation.z;
+		OBBCollisionJson["Rotation"]["x"] = InspectorUI::CeilToDigits(rotation.x, 3);
+		OBBCollisionJson["Rotation"]["y"] = InspectorUI::CeilToDigits(rotation.y, 3);
+		OBBCollisionJson["Rotation"]["z"] = InspectorUI::CeilToDigits(rotation.z, 3);
 
 		const auto& collitionTypeName = obb->GetCollitionTypeName();
 		OBBCollisionJson["CollisionType"] = collitionTypeName;

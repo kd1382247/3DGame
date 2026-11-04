@@ -13,13 +13,13 @@ namespace
 	// エフェクト設定 → json(キーは「prefix + 項目名」。ファイル名は対象外)
 	void WriteEffect(nlohmann::json& json, const std::string& prefix, const MageParameter::EffectParam& effect)
 	{
-		json[prefix + "Size"] = effect.m_size;
-		json[prefix + "Speed"] = effect.m_speed;
+		json[prefix + "Size"] = InspectorUI::CeilToDigits(effect.m_size, 2);
+		json[prefix + "Speed"] = InspectorUI::CeilToDigits(effect.m_speed, 2);
 		json[prefix + "StartFrame"] = effect.m_startFrame;
 		json[prefix + "EndFrame"] = effect.m_endFrame;
-		json[prefix + "RotationY"] = effect.m_rotationY;
-		json[prefix + "ForwardOffset"] = effect.m_forwardOffset;
-		json[prefix + "HeightOffset"] = effect.m_heightOffset;
+		json[prefix + "RotationY"] = InspectorUI::CeilToDigits(effect.m_rotationY, 1);
+		json[prefix + "ForwardOffset"] = InspectorUI::CeilToDigits(effect.m_forwardOffset, 2);
+		json[prefix + "HeightOffset"] = InspectorUI::CeilToDigits(effect.m_heightOffset, 2);
 	}
 
 	// json → エフェクト設定(キーが無い項目は、デフォルト値のまま)
@@ -41,79 +41,79 @@ namespace
 
 		//---- Status / Move / Attack(共通) ----
 		json["MaxHP"] = param.m_maxHP;
-		json["BumpSphereRadius"] = param.m_bumpSphereRadius;
-		json["BumpSphereOffsetY"] = param.m_bumpSphereOffsetY;
-		json["Scale"] = param.m_scale;
-		json["MoveSpeed"] = param.m_moveSpeed;
-		json["TurnSpeed"] = param.m_turnSpeed;
-		json["ReachDistance"] = param.m_reachDistance;
-		json["ReachDistanceMargin"] = param.m_reachDistanceMargin;
-		json["JumpPower"] = param.m_jumpPow;
-		json["AttackCooldown"] = param.m_attackCooldown;
+		json["BumpSphereRadius"] = InspectorUI::CeilToDigits(param.m_bumpSphereRadius, 2);
+		json["BumpSphereOffsetY"] = InspectorUI::CeilToDigits(param.m_bumpSphereOffsetY, 2);
+		json["Scale"] = InspectorUI::CeilToDigits(param.m_scale, 2);
+		json["MoveSpeed"] = InspectorUI::CeilToDigits(param.m_moveSpeed, 3);
+		json["TurnSpeed"] = InspectorUI::CeilToDigits(param.m_turnSpeed, 1);
+		json["ReachDistance"] = InspectorUI::CeilToDigits(param.m_reachDistance, 2);
+		json["ReachDistanceMargin"] = InspectorUI::CeilToDigits(param.m_reachDistanceMargin, 2);
+		json["JumpPower"] = InspectorUI::CeilToDigits(param.m_jumpPow, 3);
+		json["AttackCooldown"] = InspectorUI::CeilToDigits(param.m_attackCooldown, 2);
 
 		//---- TargetCircle ----
 		const auto& targetCircle = param.m_targetCircle;
-		json["TargetCircleCastDelay"] = targetCircle.m_castDelay;
-		json["TargetCircleRadius"] = targetCircle.m_radius;
-		json["TargetCircleTelegraph"] = targetCircle.m_telegraph;
+		json["TargetCircleCastDelay"] = InspectorUI::CeilToDigits(targetCircle.m_castDelay, 2);
+		json["TargetCircleRadius"] = InspectorUI::CeilToDigits(targetCircle.m_radius, 2);
+		json["TargetCircleTelegraph"] = InspectorUI::CeilToDigits(targetCircle.m_telegraph, 2);
 		json["TargetCircleShotCount"] = targetCircle.m_shotCount;
-		json["TargetCircleShotInterval"] = targetCircle.m_shotInterval;
-		json["TargetCircleDamage"] = targetCircle.m_damage;
-		json["TargetCircleHitDelay"] = targetCircle.m_hitDelay;
-		json["TargetCircleHitEndProgress"] = targetCircle.m_hitEndProgress;
+		json["TargetCircleShotInterval"] = InspectorUI::CeilToDigits(targetCircle.m_shotInterval, 2);
+		json["TargetCircleDamage"] = InspectorUI::CeilToDigits(targetCircle.m_damage, 1);
+		json["TargetCircleHitDelay"] = InspectorUI::CeilToDigits(targetCircle.m_hitDelay, 2);
+		json["TargetCircleHitEndProgress"] = InspectorUI::CeilToDigits(targetCircle.m_hitEndProgress, 3);
 		WriteEffect(json, "TargetCircleEffect", targetCircle.m_effect);
 
 		//---- ForwardSector ----
 		const auto& forwardSector = param.m_forwardSector;
-		json["ForwardSectorCastDelay"] = forwardSector.m_castDelay;
-		json["ForwardSectorAngle"] = forwardSector.m_angle;
-		json["ForwardSectorRadius"] = forwardSector.m_radius;
-		json["ForwardSectorTelegraph"] = forwardSector.m_telegraph;
-		json["ForwardSectorDamage"] = forwardSector.m_damage;
-		json["ForwardSectorHitDelay"] = forwardSector.m_hitDelay;
-		json["ForwardSectorHitEndProgress"] = forwardSector.m_hitEndProgress;
+		json["ForwardSectorCastDelay"] = InspectorUI::CeilToDigits(forwardSector.m_castDelay, 2);
+		json["ForwardSectorAngle"] = InspectorUI::CeilToDigits(forwardSector.m_angle, 1);
+		json["ForwardSectorRadius"] = InspectorUI::CeilToDigits(forwardSector.m_radius, 2);
+		json["ForwardSectorTelegraph"] = InspectorUI::CeilToDigits(forwardSector.m_telegraph, 2);
+		json["ForwardSectorDamage"] = InspectorUI::CeilToDigits(forwardSector.m_damage, 1);
+		json["ForwardSectorHitDelay"] = InspectorUI::CeilToDigits(forwardSector.m_hitDelay, 2);
+		json["ForwardSectorHitEndProgress"] = InspectorUI::CeilToDigits(forwardSector.m_hitEndProgress, 3);
 		WriteEffect(json, "ForwardSectorEffect", forwardSector.m_effect);
 
 		//---- Bolt ----
 		const auto& bolt = param.m_bolt;
-		json["BoltCastDelay"] = bolt.m_castDelay;
+		json["BoltCastDelay"] = InspectorUI::CeilToDigits(bolt.m_castDelay, 2);
 		json["BoltShotCount"] = bolt.m_shotCount;
-		json["BoltSpeed"] = bolt.m_speed;
-		json["BoltRadius"] = bolt.m_radius;
-		json["BoltDamage"] = bolt.m_damage;
-		json["BoltKnockBack"] = bolt.m_knockBack;
-		json["BoltLifeTime"] = bolt.m_lifeTime;
-		json["BoltSpawnHeight"] = bolt.m_spawnHeight;
-		json["BoltAimHeight"] = bolt.m_aimHeight;
+		json["BoltSpeed"] = InspectorUI::CeilToDigits(bolt.m_speed, 3);
+		json["BoltRadius"] = InspectorUI::CeilToDigits(bolt.m_radius, 2);
+		json["BoltDamage"] = InspectorUI::CeilToDigits(bolt.m_damage, 1);
+		json["BoltKnockBack"] = InspectorUI::CeilToDigits(bolt.m_knockBack, 3);
+		json["BoltLifeTime"] = InspectorUI::CeilToDigits(bolt.m_lifeTime, 2);
+		json["BoltSpawnHeight"] = InspectorUI::CeilToDigits(bolt.m_spawnHeight, 2);
+		json["BoltAimHeight"] = InspectorUI::CeilToDigits(bolt.m_aimHeight, 2);
 
 		//---- NovaCircle ----
 		const auto& novaCircle = param.m_novaCircle;
-		json["NovaCircleCastDelay"] = novaCircle.m_castDelay;
-		json["NovaCircleRadius"] = novaCircle.m_radius;
-		json["NovaCircleTelegraph"] = novaCircle.m_telegraph;
-		json["NovaCircleDamage"] = novaCircle.m_damage;
-		json["NovaCircleHitDelay"] = novaCircle.m_hitDelay;
-		json["NovaCircleHitEndProgress"] = novaCircle.m_hitEndProgress;
+		json["NovaCircleCastDelay"] = InspectorUI::CeilToDigits(novaCircle.m_castDelay, 2);
+		json["NovaCircleRadius"] = InspectorUI::CeilToDigits(novaCircle.m_radius, 2);
+		json["NovaCircleTelegraph"] = InspectorUI::CeilToDigits(novaCircle.m_telegraph, 2);
+		json["NovaCircleDamage"] = InspectorUI::CeilToDigits(novaCircle.m_damage, 1);
+		json["NovaCircleHitDelay"] = InspectorUI::CeilToDigits(novaCircle.m_hitDelay, 2);
+		json["NovaCircleHitEndProgress"] = InspectorUI::CeilToDigits(novaCircle.m_hitEndProgress, 3);
 		WriteEffect(json, "NovaCircleEffect", novaCircle.m_effect);
 
 		//---- Beam ----
 		const auto& beam = param.m_beam;
-		json["BeamCastDelay"] = beam.m_castDelay;
-		json["BeamLength"] = beam.m_length;
-		json["BeamWidth"] = beam.m_width;
-		json["BeamForwardOffset"] = beam.m_forwardOffset;
-		json["BeamDuration"] = beam.m_duration;
-		json["BeamDamage"] = beam.m_damage;
-		json["BeamHitDelay"] = beam.m_hitDelay;
-		json["BeamHitInterval"] = beam.m_hitInterval;
+		json["BeamCastDelay"] = InspectorUI::CeilToDigits(beam.m_castDelay, 2);
+		json["BeamLength"] = InspectorUI::CeilToDigits(beam.m_length, 2);
+		json["BeamWidth"] = InspectorUI::CeilToDigits(beam.m_width, 2);
+		json["BeamForwardOffset"] = InspectorUI::CeilToDigits(beam.m_forwardOffset, 2);
+		json["BeamDuration"] = InspectorUI::CeilToDigits(beam.m_duration, 2);
+		json["BeamDamage"] = InspectorUI::CeilToDigits(beam.m_damage, 1);
+		json["BeamHitDelay"] = InspectorUI::CeilToDigits(beam.m_hitDelay, 2);
+		json["BeamHitInterval"] = InspectorUI::CeilToDigits(beam.m_hitInterval, 2);
 		WriteEffect(json, "BeamWindupEffect", beam.m_windupEffect);
 		WriteEffect(json, "BeamEffect", beam.m_beamEffect);
 
 		//---- Summon ----
 		const auto& summon = param.m_summon;
-		json["SummonCastDelay"] = summon.m_castDelay;
+		json["SummonCastDelay"] = InspectorUI::CeilToDigits(summon.m_castDelay, 2);
 		json["SummonCount"] = summon.m_count;
-		json["SummonSpawnInterval"] = summon.m_spawnInterval;
+		json["SummonSpawnInterval"] = InspectorUI::CeilToDigits(summon.m_spawnInterval, 2);
 
 		return json;
 	}

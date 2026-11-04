@@ -16,22 +16,22 @@ namespace
 		nlohmann::json json;
 
 		json["MaxHP"] = param.m_maxHP;
-		json["BumpSphereRadius"] = param.m_bumpSphereRadius;
-		json["BumpSphereOffsetY"] = param.m_bumpSphereOffsetY;
-		json["MoveSpeed"] = param.m_moveSpeed;
-		json["TurnSpeed"] = param.m_turnSpeed;
-		json["ReachDistance"] = param.m_reachDistance;
-		json["JumpPower"] = param.m_jumpPow;
-		json["AttackPower"] = param.m_attackPow;
-		json["AttackCooldown"] = param.m_attackCooldown;
-		json["BulletFireFrame"] = param.m_bulletFireFrame;
-		json["BulletSpeed"] = param.m_bulletSpeed;
-		json["BulletRadius"] = param.m_bulletRadius;
-		json["BulletKnockBack"] = param.m_bulletKnockBack;
-		json["BulletLifeTime"] = param.m_bulletLifeTime;
-		json["BulletSpawnHeight"] = param.m_bulletSpawnHeight;
-		json["BulletSpawnForward"] = param.m_bulletSpawnForward;
-		json["BulletAimHeight"] = param.m_bulletAimHeight;
+		json["BumpSphereRadius"] = InspectorUI::CeilToDigits(param.m_bumpSphereRadius, 2);
+		json["BumpSphereOffsetY"] = InspectorUI::CeilToDigits(param.m_bumpSphereOffsetY, 2);
+		json["MoveSpeed"] = InspectorUI::CeilToDigits(param.m_moveSpeed, 3);
+		json["TurnSpeed"] = InspectorUI::CeilToDigits(param.m_turnSpeed, 1);
+		json["ReachDistance"] = InspectorUI::CeilToDigits(param.m_reachDistance, 2);
+		json["JumpPower"] = InspectorUI::CeilToDigits(param.m_jumpPow, 3);
+		json["AttackPower"] = InspectorUI::CeilToDigits(param.m_attackPow, 1);
+		json["AttackCooldown"] = InspectorUI::CeilToDigits(param.m_attackCooldown, 2);
+		json["BulletFireFrame"] = InspectorUI::CeilToDigits(param.m_bulletFireFrame, 1);
+		json["BulletSpeed"] = InspectorUI::CeilToDigits(param.m_bulletSpeed, 3);
+		json["BulletRadius"] = InspectorUI::CeilToDigits(param.m_bulletRadius, 2);
+		json["BulletKnockBack"] = InspectorUI::CeilToDigits(param.m_bulletKnockBack, 3);
+		json["BulletLifeTime"] = InspectorUI::CeilToDigits(param.m_bulletLifeTime, 2);
+		json["BulletSpawnHeight"] = InspectorUI::CeilToDigits(param.m_bulletSpawnHeight, 2);
+		json["BulletSpawnForward"] = InspectorUI::CeilToDigits(param.m_bulletSpawnForward, 2);
+		json["BulletAimHeight"] = InspectorUI::CeilToDigits(param.m_bulletAimHeight, 2);
 
 		return json;
 	}

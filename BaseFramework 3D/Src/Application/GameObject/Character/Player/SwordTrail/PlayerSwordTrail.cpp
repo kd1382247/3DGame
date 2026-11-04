@@ -8,7 +8,7 @@ void PlayerSwordTrail::Init()
 
 	m_spTrailPolygon->SetPattern(KdTrailPolygon::Trail_Pattern::eVertices);
 
-	m_spTrailPolygon->SetLength(40);
+	m_spTrailPolygon->SetLength(20);
 }
 
 void PlayerSwordTrail::StartTrail()
@@ -18,7 +18,7 @@ void PlayerSwordTrail::StartTrail()
 	m_historyCount = 0;
 }
 
-void PlayerSwordTrail::UpdateTrail(const std::shared_ptr<KdModelWork>& model,const Math::Matrix& worldMat, float animFrame)
+void PlayerSwordTrail::UpdateTrail(const std::shared_ptr<KdModelWork>& model,const Math::Matrix& worldMat, float animFrame,bool isSpinState)
 {
 	if (!m_isTracking)
 	{
@@ -46,6 +46,19 @@ void PlayerSwordTrail::UpdateTrail(const std::shared_ptr<KdModelWork>& model,con
 
 		return;
 	}
+
+	// 軌跡の長さをセット
+	// 回転切の場合な長めにセット
+	if(isSpinState)
+	{
+		m_spTrailPolygon->SetLength(40);
+	}
+	else
+	{
+		m_spTrailPolygon->SetLength(20);
+	}
+
+
 
 	std::shared_ptr<KdModelWork> spModel = model;
 	if (!spModel) { return; }

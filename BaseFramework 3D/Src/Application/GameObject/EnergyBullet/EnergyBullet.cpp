@@ -11,6 +11,25 @@
 void EnergyBullet::Init()
 {
 	SetUpReference();
+
+	if (!m_spTrailPory)
+	{
+		m_spTrailPory = std::make_shared<KdTrailPolygon>();
+		m_spTrailPory->SetMaterial("Asset/Textures/Effect/EnergyTrail/EnergyTrail.png");
+		m_spTrailPory->SetPattern(KdTrailPolygon::Trail_Pattern::eBillboard);
+		m_spTrailPory->SetLength(40);
+	}
+}
+
+void EnergyBullet::DrawBright()
+{
+	if (!m_spTrailPory)
+	{
+		return;
+	}
+
+	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spTrailPory);
+
 }
 
 void EnergyBullet::SetUpReference()
@@ -73,6 +92,10 @@ void EnergyBullet::Update()
 		Vanish();
 		return;
 	}
+
+	// 軌跡の点を入れる
+	m_spTrailPory->AddPoint(Math::Matrix::CreateTranslation(GetPos()));
+
 
 	// 反射されたらPlayerとの判定をしない
 	if (m_isReflect)

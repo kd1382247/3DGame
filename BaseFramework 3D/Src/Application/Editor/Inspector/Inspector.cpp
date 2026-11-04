@@ -8,21 +8,12 @@
 #include<map>
 
 
-void Inspector::Draw()
+void Inspector::OnDraw()
 {
-	// 項目名や値が横に長くなった場合、はみ出た分だけ横スクロールできるようにする
-	ImGuiWindowFlags flags =
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollWithMouse |
-		ImGuiWindowFlags_HorizontalScrollbar;
-
-	ImGui::Begin("Inspector",nullptr,flags);
-
 	const auto obj = EditorManager::Instance().GetSelectedObject();
 
 	if (!obj)
 	{
-		ImGui::End();
 		return;
 	}
 
@@ -67,8 +58,18 @@ void Inspector::Draw()
 	DrawDeleteButton(obj);
 
 	ImGui::PopID();
+}
 
-	ImGui::End();
+ImGuiWindowFlags Inspector::GetImGuiWindowFlags() const
+{
+
+	// 項目名や値が横に長くなった場合、はみ出た分だけ横スクロールできるようにする
+	ImGuiWindowFlags flags =
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollWithMouse |
+		ImGuiWindowFlags_HorizontalScrollbar;
+
+	return flags;
 }
 
 void Inspector::DrawCopyButton(const std::shared_ptr<KdGameObject>& obj)

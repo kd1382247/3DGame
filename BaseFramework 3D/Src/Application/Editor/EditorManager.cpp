@@ -4,6 +4,8 @@
 #include"../GameObject/Camera/CameraBase.h"
 #include "../../Framework/GameObject/KdGameObjectFactory.h"
 
+#include"EditorPanel/EditorPanel.h"
+
 #include"../System/WayPointManager/WayPointManager.h"
 #include"../GameObject/WayPoint/WayPoint.h"
 #include"../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
@@ -40,11 +42,21 @@ void EditorManager::Init()
 	if(!m_spHierarchy)
 	{
 		m_spHierarchy = std::make_shared<Hierarchy>();
+		m_panelList.push_back(m_spHierarchy);
 	}
 
 	if (!m_spInspector)
 	{
 		m_spInspector = std::make_shared<Inspector>();
+		m_panelList.push_back(m_spInspector);
+	}
+
+	if (!m_spSceneView)
+	{
+		m_spSceneView = std::make_shared<SceneView>();
+		m_spSceneView->Init();
+
+		m_panelList.push_back(m_spSceneView);
 	}
 
 	if (!m_spStageEditor)
@@ -57,11 +69,6 @@ void EditorManager::Init()
 		m_spMessageWindow = std::make_shared<MessageWindow>();
 	}
 
-	if (!m_spSceneView)
-	{
-		m_spSceneView = std::make_shared<SceneView>();
-		m_spSceneView->Init();
-	}
 
 	auto spCamera = m_wpEditorCamera.lock();
 	if (!spCamera)
@@ -73,15 +80,21 @@ void EditorManager::Init()
 
 }
 
-
 void EditorManager::Draw()
 {
 	if(m_editorMode==EditorMode::Edit)
 	{
 		DrawToolBar();
-		m_spHierarchy->Draw();
-		m_spInspector->Draw();
-		m_spSceneView->Draw();
+
+		for (const auto& panel : m_panelList)
+		{
+			if (!panel)
+			{
+				continue;
+			}
+
+			panel->Draw();
+		}
 
 		if (m_spSceneView->SizeChanged())
 		{
@@ -271,9 +284,43 @@ void EditorManager::DrawToolBar()
 	ImGuiWindowFlags flags =
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoScrollWithMouse;
+		ImGuiWindowFlags_NoScrollWithMouse|
+		ImGuiWindowFlags_MenuBar;
 
 	ImGui::Begin("Menu",nullptr,flags);
+
+	// メニューバー表示
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::BeginMenu("Window"))
+		{
+			for (const auto& panel : m_panelList)
+			{
+				if (!panel)
+				{
+					continue;
+				}
+
+				if (ImGui::MenuItem(panel->GetWindowName().c_str(),nullptr,panel->IsVisible()))
+				{
+					if (panel->IsVisible())
+					{
+						panel->SetVisible(false);
+					}
+					else
+					{
+						panel->SetVisible(true);
+					}
+
+				}
+
+			}
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMenuBar();
+	}
 
 	//-----------------------------
 	//  左:ファイル操作

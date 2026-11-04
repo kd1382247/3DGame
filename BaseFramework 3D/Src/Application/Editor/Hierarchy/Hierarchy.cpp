@@ -24,19 +24,12 @@
 #include<algorithm>
 #include<cctype>
 
-void Hierarchy::Draw()
+
+void Hierarchy::OnDraw()
 {
-
-	ImGuiWindowFlags flags =
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoScrollWithMouse;
-
-	ImGui::Begin("Hierarchy",nullptr,flags);
 
 	// カテゴリ選択(ボタンを押すと一覧が出て選択でき、選んだカテゴリ名をボタンの隣に表示する)
 	DrawCategorySelector();
-
 
 	// ステージモデル単位で保存するデータ(同じモデルは最初のステージでだけ編集できる)
 	const bool isStageDataCategory =
@@ -73,8 +66,6 @@ void Hierarchy::Draw()
 				U8("同じモデルは「%s」でだけ編集できます"),
 				primaryStage ? primaryStage->GetObjectName().c_str() : "");
 
-			// Beginに対応するEndを呼んでから抜ける
-			ImGui::End();
 			return;
 		}
 	}
@@ -100,10 +91,18 @@ void Hierarchy::Draw()
 		DrawSelectedCategoryList();
 	}
 
-
 	ImGui::EndChild();
+}
 
-	ImGui::End();
+ImGuiWindowFlags Hierarchy::GetImGuiWindowFlags() const
+{
+
+	ImGuiWindowFlags flags =
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoScrollWithMouse;
+
+	return flags;
 }
 
 void Hierarchy::DrawCategorySelector()

@@ -1,25 +1,25 @@
-﻿#include "PlayerSpecialMoveState.h"
+﻿#include "PlayerSpinAttackState.h"
 
 #include"../../Player.h"
 
 #include"PlayerNormalState.h"
 
-void PlayerSpecialMoveState::OnStart(Player* owner)
+void PlayerSpinAttackState::OnStart(Player* owner)
 {
-	owner->StartSpecialMove();
+	owner->StartSpinAttack();
 	owner->PlayAnimation(PlayerAnimationType::AttackSpin);
 
 	// SEを流す
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/SpinAttack/SpinAttack.wav");
 }
 
-void PlayerSpecialMoveState::OnUpdate(Player * owner)
+void PlayerSpinAttackState::OnUpdate(Player * owner)
 {
 	owner->UpdateAttackFrame();
-	owner->UpdateSpecialMove();
+	owner->UpdateSpinAttack();
 
 	// 当たり判定
-	owner->UpdateAttackCollision(Player::AttackType::SpecialMove);
+	owner->UpdateAttackCollision(Player::AttackType::SpinAttack);
 
 	if (owner->IsAnimationFinished())
 	{
@@ -28,7 +28,7 @@ void PlayerSpecialMoveState::OnUpdate(Player * owner)
 	}
 }
 
-void PlayerSpecialMoveState::OnExit(Player * owner)
+void PlayerSpinAttackState::OnExit(Player * owner)
 {
-	owner->EndSpecialMove();
+	owner->EndSpinAttack();
 }

@@ -16,7 +16,7 @@
 #include"State/States/PlayerNormalState.h"
 #include"State/States/PlayerAttackState.h"
 #include"State/States/PlayerChargeAttackState.h"
-#include"State/States/PlayerSpecialMoveState.h"
+#include"State/States/PlayerSpinAttackState.h"
 #include"State/States/PlayerGuardState.h"
 #include"State/States/PlayerParryState.h"
 #include"State/States/PlayerDamageState.h"
@@ -68,7 +68,7 @@ void Player::Init()
 
 		// 各アクションクラスには、自分に必要なパラメータだけを渡す
 		m_playerAttack.     Init(m_parameter.GetAttack());
-		m_playerSpecialMove.Init(m_parameter.GetSpecialMove());
+		m_playerSpinAttack.Init(m_parameter.GetSpinAttack());
 		m_playerGuard.      Init(m_parameter.GetGuard());
 		m_playerParry.      Init(m_parameter.GetParry());
 		
@@ -140,7 +140,7 @@ void Player::PostUpdate()
 
 	UpdateIsFovWide();
 
-	m_playerSwordTrail.UpdateTrail(m_spModel,m_mWorld,GetAnimFrame());
+	m_playerSwordTrail.UpdateTrail(m_spModel,m_mWorld,GetAnimFrame(),m_stateMachine.IsState<PlayerSpinAttackState>());
 
 	// カメラとの距離に応じた透け具合を更新
 	UpdateCameraFade();
@@ -184,7 +184,23 @@ void Player::DrawEffect()
 		return;
 	}
 
-	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*spTrailPoly, Math::Matrix::Identity);
+	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Add);
+
+	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*spTrailPoly);
+
+	KdShaderManager::Instance().UndoBlendState();
+}
+
+void Player::DrawBright()
+{
+	auto spTrailPoly = m_playerSwordTrail.GetTrailPolygon();
+
+	if (!spTrailPoly)
+	{
+		return;
+	}
+
+	//KdShaderManager::Instance().m_StandardShader.DrawPolygon(*spTrailPoly);
 }
 
 void Player::UpdateAttackFrame()
@@ -290,7 +306,7 @@ void Player::UpdateDebugCommand()
 
 void Player::UpdateAttackCollision(const AttackType type)
 {
-	if (type != AttackType::NormalAttack && type != AttackType::SpecialMove)
+	if (type != AttackType::NormalAttack && type != AttackType::SpinAttack)
 	{
 		return;
 	}
@@ -312,8 +328,8 @@ void Player::UpdateAttackCollision(const AttackType type)
 	}
 	else
 	{
-		sphere = CreateSpecialMoveSphere();
-		hitParam = &m_playerSpecialMove.GetHitParam();
+		sphere = CreateSpinAttackSphere();
+		hitParam = &m_playerSpinAttack.GetHitParam();
 	}
 
 
@@ -350,14 +366,14 @@ DirectX::BoundingSphere Player::CreateAttackSphere() const
 	return sphere;
 }
 
-DirectX::BoundingSphere Player::CreateSpecialMoveSphere() const
+DirectX::BoundingSphere Player::CreateSpinAttackSphere() const
 {
 	Math::Vector3 spherePos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
 
 	DirectX::BoundingSphere sphere;
 
 	sphere.Center = spherePos;
-	sphere.Radius = m_parameter.GetSpecialMove().m_hitRadius;
+	sphere.Radius = m_parameter.GetSpinAttack().m_hitRadius;
 
 	return sphere;
 
@@ -616,7 +632,7 @@ void Player::UpdateIsFovWide()
 
 	bool isFovWide = false;
 
-	if (m_stateMachine.IsState<PlayerSpecialMoveState>())
+	if (m_stateMachine.IsState<PlayerSpinAttackState>())
 	{
 		isFovWide = true;
 	}
@@ -699,7 +715,7 @@ void Player::OnHit(const AttackInfo attackInfo)
 	{
 		// 攻撃中・必殺技中は怯まない
 		if (!m_stateMachine.IsState<PlayerAttackState>() &&
-		    !m_stateMachine.IsState<PlayerSpecialMoveState>())
+		    !m_stateMachine.IsState<PlayerSpinAttackState>())
 		{
 			m_stateMachine.ChangeState<PlayerDamageState>();
 		}
@@ -775,28 +791,28 @@ void Player::EndAttack()
 	m_playerSwordTrail.EndTrail();
 }
 
-void Player::StartSpecialMove()
+void Player::StartSpinAttack()
 {
 	m_playerAttack.ResetCombo();
 
 	// 攻撃がHitした敵リストをクリア
 	m_hitChecker.Clear();
-	m_hitChecker.ResetRehitTimer(m_playerSpecialMove.GetHitCooldownDuration());
+	m_hitChecker.ResetRehitTimer(m_playerSpinAttack.GetHitCooldownDuration());
 
 	// 移動する方向を決める(カメラの前方向)
 	Math::Vector3 moveDir = Math::Vector3::Zero;
 	GetCameraForward(moveDir);
-	m_playerSpecialMove.SetMoveDir(moveDir);
+	m_playerSpinAttack.SetMoveDir(moveDir);
 
 	FacingDirectionToCamera();
 
 	m_playerSwordTrail.StartTrail();
-	ApplyActionTiming(m_playerSpecialMove.GetTiming());
+	ApplyActionTiming(m_playerSpinAttack.GetTiming());
 
 	m_animFrame = 0.0f;
 }
 
-void Player::UpdateSpecialMove()
+void Player::UpdateSpinAttack()
 {
 
 	if (m_animFrame <= m_attackTiming.hitStart || m_animFrame >= m_attackTiming.hitEnd)
@@ -804,12 +820,12 @@ void Player::UpdateSpecialMove()
 		return;
 	}
 
-	AddPendingMove(m_playerSpecialMove.CalcMoveVector(m_deltaTime));
+	AddPendingMove(m_playerSpinAttack.CalcMoveVector(m_deltaTime));
 
-	m_hitChecker.UpdateRehit(m_deltaTime, m_playerSpecialMove.GetHitCooldownDuration());
+	m_hitChecker.UpdateRehit(m_deltaTime, m_playerSpinAttack.GetHitCooldownDuration());
 }
 
-void Player::EndSpecialMove()
+void Player::EndSpinAttack()
 {
 	m_playerAttack.ResetCombo();
 	m_playerSwordTrail.EndTrail();

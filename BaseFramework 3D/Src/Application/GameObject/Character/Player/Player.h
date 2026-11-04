@@ -14,7 +14,7 @@
 #include"Attack/PlayerHitChecker.h"
 #include"Guard/PlayerGuard.h"
 #include"Parry/PlayerParry.h"
-#include"SpecialMove/PlayerSpecialMove.h"
+#include"SpinAttack/PlayerSpinAttack.h"
 #include"SwordTrail/PlayerSwordTrail.h"
 
 
@@ -42,6 +42,7 @@ public:
 
 	void DrawLit()			override;
 	void DrawEffect()       override;
+	void DrawBright()       override;
 
 	void DrawDebug()		override;
 
@@ -97,7 +98,7 @@ public:
 	{
 		None,
 		NormalAttack,
-		SpecialMove
+		SpinAttack
 	};
 
 	// 攻撃判定を実行する(攻撃判定のフレーム区間の中だけ有効)
@@ -107,9 +108,9 @@ public:
 	void StartJump();
 
 	// 必殺技の開始 / 更新 / 終了
-	void StartSpecialMove();
-	void UpdateSpecialMove();
-	void EndSpecialMove();
+	void StartSpinAttack();
+	void UpdateSpinAttack();
+	void EndSpinAttack();
 
 	// パリィ成功時
 	void OnParrySuccess();
@@ -181,7 +182,7 @@ private:
 	DirectX::BoundingSphere CreateAttackSphere()             const;
 
 	// 必殺技判定のスフィアを作る
-	DirectX::BoundingSphere CreateSpecialMoveSphere()        const;
+	DirectX::BoundingSphere CreateSpinAttackSphere()        const;
 
 	// パリィ成功時の吹き飛ばし範囲のスフィアを作る
 	DirectX::BoundingSphere CreateParrySphere()        const;
@@ -193,7 +194,7 @@ private:
 
 	// 各アクションクラス
 	PlayerAttack      m_playerAttack;
-	PlayerSpecialMove m_playerSpecialMove;
+	PlayerSpinAttack  m_playerSpinAttack;
 	PlayerGuard       m_playerGuard;
 	PlayerParry       m_playerParry;
 

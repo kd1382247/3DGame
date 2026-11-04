@@ -14,6 +14,7 @@ public:
 	~EnergyBullet()override {}
 
 	void Init()override;
+	void DrawBright()override;
 	void Update()override;
 
 	void SetUpReference()override;
@@ -54,6 +55,10 @@ private:
 
 	// 弾に追従させるEnergyエフェクト
 	std::weak_ptr<KdEffekseerObject> m_wpEffect;
+
+	// 軌跡
+	std::shared_ptr<KdTrailPolygon>m_spTrailPory = nullptr;
+
 
 	// 進行方向(発射時に決定、以後は変わらない)
 	Math::Vector3 m_dir = Math::Vector3::Zero;

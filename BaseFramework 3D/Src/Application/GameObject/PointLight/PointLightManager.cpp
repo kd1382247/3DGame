@@ -4,6 +4,7 @@
 
 #include "../Stage/StageObject.h"
 #include "../../Scene/SceneManager.h"
+#include "../../Editor/InspectorWidgets.h"
 
 std::shared_ptr<PointLightObject> PointLightObjectManager::CreatePointLight(const std::shared_ptr<StageObject>& owner)
 {
@@ -114,18 +115,18 @@ bool PointLightObjectManager::Save(const std::string& filePath, const std::share
 
 		// 座標(Stageからのローカル位置)
 		const auto& pos = light->GetLocalPos();
-		lightJson["Position"]["x"] = pos.x;
-		lightJson["Position"]["y"] = pos.y;
-		lightJson["Position"]["z"] = pos.z;
+		lightJson["Position"]["x"] = InspectorUI::CeilToDigits(pos.x, 3);
+		lightJson["Position"]["y"] = InspectorUI::CeilToDigits(pos.y, 3);
+		lightJson["Position"]["z"] = InspectorUI::CeilToDigits(pos.z, 3);
 
 		// 色
 		const auto& color = light->GetColor();
-		lightJson["Color"]["r"] = color.x;
-		lightJson["Color"]["g"] = color.y;
-		lightJson["Color"]["b"] = color.z;
+		lightJson["Color"]["r"] = InspectorUI::CeilToDigits(color.x, 3);
+		lightJson["Color"]["g"] = InspectorUI::CeilToDigits(color.y, 3);
+		lightJson["Color"]["b"] = InspectorUI::CeilToDigits(color.z, 3);
 
 		// 範囲
-		lightJson["Range"] = light->GetRange();
+		lightJson["Range"] = InspectorUI::CeilToDigits(light->GetRange(), 2);
 
 		rootJson["PointLights"].push_back(lightJson);
 	}

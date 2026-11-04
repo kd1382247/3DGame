@@ -3,6 +3,7 @@
 #include"../../GameObject/WayPoint/WayPoint.h"
 
 #include"../../Editor/EditorManager.h"
+#include"../../Editor/InspectorWidgets.h"
 
 #include"../CollisionManager/CollisionManager.h"
 #include"../../GameObject/Gimmick/AreaVolume/AreaVolume.h"
@@ -352,9 +353,9 @@ bool WayPointManager::Save(const std::string& filePath, const std::shared_ptr<St
 		// 座標(Stageからのローカル位置)
 		const auto& pos = wayPoint->GetLocalPos();
 
-		wayPointJson["Position"]["x"] = pos.x;
-		wayPointJson["Position"]["y"] = pos.y;
-		wayPointJson["Position"]["z"] = pos.z;
+		wayPointJson["Position"]["x"] = InspectorUI::CeilToDigits(pos.x, 3);
+		wayPointJson["Position"]["y"] = InspectorUI::CeilToDigits(pos.y, 3);
+		wayPointJson["Position"]["z"] = InspectorUI::CeilToDigits(pos.z, 3);
 
 		wayPointJson["Links"] = wayPoint->GetLinks();
 

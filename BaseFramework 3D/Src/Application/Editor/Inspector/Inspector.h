@@ -1,13 +1,24 @@
 ﻿#pragma once
 
+#include"../EditorPanel/EditorPanel.h"
+
 class StageObject;
 
-class Inspector
+class Inspector:public EditorPanel
 {
 public:
-	void Draw();
+
+	Inspector() :EditorPanel("Inspector") {}
+	~Inspector()override {}
+
+protected:
+
+	void OnDraw()override;
+
+	ImGuiWindowFlags GetImGuiWindowFlags()const override;
 
 private:
+
 
 	void DrawCopyButton(const std::shared_ptr<KdGameObject>& obj);
 

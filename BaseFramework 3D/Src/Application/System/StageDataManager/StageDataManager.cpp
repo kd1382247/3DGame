@@ -4,6 +4,7 @@
 #include"../../GameObject/Stage/StageObject.h"
 
 #include "../../Scene/SceneManager.h"
+#include "../../Editor/InspectorWidgets.h"
 
 #include"../../GameObject/WayPoint/WayPoint.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
@@ -20,6 +21,23 @@
 
 namespace
 {
+	// jsonの中の小数(float)を、すべて小数第digits位で切り上げる
+	// (SaveData()が返すPosition・Scale・Rotationや、各ギミックの小数をまとめて処理する)
+	void CeilFloatValues(nlohmann::json& json, const int digits = 3)
+	{
+		if (json.is_number_float())
+		{
+			json = InspectorUI::CeilToDigits(json.get<float>(), digits);
+		}
+		else if (json.is_object() || json.is_array())
+		{
+			for (auto& child : json)
+			{
+				CeilFloatValues(child, digits);
+			}
+		}
+	}
+
 	// PointLightのデータファイルのパス
 	// (AABBなどと同じステージモデルのフォルダーに置く)
 	std::filesystem::path GetPointLightDataPath(const std::string& modelName)
@@ -150,7 +168,10 @@ bool StageDataManager::SaveToFolder(const std::filesystem::path& folder)
 		}
 
 		// Jsonファイルに追加
-		stageJson["Objects"].push_back(obj->SaveData());
+		nlohmann::json objectJson = obj->SaveData();
+		CeilFloatValues(objectJson);
+
+		stageJson["Objects"].push_back(objectJson);
 	}
 
 	// ファイル作成

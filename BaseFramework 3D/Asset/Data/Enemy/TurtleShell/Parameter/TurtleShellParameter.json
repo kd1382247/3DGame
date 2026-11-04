@@ -1,17 +1,17 @@
 {
-    "AttackCooldown": 0.6000000238418579,
+    "AttackCooldown": 0.6,
     "AttackPower": 10.0,
     "BumpSphereOffsetY": 0.5,
     "BumpSphereRadius": 0.5,
     "DizzyDuration": 3.0,
-    "JumpPower": 0.4000000059604645,
-    "KnockBackPower": 0.30000001192092896,
+    "JumpPower": 0.4,
+    "KnockBackPower": 0.3,
     "MaxHP": 20,
-    "MoveSpeed": 0.06499999761581421,
+    "MoveSpeed": 0.065,
     "ReachDistance": 4.0,
     "SpinDuration": 5.0,
     "SpinHitCooldown": 0.5,
     "SpinHitRadius": 0.5,
-    "SpinSpeedBonus": 0.07000000029802322,
+    "SpinSpeedBonus": 0.07,
     "TurnSpeed": 12.0
 }

@@ -4,7 +4,7 @@
 #include"../../Player.h"
 
 #include"PlayerNormalState.h"
-#include"PlayerSpecialMoveState.h"
+#include"PlayerSpinAttackState.h"
 
 
 namespace
@@ -65,7 +65,7 @@ void PlayerChargeAttackState::OnUpdate(Player * owner)
 	{
 		if (attack.IsChargeComplete())
 		{
-			m_pMachine->ChangeState<PlayerSpecialMoveState>();
+			m_pMachine->ChangeState<PlayerSpinAttackState>();
 		}
 		else
 		{

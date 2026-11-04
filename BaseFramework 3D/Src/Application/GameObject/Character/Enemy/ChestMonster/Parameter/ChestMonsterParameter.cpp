@@ -17,24 +17,24 @@ namespace
 		nlohmann::json json;
 
 		json["MaxHP"] = param.m_maxHP;
-		json["BumpSphereRadius"] = param.m_bumpSphereRadius;
-		json["BumpSphereOffsetY"] = param.m_bumpSphereOffsetY;
-		json["Scale"] = param.m_scale;
-		json["MoveSpeed"] = param.m_moveSpeed;
-		json["TurnSpeed"] = param.m_turnSpeed;
-		json["ReachDistance"] = param.m_reachDistance;
-		json["JumpPower"] = param.m_jumpPow;
-		json["AttackPower"] = param.m_attackPow;
-		json["SpawnInterval"] = param.m_spawnInterval;
-		json["SpawnStartFrame"] = param.m_spawnStartFrame;
-		json["SpawnEndFrame"] = param.m_spawnEndFrame;
-		json["SpawnWaitFrame"] = param.m_spawnWaitFrame;
+		json["BumpSphereRadius"] = InspectorUI::CeilToDigits(param.m_bumpSphereRadius, 2);
+		json["BumpSphereOffsetY"] = InspectorUI::CeilToDigits(param.m_bumpSphereOffsetY, 2);
+		json["Scale"] = InspectorUI::CeilToDigits(param.m_scale, 2);
+		json["MoveSpeed"] = InspectorUI::CeilToDigits(param.m_moveSpeed, 3);
+		json["TurnSpeed"] = InspectorUI::CeilToDigits(param.m_turnSpeed, 1);
+		json["ReachDistance"] = InspectorUI::CeilToDigits(param.m_reachDistance, 2);
+		json["JumpPower"] = InspectorUI::CeilToDigits(param.m_jumpPow, 3);
+		json["AttackPower"] = InspectorUI::CeilToDigits(param.m_attackPow, 1);
+		json["SpawnInterval"] = InspectorUI::CeilToDigits(param.m_spawnInterval, 2);
+		json["SpawnStartFrame"] = InspectorUI::CeilToDigits(param.m_spawnStartFrame, 1);
+		json["SpawnEndFrame"] = InspectorUI::CeilToDigits(param.m_spawnEndFrame, 1);
+		json["SpawnWaitFrame"] = InspectorUI::CeilToDigits(param.m_spawnWaitFrame, 1);
 		json["MaxSpawnedAlive"] = param.m_maxSpawnedAlive;
 		json["MaxTotalEnemies"] = param.m_maxTotalEnemies;
 		json["SpawnEnemies"] = param.m_spawnEnemyNames;
-		json["SpawnHeight"] = param.m_spawnHeight;
-		json["SpawnLaunchPower"] = param.m_spawnLaunchPower;
-		json["SpawnLaunchSpeed"] = param.m_spawnLaunchSpeed;
+		json["SpawnHeight"] = InspectorUI::CeilToDigits(param.m_spawnHeight, 2);
+		json["SpawnLaunchPower"] = InspectorUI::CeilToDigits(param.m_spawnLaunchPower, 3);
+		json["SpawnLaunchSpeed"] = InspectorUI::CeilToDigits(param.m_spawnLaunchSpeed, 3);
 
 		return json;
 	}

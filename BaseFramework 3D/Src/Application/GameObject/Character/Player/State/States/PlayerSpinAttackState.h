@@ -4,7 +4,7 @@ class Player;
 
 #include"../../../StateMachine/StateBase.h"
 
-class PlayerSpecialMoveState :public StateBase<Player>
+class PlayerSpinAttackState :public StateBase<Player>
 {
 public:
 

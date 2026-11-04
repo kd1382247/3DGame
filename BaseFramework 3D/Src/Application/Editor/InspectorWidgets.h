@@ -1,7 +1,9 @@
 ﻿#pragma once
 
+#include <algorithm>
 #include <cfloat>
 #include <climits>
+#include <cmath>
 
 #include "EditorManager.h"
 
@@ -123,5 +125,31 @@ namespace InspectorUI
 	inline bool Count(const char* label, int& value, const int minValue = 0)
 	{
 		return Notify(ImGui::DragInt(label, &value, 0.2f, minValue, INT_MAX, "%d"));
+	}
+
+	//------------------------------------------------------------
+	// JSON保存用:小数第digits位で切り上げる(戻り値はdouble)
+	//
+	//   paramJson["MoveSpeed"] = InspectorUI::CeilToDigits(m_move.m_moveSpeed);
+	//
+	// ・戻り値をfloatに戻すと、jsonへ代入するときにまた誤差が付くので、doubleのまま渡すこと
+	// ・digitsは、Inspectorの表示桁数("%.3f"なら3)に合わせるとよい
+	//------------------------------------------------------------
+	inline double CeilToDigits(const float value, const int digits = 3)
+	{
+		const double scale  = std::pow(10.0, digits);
+		const double scaled = static_cast<double>(value) * scale;
+
+		// floatの誤差(0.05f は 0.0500000007... )のせいで、ちょうどの値が1つ上に切り上がるのを防ぐ
+		// 整数に十分近いときは、その整数とみなして切り上げをしない
+		const double nearest   = std::round(scaled);
+		const double tolerance = 1e-6 * std::max(1.0, std::fabs(scaled));
+
+		if (std::fabs(scaled - nearest) <= tolerance)
+		{
+			return nearest / scale;
+		}
+
+		return std::ceil(scaled) / scale;
 	}
 }

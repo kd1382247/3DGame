@@ -298,9 +298,6 @@
     <Filter Include="Src\Application\GameObject\Character\Player\Guard">
       <UniqueIdentifier>{ae66ad89-0cf3-4d45-83fd-c11ac32f5073}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Player\SpecialMove">
-      <UniqueIdentifier>{2c1729d9-9204-474b-b360-21032ca96e20}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Effect">
       <UniqueIdentifier>{aac8abf1-4800-4bde-851c-d76ce1ddd669}</UniqueIdentifier>
     </Filter>
@@ -468,6 +465,12 @@
     </Filter>
     <Filter Include="Src\Application\System\CollisionManager\IObstacle">
       <UniqueIdentifier>{0b187aa7-6660-4ee4-9486-0ebdb75d5f44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Player\SpinAttack">
+      <UniqueIdentifier>{2c1729d9-9204-474b-b360-21032ca96e20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Editor\EditorPanel">
+      <UniqueIdentifier>{36da05ed-091e-48a1-9145-d1c3da2570d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -825,9 +828,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerGuardState.h">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpecialMoveState.h">
-      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.h">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClInclude>
@@ -944,9 +944,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Player\Guard\PlayerGuard.h">
       <Filter>Src\Application\GameObject\Character\Player\Guard</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.h">
-      <Filter>Src\Application\GameObject\Character\Player\SpecialMove</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Effect\EffectBase.h">
       <Filter>Src\Application\GameObject\Effect</Filter>
@@ -1269,6 +1266,18 @@
     <ClInclude Include="Src\Application\System\Mouse\CursorVisibility.h">
       <Filter>Src\Application\System\Mouse</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\SpinAttack\PlayerSpinAttack.h">
+      <Filter>Src\Application\GameObject\Character\Player\SpinAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpinAttackState.h">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\InspectorWidgets.h">
+      <Filter>Src\Application\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\EditorPanel\EditorPanel.h">
+      <Filter>Src\Application\Editor\EditorPanel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1574,9 +1583,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerGuardState.cpp">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpecialMoveState.cpp">
-      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.cpp">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClCompile>
@@ -1681,9 +1687,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Player\Guard\PlayerGuard.cpp">
       <Filter>Src\Application\GameObject\Character\Player\Guard</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Player\SpecialMove\PlayerSpecialMove.cpp">
-      <Filter>Src\Application\GameObject\Character\Player\SpecialMove</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Effect\EffectManager.cpp">
       <Filter>Src\Application\GameObject\Effect</Filter>
@@ -1954,6 +1957,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\System\CollisionManager\CharacterPusher\CharacterPusher.cpp">
       <Filter>Src\Application\System\CollisionManager\CharacterPusher</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\SpinAttack\PlayerSpinAttack.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\SpinAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpinAttackState.cpp">
+      <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\EditorPanel\EditorPanel.cpp">
+      <Filter>Src\Application\Editor\EditorPanel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

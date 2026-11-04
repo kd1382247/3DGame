@@ -3,6 +3,7 @@
 #include"AABBCollision.h"
 
 #include"../../../../Editor/EditorManager.h"
+#include"../../../../Editor/InspectorWidgets.h"
 
 std::shared_ptr<AABBCollision> AABBCollisionManager::CreateAABBCollision()
 {
@@ -112,15 +113,15 @@ bool AABBCollisionManager::Save(const std::string& filePath, const std::shared_p
 
 		// 座標(Stageからのローカル位置)
 		const auto& pos = aabb->GetLocalPos();
-		AABBCollisionJson["Position"]["x"] = pos.x;
-		AABBCollisionJson["Position"]["y"] = pos.y;
-		AABBCollisionJson["Position"]["z"] = pos.z;
+		AABBCollisionJson["Position"]["x"] = InspectorUI::CeilToDigits(pos.x, 3);
+		AABBCollisionJson["Position"]["y"] = InspectorUI::CeilToDigits(pos.y, 3);
+		AABBCollisionJson["Position"]["z"] = InspectorUI::CeilToDigits(pos.z, 3);
 
 		// 大きさ(Stageからのローカル大きさ)
 		const auto& scale = aabb->GetLocalScale();
-		AABBCollisionJson["Scale"]["x"] = scale.x;
-		AABBCollisionJson["Scale"]["y"] = scale.y;
-		AABBCollisionJson["Scale"]["z"] = scale.z;
+		AABBCollisionJson["Scale"]["x"] = InspectorUI::CeilToDigits(scale.x, 3);
+		AABBCollisionJson["Scale"]["y"] = InspectorUI::CeilToDigits(scale.y, 3);
+		AABBCollisionJson["Scale"]["z"] = InspectorUI::CeilToDigits(scale.z, 3);
 
 
 		rootJson["AABBCollisions"].push_back(AABBCollisionJson);

@@ -58,7 +58,7 @@
             "OutroDuration": 2.0,
             "Position": {
                 "x": 7.0,
-                "y": 4.300000190734863,
+                "y": 4.3,
                 "z": 7.0
             },
             "RoomType": "Safe",
@@ -138,7 +138,7 @@
             "Name": "Player_0",
             "Position": {
                 "x": 7.0,
-                "y": 0.20000000298023224,
+                "y": 0.2,
                 "z": 6.0
             },
             "Rotation": {
@@ -163,7 +163,7 @@
             "CoreSize": {
                 "x": 18.0,
                 "y": 13.0,
-                "z": 19.649999618530273
+                "z": 19.65
             },
             "FollowStage": "CombatRoom_9x13_0",
             "IntroDuration": 2.0,
@@ -171,7 +171,7 @@
             "OutroDuration": 2.0,
             "Position": {
                 "x": 7.0,
-                "y": 5.599999904632568,
+                "y": 5.6,
                 "z": 39.0
             },
             "RoomType": "Wave",
@@ -188,7 +188,7 @@
         },
         {
             "Class": "RoomGate",
-            "CloseDuration": 0.6000000238418579,
+            "CloseDuration": 0.6,
             "FollowStage": "CombatRoom_9x13_0",
             "LinkedRoom": "Room_1",
             "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
@@ -206,14 +206,14 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 2.200000047683716,
+                "x": 2.2,
                 "y": 3.0,
                 "z": 0.5
             }
         },
         {
             "Class": "RoomGate",
-            "CloseDuration": 0.6000000238418579,
+            "CloseDuration": 0.6,
             "FollowStage": "CombatRoom_9x13_0",
             "LinkedRoom": "Room_1",
             "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
@@ -231,7 +231,7 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 2.200000047683716,
+                "x": 2.2,
                 "y": 3.0,
                 "z": 0.5
             }
@@ -332,7 +332,7 @@
         },
         {
             "Class": "RoomGate",
-            "CloseDuration": 0.6000000238418579,
+            "CloseDuration": 0.6,
             "FollowStage": "CombatRoom_21x15_0",
             "LinkedRoom": "Room_2",
             "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
@@ -340,7 +340,7 @@
             "OpenDuration": 1.5,
             "OpenHeight": 3.0,
             "Position": {
-                "x": 7.099999904632568,
+                "x": 7.1,
                 "y": 3.0,
                 "z": 64.0
             },
@@ -350,14 +350,14 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 2.200000047683716,
+                "x": 2.2,
                 "y": 3.0,
                 "z": 0.5
             }
         },
         {
             "Class": "RoomGate",
-            "CloseDuration": 0.6000000238418579,
+            "CloseDuration": 0.6,
             "FollowStage": "CombatRoom_21x15_0",
             "LinkedRoom": "Room_2",
             "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
@@ -375,7 +375,7 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 2.200000047683716,
+                "x": 2.2,
                 "y": 3.0,
                 "z": 0.5
             }
@@ -414,9 +414,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 0.9999969005584717,
+                "x": 1.0,
                 "y": 1.0,
-                "z": 0.9999969005584717
+                "z": 1.0
             },
             "StageModel": "Corridor"
         },
@@ -427,7 +427,7 @@
             "MaxAlive": 10,
             "Name": "EnemySpawner_0",
             "Position": {
-                "x": 2.0999999046325684,
+                "x": 2.1,
                 "y": 6.5,
                 "z": 47.0
             },
@@ -448,7 +448,7 @@
                         "Slime"
                     ],
                     "SpawnCount": 5,
-                    "SpawnInterval": 0.05000000074505806,
+                    "SpawnInterval": 0.05,
                     "StartDelay": 1.0
                 },
                 {
@@ -456,7 +456,7 @@
                         "Mushroom"
                     ],
                     "SpawnCount": 5,
-                    "SpawnInterval": 0.20000000298023224,
+                    "SpawnInterval": 0.2,
                     "StartDelay": 2.0
                 },
                 {
@@ -464,7 +464,7 @@
                         "Slime"
                     ],
                     "SpawnCount": 5,
-                    "SpawnInterval": 0.20000000298023224,
+                    "SpawnInterval": 0.2,
                     "StartDelay": 2.0
                 },
                 {
@@ -472,7 +472,7 @@
                         "Bomb"
                     ],
                     "SpawnCount": 5,
-                    "SpawnInterval": 0.20000000298023224,
+                    "SpawnInterval": 0.2,
                     "StartDelay": 2.0
                 },
                 {
@@ -480,7 +480,7 @@
                         "StarFish"
                     ],
                     "SpawnCount": 5,
-                    "SpawnInterval": 0.20000000298023224,
+                    "SpawnInterval": 0.2,
                     "StartDelay": 2.0
                 },
                 {
@@ -488,7 +488,7 @@
                         "TurtleShell"
                     ],
                     "SpawnCount": 5,
-                    "SpawnInterval": 0.20000000298023224,
+                    "SpawnInterval": 0.2,
                     "StartDelay": 2.0
                 }
             ]
@@ -499,13 +499,13 @@
             "Name": "ChestMonster_0",
             "Parameter": {
                 "AttackPower": 10.0,
-                "BumpSphereOffsetY": 0.800000011920929,
-                "BumpSphereRadius": 0.800000011920929,
-                "JumpPower": 0.4000000059604645,
+                "BumpSphereOffsetY": 0.8,
+                "BumpSphereRadius": 0.8,
+                "JumpPower": 0.4,
                 "MaxHP": 100,
                 "MaxSpawnedAlive": 10,
                 "MaxTotalEnemies": 40,
-                "MoveSpeed": 0.05000000074505806,
+                "MoveSpeed": 0.05,
                 "ReachDistance": 1.5,
                 "Scale": 2.0,
                 "SpawnEndFrame": 60.0,
@@ -517,8 +517,8 @@
                 ],
                 "SpawnHeight": 2.0,
                 "SpawnInterval": 2.0,
-                "SpawnLaunchPower": 0.20000000298023224,
-                "SpawnLaunchSpeed": 0.03999999910593033,
+                "SpawnLaunchPower": 0.2,
+                "SpawnLaunchSpeed": 0.04,
                 "SpawnStartFrame": 40.0,
                 "SpawnWaitFrame": 8.0,
                 "TurnSpeed": 12.0
@@ -534,9 +534,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 1.9999969005584717,
+                "x": 2.0,
                 "y": 2.0,
-                "z": 1.9999969005584717
+                "z": 2.0
             }
         },
         {
@@ -545,13 +545,13 @@
             "Name": "ChestMonster_1",
             "Parameter": {
                 "AttackPower": 10.0,
-                "BumpSphereOffsetY": 0.800000011920929,
-                "BumpSphereRadius": 0.800000011920929,
-                "JumpPower": 0.4000000059604645,
+                "BumpSphereOffsetY": 0.8,
+                "BumpSphereRadius": 0.8,
+                "JumpPower": 0.4,
                 "MaxHP": 100,
                 "MaxSpawnedAlive": 10,
                 "MaxTotalEnemies": 40,
-                "MoveSpeed": 0.05000000074505806,
+                "MoveSpeed": 0.05,
                 "ReachDistance": 1.5,
                 "Scale": 2.0,
                 "SpawnEndFrame": 60.0,
@@ -563,8 +563,8 @@
                 ],
                 "SpawnHeight": 2.0,
                 "SpawnInterval": 2.0,
-                "SpawnLaunchPower": 0.20000000298023224,
-                "SpawnLaunchSpeed": 0.03999999910593033,
+                "SpawnLaunchPower": 0.2,
+                "SpawnLaunchSpeed": 0.04,
                 "SpawnStartFrame": 40.0,
                 "SpawnWaitFrame": 8.0,
                 "TurnSpeed": 12.0
@@ -580,9 +580,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 1.9999977350234985,
+                "x": 2.0,
                 "y": 2.0,
-                "z": 1.9999977350234985
+                "z": 2.0
             }
         },
         {
@@ -591,13 +591,13 @@
             "Name": "ChestMonster_2",
             "Parameter": {
                 "AttackPower": 10.0,
-                "BumpSphereOffsetY": 0.800000011920929,
-                "BumpSphereRadius": 0.800000011920929,
-                "JumpPower": 0.4000000059604645,
+                "BumpSphereOffsetY": 0.8,
+                "BumpSphereRadius": 0.8,
+                "JumpPower": 0.4,
                 "MaxHP": 100,
                 "MaxSpawnedAlive": 10,
                 "MaxTotalEnemies": 40,
-                "MoveSpeed": 0.05000000074505806,
+                "MoveSpeed": 0.05,
                 "ReachDistance": 1.5,
                 "Scale": 2.0,
                 "SpawnEndFrame": 60.0,
@@ -609,8 +609,8 @@
                 ],
                 "SpawnHeight": 2.0,
                 "SpawnInterval": 2.0,
-                "SpawnLaunchPower": 0.20000000298023224,
-                "SpawnLaunchSpeed": 0.03999999910593033,
+                "SpawnLaunchPower": 0.2,
+                "SpawnLaunchSpeed": 0.04,
                 "SpawnStartFrame": 40.0,
                 "SpawnWaitFrame": 8.0,
                 "TurnSpeed": 12.0
@@ -626,9 +626,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 1.9999959468841553,
+                "x": 2.0,
                 "y": 2.0,
-                "z": 1.9999959468841553
+                "z": 2.0
             }
         },
         {
@@ -637,13 +637,13 @@
             "Name": "ChestMonster_3",
             "Parameter": {
                 "AttackPower": 10.0,
-                "BumpSphereOffsetY": 0.800000011920929,
-                "BumpSphereRadius": 0.800000011920929,
-                "JumpPower": 0.4000000059604645,
+                "BumpSphereOffsetY": 0.8,
+                "BumpSphereRadius": 0.8,
+                "JumpPower": 0.4,
                 "MaxHP": 100,
                 "MaxSpawnedAlive": 10,
                 "MaxTotalEnemies": 40,
-                "MoveSpeed": 0.05000000074505806,
+                "MoveSpeed": 0.05,
                 "ReachDistance": 1.5,
                 "Scale": 2.0,
                 "SpawnEndFrame": 60.0,
@@ -655,8 +655,8 @@
                 ],
                 "SpawnHeight": 2.0,
                 "SpawnInterval": 2.0,
-                "SpawnLaunchPower": 0.20000000298023224,
-                "SpawnLaunchSpeed": 0.03999999910593033,
+                "SpawnLaunchPower": 0.2,
+                "SpawnLaunchSpeed": 0.04,
                 "SpawnStartFrame": 40.0,
                 "SpawnWaitFrame": 8.0,
                 "TurnSpeed": 12.0
@@ -672,9 +672,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 1.999991536140442,
+                "x": 2.0,
                 "y": 2.0,
-                "z": 1.999991536140442
+                "z": 2.0
             }
         },
         {
@@ -1031,14 +1031,14 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 1.4999991655349731,
+                "x": 1.5,
                 "y": 1.5,
-                "z": 1.4999991655349731
+                "z": 1.5
             }
         },
         {
             "Class": "RoomGate",
-            "CloseDuration": 0.6000000238418579,
+            "CloseDuration": 0.6,
             "FollowStage": "CombatRoom_15x15_0",
             "LinkedRoom": "Room_3",
             "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
@@ -1046,7 +1046,7 @@
             "OpenDuration": 1.5,
             "OpenHeight": 3.0,
             "Position": {
-                "x": 6.899999618530273,
+                "x": 6.9,
                 "y": 9.0,
                 "z": 126.0
             },
@@ -1056,7 +1056,7 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 2.200000047683716,
+                "x": 2.2,
                 "y": 3.0,
                 "z": 0.5
             }
@@ -1066,8 +1066,8 @@
             "Class": "Room",
             "CoreOffset": {
                 "x": 0.0,
-                "y": -0.20000000298023224,
-                "z": -7.449999809265137
+                "y": -0.2,
+                "z": -7.45
             },
             "CoreSize": {
                 "x": 30.0,
@@ -1080,8 +1080,8 @@
             "OutroDuration": 2.0,
             "Position": {
                 "x": 7.0,
-                "y": 16.200002670288086,
-                "z": 141.00039672851563
+                "y": 16.2,
+                "z": 141.001
             },
             "RoomType": "Boss",
             "Rotation": {
@@ -1103,8 +1103,8 @@
             "Name": "EnemySpawner_2",
             "Position": {
                 "x": -3.0,
-                "y": 12.500004768371582,
-                "z": 131.0001220703125
+                "y": 12.5,
+                "z": 131.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1112,9 +1112,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 0.9999982118606567,
+                "x": 1.0,
                 "y": 1.0,
-                "z": 0.9999982118606567
+                "z": 1.0
             },
             "SummonEnemies": [
                 "Cactas",
@@ -1132,8 +1132,8 @@
             "Name": "EnemySpawner_3",
             "Position": {
                 "x": 17.0,
-                "y": 12.500004768371582,
-                "z": 131.0001220703125
+                "y": 12.5,
+                "z": 131.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1161,8 +1161,8 @@
             "Name": "EnemySpawner_4",
             "Position": {
                 "x": -3.0,
-                "y": 12.500004768371582,
-                "z": 151.00039672851563
+                "y": 12.5,
+                "z": 151.001
             },
             "Rotation": {
                 "x": 0.0,
@@ -1190,8 +1190,8 @@
             "Name": "EnemySpawner_5",
             "Position": {
                 "x": 17.0,
-                "y": 12.500004768371582,
-                "z": 151.00039672851563
+                "y": 12.5,
+                "z": 151.001
             },
             "Rotation": {
                 "x": 0.0,
@@ -1199,9 +1199,9 @@
                 "z": 0.0
             },
             "Scale": {
-                "x": 0.9999992251396179,
+                "x": 1.0,
                 "y": 1.0,
-                "z": 0.9999992251396179
+                "z": 1.0
             },
             "SummonEnemies": [
                 "Bomb",
@@ -1217,7 +1217,7 @@
             "Order": 0,
             "Position": {
                 "x": 7.0,
-                "y": 2.9600000381469727,
+                "y": 2.96,
                 "z": 60.0
             },
             "Radius": 2.0,
@@ -1238,7 +1238,7 @@
             "Order": 1,
             "Position": {
                 "x": 7.0,
-                "y": 2.9600000381469727,
+                "y": 2.96,
                 "z": 103.0
             },
             "Radius": 2.0,
@@ -1274,50 +1274,12 @@
             "StageModel": "Corridor_Stair"
         },
         {
-            "Class": "Mushroom",
-            "Name": "Mushroom_0",
+            "Class": "StarFish",
+            "Name": "StarFish_0",
             "Position": {
-                "x": 7.400000095367432,
-                "y": 2.5,
-                "z": 5.199999809265137
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
-        },
-        {
-            "Class": "Cactas",
-            "Name": "Cactas_0",
-            "Position": {
-                "x": 5.5,
-                "y": 0.0,
-                "z": 3.799999952316284
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
-        },
-        {
-            "Class": "TurtleShell",
-            "Name": "TurtleShell_0",
-            "Position": {
-                "x": 7.900000095367432,
-                "y": 1.0,
-                "z": 5.199999809265137
+                "x": 4.5,
+                "y": 2.1,
+                "z": 2.9
             },
             "Rotation": {
                 "x": 0.0,

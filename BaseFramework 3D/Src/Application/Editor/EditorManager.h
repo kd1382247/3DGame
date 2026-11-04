@@ -4,6 +4,8 @@ class Hierarchy;
 class Inspector;
 class StageEditor;
 class SceneView;
+class EditorPanel;
+
 
 class CameraBase;
 class MessageWindow;
@@ -170,6 +172,8 @@ private:
 	std::shared_ptr<StageEditor> m_spStageEditor=nullptr;
 	std::shared_ptr<SceneView>m_spSceneView = nullptr;
 
+	// エディタに表示するウィンドウを格納
+	std::vector<std::shared_ptr<EditorPanel>>m_panelList;
 
 	// エディタのモード
 	EditorMode m_editorMode = EditorMode::Edit;
