@@ -4,7 +4,7 @@
 
 #include"../Gimmick/AreaVolume/AreaVolume.h"
 
-#include "../../System/WayPointManager/WayPointManager.h"
+#include "WayPointManager.h"
 
 void WayPoint::Init()
 {

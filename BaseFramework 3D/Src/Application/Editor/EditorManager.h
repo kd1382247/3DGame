@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include"EditorSelection/EditorSelection.h"
+
 class Hierarchy;
 class Inspector;
 class StageEditor;
@@ -46,18 +48,12 @@ public:
 	// 現在選択されているオブジェクト
 	void SetSelectedObject(const std::shared_ptr<KdGameObject>& obj)
 	{
-		// 前に選択されていたフラグをfalse
-		if (m_spSelectedObject){m_spSelectedObject->SetSelected(false);}
-
-		m_spSelectedObject = obj;
-
-		// 新たに選択されたフラグをtrueにする
-		if (m_spSelectedObject){m_spSelectedObject->SetSelected(true);}
+		m_editorSelection.SetSelectedObject(obj);
 	}
 
 	const std::shared_ptr<KdGameObject>& GetSelectedObject() const
 	{
-		return m_spSelectedObject;
+		return m_editorSelection.GetSelectedObject();
 	}
 
 	// オブジェクトを作成
@@ -165,7 +161,8 @@ private:
 	// (同じクラス名の中で、未使用の最小の番号を採用する。番号の欠番は次回そこから埋まる)
 	std::string MakeUniqueObjectName(const std::string& className) const;
 
-	std::shared_ptr<KdGameObject> m_spSelectedObject=nullptr;
+	// 選択中のオブジェクトを管理
+	EditorSelection            m_editorSelection;
 
 	std::shared_ptr<Hierarchy> m_spHierarchy=nullptr;
 	std::shared_ptr<Inspector> m_spInspector=nullptr;
@@ -202,7 +199,7 @@ private:
 
 private: // シングルトンパターン
 	EditorManager() { Init(); }
-	~EditorManager() {}
+	~EditorManager() = default;
 
 public:
 

@@ -75,19 +75,19 @@ std::shared_ptr<OBBCollision> OBBCollisionManager::FindOBBCollision(int id)const
 
 }
 
-void OBBCollisionManager::ClearOBBCollisionList()
+void OBBCollisionManager::Backup()
 {
 	m_spBackupList = std::move(m_spOBBCollisionList);
 	m_spOBBCollisionList.clear();
 }
 
-void OBBCollisionManager::RestoreOBBCollisionList()
+void OBBCollisionManager::Restore()
 {
 	m_spOBBCollisionList = std::move(m_spBackupList);
 	m_spBackupList.clear();
 }
 
-void OBBCollisionManager::ClearBackup()
+void OBBCollisionManager::Discard()
 {
 	m_spBackupList.clear();
 }
@@ -130,7 +130,7 @@ bool OBBCollisionManager::Save(const std::string& filePath, const std::shared_pt
 		OBBCollisionJson["Rotation"]["y"] = InspectorUI::CeilToDigits(rotation.y, 3);
 		OBBCollisionJson["Rotation"]["z"] = InspectorUI::CeilToDigits(rotation.z, 3);
 
-		const auto& collitionTypeName = obb->GetCollitionTypeName();
+		const auto& collitionTypeName = obb->GetCollisionTypeName();
 		OBBCollisionJson["CollisionType"] = collitionTypeName;
 
 		rootJson["OBBCollisions"].push_back(OBBCollisionJson);

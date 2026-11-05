@@ -75,19 +75,19 @@ std::shared_ptr<AABBCollision> AABBCollisionManager::FindAABBCollision(int id)co
 
 }
 
-void AABBCollisionManager::ClearAABBCollisionList()
+void AABBCollisionManager::Backup()
 {
 	m_spBackupList = std::move(m_spAABBCollisionList);
 	m_spAABBCollisionList.clear();
 }
 
-void AABBCollisionManager::RestoreAABBCollisionList()
+void AABBCollisionManager::Restore()
 {
 	m_spAABBCollisionList = std::move(m_spBackupList);
 	m_spBackupList.clear();
 }
 
-void AABBCollisionManager::ClearBackup()
+void AABBCollisionManager::Discard()
 {
 	m_spBackupList.clear();
 }

@@ -4,12 +4,9 @@
 #include "../../Scene/SceneManager.h"
 #include"../../Scene/EditorScene/EditorScene.h"
 
-#include "../../System/WayPointManager/WayPointManager.h"
-#include"../../System/StageDataManager/StageDataManager.h"
-#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
-#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
-#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../StageBackup/StageBackup.h"
 
+#include"../../System/StageDataManager/StageDataManager.h"
 
 #include"../../GameObject/Camera/TPSCamera/TPSCamera.h"
 
@@ -82,6 +79,16 @@ void StageEditor::CreateNewStage()
 
 	// 既存の編集対象をクリア
 	ClearStage();
+
+	// クリア出来たらバックアップを消す
+
+	if (auto editorScene = SceneManager::Instance().GetCurrentScene<EditorScene>())
+	{
+		editorScene->Discard();
+	}
+	StageBackup::Discard();
+
+
 
 	m_isEditStage = true;
 
@@ -428,12 +435,8 @@ void StageEditor::LoadSucceeded(const std::string& stageName)
 		return;
 	}
 
-	editorScene->ClearBackupList();
-	WayPointManager::Instance().ClearBackup();
-	AABBCollisionManager::Instance().ClearBackup();
-
-	OBBCollisionManager::Instance().ClearBackup();
-	AIBlockManager::Instance().ClearBackup();
+	editorScene->Discard();
+	StageBackup::Discard();
 
 	EditorManager::Instance().ClearDirty();
 
@@ -457,15 +460,9 @@ void StageEditor::LoadFailed()
 		return;
 	}
 
-	editorScene->RestoreObjectList();;
+	editorScene->Restore();
+	StageBackup::Restore();
 
-	// ウェイポイントを復元
-	WayPointManager::Instance().RestoreWayPoints();
-
-	AABBCollisionManager::Instance().RestoreAABBCollisionList();
-
-	OBBCollisionManager::Instance().RestoreOBBCollisionList();
-	AIBlockManager::Instance().RestoreAIBlockList();
 }
 
 bool StageEditor::IsStageExists(const std::string& stageName) const
@@ -595,22 +592,15 @@ void StageEditor::ClearStage()
 {
 	// 選択中のオブジェクトへの参照を先に解除する
 	EditorManager::Instance().SetSelectedObject(nullptr);
-
-	// WayPointをクリア
-	WayPointManager::Instance().ClearWayPoints();
-
-	// AABBをクリア
-	AABBCollisionManager::Instance().ClearAABBCollisionList();
-
-	// OBBをクリア
-	OBBCollisionManager::Instance().ClearOBBCollisionList();
-	AIBlockManager::Instance().ClearAIBlockList();
-
+	
 	// ゲームオブジェクトをクリア
 	auto editorScene = SceneManager::Instance().GetCurrentScene<EditorScene>();
 	if (!editorScene)
 	{
 		return;
 	}
-	editorScene->BackupObjectList();
+	editorScene->Backup();
+
+	// データをバックアップ
+	StageBackup::Backup();
 }

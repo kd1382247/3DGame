@@ -6,7 +6,7 @@
 
 #include"EditorPanel/EditorPanel.h"
 
-#include"../System/WayPointManager/WayPointManager.h"
+#include"../GameObject/WayPoint/WayPointManager.h"
 #include"../GameObject/WayPoint/WayPoint.h"
 #include"../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
@@ -29,6 +29,9 @@
 #include"../System/ReferenceManager/ReferenceManager.h"
 #include "../Scene/SceneManager.h"
 #include"../System/StageDataManager/StageDataManager.h"
+
+
+#include"StageBackup/StageBackup.h"
 
 #include"../BGMManager/BGMManager.h"
 
@@ -138,32 +141,23 @@ void EditorManager::StartPlayMode()
 	}
 
 	// Play中の状態を削除
-	editorScene->BackupObjectList();
-	WayPointManager::Instance().ClearWayPoints();
-	AABBCollisionManager::Instance().ClearAABBCollisionList();
-	OBBCollisionManager::Instance().ClearOBBCollisionList();
-	AIBlockManager::Instance().ClearAIBlockList();
+	editorScene->Backup();
+	StageBackup::Backup();
 
 
 	// Edit開始前の状態を復元
 	if (!StageDataManager::Instance().LoadTemporary())
 	{
 		// ロードに失敗したため復元する
-		editorScene->RestoreObjectList();
-		WayPointManager::Instance().RestoreWayPoints();
-		AABBCollisionManager::Instance().RestoreAABBCollisionList();
-		OBBCollisionManager::Instance().RestoreOBBCollisionList();
-		AIBlockManager::Instance().RestoreAIBlockList();
+		editorScene->Restore();
+		StageBackup::Restore();
 
 		return;
 	}
 
 	// バックアップリストをクリア
-	editorScene->ClearBackupList();
-	WayPointManager::Instance().ClearBackup();
-	AABBCollisionManager::Instance().ClearBackup();
-	OBBCollisionManager::Instance().ClearBackup();
-	AIBlockManager::Instance().ClearBackup();
+	editorScene->Discard();
+	StageBackup::Discard();
 
 	// 作り直されたステージの中から、編集中だったステージを選び直す
 	RestoreActiveStageByName(activeStageName);
@@ -205,31 +199,22 @@ void EditorManager::StopPlayMode()
 	BGMManager::Instance().Reset();
 
 	// Play中の状態を削除
-	editorScene->BackupObjectList();
-	WayPointManager::Instance().ClearWayPoints();
-	AABBCollisionManager::Instance().ClearAABBCollisionList();
-	OBBCollisionManager::Instance().ClearOBBCollisionList();
-	AIBlockManager::Instance().ClearAIBlockList();
+	editorScene->Backup();
+	StageBackup::Backup();
 
 	// Edit開始前の状態を復元
 	if (!StageDataManager::Instance().LoadTemporary())
 	{
 		// ロードに失敗したため復元する
-		editorScene->RestoreObjectList();
-		WayPointManager::Instance().RestoreWayPoints();
-		AABBCollisionManager::Instance().RestoreAABBCollisionList();
-		OBBCollisionManager::Instance().RestoreOBBCollisionList();
-		AIBlockManager::Instance().RestoreAIBlockList();
+		editorScene->Restore();
+		StageBackup::Restore();
 
 		return;
 	}
 
 	// バックアップリストをクリア
-	editorScene->ClearBackupList();
-	WayPointManager::Instance().ClearBackup();
-	AABBCollisionManager::Instance().ClearBackup();
-	OBBCollisionManager::Instance().ClearBackup();
-	AIBlockManager::Instance().ClearBackup();
+	editorScene->Discard();
+	StageBackup::Discard();
 
 	// 作り直されたステージの中から、編集中だったステージを選び直す
 	RestoreActiveStageByName(activeStageName);
@@ -303,14 +288,9 @@ void EditorManager::DrawToolBar()
 
 				if (ImGui::MenuItem(panel->GetWindowName().c_str(),nullptr,panel->IsVisible()))
 				{
-					if (panel->IsVisible())
-					{
-						panel->SetVisible(false);
-					}
-					else
-					{
-						panel->SetVisible(true);
-					}
+
+					panel->IsVisible() ?
+						panel->SetVisible(false) : panel->SetVisible(true);
 
 				}
 

@@ -14,6 +14,4 @@ void EditorPanel::Draw()
 
 	ImGui::End();
 
-
-
 }

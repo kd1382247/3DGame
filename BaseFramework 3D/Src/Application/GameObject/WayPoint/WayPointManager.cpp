@@ -5,7 +5,8 @@
 #include"../../Editor/EditorManager.h"
 #include"../../Editor/InspectorWidgets.h"
 
-#include"../CollisionManager/CollisionManager.h"
+#include"../../System/CollisionManager/CollisionManager.h"
+
 #include"../../GameObject/Gimmick/AreaVolume/AreaVolume.h"
 
 #include<queue>
@@ -88,7 +89,7 @@ void WayPointManager::RemoveByOwner(const StageObject* owner)
 	}
 }
 
-void WayPointManager::ClearWayPoints()
+void WayPointManager::Backup()
 {
 	// 一時的にバックアップリストに移す
 	m_spBackupWayPointList = std::move(m_spWayPointList);
@@ -98,7 +99,7 @@ void WayPointManager::ClearWayPoints()
 	m_flowGoalID = -1;
 }
 
-void WayPointManager::RestoreWayPoints()
+void WayPointManager::Restore()
 {
 	// バックアップリストから復元
 	m_spWayPointList = std::move(m_spBackupWayPointList);
@@ -109,7 +110,7 @@ void WayPointManager::RestoreWayPoints()
 	m_flowGoalID = -1;
 }
 
-void WayPointManager::ClearBackup()
+void WayPointManager::Discard()
 {
 	m_spBackupWayPointList.clear();
 }

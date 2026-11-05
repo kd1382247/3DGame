@@ -102,24 +102,8 @@ DirectX::BoundingOrientedBox OBBCollision::GetBox() const
 
 void OBBCollision::DrawInspectorHeader()
 {
-	// 座標変更(Stageからのローカル位置)
-	Math::Vector3 pos = GetLocalPos();
-
-	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
-	{
-		SetLocalPos(pos);
-		EditorManager::Instance().MarkDirty();
-	}
-
-	Math::Vector3 scale = GetLocalScale();
-
-	// 大きさ変更(Stageからのローカル大きさ)
-	if (ImGui::DragFloat3("Size", &scale.x, 0.01f))
-	{
-		SetLocalScale(scale);
-		EditorManager::Instance().MarkDirty();
-	}
-
+	// 基底クラスのInspectorを呼ぶ
+	StageOwnedObject::DrawInspectorHeader();
 
 	Math::Vector3 rotation = GetRotation();
 	// 回転(Stageには追従させず、OBB自身の回転をそのまま使う)
@@ -128,8 +112,6 @@ void OBBCollision::DrawInspectorHeader()
 		SetRotation(rotation);
 		EditorManager::Instance().MarkDirty();
 	}
-
-
 
 	std::string collTypeName = m_collisionTypeName[static_cast<int>(GetCollisionType())];
 
@@ -153,13 +135,6 @@ void OBBCollision::DrawInspectorHeader()
 
 		ImGui::EndCombo();
 	}
-}
-
-void OBBCollision::SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale)
-{
-	// 回転はStageに追従させず、位置と大きさだけを追従させる
-	SetPos(stagePos + m_localPos * stageScale);
-	SetScale(m_localScale * stageScale);
 }
 
 void OBBCollision::Destroy()

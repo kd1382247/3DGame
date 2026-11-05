@@ -6,15 +6,14 @@
 #include "EditorScene/EditorScene.h"
 #include "ResultScene/ResultScene.h"
 
+
+#include"../Editor/StageBackup/StageBackup.h"
+
 #include "../System/CollisionManager/CollisionManager.h"
-#include "../System/WayPointManager/WayPointManager.h"
 #include "../System/TimeManager/TimeManager.h"
 #include "../Editor/EditorManager.h"
 #include "../BGMManager/BGMManager.h"
 #include "../../Framework/Effekseer/KdEffekseerManager.h"
-#include "../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
-#include "../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
-#include "../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 
 void SceneManager::PreUpdate()
 {
@@ -133,20 +132,10 @@ void SceneManager::ResetSystems()
 	// 当たり判定の登録リスト
 	CollisionManager::Instance().Clear();
 
-	// ステージの当たり判定(AABB / OBB)
-	// ClearXXXList()は退避用リストへ移すだけなので、ClearBackup()も呼んで完全に空にする
-	AABBCollisionManager::Instance().ClearAABBCollisionList();
-	AABBCollisionManager::Instance().ClearBackup();
-
-	OBBCollisionManager::Instance().ClearOBBCollisionList();
-	OBBCollisionManager::Instance().ClearBackup();
-
-	AIBlockManager::Instance().ClearAIBlockList();
-	AIBlockManager::Instance().ClearBackup();
-
-	// ウェイポイント(同じく退避用リストも空にする)
-	WayPointManager::Instance().ClearWayPoints();
-	WayPointManager::Instance().ClearBackup();
+	// ステージデータをリセット
+	// Backup → Discardでリストを空にする
+	StageBackup::Backup();
+	StageBackup::Discard();
 
 	// ヒットストップ・スローモーションの状態
 	TimeManager::Instance().Init();

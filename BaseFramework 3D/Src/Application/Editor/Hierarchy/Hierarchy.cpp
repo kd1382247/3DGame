@@ -3,7 +3,7 @@
 #include "../EditorManager.h"
 #include "../../Scene/SceneManager.h"
 #include "../../../Framework/GameObject/KdGameObjectFactory.h"
-#include "../../System/WayPointManager/WayPointManager.h"
+#include "../../GameObject/WayPoint/WayPointManager.h"
 #include"../../GameObject/WayPoint/WayPoint.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"

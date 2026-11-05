@@ -19,11 +19,14 @@ public:
 	std::shared_ptr<OBBCollision> FindOBBCollision(int id)const;
 
 
-	void ClearOBBCollisionList();
-	// ウェイポイントを復元
-	void RestoreOBBCollisionList();
-	// バックアップをクリア
-	void ClearBackup();
+	//=====トランザクション処理=====//
+
+	// リストをバックアップ
+	void Backup();
+	// リストを元に戻す
+	void Restore();
+	// リストのバックアップをクリア
+	void Discard();
 
 
 	bool Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner);
@@ -61,8 +64,8 @@ private:
 
 private:
 
-	OBBCollisionManager() {}
-	~OBBCollisionManager() {}
+	OBBCollisionManager() = default;
+	~OBBCollisionManager() = default;
 
 public:
 

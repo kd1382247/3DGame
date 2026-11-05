@@ -276,11 +276,13 @@
     <ClInclude Include="Src\Application\BGMManager\BGMManager.h" />
     <ClInclude Include="Src\Application\Editor\EditorManager.h" />
     <ClInclude Include="Src\Application\Editor\EditorPanel\EditorPanel.h" />
+    <ClInclude Include="Src\Application\Editor\EditorSelection\EditorSelection.h" />
     <ClInclude Include="Src\Application\Editor\Hierarchy\Hierarchy.h" />
     <ClInclude Include="Src\Application\Editor\InspectorWidgets.h" />
     <ClInclude Include="Src\Application\Editor\Inspector\Inspector.h" />
     <ClInclude Include="Src\Application\Editor\MessageWindow\MessageWindow.h" />
     <ClInclude Include="Src\Application\Editor\SceneView\SceneView.h" />
+    <ClInclude Include="Src\Application\Editor\StageBackup\StageBackup.h" />
     <ClInclude Include="Src\Application\Editor\StageEditor\StageEditor.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\CameraBase.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.h" />
@@ -459,8 +461,10 @@
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\StageFollower.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\StageObject.h" />
+    <ClInclude Include="Src\Application\GameObject\Stage\StageOwnedObject\StageOwnedObject.h" />
     <ClInclude Include="Src\Application\GameObject\Title\Title.h" />
     <ClInclude Include="Src\Application\GameObject\WayPoint\WayPoint.h" />
+    <ClInclude Include="Src\Application\GameObject\WayPoint\WayPointManager.h" />
     <ClInclude Include="Src\Application\main.h" />
     <ClInclude Include="Src\Application\Scene\BaseScene\BaseScene.h" />
     <ClInclude Include="Src\Application\Scene\EditorScene\EditorScene.h" />
@@ -487,7 +491,6 @@
     <ClInclude Include="Src\Application\System\StageDataManager\StageDataManager.h" />
     <ClInclude Include="Src\Application\System\StageLoder\StageLoder.h" />
     <ClInclude Include="Src\Application\System\TimeManager\TimeManager.h" />
-    <ClInclude Include="Src\Application\System\WayPointManager\WayPointManager.h" />
     <ClInclude Include="Src\Framework\Direct3D\KdMaterial.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdPolygon.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdSquarePolygon.h" />
@@ -543,6 +546,7 @@
     <ClCompile Include="Src\Application\Editor\Inspector\Inspector.cpp" />
     <ClCompile Include="Src\Application\Editor\MessageWindow\MessageWindow.cpp" />
     <ClCompile Include="Src\Application\Editor\SceneView\SceneView.cpp" />
+    <ClCompile Include="Src\Application\Editor\StageBackup\StageBackup.cpp" />
     <ClCompile Include="Src\Application\Editor\StageEditor\StageEditor.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\CameraBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.cpp" />
@@ -696,8 +700,10 @@
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\StageFollower.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\StageObject.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Stage\StageOwnedObject\StageOwnedObject.cpp" />
     <ClCompile Include="Src\Application\GameObject\Title\Title.cpp" />
     <ClCompile Include="Src\Application\GameObject\WayPoint\WayPoint.cpp" />
+    <ClCompile Include="Src\Application\GameObject\WayPoint\WayPointManager.cpp" />
     <ClCompile Include="Src\Application\main.cpp" />
     <ClCompile Include="Src\Application\Scene\BaseScene\BaseScene.cpp" />
     <ClCompile Include="Src\Application\Scene\EditorScene\EditorScene.cpp" />
@@ -721,7 +727,6 @@
     <ClCompile Include="Src\Application\System\StageDataManager\StageDataManager.cpp" />
     <ClCompile Include="Src\Application\System\StageLoder\StageLoder.cpp" />
     <ClCompile Include="Src\Application\System\TimeManager\TimeManager.cpp" />
-    <ClCompile Include="Src\Application\System\WayPointManager\WayPointManager.cpp" />
     <ClCompile Include="Src\Framework\Direct3D\KdMaterial.cpp">
       <SubType>
       </SubType>

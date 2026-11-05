@@ -8,7 +8,7 @@
 
 #include"../../System/StageLoder/StageLoder.h"
 #include"../../System/StageDataManager/StageDataManager.h"
-#include"../../System/WayPointManager/WayPointManager.h"
+#include"../WayPoint/WayPointManager.h"
 #include"../../Editor/EditorManager.h"
 #include"../../Scene/SceneManager.h"
 #include"../Gimmick/StageGimmick.h"

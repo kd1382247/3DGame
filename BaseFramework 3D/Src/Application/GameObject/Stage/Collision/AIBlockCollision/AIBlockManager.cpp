@@ -70,19 +70,19 @@ std::shared_ptr<AIBlock> AIBlockManager::FindAIBlock(int id)const
 	return nullptr;
 }
 
-void AIBlockManager::ClearAIBlockList()
+void AIBlockManager::Backup()
 {
 	m_spBackupList = std::move(m_spAIBlockList);
 	m_spAIBlockList.clear();
 }
 
-void AIBlockManager::RestoreAIBlockList()
+void AIBlockManager::Restore()
 {
 	m_spAIBlockList = std::move(m_spBackupList);
 	m_spBackupList.clear();
 }
 
-void AIBlockManager::ClearBackup()
+void AIBlockManager::Discard()
 {
 	m_spBackupList.clear();
 }

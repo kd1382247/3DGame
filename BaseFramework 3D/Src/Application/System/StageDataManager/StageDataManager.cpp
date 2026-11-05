@@ -10,7 +10,7 @@
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 
-#include "../../System/WayPointManager/WayPointManager.h"
+#include "../../GameObject/WayPoint/WayPointManager.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"

@@ -16,12 +16,6 @@ public:
 
 	void RemoveByOwner(const StageObject* owner);
 
-	void ClearWayPoints();
-	// ウェイポイントを復元
-	void RestoreWayPoints();
-	// バックアップをクリア
-	void ClearBackup();
-
 	// 指定IDが登録されていない場合はnullptrを返す
 	std::shared_ptr<WayPoint> FindWayPoint(int id) const;
 
@@ -43,6 +37,17 @@ public:
 	// デバッグの表示切り替えフラグ
 	bool IsDebug() { return m_isDebug; }
 	void SetIsDebug(const bool flg) { m_isDebug = flg; }
+
+
+	//=====トランザクション処理=====//
+
+	// リストをバックアップ
+	void Backup();
+	// リストを元に戻す
+	void Restore();
+	// リストのバックアップをクリア
+	void Discard();
+
 
 	bool Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner);
 
@@ -95,7 +100,7 @@ private:
 private:
 
 	WayPointManager() { Init(); }
-	~WayPointManager() {}
+	~WayPointManager() = default;
 
 public:
 

@@ -66,7 +66,6 @@ private:
 	// メッセージウィンドウクラス
 	MessageWindow m_messageWindow;
 
-
 	// 編集中のステージ名
 	std::string m_currentStageName;
 

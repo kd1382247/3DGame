@@ -3,7 +3,7 @@
 #include"../../Editor/EditorManager.h"
 #include"../../GameObject/Camera/EditorCamera/EditorCamera.h"
 
-#include"../../System/WayPointManager/WayPointManager.h"
+#include"../../GameObject/WayPoint/WayPointManager.h"
 #include"../../GameObject/WayPoint/WayPoint.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
@@ -56,19 +56,19 @@ void EditorScene::DrawDebug()
 	}
 }
 
-void EditorScene::BackupObjectList()
+void EditorScene::Backup()
 {
 	m_spBackupList = std::move(m_objList);
 	m_objList.clear();
 }
 
-void EditorScene::RestoreObjectList()
+void EditorScene::Restore()
 {
 	m_objList = std::move(m_spBackupList);
 	m_spBackupList.clear();
 }
 
-void EditorScene::ClearBackupList()
+void EditorScene::Discard()
 {
 	m_spBackupList.clear();
 }

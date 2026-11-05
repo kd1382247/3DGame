@@ -238,9 +238,6 @@
     <Filter Include="Src\Application\GameObject\WayPoint">
       <UniqueIdentifier>{75425795-af46-4a60-bf6c-781f50c49e32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\System\WayPointManager">
-      <UniqueIdentifier>{16ea0773-1cb7-4e0b-a443-167e6ad4ce1f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\CombatCollisionManager">
       <UniqueIdentifier>{92f6603e-1b19-499d-8558-f3fb6857775c}</UniqueIdentifier>
     </Filter>
@@ -471,6 +468,15 @@
     </Filter>
     <Filter Include="Src\Application\Editor\EditorPanel">
       <UniqueIdentifier>{36da05ed-091e-48a1-9145-d1c3da2570d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Editor\EditorSelection">
+      <UniqueIdentifier>{e73979eb-223f-4a84-9999-249c321def53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Editor\StageBackup">
+      <UniqueIdentifier>{2d4e76b5-b663-41b1-8042-5139017f3e9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Stage\StageOwnedObject">
+      <UniqueIdentifier>{fa69cb4f-758d-4506-8637-0b29d4071e04}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -773,9 +779,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\Editor\MessageWindow\MessageWindow.h">
       <Filter>Src\Application\Editor\MessageWindow</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\System\WayPointManager\WayPointManager.h">
-      <Filter>Src\Application\System\WayPointManager</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\WayPoint\WayPoint.h">
       <Filter>Src\Application\GameObject\WayPoint</Filter>
@@ -1278,6 +1281,18 @@
     <ClInclude Include="Src\Application\Editor\EditorPanel\EditorPanel.h">
       <Filter>Src\Application\Editor\EditorPanel</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Editor\EditorSelection\EditorSelection.h">
+      <Filter>Src\Application\Editor\EditorSelection</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\StageBackup\StageBackup.h">
+      <Filter>Src\Application\Editor\StageBackup</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\WayPoint\WayPointManager.h">
+      <Filter>Src\Application\GameObject\WayPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Stage\StageOwnedObject\StageOwnedObject.h">
+      <Filter>Src\Application\GameObject\Stage\StageOwnedObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1537,9 +1552,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Editor\MessageWindow\MessageWindow.cpp">
       <Filter>Src\Application\Editor\MessageWindow</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\System\WayPointManager\WayPointManager.cpp">
-      <Filter>Src\Application\System\WayPointManager</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\WayPoint\WayPoint.cpp">
       <Filter>Src\Application\GameObject\WayPoint</Filter>
@@ -1966,6 +1978,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Editor\EditorPanel\EditorPanel.cpp">
       <Filter>Src\Application\Editor\EditorPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\StageBackup\StageBackup.cpp">
+      <Filter>Src\Application\Editor\StageBackup</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\WayPoint\WayPointManager.cpp">
+      <Filter>Src\Application\GameObject\WayPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Stage\StageOwnedObject\StageOwnedObject.cpp">
+      <Filter>Src\Application\GameObject\Stage\StageOwnedObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

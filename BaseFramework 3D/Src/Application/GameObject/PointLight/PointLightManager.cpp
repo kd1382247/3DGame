@@ -95,6 +95,7 @@ int PointLightObjectManager::FindAvailableID() const
 	}
 }
 
+
 bool PointLightObjectManager::Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner)
 {
 	nlohmann::json rootJson;

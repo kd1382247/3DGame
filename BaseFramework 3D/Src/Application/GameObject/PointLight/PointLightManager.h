@@ -43,11 +43,10 @@ private:
 
 	bool m_isDebug = false;
 
-
 private:
 
-	PointLightObjectManager() {}
-	~PointLightObjectManager() {}
+	PointLightObjectManager() = default;
+	~PointLightObjectManager() = default;
 
 public:
 

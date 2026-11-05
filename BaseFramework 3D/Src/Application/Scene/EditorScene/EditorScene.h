@@ -14,9 +14,9 @@ public:
 	void PreDraw()override;
 	void DrawDebug()override;
 
-	void BackupObjectList();
-	void RestoreObjectList();
-	void ClearBackupList();
+	void Backup();
+	void Restore();
+	void Discard();
 
 	bool UsePostProcess()const override;
 	

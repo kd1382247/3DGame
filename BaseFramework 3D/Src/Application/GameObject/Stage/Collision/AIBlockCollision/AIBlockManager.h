@@ -20,11 +20,17 @@ public:
 
 	std::shared_ptr<AIBlock> FindAIBlock(int id)const;
 
-	void ClearAIBlockList();
-	// ブロックを復元
-	void RestoreAIBlockList();
-	// バックアップをクリア
-	void ClearBackup();
+
+	//=====トランザクション処理=====//
+
+	// リストをバックアップ
+	void Backup();
+	// リストを元に戻す
+	void Restore();
+	// リストのバックアップをクリア
+	void Discard();
+
+
 
 	bool Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner);
 

@@ -25,8 +25,8 @@ private:
 
 private:
 
-	StageDataManager(){}
-	~StageDataManager(){}
+	StageDataManager() = default;
+	~StageDataManager() = default;
 
 public:
 
