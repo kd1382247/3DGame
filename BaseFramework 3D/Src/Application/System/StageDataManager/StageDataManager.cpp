@@ -6,17 +6,22 @@
 #include "../../Scene/SceneManager.h"
 #include "../../Editor/InspectorWidgets.h"
 
-#include"../../GameObject/WayPoint/WayPoint.h"
+
+#include "../../GameObject/Stage/WayPoint/WayPointManager.h"
+#include"../../GameObject/Stage/WayPoint/WayPoint.h"
+
+#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
+
+#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 
-#include "../../GameObject/WayPoint/WayPointManager.h"
-#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
-#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
-#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"
 #include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
-#include"../../GameObject/PointLight/PointLight.h"
-#include"../../GameObject/PointLight/PointLightManager.h"
+#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"
+
+#include"../../GameObject/Stage/PointLight/PointLightManager.h"
+#include"../../GameObject/Stage/PointLight/PointLight.h"
+
 #include"../../System/StageLoder/StageLoder.h"
 
 namespace

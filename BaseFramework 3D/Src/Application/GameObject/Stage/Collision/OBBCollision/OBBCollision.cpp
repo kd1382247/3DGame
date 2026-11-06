@@ -22,6 +22,17 @@ void OBBCollision::Init()
 
 void OBBCollision::DrawDebug()
 {
+	if (!OBBCollisionManager::Instance().IsDebug())
+	{
+		return;
+	}
+
+	// Active StageのAABBだけ表示する
+	if (GetOwner() != EditorManager::Instance().GetActiveStage())
+	{
+		return;
+	}
+
 
 	Math::Color color;
 
@@ -135,9 +146,4 @@ void OBBCollision::DrawInspectorHeader()
 
 		ImGui::EndCombo();
 	}
-}
-
-void OBBCollision::Destroy()
-{
-	OBBCollisionManager::Instance().RemoveOBBCollision(GetID());
 }

@@ -2,27 +2,14 @@
 
 #include"../EditorPanel/EditorPanel.h"
 
+#include"HierarchyCategory.h"
+
 class Hierarchy:public EditorPanel
 {
 public:
 
 	Hierarchy() :EditorPanel("Hierarchy") {}
 	~Hierarchy()override {}
-
-
-	enum class HierarchyCategory
-	{
-		GameObject,
-		WayPoint,
-		Stage,
-		Gimmick,
-		AreaVolume,
-		CheckPoint,
-		AABB,
-		OBB,
-		AIBlock,
-		PointLight
-	};
 
 	HierarchyCategory GetHierarchyCategory() const { return m_category; }
 
@@ -63,16 +50,13 @@ private:
 	// 選択中カテゴリのオブジェクト一覧
 	void DrawSelectedCategoryList();
 
+	void DrawStageOwnedObjects();
 	void DrawGameObjects();
-	void DrawWayPoints();
 	void DrawStage();
 	void DrawGimmick();
 	void DrawAreaVolume();
 	void DrawCheckPoint();
-	void DrawAABB();
-	void DrawOBB();
-	void DrawAIBlock();
-	void DrawPointLight();
+
 
 
 	// 指定のカテゴリに登録されている生成候補を表示する

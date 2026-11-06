@@ -22,7 +22,6 @@ public:
 	// ワールド座標でのAABB(位置と大きさから作る)
 	DirectX::BoundingBox GetBox()const;
 
-	void Destroy()override;
 
 
 };

@@ -2,6 +2,8 @@
 
 #include"EditorSelection/EditorSelection.h"
 
+#include"Hierarchy/HierarchyCategory.h"
+
 class Hierarchy;
 class Inspector;
 class StageEditor;
@@ -13,6 +15,7 @@ class CameraBase;
 class MessageWindow;
 
 class StageObject;
+class StageOwnedObject;
 
 class EditorManager
 {
@@ -96,6 +99,9 @@ public:
 	// (アクティブステージが「最初のステージ」ならtrue。ステージが1つもない場合もtrue)
 	bool CanEditStageData() const;
 
+	// ステージに対応するオブジェクトを返す
+	std::vector<std::shared_ptr<StageOwnedObject>>GetStageOwnedObjects(HierarchyCategory category);
+
 
 private:
 
@@ -124,6 +130,9 @@ private:
 	template<typename Container, typename Predicate>
 	std::shared_ptr<KdGameObject> SelectClosestByMouse(const Container& objects, UINT rayType, Predicate predicate);
 
+	// ステージに追従するオブジェクトを選択
+	void SelectStageOwnedByMouse();
+
 	// キャラクターを選択
 	void SelectGameObjectByMouse();
 
@@ -138,21 +147,6 @@ private:
 
 	// CheckPointを選択
 	void SelectCheckPointByMouse();
-
-	// ウェイポイントを選択
-	void SelectWayPointByMouse();
-
-	// AABBを選択
-	void SelectAABBByMouse();
-
-	// OBBを選択
-	void SelectOBBByMouse();
-
-	// AIBlockを選択
-	void SelectAIBlockByMouse();
-
-	// PointLightを選択
-	void SelectPointLightByMouse();
 
 	// 名前が同じステージをActiveStageにする(Play開始/終了でステージが作り直されるため)
 	void RestoreActiveStageByName(const std::string& stageName);

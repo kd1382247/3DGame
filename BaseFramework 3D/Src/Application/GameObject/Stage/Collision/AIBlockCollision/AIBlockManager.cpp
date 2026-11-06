@@ -2,10 +2,11 @@
 
 #include"AIBlock.h"
 
-#include"../../../../Editor/EditorManager.h"
+
+#include"../../../../Scene/SceneManager.h"
 #include"../../../../Editor/InspectorWidgets.h"
 
-std::shared_ptr<AIBlock> AIBlockManager::CreateAIBlock()
+std::shared_ptr<AIBlock> AIBlockManager::CreateAIBlock(const std::shared_ptr<StageObject>& owner)
 {
 	const int id = FindAvailableID();
 
@@ -15,76 +16,25 @@ std::shared_ptr<AIBlock> AIBlockManager::CreateAIBlock()
 
 	block->SetID(id);
 
+	block->SetOwner(owner);
+
 	// オブジェクトの名前をセット 後ろにID
 	block->SetObjectName("AIBlock_" + std::to_string(id));
 
-	m_spAIBlockList.push_back(block);
+	SceneManager::Instance().AddObject(block);
 
 	return block;
 }
 
-void AIBlockManager::RemoveAIBlock(int id)
-{
-	auto target = FindAIBlock(id);
-
-	if (!target)
-	{
-		return;
-	}
-
-	auto it = std::find(m_spAIBlockList.begin(), m_spAIBlockList.end(), target);
-
-	if (it == m_spAIBlockList.end())
-	{
-		return;
-	}
-
-	m_spAIBlockList.erase(it);
-}
-
 void AIBlockManager::RemoveByOwner(const StageObject* owner)
 {
-	std::erase_if(m_spAIBlockList,
-		[owner](const std::shared_ptr<AIBlock>& block)
-		{
-			return block && block->GetOwner().get() == owner;
-		}
-	);
-}
-
-std::shared_ptr<AIBlock> AIBlockManager::FindAIBlock(int id)const
-{
-	for (const auto& block : m_spAIBlockList)
+	for (const auto& aiBlock : GetAIBlockList())
 	{
-		if (!block)
+		if (aiBlock->GetOwner().get() == owner)
 		{
-			continue;
-		}
-
-		if (block->GetID() == id)
-		{
-			return block;
+			aiBlock->Destroy();
 		}
 	}
-
-	return nullptr;
-}
-
-void AIBlockManager::Backup()
-{
-	m_spBackupList = std::move(m_spAIBlockList);
-	m_spAIBlockList.clear();
-}
-
-void AIBlockManager::Restore()
-{
-	m_spAIBlockList = std::move(m_spBackupList);
-	m_spBackupList.clear();
-}
-
-void AIBlockManager::Discard()
-{
-	m_spBackupList.clear();
 }
 
 bool AIBlockManager::Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner)
@@ -92,7 +42,7 @@ bool AIBlockManager::Save(const std::string& filePath, const std::shared_ptr<Sta
 	nlohmann::json rootJson;
 	rootJson["AIBlocks"] = nlohmann::json::array();
 
-	for (const auto& block : m_spAIBlockList)
+	for (const auto& block : GetAIBlockList())
 	{
 		if (!block ||
 			block->GetOwner() != owner)
@@ -178,15 +128,7 @@ bool AIBlockManager::Load(const std::string& filePath, const std::shared_ptr<Sta
 	// Jsonに保存されてる情報でAIBlockを生成
 	for (const auto& blockJson : rootJson["AIBlocks"])
 	{
-		auto block = std::make_shared<AIBlock>();
-
-		block->Init();
-
-		// ID(使われていない最小のID)
-		block->SetID(FindAvailableID());
-
-		// 名前
-		block->SetObjectName("AIBlock_" + std::to_string(block->GetID()));
+		auto block = CreateAIBlock(owner);
 
 		// 座標(Stageからのローカル位置)
 		block->SetLocalPos({
@@ -201,10 +143,6 @@ bool AIBlockManager::Load(const std::string& filePath, const std::shared_ptr<Sta
 			blockJson["Scale"]["y"].get<float>(),
 			blockJson["Scale"]["z"].get<float>()
 			});
-
-		block->SetOwner(owner);
-
-		m_spAIBlockList.push_back(block);
 	}
 
 	return true;
@@ -212,47 +150,53 @@ bool AIBlockManager::Load(const std::string& filePath, const std::shared_ptr<Sta
 
 int AIBlockManager::FindAvailableID() const
 {
+	
+	const auto aiBlockList = GetAIBlockList();
+
 	int id = 0;
 
-	while (FindAIBlock(id))
+	// 未使用のIDが見つかるまでループを回す
+	while (true)
 	{
+		bool exists = false;
+
+		for (const auto& aiBlock : aiBlockList)
+		{
+			// 今のIDがすでに使われていたらループを抜ける
+			if (aiBlock->GetID() == id)
+			{
+				exists = true;
+				break;
+			}
+		}
+
+		// 未使用のIDが見つかったら処理終了
+		if (!exists)
+		{
+			return id;
+		}
+
+		// IDを加算
 		++id;
 	}
-
-	return id;
 }
 
-void AIBlockManager::DrawDebug()
+std::vector<std::shared_ptr<AIBlock>> AIBlockManager::GetAIBlockList() const
 {
-	if (!IsDebug())
-	{
-		return;
-	}
 
-	for (const auto& block : m_spAIBlockList)
-	{
-		if (!block) { continue; }
+	std::vector<std::shared_ptr<AIBlock>> aiBlockList;
 
-		// 持ち主が違う場合表示しない
-		if (block->GetOwner() != EditorManager::Instance().GetActiveStage())
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto aiBlock = std::dynamic_pointer_cast<AIBlock>(obj);
+
+		if (!aiBlock || aiBlock->IsExpired())
 		{
 			continue;
 		}
 
-		block->DrawDebug();
+		aiBlockList.push_back(aiBlock);
 	}
-}
 
-void AIBlockManager::SetStageTransform(const StageObject* stageObject, const Math::Vector3& stagePos, const Math::Vector3& stageScale)
-{
-	for (const auto& block : m_spAIBlockList)
-	{
-		if (!block ||
-			!block->ShouldFollow(stageObject))
-		{
-			continue;
-		}
-
-		block->SetStageTransform(stagePos, stageScale);
-	}
+	return aiBlockList;
 }

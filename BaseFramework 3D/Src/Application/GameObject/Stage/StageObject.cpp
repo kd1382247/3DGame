@@ -4,11 +4,11 @@
 #include"Collision/OBBCollision/OBBCollisionManager.h"
 #include"Collision/AIBlockCollision/AIBlockManager.h"
 
-#include"../PointLight/PointLightManager.h"
+#include"../Stage/PointLight/PointLightManager.h"
 
 #include"../../System/StageLoder/StageLoder.h"
 #include"../../System/StageDataManager/StageDataManager.h"
-#include"../WayPoint/WayPointManager.h"
+#include"../Stage/WayPoint/WayPointManager.h"
 #include"../../Editor/EditorManager.h"
 #include"../../Scene/SceneManager.h"
 #include"../Gimmick/StageGimmick.h"
@@ -66,16 +66,6 @@ void StageObject::ClearOwnerData()
 	AIBlockManager      ::Instance().RemoveByOwner(this);
 	WayPointManager     ::Instance().RemoveByOwner(this);
 	PointLightObjectManager::Instance().RemoveByOwner(this);
-}
-
-void StageObject::PreDraw()
-{
-	// AABB/OBB/WayPointは回転を表現できない(またはStage自体は回転させない方針の)ため、
-	// 位置と大きさだけをStageに追従させる
-	AABBCollisionManager::Instance().SetStageTransform(this,GetPos(), GetScale());
-	OBBCollisionManager::Instance().SetStageTransform(this,GetPos(), GetScale());
-	AIBlockManager::Instance().SetStageTransform(this,GetPos(), GetScale());
-	WayPointManager::Instance().SetStageTransform(this,GetPos(), GetScale());
 }
 
 void StageObject::DrawInspectorHeader()

@@ -18,8 +18,6 @@ public:
 
 	void SetMatrix(const Math::Matrix& mat) { m_mWorld = mat; }
 
-
-
 	//=====================================================
 	// 当たり判定
 	//=====================================================
@@ -46,7 +44,5 @@ public:
 
 
 	DirectX::BoundingBox GetBox()const;
-
-	void Destroy()override;
 
 };

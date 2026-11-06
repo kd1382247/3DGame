@@ -2,9 +2,9 @@
 
 #include "PointLight.h"
 
-#include "../Stage/StageObject.h"
-#include "../../Scene/SceneManager.h"
-#include "../../Editor/InspectorWidgets.h"
+#include "../StageObject.h"
+#include "../../../Scene/SceneManager.h"
+#include "../../../Editor/InspectorWidgets.h"
 
 std::shared_ptr<PointLightObject> PointLightObjectManager::CreatePointLight(const std::shared_ptr<StageObject>& owner)
 {
@@ -20,9 +20,6 @@ std::shared_ptr<PointLightObject> PointLightObjectManager::CreatePointLight(cons
 	light->SetObjectName("PointLight_" + std::to_string(id));
 
 	light->SetOwner(owner);
-
-	// 持ち主のステージに合わせた位置にしておく
-	light->UpdateWorldPos();
 
 	SceneManager::Instance().AddObject(light);
 
@@ -222,9 +219,6 @@ bool PointLightObjectManager::Load(const std::string& filePath, const std::share
 
 		// 範囲
 		light->SetRange(lightJson.value("Range", 3.0f));
-
-		// 読み込んだローカル位置を、ワールド位置に反映
-		light->UpdateWorldPos();
 	}
 
 	return true;

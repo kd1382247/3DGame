@@ -5,8 +5,8 @@
 #include"../../../System/CollisionManager/CollisionManager.h"
 #include"../../../System/TimeManager/TimeManager.h"
 
-#include"../../../GameObject/WayPoint/WayPointManager.h"
-#include"../../../GameObject/WayPoint/WayPoint.h"
+#include"../../../GameObject/Stage/WayPoint/WayPointManager.h"
+#include"../../../GameObject/Stage/WayPoint/WayPoint.h"
 #include"../../../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"
 #include"../../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
 

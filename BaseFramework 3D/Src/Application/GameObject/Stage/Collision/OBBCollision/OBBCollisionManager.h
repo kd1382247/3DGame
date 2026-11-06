@@ -10,24 +10,9 @@ class OBBCollisionManager
 public:
 
 
-	std::shared_ptr<OBBCollision> CreateOBBCollision();
-
-	void RemoveOBBCollision(int id);
+	std::shared_ptr<OBBCollision> CreateOBBCollision(const std::shared_ptr<StageObject>& owner);
 
 	void RemoveByOwner(const StageObject* owner);
-
-	std::shared_ptr<OBBCollision> FindOBBCollision(int id)const;
-
-
-	//=====トランザクション処理=====//
-
-	// リストをバックアップ
-	void Backup();
-	// リストを元に戻す
-	void Restore();
-	// リストのバックアップをクリア
-	void Discard();
-
 
 	bool Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner);
 
@@ -37,28 +22,13 @@ public:
 	// 現在使われていない最小のIDを返す
 	int FindAvailableID() const;
 
-	const std::vector<std::shared_ptr<OBBCollision>>& GetOBBCollisionList() const
-	{
-		return m_spOBBCollisionList;
-	}
+	std::vector<std::shared_ptr<OBBCollision>> GetOBBCollisionList() const;
 
 	// デバッグの表示切り替えフラグ
 	bool IsDebug() { return m_isDebug; }
 	void SetIsDebug(const bool flg) { m_isDebug = flg; }
 
-	// デバッグ表示
-	void DrawDebug();
-
-	// Stage(親)のワールド位置・大きさを、管理している全OBBに反映する
-	void SetStageTransform(const StageObject*stageObject,const Math::Vector3& stagePos, const Math::Vector3& stageScale);
-
 private:
-
-	void Init();
-
-	std::vector<std::shared_ptr<OBBCollision>>m_spOBBCollisionList;
-
-	std::vector<std::shared_ptr<OBBCollision>>m_spBackupList;
 
 	bool m_isDebug = false;
 

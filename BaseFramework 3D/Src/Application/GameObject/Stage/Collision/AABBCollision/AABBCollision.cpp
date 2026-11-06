@@ -2,9 +2,10 @@
 
 #include"AABBCollisionManager.h"
 
+#include"../../../../Editor/EditorManager.h"
+
 #include"../../../../System/CollisionManager/CollisionManager.h"
 #include"../../../../System/CollisionManager/CollisionMath/CollisionMath.h"
-
 
 void AABBCollision::Init()
 {
@@ -21,6 +22,16 @@ void AABBCollision::Init()
 
 void AABBCollision::DrawDebug()
 {
+	if (!AABBCollisionManager::Instance().IsDebug())
+	{
+		return;
+	}
+
+	// Active StageのAABBだけ表示する
+	if (GetOwner() != EditorManager::Instance().GetActiveStage())
+	{
+		return;
+	}
 
 	Math::Color color;
 
@@ -79,9 +90,4 @@ DirectX::BoundingBox AABBCollision::GetBox() const
 	};
 
 	return box;
-}
-
-void AABBCollision::Destroy()
-{
-	AABBCollisionManager::Instance().RemoveAABBCollision(GetID());
 }

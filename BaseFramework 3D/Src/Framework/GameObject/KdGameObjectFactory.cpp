@@ -7,7 +7,7 @@
 #include"../../Application/GameObject/Camera/TPSCamera/TPSCamera.h"
 
 // ウェイポイント
-#include"../../Application/GameObject/WayPoint/WayPoint.h"
+#include"../../Application/GameObject/Stage/WayPoint/WayPoint.h"
 
 // 敵
 #include"../../Application/GameObject//Character/Enemy/Bomb/Bomb.h"

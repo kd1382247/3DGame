@@ -34,9 +34,4 @@ public:
 	virtual bool IsActiveFor(const CharacterBase* character)const { return character!=nullptr; }
 
 	virtual bool IsWalkableOnly()const { return false; }
-
-private:
-
-
-
 };

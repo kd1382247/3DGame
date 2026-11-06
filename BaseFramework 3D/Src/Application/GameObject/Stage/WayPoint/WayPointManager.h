@@ -1,18 +1,14 @@
 ﻿#pragma once
 
 class WayPoint;
-
+class AreaVolume;
 class StageObject;
 
 class WayPointManager
 {
 public:
 
-	void Init();
-
-	// WayPointの登録・削除
-	bool RegisterWayPoint(const std::shared_ptr<WayPoint>& wayPoint);
-	bool RemoveWayPoint(int id);
+	void UnLinkID(int id);
 
 	void RemoveByOwner(const StageObject* owner);
 
@@ -29,40 +25,19 @@ public:
 
 	
 	// WayPointを初期化する
-	std::shared_ptr<WayPoint> CreateWayPoint();
-
-	// デバッグ表示
-	void DrawDebug();
+	std::shared_ptr<WayPoint> CreateWayPoint(const std::shared_ptr<StageObject>& owner);
 
 	// デバッグの表示切り替えフラグ
 	bool IsDebug() { return m_isDebug; }
 	void SetIsDebug(const bool flg) { m_isDebug = flg; }
 
-
-	//=====トランザクション処理=====//
-
-	// リストをバックアップ
-	void Backup();
-	// リストを元に戻す
-	void Restore();
-	// リストのバックアップをクリア
-	void Discard();
-
-
 	bool Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner);
 
 	bool Load(const std::string& filePath, const std::shared_ptr<StageObject>& owner);
 
-	const std::vector<std::shared_ptr<WayPoint>>& GetWayPoints() const
-	{
-		return m_spWayPointList;
-	}
+	std::vector<std::shared_ptr<WayPoint>> GetWayPoints() const;
 
-	// Stage(親)のワールド位置・大きさを、管理している全WayPointに反映する
-	void SetStageTransform(const StageObject* stageObject,const Math::Vector3& stagePos, const Math::Vector3& stageScale);
-
-	// 全WayPointのエリアIDを座標から自動で決める
-	void AssignAreaIDs();
+	std::vector<std::weak_ptr<AreaVolume>> GetAreaVolumes()const;
 
 	void UpdateFlowGoal(const int goalID);
 
@@ -71,7 +46,15 @@ public:
 
 	bool IsFlowGoal(const int id)const { return  m_flowGoalID == id; }
 
+	// 配列が古くなった
+	void InvalidateIndex() { m_isIndexDirty = true; }
+
+	// 表が古くなった
+	void InvalidateFlowField() { m_flowGoalID = -1; }
+
 private:
+
+	void UpdateWayPointList()const;
 
 	// 現在使われていない最小のIDを返す
 	int FindAvailableID() const;
@@ -81,25 +64,22 @@ private:
 
 private:
 
-	// 現在のステージに配置されているWayPointを所有する
-	std::vector<std::shared_ptr<WayPoint>> m_spWayPointList;
-	// バックアップ用のWayPointリスト
-	std::vector<std::shared_ptr<WayPoint>>m_spBackupWayPointList;
-
 	// ゴールまでの道のり(標識)
 	std::unordered_map<int, float>m_costToGoal;
 
 	// 今の標識がどのゴールのものか
 	int m_flowGoalID = -1;
 
-	// デバッグ
-	std::unique_ptr<KdDebugWireFrame> m_pDebugWire = nullptr;
-
 	bool m_isDebug = false;
+
+	// 所有せずに索引目的のためweak_ptr
+	// constの関数内で値を変えるのでmutableを付ける
+	mutable std::map<int, std::weak_ptr<WayPoint>>m_wpWayPointList;
+	mutable bool m_isIndexDirty = true;
 
 private:
 
-	WayPointManager() { Init(); }
+	WayPointManager() = default;
 	~WayPointManager() = default;
 
 public:

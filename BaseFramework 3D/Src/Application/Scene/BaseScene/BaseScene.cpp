@@ -3,7 +3,7 @@
 #include"../../System/CollisionManager/CollisionManager.h"
 
 #include"../../Editor/EditorManager.h"
-#include"../../GameObject/PointLight/PointLightManager.h"
+#include"../../GameObject/Stage/PointLight/PointLightManager.h"
 
 
 void BaseScene::PreUpdate()

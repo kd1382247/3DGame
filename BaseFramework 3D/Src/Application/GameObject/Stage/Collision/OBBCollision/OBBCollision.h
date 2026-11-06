@@ -65,8 +65,6 @@ public:
 	// 位置・大きさ・回転は固定表示(スクロールしない)側に出す
 	void DrawInspectorHeader()override;
 
-	void Destroy()override;
-
 private:
 
 	OBBCollisionType m_collisionType = OBBCollisionType::Walkable;

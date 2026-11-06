@@ -2,6 +2,8 @@
 
 #include"AIBlockManager.h"
 
+#include"../../../../Editor/EditorManager.h"
+
 void AIBlock::Init()
 {
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
@@ -16,7 +18,18 @@ void AIBlock::Init()
 
 void AIBlock::DrawDebug()
 {
-	// AABB(緑)と区別するため青で表示。選択中は水色
+	if (!AIBlockManager::Instance().IsDebug())
+	{
+		return;
+	}
+
+	// Active StageのAIBlockだけ表示する
+	if (GetOwner() != EditorManager::Instance().GetActiveStage())
+	{
+		return;
+	}
+
+	// AABB(緑)と区別するため青で表示。選択中は黄色
 	Math::Color color;
 
 	if (IsSelected())
@@ -47,9 +60,4 @@ DirectX::BoundingBox AIBlock::GetBox() const
 	};
 
 	return box;
-}
-
-void AIBlock::Destroy()
-{
-	AIBlockManager::Instance().RemoveAIBlock(GetID());
 }

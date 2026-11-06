@@ -5,12 +5,8 @@
 #include"../CollisionRegistry/CollisionRegistry.h"
 
 #include"../../../../Framework/GameObject/KdGameObject.h"
-#include"../IObstacle/IObstacle.h"
-#include"../../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
-#include"../../../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
 
-#include"../../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
-#include"../../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
+#include"../IObstacle/IObstacle.h"
 
 #include"../../../GameObject/Character/CharacterBase.h"
 
@@ -50,24 +46,28 @@ void CharacterMover::CollectObstacles()
 {
 	m_obstacles.clear();
 
-	for (const auto& aabb : AABBCollisionManager::Instance().GetAABBCollisionList())
+	for (const auto& weakObj : m_registry.GetObjects(CollisionLayer::AABB))
 	{
-		if (!aabb)
+		auto obstacle = dynamic_cast<const IObstacle*>(weakObj.lock().get());
+
+		if (!obstacle)
 		{
 			continue;
 		}
 
-		m_obstacles.push_back(aabb.get());
+		m_obstacles.push_back(obstacle);
 	}
 
-	for (const auto& obb : OBBCollisionManager::Instance().GetOBBCollisionList())
+	for (const auto& weakObj : m_registry.GetObjects(CollisionLayer::OBB))
 	{
-		if (!obb)
+		auto obstacle = dynamic_cast<const IObstacle*>(weakObj.lock().get());
+
+		if (!obstacle)
 		{
 			continue;
 		}
 
-		m_obstacles.push_back(obb.get());
+		m_obstacles.push_back(obstacle);
 	}
 
 	for (const auto& weakObj : m_registry.GetObjects(CollisionLayer::Gate))

@@ -6,8 +6,8 @@
 
 #include"EditorPanel/EditorPanel.h"
 
-#include"../GameObject/WayPoint/WayPointManager.h"
-#include"../GameObject/WayPoint/WayPoint.h"
+#include"../GameObject/Stage/WayPoint/WayPointManager.h"
+#include"../GameObject/Stage/WayPoint/WayPoint.h"
 #include"../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
 
@@ -17,8 +17,8 @@
 #include"../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
 #include"../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"
 
-#include"../GameObject/PointLight/PointLightManager.h"
-#include"../GameObject/PointLight/PointLight.h"
+#include"../GameObject/Stage/PointLight/PointLightManager.h"
+#include"../GameObject/Stage/PointLight/PointLight.h"
 
 #include"../Scene/EditorScene/EditorScene.h"
 
@@ -30,15 +30,30 @@
 #include "../Scene/SceneManager.h"
 #include"../System/StageDataManager/StageDataManager.h"
 
-
-#include"StageBackup/StageBackup.h"
-
 #include"../BGMManager/BGMManager.h"
 
 #include "Hierarchy/Hierarchy.h"
 #include "Inspector/Inspector.h"
 #include "StageEditor/StageEditor.h"
 #include"SceneView/SceneView.h"
+
+namespace
+{
+	// StageOwnedObjectを継承しているクラスのリストを受け取って、第一引数のリストに追加する
+	template<class T>
+	void AddStageOwnedObjectList(std::vector<std::shared_ptr<StageOwnedObject>>& OwnedObjList, const std::vector<std::shared_ptr<T>>& list)
+	{
+		for (const auto& obj : list)
+		{
+			if (!obj || obj->IsExpired())
+			{
+				continue;
+			}
+
+			OwnedObjList.push_back(obj);
+		}
+	}
+}
 
 void EditorManager::Init()
 {
@@ -142,7 +157,6 @@ void EditorManager::StartPlayMode()
 
 	// Play中の状態を削除
 	editorScene->Backup();
-	StageBackup::Backup();
 
 
 	// Edit開始前の状態を復元
@@ -150,14 +164,12 @@ void EditorManager::StartPlayMode()
 	{
 		// ロードに失敗したため復元する
 		editorScene->Restore();
-		StageBackup::Restore();
 
 		return;
 	}
 
 	// バックアップリストをクリア
 	editorScene->Discard();
-	StageBackup::Discard();
 
 	// 作り直されたステージの中から、編集中だったステージを選び直す
 	RestoreActiveStageByName(activeStageName);
@@ -200,21 +212,18 @@ void EditorManager::StopPlayMode()
 
 	// Play中の状態を削除
 	editorScene->Backup();
-	StageBackup::Backup();
 
 	// Edit開始前の状態を復元
 	if (!StageDataManager::Instance().LoadTemporary())
 	{
 		// ロードに失敗したため復元する
 		editorScene->Restore();
-		StageBackup::Restore();
 
 		return;
 	}
 
 	// バックアップリストをクリア
 	editorScene->Discard();
-	StageBackup::Discard();
 
 	// 作り直されたステージの中から、編集中だったステージを選び直す
 	RestoreActiveStageByName(activeStageName);
@@ -470,44 +479,35 @@ void EditorManager::UpdateMouseSelection()
 
 	switch (m_spHierarchy->GetHierarchyCategory())
 	{
-	case Hierarchy::HierarchyCategory::GameObject :
+	case HierarchyCategory::GameObject :
 
 		SelectGameObjectByMouse();
 		break;
 
-	case Hierarchy::HierarchyCategory::Stage:
+	case HierarchyCategory::Stage:
 		SelectStageObjectByMouse();
 		break;
 
-	case Hierarchy::HierarchyCategory::Gimmick:
+	case HierarchyCategory::Gimmick:
 		SelectGimmickByMouse();
 		break;
 
-	case Hierarchy::HierarchyCategory::AreaVolume:
+	case HierarchyCategory::AreaVolume:
 		SelectAreaVolumeByMouse();
 		break;
 
-	case Hierarchy::HierarchyCategory::CheckPoint:
+	case HierarchyCategory::CheckPoint:
 		SelectCheckPointByMouse();
 		break;
 
-	case Hierarchy::HierarchyCategory::WayPoint:
-		SelectWayPointByMouse();
-		break;
+	case HierarchyCategory::WayPoint:
+	case HierarchyCategory::AABB:
+	case HierarchyCategory::OBB:
+	case HierarchyCategory::AIBlock:
+	case HierarchyCategory::PointLight:
 
-	case Hierarchy::HierarchyCategory::AABB:
-		SelectAABBByMouse();
-		break;
-	case Hierarchy::HierarchyCategory::OBB:
-		SelectOBBByMouse();
-		break;
+		SelectStageOwnedByMouse();
 
-	case Hierarchy::HierarchyCategory::AIBlock:
-		SelectAIBlockByMouse();
-		break;
-
-	case Hierarchy::HierarchyCategory::PointLight:
-		SelectPointLightByMouse();
 		break;
 
 	}
@@ -551,6 +551,30 @@ std::shared_ptr<KdGameObject> EditorManager::SelectClosestByMouse(const Containe
 	}
 
 	return selectedObj;
+}
+
+
+void EditorManager::SelectStageOwnedByMouse()
+{
+
+	if (!CanEditStageData())
+	{
+		return;
+	}
+
+	auto activeStage = GetActiveStage();
+
+	auto StageOwnedObjList = GetStageOwnedObjects(m_spHierarchy->GetHierarchyCategory());
+
+	auto selectedObj = SelectClosestByMouse(
+		StageOwnedObjList,
+		KdCollider::TypeBump,
+		[&activeStage](const std::shared_ptr<StageOwnedObject>& obj)
+		{
+			return obj->GetOwner() == activeStage;
+		});
+
+	SetSelectedObject(selectedObj);
 }
 
 void EditorManager::SelectGameObjectByMouse()
@@ -662,141 +686,6 @@ void EditorManager::SelectCheckPointByMouse()
 	SetSelectedObject(selectedObj);
 }
 
-void EditorManager::SelectWayPointByMouse()
-{
-	if (!CanEditStageData())
-	{
-		return;
-	}
-
-	auto activeStage = GetActiveStage();
-
-	auto selectedObj = SelectClosestByMouse(
-		WayPointManager::Instance().GetWayPoints(),
-		KdCollider::TypeBump,
-		[activeStage](const std::shared_ptr<KdGameObject>& obj)
-		{
-			auto point = std::dynamic_pointer_cast<WayPoint>(obj);
-
-			if (!point)
-			{
-				return false;
-			}
-
-			return point->GetOwner() == activeStage;
-		});
-
-	SetSelectedObject(selectedObj);
-}
-
-void EditorManager::SelectAABBByMouse()
-{
-	if (!CanEditStageData())
-	{
-		return;
-	}
-
-	auto activeStage = GetActiveStage();
-
-	auto selectedObj = SelectClosestByMouse(
-		AABBCollisionManager::Instance().GetAABBCollisionList(),
-		KdCollider::TypeBump,
-		[activeStage](const std::shared_ptr<KdGameObject>& obj)
-		{
-			auto aabb = std::dynamic_pointer_cast<AABBCollision>(obj);
-
-			if (!aabb)
-			{
-				return false;
-			}
-
-			return aabb->GetOwner() == activeStage;
-		});
-
-	SetSelectedObject(selectedObj);
-}
-
-void EditorManager::SelectOBBByMouse()
-{
-	if (!CanEditStageData())
-	{
-		return;
-	}
-
-	auto activeStage = GetActiveStage();
-
-	auto selectedObj = SelectClosestByMouse(
-		OBBCollisionManager::Instance().GetOBBCollisionList(),
-		KdCollider::TypeBump,
-		[activeStage](const std::shared_ptr<KdGameObject>& obj)
-		{
-			auto obb = std::dynamic_pointer_cast<OBBCollision>(obj);
-
-			if (!obb)
-			{
-				return false;
-			}
-
-			return obb->GetOwner() == activeStage;
-		});
-
-	SetSelectedObject(selectedObj);
-}
-
-void EditorManager::SelectAIBlockByMouse()
-{
-	if (!CanEditStageData())
-	{
-		return;
-	}
-
-	auto activeStage = GetActiveStage();
-
-	auto selectedObj = SelectClosestByMouse(
-		AIBlockManager::Instance().GetAIBlockList(),
-		KdCollider::TypeBump,
-		[activeStage](const std::shared_ptr<KdGameObject>& obj)
-		{
-			auto block = std::dynamic_pointer_cast<AIBlock>(obj);
-
-			if (!block)
-			{
-				return false;
-			}
-
-			return block->GetOwner() == activeStage;
-		});
-
-	SetSelectedObject(selectedObj);
-}
-
-void EditorManager::SelectPointLightByMouse()
-{
-	if (!CanEditStageData())
-	{
-		return;
-	}
-
-	auto activeStage = GetActiveStage();
-
-	auto selectedObj = SelectClosestByMouse(
-		PointLightObjectManager::Instance().GetPointLights(),
-		KdCollider::TypeBump,
-		[activeStage](const std::shared_ptr<KdGameObject>& obj)
-		{
-			auto light = std::dynamic_pointer_cast<PointLightObject>(obj);
-
-			if (!light)
-			{
-				return false;
-			}
-
-			return light->GetOwner() == activeStage;
-		});
-
-	SetSelectedObject(selectedObj);
-}
-
 void EditorManager::CreateGameObject(const std::string& className, const std::string& stageModelName)
 {
 	auto newObject =
@@ -881,7 +770,7 @@ std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<Kd
 	//------------------------------------------------------------
 	if (auto srcAABB = std::dynamic_pointer_cast<AABBCollision>(src))
 	{
-		auto copy = AABBCollisionManager::Instance().CreateAABBCollision();
+		auto copy = AABBCollisionManager::Instance().CreateAABBCollision(srcAABB->GetOwner());
 
 		if (!copy)
 		{
@@ -904,7 +793,7 @@ std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<Kd
 	//------------------------------------------------------------
 	if (auto srcOBB = std::dynamic_pointer_cast<OBBCollision>(src))
 	{
-		auto copy = OBBCollisionManager::Instance().CreateOBBCollision();
+		auto copy = OBBCollisionManager::Instance().CreateOBBCollision(srcOBB->GetOwner());
 
 		if (!copy)
 		{
@@ -928,7 +817,7 @@ std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<Kd
 	//------------------------------------------------------------
 	if (auto srcBlock = std::dynamic_pointer_cast<AIBlock>(src))
 	{
-		auto copy = AIBlockManager::Instance().CreateAIBlock();
+		auto copy = AIBlockManager::Instance().CreateAIBlock(srcBlock->GetOwner());
 
 		if (!copy)
 		{
@@ -961,8 +850,6 @@ std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<Kd
 		copy->SetLocalPos(srcLight->GetLocalPos());
 		copy->SetColor(srcLight->GetColor());
 		copy->SetRange(srcLight->GetRange());
-
-		copy->UpdateWorldPos();
 
 		return copy;
 	}
@@ -1089,6 +976,38 @@ bool EditorManager::CanEditStageData() const
 	}
 
 	return FindPrimaryStage(activeStage->GetStageModelName()) == activeStage;
+}
+
+std::vector<std::shared_ptr<StageOwnedObject>> EditorManager::GetStageOwnedObjects(HierarchyCategory category)
+{
+
+	std::vector<std::shared_ptr<StageOwnedObject>> OwnedObjList;
+
+	switch (category)
+	{
+	case HierarchyCategory::WayPoint:
+
+		AddStageOwnedObjectList<WayPoint>        (OwnedObjList, WayPointManager::        Instance().GetWayPoints());
+		break;
+	case HierarchyCategory::AABB:
+
+		AddStageOwnedObjectList<AABBCollision>   (OwnedObjList, AABBCollisionManager::   Instance().GetAABBCollisionList());
+		break;
+	case HierarchyCategory::OBB:
+
+		AddStageOwnedObjectList<OBBCollision>    (OwnedObjList, OBBCollisionManager::    Instance().GetOBBCollisionList());
+		break;
+	case HierarchyCategory::AIBlock:
+
+		AddStageOwnedObjectList<AIBlock>         (OwnedObjList, AIBlockManager::         Instance().GetAIBlockList());
+		break;
+	case HierarchyCategory::PointLight:
+
+		AddStageOwnedObjectList<PointLightObject>(OwnedObjList, PointLightObjectManager::Instance().GetPointLights());
+		break;
+	}
+
+	return OwnedObjList;
 }
 
 std::string EditorManager::MakeUniqueObjectName(const std::string& className) const

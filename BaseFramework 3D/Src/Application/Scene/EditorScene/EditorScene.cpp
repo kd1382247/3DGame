@@ -3,12 +3,6 @@
 #include"../../Editor/EditorManager.h"
 #include"../../GameObject/Camera/EditorCamera/EditorCamera.h"
 
-#include"../../GameObject/WayPoint/WayPointManager.h"
-#include"../../GameObject/WayPoint/WayPoint.h"
-#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
-#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
-#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
-
 
 #include"../SceneManager.h"
 
@@ -40,14 +34,6 @@ void EditorScene::DrawDebug()
 {
 
 	BaseScene::DrawDebug();
-
-	AABBCollisionManager::Instance().DrawDebug();
-
-	OBBCollisionManager::Instance().DrawDebug();
-
-	AIBlockManager::Instance().DrawDebug();
-
-	WayPointManager::Instance().DrawDebug();
 	
 	// SceneViewへの描画終了
 	if (EditorManager::Instance().IsEditMode())

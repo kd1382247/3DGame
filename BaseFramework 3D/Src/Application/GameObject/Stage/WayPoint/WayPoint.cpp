@@ -1,8 +1,8 @@
 ﻿#include "WayPoint.h"
 
-#include"../../Editor/EditorManager.h"
+#include"../../../Editor/EditorManager.h"
 
-#include"../Gimmick/AreaVolume/AreaVolume.h"
+#include"../../Gimmick/AreaVolume/AreaVolume.h"
 
 #include "WayPointManager.h"
 
@@ -20,8 +20,70 @@ void WayPoint::Init()
 
 }
 
+void WayPoint::PreDraw()
+{
+	StageOwnedObject::PreDraw();
+
+
+
+	int AreaID = -1;
+
+	// エリアIDを決める
+	for (const auto& weakArea : WayPointManager::Instance().GetAreaVolumes())
+	{
+		auto spArea = weakArea.lock();
+
+		if (!spArea) { continue; }
+
+		// エリア内に入っていたら、そのIDを入れる
+		if (spArea->IsInside(GetPos()+Math::Vector3(0.0f,0.5f,0.0f)))
+		{
+			AreaID = spArea->GetAreaID();
+			break;
+		}
+	}
+
+	SetAreaID(AreaID);
+
+	WayPointManager::Instance().InvalidateIndex();
+	WayPointManager::Instance().InvalidateFlowField();
+
+}
+
 void WayPoint::DrawDebug()
 {
+
+	if (!WayPointManager::Instance().IsDebug())
+	{
+		return;
+	}
+
+	if (GetOwner() != EditorManager::Instance().GetActiveStage())
+	{
+		return;
+	}
+
+	// 線の表示
+	for (int linkID : GetLinks())
+	{
+		auto linkedPoint = WayPointManager::Instance().FindWayPoint(linkID);
+
+		if (!linkedPoint)
+		{
+			continue;
+		}
+
+		// 小さいID側だけ登録
+		if (GetID() > linkID)
+		{
+			continue;
+		}
+
+		m_pDebugWire->AddDebugLine(GetPos(), linkedPoint->GetPos(), kGreenColor);
+	}
+
+
+
 	Math::Color color;
 
 	// 球の表示
@@ -37,9 +99,6 @@ void WayPoint::DrawDebug()
 
 	m_pDebugWire->AddDebugSphere(GetPos(), 0.5f, color);
 	KdGameObject::DrawDebug();
-
-	// IDを描画
-	//DrawID();
 }
 
 void WayPoint::DrawInspectorHeader()
@@ -130,25 +189,18 @@ void WayPoint::DrawInspector()
 	}
 }
 
-void WayPoint::SetID(int id)
-{
-	m_id = id;
-}
-
-void WayPoint::SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale)
-{
-	SetPos(stagePos + m_localPos * stageScale);
-}
-
 void WayPoint::Destroy()
 {
-	WayPointManager::Instance().RemoveWayPoint(GetID());
+	// 接続しているウェイポイントを解除する
+	WayPointManager::Instance().UnLinkID(GetID());
+
+	KdGameObject::Destroy();
 }
 
 bool WayPoint::AddLink(int id)
 {
 	// 自分自身には接続しない
-	if (id == m_id)
+	if (id == GetID())
 	{
 		return false;
 	}

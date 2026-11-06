@@ -2,11 +2,26 @@
 
 #include"../../../Editor/EditorManager.h"
 
-void StageOwnedObject::SetStageTransform(const Math::Vector3& stagePos, const Math::Vector3& stageScale)
+#include"../StageObject.h"
+
+void StageOwnedObject::PreDraw()
 {
-	// AABBは回転を表現できないため、位置と大きさだけをStageに追従させる
-	SetPos(stagePos + m_localPos * stageScale);
-	SetScale(m_localScale * stageScale);
+	FollowOwner();
+}
+
+void StageOwnedObject::FollowOwner()
+{
+	auto spOwner = m_wpOwner.lock();
+
+	if (!spOwner)
+	{
+		return;
+	}
+
+	// 位置と大きさだけをStageに追従させる
+	SetPos(spOwner->GetPos() + m_localPos * spOwner->GetScale());
+	SetScale(m_localScale * spOwner->GetScale());
+
 }
 
 void StageOwnedObject::DrawInspectorHeader()

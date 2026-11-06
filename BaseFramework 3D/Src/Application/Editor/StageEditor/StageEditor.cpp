@@ -4,8 +4,6 @@
 #include "../../Scene/SceneManager.h"
 #include"../../Scene/EditorScene/EditorScene.h"
 
-#include"../StageBackup/StageBackup.h"
-
 #include"../../System/StageDataManager/StageDataManager.h"
 
 #include"../../GameObject/Camera/TPSCamera/TPSCamera.h"
@@ -86,9 +84,6 @@ void StageEditor::CreateNewStage()
 	{
 		editorScene->Discard();
 	}
-	StageBackup::Discard();
-
-
 
 	m_isEditStage = true;
 
@@ -436,7 +431,6 @@ void StageEditor::LoadSucceeded(const std::string& stageName)
 	}
 
 	editorScene->Discard();
-	StageBackup::Discard();
 
 	EditorManager::Instance().ClearDirty();
 
@@ -461,7 +455,6 @@ void StageEditor::LoadFailed()
 	}
 
 	editorScene->Restore();
-	StageBackup::Restore();
 
 }
 
@@ -600,7 +593,4 @@ void StageEditor::ClearStage()
 		return;
 	}
 	editorScene->Backup();
-
-	// データをバックアップ
-	StageBackup::Backup();
 }

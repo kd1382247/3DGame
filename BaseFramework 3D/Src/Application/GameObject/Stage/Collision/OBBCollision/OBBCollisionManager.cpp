@@ -2,10 +2,10 @@
 
 #include"OBBCollision.h"
 
-#include"../../../../Editor/EditorManager.h"
+#include"../../../../Scene/SceneManager.h"
 #include"../../../../Editor/InspectorWidgets.h"
 
-std::shared_ptr<OBBCollision> OBBCollisionManager::CreateOBBCollision()
+std::shared_ptr<OBBCollision> OBBCollisionManager::CreateOBBCollision(const std::shared_ptr<StageObject>& owner)
 {
 	const int id = FindAvailableID();
 
@@ -15,81 +15,28 @@ std::shared_ptr<OBBCollision> OBBCollisionManager::CreateOBBCollision()
 
 	obb->SetID(id);
 
+	obb->SetOwner(owner);
+
 	// オブジェクトの名前をセット 後ろにID
 	std::string objName = "OBBCollision_" + std::to_string(id);
 	obb->SetObjectName(objName);
 
-	m_spOBBCollisionList.push_back(obb);
+	SceneManager::Instance().AddObject(obb);
 
 	return obb;
 }
 
-void OBBCollisionManager::RemoveOBBCollision(int id)
-{
-
-	auto target = FindOBBCollision(id);
-
-	if (!target)
-	{
-		return;
-	}
-
-	auto it = std::find(m_spOBBCollisionList.begin(), m_spOBBCollisionList.end(), target);
-
-	if (it == m_spOBBCollisionList.end())
-	{
-		return;
-	}
-
-	m_spOBBCollisionList.erase(it);
-
-}
-
 void OBBCollisionManager::RemoveByOwner(const StageObject* owner)
 {
-	std::erase_if(m_spOBBCollisionList,
-		[owner](const std::shared_ptr<OBBCollision>& obb)
-		{
-			return obb && obb->GetOwner().get() == owner;
-		}
-	);
-}
 
-std::shared_ptr<OBBCollision> OBBCollisionManager::FindOBBCollision(int id)const
-{
-
-	for (const auto& obb : m_spOBBCollisionList)
+	for (const auto& obb : GetOBBCollisionList())
 	{
-		if (!obb)
+		if (obb->GetOwner().get() == owner)
 		{
-			continue;
-		}
-
-		if (obb->GetID() == id)
-		{
-			return obb;
+			obb->Destroy();
 		}
 	}
 
-	return nullptr;
-
-}
-
-void OBBCollisionManager::Backup()
-{
-	m_spBackupList = std::move(m_spOBBCollisionList);
-	m_spOBBCollisionList.clear();
-}
-
-void OBBCollisionManager::Restore()
-{
-	m_spOBBCollisionList = std::move(m_spBackupList);
-	m_spBackupList.clear();
-}
-
-void OBBCollisionManager::Discard()
-{
-	m_spBackupList.clear();
 }
 
 bool OBBCollisionManager::Save(const std::string& filePath, const std::shared_ptr<StageObject>& owner)
@@ -97,7 +44,7 @@ bool OBBCollisionManager::Save(const std::string& filePath, const std::shared_pt
 	nlohmann::json rootJson;
 	rootJson["OBBCollisions"] = nlohmann::json::array();
 
-	for (const auto& obb : m_spOBBCollisionList)
+	for (const auto& obb : GetOBBCollisionList())
 	{
 		if (!obb ||
 			obb->GetOwner() != owner)
@@ -199,21 +146,8 @@ bool OBBCollisionManager::Load(const std::string& filePath, const std::shared_pt
 	// Jsonに保存されてる情報でOBBCollisionを生成
 	for (const auto& obbJson : rootJson["OBBCollisions"])
 	{
+		auto obb = CreateOBBCollision(owner);
 
-		auto obj = KdGameObjectFactory::Instance().CreateGameObject("OBBCollision");
-
-		auto obb = std::dynamic_pointer_cast<OBBCollision>(obj);
-
-		if (!obb)
-		{
-			continue;
-		}
-
-		obb->Init();
-		// ID
-		obb->SetID(FindAvailableID());
-		// 名前
-		obb->SetObjectName("OBBCollision_" + std::to_string(obb->GetID()));
 		// 座標(Stageからのローカル位置)
 		obb->SetLocalPos({
 			obbJson["Position"]["x"].get<float>(),
@@ -241,10 +175,6 @@ bool OBBCollisionManager::Load(const std::string& filePath, const std::shared_pt
 		{
 			obb->SetCollisionType(obbJson["CollisionType"].get<std::string>());
 		}
-
-		obb->SetOwner(owner);
-
-		m_spOBBCollisionList.push_back(obb);
 	}
 
 	return true;
@@ -252,51 +182,53 @@ bool OBBCollisionManager::Load(const std::string& filePath, const std::shared_pt
 
 int OBBCollisionManager::FindAvailableID() const
 {
+	auto obbList = GetOBBCollisionList();
+
 	int id = 0;
 
-	while (FindOBBCollision(id))
+	// 未使用のIDが見つかるまでループを回す
+	while (true)
 	{
+		bool exists = false;
+
+		for (const auto& obb : obbList)
+		{
+			// 今のIDがすでに使われていたらループを抜ける
+			if (obb->GetID() == id)
+			{
+				exists = true;
+				break;
+			}
+		}
+		// 未使用のIDが見つかったら処理終了
+		if (!exists)
+		{
+			return id;
+		}
+
+		// IDを加算
 		++id;
+
 	}
 
-	return id;
+
 }
 
-void OBBCollisionManager::DrawDebug()
+std::vector<std::shared_ptr<OBBCollision>> OBBCollisionManager::GetOBBCollisionList() const
 {
-	if (!IsDebug())
-	{
-		return;
-	}
+	std::vector<std::shared_ptr<OBBCollision>>obbList;
 
-	for (const auto& obb : m_spOBBCollisionList)
+	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
-		if (!obb) { continue; }
-		// 持ち主が違う場合表示しない
-		if (obb->GetOwner() != EditorManager::Instance().GetActiveStage())
+		auto obb = std::dynamic_pointer_cast<OBBCollision>(obj);
+
+		if (!obb || obb->IsExpired())
 		{
 			continue;
 		}
 
-		obb->DrawDebug();
+		obbList.push_back(obb);
 	}
-}
 
-void OBBCollisionManager::SetStageTransform(const StageObject* stageObject, const Math::Vector3& stagePos, const Math::Vector3& stageScale)
-{
-	for (const auto& obb : m_spOBBCollisionList)
-	{
-		if (!obb ||
-			!obb->ShouldFollow(stageObject))
-		{
-			continue;
-		}
-
-		obb->SetStageTransform(stagePos, stageScale);
-	}
-}
-
-void OBBCollisionManager::Init()
-{
-
+	return obbList;
 }

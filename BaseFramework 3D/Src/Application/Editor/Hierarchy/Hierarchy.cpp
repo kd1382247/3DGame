@@ -3,19 +3,21 @@
 #include "../EditorManager.h"
 #include "../../Scene/SceneManager.h"
 #include "../../../Framework/GameObject/KdGameObjectFactory.h"
-#include "../../GameObject/WayPoint/WayPointManager.h"
-#include"../../GameObject/WayPoint/WayPoint.h"
-#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
+
+#include "../../GameObject/Stage/WayPoint/WayPointManager.h"
+#include"../../GameObject/Stage/WayPoint/WayPoint.h"
+
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
 
-#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
+#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
 
-#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"
 #include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
+#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"
 
-#include"../../GameObject/PointLight/PointLight.h"
-#include"../../GameObject/PointLight/PointLightManager.h"
+#include"../../GameObject/Stage/PointLight/PointLightManager.h"
+#include"../../GameObject/Stage/PointLight/PointLight.h"
 
 #include"../../GameObject/Stage/StageObject.h"
 #include"../../GameObject/Gimmick/StageGimmick.h"
@@ -161,7 +163,7 @@ const char* Hierarchy::GetCategoryLabel(HierarchyCategory category)
 	case HierarchyCategory::AABB:         return "AABB";
 	case HierarchyCategory::OBB:          return "OBB";
 	case HierarchyCategory::AIBlock:      return "AIBlock";
-	case HierarchyCategory::PointLight: return "PointLight";
+	case HierarchyCategory::PointLight:   return "PointLight";
 	}
 
 	return "";
@@ -300,21 +302,27 @@ void Hierarchy::AddGameObject()
 
 void Hierarchy::AddWayPoint()
 {
-	// ウェイポイントを新規作成
-	if (ImGui::Button("Add WayPoint"))
+
+	if(EditorManager::Instance().GetActiveStage())
 	{
-		auto wayPoint = WayPointManager::Instance().CreateWayPoint();
-
-		if (wayPoint)
+		// ウェイポイントを新規作成
+		if (ImGui::Button("Add WayPoint"))
 		{
+			auto wayPoint = WayPointManager::Instance().CreateWayPoint(
+				EditorManager::Instance().GetActiveStage());
 
-			wayPoint->SetOwner(EditorManager::Instance().GetActiveStage());
+			if (wayPoint)
+			{
+				// CreateWayPoint()内でManagerへの登録まで完了している
+				EditorManager::Instance().SetSelectedObject(wayPoint);
 
-			// CreateWayPoint()内でManagerへの登録まで完了している
-			EditorManager::Instance().SetSelectedObject(wayPoint);
-
-			EditorManager::Instance().MarkDirty();
+				EditorManager::Instance().MarkDirty();
+			}
 		}
+	}
+	else
+	{
+		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
 	}
 
 	ImGui::SameLine();
@@ -450,23 +458,26 @@ void Hierarchy::AddCheckPoint()
 
 void Hierarchy::AddAABB()
 {
-
-	if (ImGui::Button("Add AABB"))
+	if(EditorManager::Instance().GetActiveStage())
 	{
-		auto aabbBox = AABBCollisionManager::Instance().CreateAABBCollision();
-
-		if (aabbBox)
+		if (ImGui::Button("Add AABB"))
 		{
+			auto aabbBox = AABBCollisionManager::Instance().CreateAABBCollision(
+				EditorManager::Instance().GetActiveStage());
 
-			aabbBox->SetOwner(EditorManager::Instance().GetActiveStage());
+			if (aabbBox)
+			{
+				// CreateWayPoint()内でManagerへの登録まで完了している
+				EditorManager::Instance().SetSelectedObject(aabbBox);
 
-			// CreateWayPoint()内でManagerへの登録まで完了している
-			EditorManager::Instance().SetSelectedObject(aabbBox);
-
-			EditorManager::Instance().MarkDirty();
+				EditorManager::Instance().MarkDirty();
+			}
 		}
 	}
-
+	else
+	{
+		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
+	}
 
 	ImGui::SameLine();
 
@@ -482,21 +493,29 @@ void Hierarchy::AddAABB()
 
 void Hierarchy::AddOBB()
 {
-	if (ImGui::Button("Add OBB"))
+
+	if (EditorManager::Instance().GetActiveStage())
 	{
-		auto obb = OBBCollisionManager::Instance().CreateOBBCollision();
-		
-		if (obb)
+		if (ImGui::Button("Add OBB"))
 		{
-			obb->SetOwner(EditorManager::Instance().GetActiveStage());
+			auto obb = OBBCollisionManager::Instance().CreateOBBCollision(
+				EditorManager::Instance().GetActiveStage());
 
-			// CreateWayPoint()内でManagerへの登録まで完了している
-			EditorManager::Instance().SetSelectedObject(obb);
+			if (obb)
+			{
 
-			EditorManager::Instance().MarkDirty();
+				// CreateWayPoint()内でManagerへの登録まで完了している
+				EditorManager::Instance().SetSelectedObject(obb);
+
+				EditorManager::Instance().MarkDirty();
+			}
 		}
 	}
-
+	else
+	{
+		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
+	}
+	
 	ImGui::SameLine();
 
 	bool isDebug = OBBCollisionManager::Instance().IsDebug();
@@ -510,19 +529,26 @@ void Hierarchy::AddOBB()
 
 void Hierarchy::AddAIBlock()
 {
-	if (ImGui::Button("Add AIBlock"))
+
+	if(EditorManager::Instance().GetActiveStage())
 	{
-		auto block = AIBlockManager::Instance().CreateAIBlock();
-
-		if (block)
+		if (ImGui::Button("Add AIBlock"))
 		{
-			block->SetOwner(EditorManager::Instance().GetActiveStage());
+			auto block = AIBlockManager::Instance().CreateAIBlock(
+				EditorManager::Instance().GetActiveStage());
 
-			// CreateAIBlock()内でManagerへの登録まで完了している
-			EditorManager::Instance().SetSelectedObject(block);
+			if (block)
+			{
+				// CreateAIBlock()内でManagerへの登録まで完了している
+				EditorManager::Instance().SetSelectedObject(block);
 
-			EditorManager::Instance().MarkDirty();
+				EditorManager::Instance().MarkDirty();
+			}
 		}
+	}
+	else
+	{
+		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
 	}
 
 	ImGui::SameLine();
@@ -606,11 +632,6 @@ void Hierarchy::DrawSelectedCategoryList()
 	case HierarchyCategory::GameObject:
 		DrawGameObjects();
 		break;
-
-	case HierarchyCategory::WayPoint:
-		DrawWayPoints();
-		break;
-
 	case HierarchyCategory::Stage:
 		DrawStage();
 		break;
@@ -627,44 +648,43 @@ void Hierarchy::DrawSelectedCategoryList()
 		DrawCheckPoint();
 		break;
 
+	case HierarchyCategory::WayPoint:
 	case HierarchyCategory::AABB:
-		DrawAABB();
-		break;
-
 	case HierarchyCategory::OBB:
-		DrawOBB();
-		break;
-
 	case HierarchyCategory::AIBlock:
-		DrawAIBlock();
-		break;
-
 	case HierarchyCategory::PointLight:
-		DrawPointLight();
+		DrawStageOwnedObjects();
 		break;
 	}
+}
+
+void Hierarchy::DrawStageOwnedObjects()
+{
+	auto activeStage = EditorManager::Instance().GetActiveStage();
+
+	auto ownedObjList = EditorManager::Instance().GetStageOwnedObjects(m_category);
+
+	for (const auto& ownedObj : ownedObjList)
+	{
+		if (!ownedObj)
+		{
+			continue;
+		}
+
+		// ownerが一致しない場合は飛ばす
+		if (ownedObj->GetOwner() != activeStage)
+		{
+			continue;
+		}
+
+		SelectHierarchyObject(ownedObj);
+	}
+
 }
 
 void Hierarchy::DrawGameObjects()
 {
 	DrawObjectList(KdGameObject::ObjectCategory::Character);
-}
-
-void Hierarchy::DrawWayPoints()
-{
-
-	auto activeStage = EditorManager::Instance().GetActiveStage();
-
-	for (const auto& wayPoint : WayPointManager::Instance().GetWayPoints())
-	{
-		if (!wayPoint ||
-			wayPoint->GetOwner() != activeStage)
-		{
-			continue;
-		}
-
-		SelectHierarchyObject(wayPoint);
-	}
 }
 
 void Hierarchy::DrawStage()
@@ -746,72 +766,6 @@ void Hierarchy::DrawCheckPoint()
 		}
 
 		SelectHierarchyObject(obj);
-	}
-}
-
-void Hierarchy::DrawAABB()
-{
-
-	auto activeStage = EditorManager::Instance().GetActiveStage();
-
-	for (const auto& aabbBox : AABBCollisionManager::Instance().GetAABBCollisionList())
-	{
-		if (!aabbBox||
-			aabbBox->GetOwner() != activeStage)
-		{
-			continue;
-		}
-
-		SelectHierarchyObject(aabbBox);
-	}
-}
-
-void Hierarchy::DrawOBB()
-{
-
-	auto activeStage = EditorManager::Instance().GetActiveStage();
-
-	for (const auto& obb : OBBCollisionManager::Instance().GetOBBCollisionList())
-	{
-		if (!obb||
-			obb->GetOwner()!=activeStage)
-		{
-			continue;
-		}
-
-		SelectHierarchyObject(obb);
-	}
-}
-
-void Hierarchy::DrawAIBlock()
-{
-	auto activeStage = EditorManager::Instance().GetActiveStage();
-
-	for (const auto& block : AIBlockManager::Instance().GetAIBlockList())
-	{
-		if (!block ||
-			block->GetOwner() != activeStage)
-		{
-			continue;
-		}
-
-		SelectHierarchyObject(block);
-	}
-}
-
-void Hierarchy::DrawPointLight()
-{
-	auto activeStage = EditorManager::Instance().GetActiveStage();
-
-	for (const auto& light : PointLightObjectManager::Instance().GetPointLights())
-	{
-		if (!light ||
-			light->GetOwner() != activeStage)
-		{
-			continue;
-		}
-
-		SelectHierarchyObject(light);
 	}
 }
 

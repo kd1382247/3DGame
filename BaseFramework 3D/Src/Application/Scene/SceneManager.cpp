@@ -6,9 +6,6 @@
 #include "EditorScene/EditorScene.h"
 #include "ResultScene/ResultScene.h"
 
-
-#include"../Editor/StageBackup/StageBackup.h"
-
 #include "../System/CollisionManager/CollisionManager.h"
 #include "../System/TimeManager/TimeManager.h"
 #include "../Editor/EditorManager.h"
@@ -131,11 +128,6 @@ void SceneManager::ResetSystems()
 {
 	// 当たり判定の登録リスト
 	CollisionManager::Instance().Clear();
-
-	// ステージデータをリセット
-	// Backup → Discardでリストを空にする
-	StageBackup::Backup();
-	StageBackup::Discard();
 
 	// ヒットストップ・スローモーションの状態
 	TimeManager::Instance().Init();

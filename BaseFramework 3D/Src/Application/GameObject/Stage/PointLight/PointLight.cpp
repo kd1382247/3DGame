@@ -2,9 +2,9 @@
 
 #include "PointLightManager.h"
 
-#include "../Stage/StageObject.h"
-#include "../../Editor/EditorManager.h"
-#include "../../Editor/InspectorWidgets.h"
+#include "../StageObject.h"
+#include "../../../Editor/EditorManager.h"
+#include "../../../Editor/InspectorWidgets.h"
 
 void PointLightObject::Init()
 {
@@ -29,20 +29,14 @@ void PointLightObject::Update()
 
 void PointLightObject::ApplyLight()
 {
-	if (m_hasOwner)
+	auto owner = GetOwner();
+
+	// 持ち主のステージが消えたら、ライトも一緒に消す
+	if (!owner || owner->IsExpired())
 	{
-		auto owner = m_wpOwner.lock();
-
-		// 持ち主のステージが消えたら、ライトも一緒に消す
-		if (!owner || owner->IsExpired())
-		{
-			Destroy();
-			return;
-		}
+		Destroy();
+		return;
 	}
-
-	// Stageに追従
-	UpdateWorldPos();
 
 	// ポイントライト
 	KdShaderManager::Instance().WorkAmbientController().AddPointLight
@@ -52,21 +46,6 @@ void PointLightObject::ApplyLight()
 		GetPos()
 	);
 
-}
-
-void PointLightObject::UpdateWorldPos()
-{
-	auto owner = m_wpOwner.lock();
-
-	if (!owner)
-	{
-		// 持ち主がいない間は、ローカル位置をそのままワールド位置にする
-		SetPos(m_localPos);
-		return;
-	}
-
-	// ステージの位置・回転・大きさを反映したワールド位置
-	SetPos(Math::Vector3::Transform(m_localPos, owner->GetMatrix()));
 }
 
 void PointLightObject::DrawDebug()
@@ -112,17 +91,13 @@ void PointLightObject::DrawDebug()
 void PointLightObject::DrawInspectorHeader()
 {
 	// 座標変更(Stageからのローカル位置)
-	Math::Vector3 pos = m_localPos;
+	Math::Vector3 pos = GetLocalPos();
 
 	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
 	{
-		m_localPos = pos;
+		SetLocalPos(pos);
 		EditorManager::Instance().MarkDirty();
 	}
-
-
-	// Stageに追従
-	UpdateWorldPos();
 }
 
 void PointLightObject::DrawInspector()
