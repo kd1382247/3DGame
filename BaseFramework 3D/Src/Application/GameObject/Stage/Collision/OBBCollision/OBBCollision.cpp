@@ -147,3 +147,20 @@ void OBBCollision::DrawInspectorHeader()
 		ImGui::EndCombo();
 	}
 }
+
+void OBBCollision::CopyFrom(const std::shared_ptr<StageOwnedObject>& ownedObject)
+{
+
+	auto obb = std::dynamic_pointer_cast<OBBCollision>(ownedObject);
+
+	if (!obb)
+	{
+		return;
+	}
+
+	StageOwnedObject::CopyFrom(ownedObject);
+
+	SetRotation(ownedObject->GetRotation());
+
+	SetCollisionType(obb->GetCollisionType());
+}

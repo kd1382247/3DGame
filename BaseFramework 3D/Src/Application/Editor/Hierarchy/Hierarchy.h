@@ -4,6 +4,7 @@
 
 #include"HierarchyCategory.h"
 
+
 class Hierarchy:public EditorPanel
 {
 public:
@@ -32,16 +33,12 @@ private:
 	// 選択中カテゴリのAddボタン
 	void DrawAddButtons();
 
+	void AddStageOwned();
 	void AddGameObject();
-	void AddWayPoint();
 	void AddStage();
 	void AddGimmick();
 	void AddAreaVolume();
 	void AddCheckPoint();
-	void AddAABB();
-	void AddOBB();
-	void AddAIBlock();
-	void AddPointLight();
 
 	// 検索ボックス(名前の一部で一覧を絞り込む)
 	void DrawSearchFilter();

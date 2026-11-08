@@ -31,6 +31,8 @@ public:
 	float GetRange()const { return m_range; }
 	void SetRange(float range) { m_range = range; }
 
+	// コピーされたときに呼ばれる
+	void CopyFrom(const std::shared_ptr<StageOwnedObject>& ownedObj)override;
 
 private:
 

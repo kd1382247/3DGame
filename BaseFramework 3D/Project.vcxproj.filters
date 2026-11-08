@@ -478,6 +478,9 @@
     <Filter Include="Src\Application\Editor\StageOwnedTypeInfo">
       <UniqueIdentifier>{57c21139-bf69-47a2-9a52-2ce6b0f84bd1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Framework\GameObject\Component">
+      <UniqueIdentifier>{f6fb55bf-d47b-4cb9-b3bf-aba7cd6713e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1296,6 +1299,12 @@
     <ClInclude Include="Src\Application\Editor\StageOwnedTypeInfo\StageOwnedTypeInfo.h">
       <Filter>Src\Application\Editor\StageOwnedTypeInfo</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Framework\GameObject\Component\Component.h">
+      <Filter>Src\Framework\GameObject\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\GameObject\Component\ParentLink.h">
+      <Filter>Src\Framework\GameObject\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1990,6 +1999,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Editor\StageOwnedTypeInfo\StageOwnedTypeInfo.cpp">
       <Filter>Src\Application\Editor\StageOwnedTypeInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\GameObject\Component\Component.cpp">
+      <Filter>Src\Framework\GameObject\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\GameObject\Component\ParentLink.cpp">
+      <Filter>Src\Framework\GameObject\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

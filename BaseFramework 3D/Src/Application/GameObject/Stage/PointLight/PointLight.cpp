@@ -48,6 +48,22 @@ void PointLightObject::ApplyLight()
 
 }
 
+void PointLightObject::CopyFrom(const std::shared_ptr<StageOwnedObject>& ownedObj)
+{
+
+	auto light = std::dynamic_pointer_cast<PointLightObject>(ownedObj);
+
+	if (!light)
+	{
+		return;
+	}
+
+	StageOwnedObject::CopyFrom(ownedObj);
+
+	SetColor(light->GetColor());
+	SetRange(light->GetRange());
+}
+
 void PointLightObject::DrawDebug()
 {
 	// Play中は表示しない

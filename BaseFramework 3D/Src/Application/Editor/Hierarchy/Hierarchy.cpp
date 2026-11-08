@@ -4,24 +4,17 @@
 #include "../../Scene/SceneManager.h"
 #include "../../../Framework/GameObject/KdGameObjectFactory.h"
 
-#include "../../GameObject/Stage/WayPoint/WayPointManager.h"
 #include"../../GameObject/Stage/WayPoint/WayPoint.h"
-
-#include"../../GameObject/Stage/Collision/AABBCollision/AABBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/AABBCollision/AABBCollision.h"
-
-#include"../../GameObject/Stage/Collision/OBBCollision/OBBCollisionManager.h"
 #include"../../GameObject/Stage/Collision/OBBCollision/OBBCollision.h"
-
-#include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlockManager.h"
 #include"../../GameObject/Stage/Collision/AIBlockCollision/AIBlock.h"
-
-#include"../../GameObject/Stage/PointLight/PointLightManager.h"
 #include"../../GameObject/Stage/PointLight/PointLight.h"
 
 #include"../../GameObject/Stage/StageObject.h"
 #include"../../GameObject/Gimmick/StageGimmick.h"
 #include"../../System/StageLoder/StageLoder.h"
+
+#include"../StageOwnedTypeInfo/StageOwnedTypeInfo.h"
 
 #include<algorithm>
 #include<cctype>
@@ -34,12 +27,7 @@ void Hierarchy::OnDraw()
 	DrawCategorySelector();
 
 	// ステージモデル単位で保存するデータ(同じモデルは最初のステージでだけ編集できる)
-	const bool isStageDataCategory =
-		m_category == HierarchyCategory::AABB ||
-		m_category == HierarchyCategory::OBB ||
-		m_category == HierarchyCategory::AIBlock ||
-		m_category == HierarchyCategory::WayPoint ||
-		m_category == HierarchyCategory::PointLight;
+	const bool isStageDataCategory = FindStageOwnedTypeInfo(m_category) != nullptr;
 
 	// Active Stageで一覧を絞り込むカテゴリ(ギミック・AreaVolumeはステージごとに保存するので、編集の制限はない)
 	const bool isOwnerCategory =
@@ -232,12 +220,12 @@ void Hierarchy::DrawActiveStageSelector()
 					EditorManager::Instance().SetActiveStage(stage);
 					EditorManager::Instance().SetSelectedObject(nullptr);
 
-					// デバッグ表示フラグをfalseにする
-					WayPointManager::Instance().SetIsDebug(false);
-					AABBCollisionManager::Instance().SetIsDebug(false);
-					OBBCollisionManager::Instance().SetIsDebug(false);
-					AIBlockManager::Instance().SetIsDebug(false);
-					PointLightObjectManager::Instance().SetIsDebug(false);
+					// 表を参照で取得
+					for (const auto& table: GetStageOwnedTypeInfoTable())
+					{
+						// デバッグ表示を消す
+						table.second.setDebug(false);
+					}
 				}
 				ImGui::PopID();
 			}
@@ -255,9 +243,6 @@ void Hierarchy::DrawAddButtons()
 	case HierarchyCategory::GameObject:
 		AddGameObject();
 		break;
-	case HierarchyCategory::WayPoint:
-		AddWayPoint();
-		break;
 	case HierarchyCategory::Stage:
 		AddStage();
 		break;
@@ -270,19 +255,59 @@ void Hierarchy::DrawAddButtons()
 	case HierarchyCategory::CheckPoint:
 		AddCheckPoint();
 		break;
+	case HierarchyCategory::WayPoint:
 	case HierarchyCategory::AABB:
-		AddAABB();
-		break;
 	case HierarchyCategory::OBB:
-		AddOBB();
-		break;
 	case HierarchyCategory::AIBlock:
-		AddAIBlock();
-		break;
 	case HierarchyCategory::PointLight:
-		AddPointLight();
+		AddStageOwned();
 		break;
 	}
+}
+
+void Hierarchy::AddStageOwned()
+{
+
+	// カテゴリごとの構造体を取得
+	auto info = FindStageOwnedTypeInfo(m_category);
+
+	if (info == nullptr)
+	{
+		return;
+	}
+
+	auto activeStage = EditorManager::Instance().GetActiveStage();
+
+	if (activeStage)
+	{
+		// カテゴリでラベル名をセット
+		if (ImGui::Button(GetCategoryLabel(m_category)))
+		{
+			auto stageOwnedObj = info->createObject(activeStage);
+
+			if (stageOwnedObj)
+			{
+				EditorManager::Instance().SetSelectedObject(stageOwnedObj);
+
+				EditorManager::Instance().MarkDirty();
+			}
+		}
+	}
+	else
+	{
+		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
+	}
+
+
+	ImGui::SameLine();
+
+	bool isDebug = info->isDebug();
+
+	if (ImGui::Checkbox("Debug", &isDebug))
+	{
+		info->setDebug(isDebug);
+	}
+
 }
 
 void Hierarchy::AddGameObject()
@@ -297,42 +322,6 @@ void Hierarchy::AddGameObject()
 	{
 		DrawAddObjectList(KdGameObject::ObjectCategory::Character);
 		ImGui::EndPopup();
-	}
-}
-
-void Hierarchy::AddWayPoint()
-{
-
-	if(EditorManager::Instance().GetActiveStage())
-	{
-		// ウェイポイントを新規作成
-		if (ImGui::Button("Add WayPoint"))
-		{
-			auto wayPoint = WayPointManager::Instance().CreateWayPoint(
-				EditorManager::Instance().GetActiveStage());
-
-			if (wayPoint)
-			{
-				// CreateWayPoint()内でManagerへの登録まで完了している
-				EditorManager::Instance().SetSelectedObject(wayPoint);
-
-				EditorManager::Instance().MarkDirty();
-			}
-		}
-	}
-	else
-	{
-		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
-	}
-
-	ImGui::SameLine();
-
-	bool isDebug = WayPointManager::Instance().IsDebug();
-
-	if (ImGui::Checkbox("Debug", &isDebug))
-	{
-		isDebug ? WayPointManager::Instance().SetIsDebug(true) :
-			WayPointManager::Instance().SetIsDebug(false);
 	}
 }
 
@@ -456,145 +445,6 @@ void Hierarchy::AddCheckPoint()
 	}
 }
 
-void Hierarchy::AddAABB()
-{
-	if(EditorManager::Instance().GetActiveStage())
-	{
-		if (ImGui::Button("Add AABB"))
-		{
-			auto aabbBox = AABBCollisionManager::Instance().CreateAABBCollision(
-				EditorManager::Instance().GetActiveStage());
-
-			if (aabbBox)
-			{
-				// CreateWayPoint()内でManagerへの登録まで完了している
-				EditorManager::Instance().SetSelectedObject(aabbBox);
-
-				EditorManager::Instance().MarkDirty();
-			}
-		}
-	}
-	else
-	{
-		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
-	}
-
-	ImGui::SameLine();
-
-	bool isDebug = AABBCollisionManager::Instance().IsDebug();
-
-	if (ImGui::Checkbox("Debug", &isDebug))
-	{
-		isDebug? AABBCollisionManager::Instance().SetIsDebug(true):
-			     AABBCollisionManager::Instance().SetIsDebug(false);
-	}
-
-}
-
-void Hierarchy::AddOBB()
-{
-
-	if (EditorManager::Instance().GetActiveStage())
-	{
-		if (ImGui::Button("Add OBB"))
-		{
-			auto obb = OBBCollisionManager::Instance().CreateOBBCollision(
-				EditorManager::Instance().GetActiveStage());
-
-			if (obb)
-			{
-
-				// CreateWayPoint()内でManagerへの登録まで完了している
-				EditorManager::Instance().SetSelectedObject(obb);
-
-				EditorManager::Instance().MarkDirty();
-			}
-		}
-	}
-	else
-	{
-		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
-	}
-	
-	ImGui::SameLine();
-
-	bool isDebug = OBBCollisionManager::Instance().IsDebug();
-
-	if (ImGui::Checkbox("Debug", &isDebug))
-	{
-		isDebug ? OBBCollisionManager::Instance().SetIsDebug(true) :
-			OBBCollisionManager::Instance().SetIsDebug(false);
-	}
-}
-
-void Hierarchy::AddAIBlock()
-{
-
-	if(EditorManager::Instance().GetActiveStage())
-	{
-		if (ImGui::Button("Add AIBlock"))
-		{
-			auto block = AIBlockManager::Instance().CreateAIBlock(
-				EditorManager::Instance().GetActiveStage());
-
-			if (block)
-			{
-				// CreateAIBlock()内でManagerへの登録まで完了している
-				EditorManager::Instance().SetSelectedObject(block);
-
-				EditorManager::Instance().MarkDirty();
-			}
-		}
-	}
-	else
-	{
-		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
-	}
-
-	ImGui::SameLine();
-
-	bool isDebug = AIBlockManager::Instance().IsDebug();
-
-	if (ImGui::Checkbox("Debug", &isDebug))
-	{
-		AIBlockManager::Instance().SetIsDebug(isDebug);
-	}
-}
-
-void Hierarchy::AddPointLight()
-{
-	// PointLightはActive Stageの持ち物になるので、ステージが無いときは作れない
-	if (EditorManager::Instance().GetActiveStage())
-	{
-		if (ImGui::Button("Add PointLight"))
-		{
-			auto light = PointLightObjectManager::Instance().CreatePointLight(
-				EditorManager::Instance().GetActiveStage());
-
-			if (light)
-			{
-				// CreatePointLight()内でシーンへの追加まで完了している
-				EditorManager::Instance().SetSelectedObject(light);
-
-				EditorManager::Instance().MarkDirty();
-			}
-		}
-	}
-	else
-	{
-		ImGui::TextDisabled(U8("先に部屋のステージを追加してください"));
-	}
-
-	ImGui::SameLine();
-
-	bool isDebug = PointLightObjectManager::Instance().IsDebug();
-
-	if (ImGui::Checkbox("Debug", &isDebug))
-	{
-		PointLightObjectManager::Instance().SetIsDebug(isDebug);
-	}
-}
-
 void Hierarchy::DrawSearchFilter()
 {
 	ImGui::SetNextItemWidth(-1);// ウィンドウの横幅いっぱいに広げる
@@ -662,9 +512,14 @@ void Hierarchy::DrawStageOwnedObjects()
 {
 	auto activeStage = EditorManager::Instance().GetActiveStage();
 
-	auto ownedObjList = EditorManager::Instance().GetStageOwnedObjects(m_category);
+	auto info = FindStageOwnedTypeInfo(m_category);
 
-	for (const auto& ownedObj : ownedObjList)
+	if (info == nullptr)
+	{
+		return;
+	}
+
+	for (const auto& ownedObj : info->getObjects())
 	{
 		if (!ownedObj)
 		{

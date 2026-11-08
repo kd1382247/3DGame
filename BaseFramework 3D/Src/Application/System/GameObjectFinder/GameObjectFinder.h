@@ -28,13 +28,12 @@ public:
 		}
 		return nullptr;
 	}
-	
-
 
 	// 複数の同じ型のオブジェクトを返す
 	template<class T>
 	std::vector<std::shared_ptr<T>> FindObjects()
 	{
+
 		std::vector<std::shared_ptr<T>> result;
 
 		for (const auto& obj : SceneManager::Instance().GetObjList())
@@ -55,6 +54,7 @@ public:
 
 		return result;
 	}
+	
 
 private: // シングルトンパターン
 
@@ -69,3 +69,4 @@ public:
 		return instance;
 	}
 };
+

@@ -498,6 +498,8 @@
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdTrailPolygon.h" />
     <ClInclude Include="Src\Framework\Effekseer\KdEffekseerManager.h" />
     <ClInclude Include="Src\Framework\Font\KdFont.h" />
+    <ClInclude Include="Src\Framework\GameObject\Component\Component.h" />
+    <ClInclude Include="Src\Framework\GameObject\Component\ParentLink.h" />
     <ClInclude Include="Src\Framework\GameObject\KdGameObject.h" />
     <ClInclude Include="Src\Framework\GameObject\KdGameObjectFactory.h" />
     <ClInclude Include="Src\Framework\Input\KdInput.h" />
@@ -737,6 +739,8 @@
     <ClCompile Include="Src\Framework\Direct3D\Polygon\KdTrailPolygon.cpp" />
     <ClCompile Include="Src\Framework\Effekseer\KdEffekseerManager.cpp" />
     <ClCompile Include="Src\Framework\Font\KdFont.cpp" />
+    <ClCompile Include="Src\Framework\GameObject\Component\Component.cpp" />
+    <ClCompile Include="Src\Framework\GameObject\Component\ParentLink.cpp" />
     <ClCompile Include="Src\Framework\GameObject\KdGameObject.cpp" />
     <ClCompile Include="Src\Framework\GameObject\KdGameObjectFactory.cpp" />
     <ClCompile Include="Src\Framework\Input\KdInput.cpp" />

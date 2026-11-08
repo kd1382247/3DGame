@@ -4,6 +4,9 @@ class BaseScene;
 
 #include"SceneTransition/SceneTransition.h"
 
+#include"../../Framework/GameObject/Component/ParentLink.h"
+
+
 class SceneManager
 {
 public:
@@ -60,6 +63,20 @@ private:
 	void Init()
 	{
 		m_transition.Init();
+
+		// 名前からオブジェクトを探す関数を登録する
+		ParentLink::SetParentResolver([](const std::string& objName)
+			{
+				for (const auto& obj : SceneManager::Instance().GetObjList())
+				{
+					if (!obj || obj->IsExpired()) { continue; }
+
+					if (obj->GetObjectName() == objName)
+					{
+						return obj;
+					}
+				}
+			});
 
 		// 開始シーンに切り替え
 		ChangeScene(m_currentSceneType);

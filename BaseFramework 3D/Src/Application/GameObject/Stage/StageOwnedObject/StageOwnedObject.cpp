@@ -11,17 +11,26 @@ void StageOwnedObject::PreDraw()
 
 void StageOwnedObject::FollowOwner()
 {
-	auto spOwner = m_wpOwner.lock();
+	m_parentLink.Update(*this);
+}
 
-	if (!spOwner)
-	{
-		return;
-	}
+std::shared_ptr<StageObject> StageOwnedObject::GetOwner() const
+{
+	auto stageObj = std::dynamic_pointer_cast<StageObject>(m_parentLink.GetParent());
 
-	// 位置と大きさだけをStageに追従させる
-	SetPos(spOwner->GetPos() + m_localPos * spOwner->GetScale());
-	SetScale(m_localScale * spOwner->GetScale());
+	return stageObj;
+}
 
+void StageOwnedObject::SetOwner(const std::shared_ptr<StageObject>& owner)
+{
+	m_parentLink.SetParent(owner);
+	FollowOwner();
+}
+
+void StageOwnedObject::CopyFrom(const std::shared_ptr<StageOwnedObject>& ownedObj)
+{
+	SetLocalPos(ownedObj->GetLocalPos());
+	SetLocalScale(ownedObj->GetLocalScale());
 }
 
 void StageOwnedObject::DrawInspectorHeader()

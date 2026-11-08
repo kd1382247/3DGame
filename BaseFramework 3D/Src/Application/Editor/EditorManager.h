@@ -2,7 +2,6 @@
 
 #include"EditorSelection/EditorSelection.h"
 
-#include"Hierarchy/HierarchyCategory.h"
 
 class Hierarchy;
 class Inspector;
@@ -15,7 +14,6 @@ class CameraBase;
 class MessageWindow;
 
 class StageObject;
-class StageOwnedObject;
 
 class EditorManager
 {
@@ -98,10 +96,6 @@ public:
 	// 今のアクティブステージで、AABB/OBB/WayPointを編集できるか
 	// (アクティブステージが「最初のステージ」ならtrue。ステージが1つもない場合もtrue)
 	bool CanEditStageData() const;
-
-	// ステージに対応するオブジェクトを返す
-	std::vector<std::shared_ptr<StageOwnedObject>>GetStageOwnedObjects(HierarchyCategory category);
-
 
 private:
 
