@@ -29,7 +29,7 @@ void PointLightObject::Update()
 
 void PointLightObject::ApplyLight()
 {
-	auto owner = GetOwner();
+	auto owner = GetParent();
 
 	// 持ち主のステージが消えたら、ライトも一緒に消す
 	if (!owner || owner->IsExpired())
@@ -67,7 +67,7 @@ void PointLightObject::CopyFrom(const std::shared_ptr<StageOwnedObject>& ownedOb
 void PointLightObject::DrawDebug()
 {
 	// Play中は表示しない
-	if (!EditorManager::Instance().IsEditMode())
+	if (!EditorManager::Instance().IsEditing())
 	{
 		return;
 	}
@@ -80,7 +80,7 @@ void PointLightObject::DrawDebug()
 	}
 
 	// Active Stageのライトだけ表示する
-	if (GetOwner() != EditorManager::Instance().GetActiveStage())
+	if (GetParent() != EditorManager::Instance().GetActiveStage())
 	{
 		return;
 	}
@@ -102,18 +102,6 @@ void PointLightObject::DrawDebug()
 
 	m_pDebugWire->AddDebugSphere(GetPos(), kRadius, color);
 	KdGameObject::DrawDebug();
-}
-
-void PointLightObject::DrawInspectorHeader()
-{
-	// 座標変更(Stageからのローカル位置)
-	Math::Vector3 pos = GetLocalPos();
-
-	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
-	{
-		SetLocalPos(pos);
-		EditorManager::Instance().MarkDirty();
-	}
 }
 
 void PointLightObject::DrawInspector()

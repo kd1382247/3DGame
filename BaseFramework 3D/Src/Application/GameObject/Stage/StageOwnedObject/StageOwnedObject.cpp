@@ -1,30 +1,40 @@
 ﻿#include "StageOwnedObject.h"
 
-#include"../../../Editor/EditorManager.h"
-
 #include"../StageObject.h"
+
+StageOwnedObject::StageOwnedObject()
+{
+	// 部品の実体を作って受け取る
+	m_spParentLink = AddComponent<ParentLink>();
+}
 
 void StageOwnedObject::PreDraw()
 {
-	FollowOwner();
+	// 部品の更新
+	UpdateComponents();
 }
 
 void StageOwnedObject::FollowOwner()
 {
-	m_parentLink.Update(*this);
+	m_spParentLink->Apply(*this);
 }
 
-std::shared_ptr<StageObject> StageOwnedObject::GetOwner() const
+std::shared_ptr<StageObject> StageOwnedObject::GetParent() const
 {
-	auto stageObj = std::dynamic_pointer_cast<StageObject>(m_parentLink.GetParent());
+	auto stageObj = std::dynamic_pointer_cast<StageObject>(m_spParentLink->GetParent());
 
 	return stageObj;
 }
 
-void StageOwnedObject::SetOwner(const std::shared_ptr<StageObject>& owner)
+void StageOwnedObject::SetParent(const std::shared_ptr<StageObject>& owner)
 {
-	m_parentLink.SetParent(owner);
+	m_spParentLink->SetParent(owner);
 	FollowOwner();
+}
+
+void StageOwnedObject::SetParentKeepWorld(const std::shared_ptr<StageObject>& stage)
+{
+	m_spParentLink->SetParentKeepWorld(stage, *this);
 }
 
 void StageOwnedObject::CopyFrom(const std::shared_ptr<StageOwnedObject>& ownedObj)
@@ -35,21 +45,13 @@ void StageOwnedObject::CopyFrom(const std::shared_ptr<StageOwnedObject>& ownedOb
 
 void StageOwnedObject::DrawInspectorHeader()
 {
-	// 座標変更(Stageからのローカル位置)
-	Math::Vector3 pos = GetLocalPos();
-
-	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
+	// 親がいない場合
+	if (!HasParent())
 	{
-		SetLocalPos(pos);
-		EditorManager::Instance().MarkDirty();
+		DrawPositionInspector();
+		DrawScaleInspector();
 	}
 
-	Math::Vector3 scale = GetLocalScale();
 
-	// 大きさ変更(Stageからのローカル大きさ)
-	if (ImGui::DragFloat3("Size", &scale.x, 0.01f))
-	{
-		SetLocalScale(scale);
-		EditorManager::Instance().MarkDirty();
-	}
 }
+

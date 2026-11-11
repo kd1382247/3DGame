@@ -18,7 +18,6 @@ public:
 	void DrawLit()override;
 	void DrawDebug()override;
 
-	void DrawInspectorHeader()override;
 	void DrawInspector()override;
 
 	nlohmann::json SaveData()const override;

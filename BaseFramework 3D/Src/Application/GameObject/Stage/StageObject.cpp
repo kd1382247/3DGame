@@ -3,15 +3,19 @@
 #include"Collision/AABBCollision/AABBCollisionManager.h"
 #include"Collision/OBBCollision/OBBCollisionManager.h"
 #include"Collision/AIBlockCollision/AIBlockManager.h"
-
 #include"../Stage/PointLight/PointLightManager.h"
+#include"../Stage/WayPoint/WayPointManager.h"
 
 #include"../../System/StageLoder/StageLoder.h"
 #include"../../System/StageDataManager/StageDataManager.h"
-#include"../Stage/WayPoint/WayPointManager.h"
 #include"../../Editor/EditorManager.h"
 #include"../../Scene/SceneManager.h"
+
 #include"../Gimmick/StageGimmick.h"
+#include"../Character/CharacterBase.h"
+#include"../../../Framework/GameObject/Component/ParentLink.h"
+
+#include"../../Editor/StageOwnedTypeInfo/StageOwnedTypeInfo.h"
 
 void StageObject::Init()
 {
@@ -61,16 +65,18 @@ void StageObject::LoadStageModel(const std::string& modelName)
 
 void StageObject::ClearOwnerData()
 {
-	AABBCollisionManager::Instance().RemoveByOwner(this);
-	OBBCollisionManager ::Instance().RemoveByOwner(this);
-	AIBlockManager      ::Instance().RemoveByOwner(this);
-	WayPointManager     ::Instance().RemoveByOwner(this);
-	PointLightObjectManager::Instance().RemoveByOwner(this);
+	for (const auto& table : GetStageOwnedTypeInfoTable())
+	{
+		table.second.clearOwnerData(this);
+	}
 }
 
 void StageObject::DrawInspectorHeader()
 {
-	DrawTransformInspector();
+	DrawPositionInspector();
+	DrawScaleInspector();
+	DrawYawInspector();
+
 }
 
 void StageObject::DrawInspector()
@@ -146,13 +152,88 @@ std::vector<std::shared_ptr<StageGimmick>> StageObject::GetOwnedGimmicks()const
 
 		if (gimmick &&
 			!gimmick->IsExpired() &&
-			gimmick->GetOwnerStageName() == GetObjectName())
+			gimmick->GetParentName() == GetObjectName())
 		{
 			gimmicks.push_back(gimmick);
 		}
 	}
 
 	return gimmicks;
+}
+
+std::vector<std::shared_ptr<CharacterBase>> StageObject::GetOwnedCharacters() const
+{
+
+	std::vector<std::shared_ptr<CharacterBase>> characters;
+
+	// キャラクターはステージの名前で持ち主を覚えているので、名前で探す
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto character = std::dynamic_pointer_cast<CharacterBase>(obj);
+
+		if (!character||character->IsExpired())
+		{
+			continue;
+		}
+
+		if (auto parentObj = character->GetComponent<ParentLink>())
+		{
+			if(parentObj->GetParentName()==GetObjectName())
+			{
+				characters.push_back(character);
+			}
+		}
+	}
+
+	return characters;
+}
+
+void StageObject::DrawYawInspector()
+{
+
+	// 回転を90で割り、四捨五入下整数を入れる
+	int rotateCount = std::lround(GetRotation().y / 90);
+
+	// 0～3に収める
+	rotateCount = ((rotateCount % 4) + 4) % 4;
+
+	// どれだけ動かすのか
+	int rotateValue = 0;
+
+	// 回転角度を表示
+	ImGui::Text("Rotate %d", rotateCount * 90);
+
+
+	// 2つのボタンの合計幅を、Position / Scale の入力欄と同じ幅にそろえる
+	const float buttonWidth =
+		(ImGui::CalcItemWidth() - ImGui::GetStyle().ItemSpacing.x) * 0.5f;
+
+
+	if (ImGui::Button("-90##RotYMinus", ImVec2(buttonWidth, 0.0f)))
+	{
+		rotateValue = -1;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("+90##RotYPlus", ImVec2(buttonWidth, 0.0f)))
+	{
+		rotateValue = -1;
+	}
+
+
+	if (rotateValue != 0)
+	{
+		rotateCount += rotateValue;
+		// 0～3に収める
+		rotateCount = ((rotateCount % 4) + 4) % 4;
+
+		SetRotation(Math::Vector3(0.0f, rotateCount * 90.0f, 0.0f));
+
+		EditorManager::Instance().MarkDirty();
+	}
+
+
 }
 
 void StageObject::Destroy()
@@ -164,6 +245,12 @@ void StageObject::Destroy()
 	for (const auto& gimmick : GetOwnedGimmicks())
 	{
 		gimmick->Destroy();
+	}
+
+	// この部屋のキャラクターも消す
+	for (const auto& character : GetOwnedCharacters())
+	{
+		character->Destroy();
 	}
 
 	// 編集するステージ指定されていたら解除する

@@ -4,6 +4,9 @@
 
 #include"../../GameObject/Stage/StageObject.h"
 #include"../../GameObject/Gimmick/StageGimmick.h"
+#include"../../GameObject/Character/CharacterBase.h"
+
+#include"../../Scene/SceneManager.h"
 
 #include<map>
 
@@ -38,6 +41,14 @@ void Inspector::OnDraw()
 
 	ImGui::Separator();
 
+	// 親を変更できる
+	DrawParentSelector(obj);
+
+	// オブジェクトが持つ部品のInspector
+	obj->DrawComponentsInspector();
+
+	ImGui::Separator();
+
 	//------------------------------------------------------------
 	// 中央(スクロール): パラメータなど項目が多い部分だけスクロールする
 	// 下端はDeleteボタンの分だけ空けておく
@@ -46,7 +57,10 @@ void Inspector::OnDraw()
 
 	if (ImGui::BeginChild("InspectorBody", ImVec2(0.0f, -footerHeight), false, ImGuiWindowFlags_HorizontalScrollbar))
 	{
+		// オブジェクト固有のInspector
 		obj->DrawInspector();
+
+
 	}
 	ImGui::EndChild();
 
@@ -74,7 +88,7 @@ ImGuiWindowFlags Inspector::GetImGuiWindowFlags() const
 
 void Inspector::DrawCopyButton(const std::shared_ptr<KdGameObject>& obj)
 {
-	// コピーできるのは、ギミック・AABB・OBBだけ
+	// ParentLinkを持つ、IsCopyableがtrueの場合コピー可能
 	if (!EditorManager::Instance().CanCopyObject(obj))
 	{
 		return;
@@ -130,9 +144,10 @@ void Inspector::DrawDeleteStagePopup(const std::shared_ptr<StageObject>& stage)
 
 	ImGui::Text(U8("「%s」を削除します。"), stage->GetObjectName().c_str());
 
-	// 一緒に消えるギミックを、種類ごとに数える
-	std::map<std::string, int> gimmickCounts;
+	// 一緒に消えるキャラクター、ギミックを種類ごとに数える
+	std::map<std::string, int> objectCounts;
 
+	// ギミック
 	for (const auto& gimmick : stage->GetOwnedGimmicks())
 	{
 		std::string className = gimmick->GetFactoryClassName();
@@ -142,16 +157,29 @@ void Inspector::DrawDeleteStagePopup(const std::shared_ptr<StageObject>& stage)
 			className = gimmick->GetObjectName();
 		}
 
-		++gimmickCounts[className];
+		++objectCounts[className];
 	}
 
-	if (!gimmickCounts.empty())
+	// キャラクター
+	for (const auto& character : stage->GetOwnedCharacters())
+	{
+		std::string className = character->GetFactoryClassName();
+
+		if (className.empty())
+		{
+			className = character->GetObjectName();
+		}
+
+		++objectCounts[className];
+	}
+
+	if (!objectCounts.empty())
 	{
 		ImGui::Separator();
 
-		ImGui::Text(U8("このステージのギミックも一緒に削除されます"));
+		ImGui::Text(U8("このステージのギミック、キャラクターも一緒に削除されます"));
 
-		for (const auto& [name, count] : gimmickCounts)
+		for (const auto& [name, count] : objectCounts)
 		{
 			ImGui::BulletText("%s x %d", name.c_str(), count);
 		}
@@ -176,6 +204,76 @@ void Inspector::DrawDeleteStagePopup(const std::shared_ptr<StageObject>& stage)
 	}
 
 	ImGui::EndPopup();
+}
+
+void Inspector::DrawParentSelector(const std::shared_ptr<KdGameObject>& obj)
+{
+	// 親を変えることができない場合早期リターン
+	if (!EditorManager::Instance().CanChangeParent(obj))
+	{
+		return;
+	}
+
+	std::vector<std::shared_ptr<StageObject>> stageObjects;
+
+	// ステージを集める
+	for (const auto& sceneObj : SceneManager::Instance().GetObjList())
+	{
+		auto stageObj = std::dynamic_pointer_cast<StageObject>(sceneObj);
+
+		if (!stageObj)             { continue; }
+		if (stageObj->IsExpired()) { continue; }
+
+		stageObjects.push_back(stageObj);
+	}
+
+
+	auto parentObj = obj->GetComponent<ParentLink>();
+
+	if (!parentObj)
+	{
+		return;
+	}
+
+	// 現在の親の名前
+	std::string parentName = parentObj->GetParentName();
+
+	// 親の名前がなかったら
+	if (parentName.empty())
+	{
+		parentName = "None";
+	}
+
+	// コンボを書く
+	if (ImGui::BeginCombo("Parent", parentName.c_str()))
+	{
+
+		for (const auto& stageObj : stageObjects)
+		{
+			
+			ImGui::PushID(stageObj.get());
+
+			// 現在の親の名前と、ステージの名前が違ったら
+			if (ImGui::Selectable(stageObj->GetObjectName().c_str(),
+				parentName == stageObj->GetObjectName()))
+			{
+				// 選択したステージと親のステージ名が違った場合
+				if(parentName!=stageObj->GetObjectName())
+				{
+
+					parentObj->SetParentKeepWorld(stageObj, *obj);
+
+					EditorManager::Instance().MarkDirty();
+				}
+
+			}
+
+			ImGui::PopID();
+		}
+
+
+		ImGui::EndCombo();
+	}
 }
 
 void Inspector::DeleteObject(const std::shared_ptr<KdGameObject>& obj)

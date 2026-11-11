@@ -14,7 +14,6 @@ public:
 
 	void DrawDebug()override;
 
-	void DrawInspectorHeader()override;
 	void DrawInspector()override;
 
 	DirectX::BoundingBox GetBox()const;

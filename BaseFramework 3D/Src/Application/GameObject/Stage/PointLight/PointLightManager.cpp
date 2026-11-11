@@ -19,7 +19,7 @@ std::shared_ptr<PointLightObject> PointLightObjectManager::CreatePointLight(cons
 	// オブジェクトの名前をセット 後ろにID
 	light->SetObjectName("PointLight_" + std::to_string(id));
 
-	light->SetOwner(owner);
+	light->SetParent(owner);
 
 	SceneManager::Instance().AddObject(light);
 
@@ -49,7 +49,7 @@ void PointLightObjectManager::RemoveByOwner(const StageObject* owner)
 {
 	for (const auto& light : GetPointLights())
 	{
-		if (light->GetOwner().get() == owner)
+		if (light->GetParent().get() == owner)
 		{
 			light->Destroy();
 		}
@@ -100,7 +100,7 @@ bool PointLightObjectManager::Save(const std::string& filePath, const std::share
 
 	for (const auto& light : GetPointLights())
 	{
-		if (light->GetOwner() != owner)
+		if (light->GetParent() != owner)
 		{
 			continue;
 		}

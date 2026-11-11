@@ -15,7 +15,7 @@ std::shared_ptr<AABBCollision> AABBCollisionManager::CreateAABBCollision(const s
 
 	aabb->SetID(id);
 
-	aabb->SetOwner(owner);
+	aabb->SetParent(owner);
 
 	// オブジェクトの名前をセット 後ろにID
 	std::string objName = "AABBCollision_" + std::to_string(id);
@@ -30,7 +30,7 @@ void AABBCollisionManager::RemoveByOwner(const StageObject* owner)
 {
 	for (const auto& aabb : GetAABBCollisionList())
 	{
-		if (aabb->GetOwner().get() == owner)
+		if (aabb->GetParent().get() == owner)
 		{
 			aabb->Destroy();
 		}
@@ -45,7 +45,7 @@ bool AABBCollisionManager::Save(const std::string& filePath, const std::shared_p
 	for (const auto& aabb : GetAABBCollisionList())
 	{
 		if (!aabb||
-			aabb->GetOwner() != owner)
+			aabb->GetParent() != owner)
 		{
 			continue;
 		}

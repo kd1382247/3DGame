@@ -36,7 +36,6 @@ public:
 
 	void DrawDebug()override;
 
-	void DrawInspectorHeader()override;
 	void DrawInspector()override;
 
 	void SetUpReference()override;

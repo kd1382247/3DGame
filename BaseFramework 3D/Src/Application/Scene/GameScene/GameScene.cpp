@@ -22,6 +22,8 @@
 #include"../../GameObject/Camera/CameraBase.h"
 #include"../../System/Mouse/CursorVisibility.h"
 
+#include"../../../Framework/GameObject/Component/ParentLink.h"
+
 namespace
 {
 	// ゲームで読み込むステージ名 (Asset/Data/Stage/ の中のフォルダー名)
@@ -289,6 +291,12 @@ void GameScene::RestoreFromCheckPoint()
 			player->SetPos(checkPointManager.GetRespawnPos());
 			player->SetPrevPos(checkPointManager.GetRespawnPos());
 
+			if (auto parentObj = player->GetComponent<ParentLink>())
+			{
+				// 位置をセットしたので、置いたフラグを立てる
+				parentObj->MarkPlaced();
+			}
+
 			continue;
 		}
 
@@ -302,6 +310,8 @@ void GameScene::RestoreFromCheckPoint()
 			}
 		}
 	}
+
+
 }
 
 void GameScene::UpdatePause()

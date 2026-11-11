@@ -65,7 +65,7 @@ private:
 		m_transition.Init();
 
 		// 名前からオブジェクトを探す関数を登録する
-		ParentLink::SetParentResolver([](const std::string& objName)
+		ParentLink::SetParentResolver([](const std::string& objName)->std::shared_ptr<KdGameObject>
 			{
 				for (const auto& obj : SceneManager::Instance().GetObjList())
 				{
@@ -76,6 +76,7 @@ private:
 						return obj;
 					}
 				}
+				return nullptr;
 			});
 
 		// 開始シーンに切り替え

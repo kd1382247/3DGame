@@ -13,9 +13,6 @@ public:
 
 	void DrawDebug()override;
 
-	// 位置(Stageからのローカル位置)は、Inspectorの固定部分に出す
-	void DrawInspectorHeader()override;
-
 	// 色・範囲は、Inspectorのスクロールする部分に出す
 	void DrawInspector()override;
 

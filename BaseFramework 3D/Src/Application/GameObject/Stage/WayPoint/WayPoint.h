@@ -15,9 +15,6 @@ public:
 	void PreDraw()override;
 	void DrawDebug() override;
 
-	// 固定表示(スクロールしない):位置
-	void DrawInspectorHeader() override;
-
 	// スクロール側:エリアID・接続関係
 	void DrawInspector() override;
 

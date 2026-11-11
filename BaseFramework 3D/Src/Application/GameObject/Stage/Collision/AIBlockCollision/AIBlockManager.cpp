@@ -16,7 +16,7 @@ std::shared_ptr<AIBlock> AIBlockManager::CreateAIBlock(const std::shared_ptr<Sta
 
 	block->SetID(id);
 
-	block->SetOwner(owner);
+	block->SetParent(owner);
 
 	// オブジェクトの名前をセット 後ろにID
 	block->SetObjectName("AIBlock_" + std::to_string(id));
@@ -30,7 +30,7 @@ void AIBlockManager::RemoveByOwner(const StageObject* owner)
 {
 	for (const auto& aiBlock : GetAIBlockList())
 	{
-		if (aiBlock->GetOwner().get() == owner)
+		if (aiBlock->GetParent().get() == owner)
 		{
 			aiBlock->Destroy();
 		}
@@ -45,7 +45,7 @@ bool AIBlockManager::Save(const std::string& filePath, const std::shared_ptr<Sta
 	for (const auto& block : GetAIBlockList())
 	{
 		if (!block ||
-			block->GetOwner() != owner)
+			block->GetParent() != owner)
 		{
 			continue;
 		}

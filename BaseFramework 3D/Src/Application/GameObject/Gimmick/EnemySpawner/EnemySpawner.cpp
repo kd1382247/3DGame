@@ -218,11 +218,11 @@ void EnemySpawner::DrawDebug()
 
 void EnemySpawner::DrawInspectorHeader()
 {
-	KdGameObject::DrawBasicInspecter();
+
+	StageGimmick::DrawInspectorHeader();
 
 	ImGui::Separator();
 
-	m_stageFollower.DrawInspector();
 
 	// 紐づける部屋
 	const char* preview = m_linkedRoomName.empty() ? "(None)" : m_linkedRoomName.c_str();
@@ -398,9 +398,7 @@ bool EnemySpawner::IsFinished() const
 
 nlohmann::json EnemySpawner::SaveData() const
 {
-	nlohmann::json roomJson = KdGameObject::SaveData();
-
-	m_stageFollower.SaveData(roomJson);
+	nlohmann::json roomJson = StageGimmick::SaveData();;
 
 	roomJson["LinkedRoom"] = m_linkedRoomName;
 
@@ -428,7 +426,7 @@ nlohmann::json EnemySpawner::SaveData() const
 
 void EnemySpawner::LoadData(const nlohmann::json& json)
 {
-	m_stageFollower.LoadData(json);
+	StageGimmick::LoadData(json);
 
 	if (json.contains("LinkedRoom"))
 	{

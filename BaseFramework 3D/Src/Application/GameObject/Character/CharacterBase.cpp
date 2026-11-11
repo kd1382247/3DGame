@@ -1,17 +1,18 @@
 ﻿#include "CharacterBase.h"
 
+#include"../../Editor/EditorManager.h"
+
 #include"../../System/CollisionManager/CollisionManager.h"
 #include"../../System/TimeManager/TimeManager.h"
 
-#include"../../Editor/EditorManager.h"
-#include"../../Editor/InspectorWidgets.h"
-
 #include"../Gimmick/AreaVolume/AreaVolume.h"
-
 
 CharacterBase::CharacterBase()
 {
+	m_spParentLink = AddComponent<ParentLink>();
 
+	m_spParentLink->SetFollowMode(ParentLink::FollowMode::PlaceOnce);
+	m_spParentLink->SetFollowScale(false);
 }
 
 CharacterBase::~CharacterBase()
@@ -23,8 +24,20 @@ CharacterBase::~CharacterBase()
 void CharacterBase::Init()
 {}
 
+void CharacterBase::PreDraw()
+{
+	// EditorSceneかつ編集中だったら
+	if(EditorManager::Instance().IsEditing())
+	{
+		m_spParentLink->Apply(*this);
+	}
+}
+
 void CharacterBase::PreUpdate()
 {
+	// 部品の更新を呼ぶ
+	UpdateComponents();
+
 	// 移動開始前の位置をセット
 	SetPrevPos(GetPos());
 	// 前フレームの移動量をクリア
@@ -86,6 +99,21 @@ void CharacterBase::GenerateDepthMapFromLight()
 
 void CharacterBase::DrawInspectorHeader()
 {
+
+	// 親がいる場合、ローカル座標を変更する
+	if (m_spParentLink->HasParent())
+	{
+		DrawNameInspector();
+
+		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			DrawRotationInspector();
+			DrawScaleInspector();
+		}
+
+		return;
+	}
+
 	// 名前・位置・回転・大きさ(スクロールしない部分)
 	DrawBasicInspecter();
 }

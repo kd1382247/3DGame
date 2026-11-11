@@ -162,15 +162,8 @@ void Room::DrawDebug()
 	KdGameObject::DrawDebug();
 }
 
-void Room::DrawInspectorHeader()
-{
-	KdGameObject::DrawBasicInspecter();
-}
-
 void Room::DrawInspector()
 {
-	// 追従するステージ
-	m_stageFollower.DrawInspector();
 
 	// 内側の箱(バトル開始の判定範囲)の位置と大きさ
 	if (ImGui::DragFloat3("CoreOffset", &m_coreOffset.x, 0.05f))
@@ -234,7 +227,7 @@ void Room::SetUpReference()
 
 nlohmann::json Room::SaveData() const
 {
-	nlohmann::json roomJson = KdGameObject::SaveData();
+	nlohmann::json roomJson = StageGimmick::SaveData();
 	
 	roomJson["CoreOffset"] =
 	{
@@ -250,8 +243,6 @@ nlohmann::json Room::SaveData() const
 		{"z",m_coreSize.z}
 	};
 
-	m_stageFollower.SaveData(roomJson);
-
 	roomJson["IntroDuration"] = m_introDuration;
 	roomJson["BossDefeatDuration"] = m_bossDefeatDuration;
 	roomJson["OutroDuration"] = m_outroDuration;
@@ -263,7 +254,7 @@ nlohmann::json Room::SaveData() const
 
 void Room::LoadData(const nlohmann::json& json)
 {
-	m_stageFollower.LoadData(json);
+	StageGimmick::LoadData(json);
 
 	if (json.contains("CoreOffset"))
 	{

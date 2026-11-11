@@ -39,7 +39,7 @@ void WayPointManager::RemoveByOwner(const StageObject* owner)
 {
 	for (const auto& point : GetWayPoints())
 	{
-		if (point && point->GetOwner().get() == owner)
+		if (point && point->GetParent().get() == owner)
 		{
 			point->Destroy();
 		}
@@ -183,7 +183,7 @@ std::shared_ptr<WayPoint> WayPointManager::CreateWayPoint(const std::shared_ptr<
 
 	wayPoint->SetID(id);
 
-	wayPoint->SetOwner(owner);
+	wayPoint->SetParent(owner);
 
 	// オブジェクトの名前をセット 後ろにID
 	std::string objName = "WayPoint_" + std::to_string(id);
@@ -271,7 +271,7 @@ bool WayPointManager::Save(const std::string& filePath, const std::shared_ptr<St
 	for (const auto& wayPoint : GetWayPoints())
 	{
 		if (!wayPoint||
-			wayPoint->GetOwner()!=owner)
+			wayPoint->GetParent()!=owner)
 		{
 			continue;
 		}

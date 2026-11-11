@@ -17,6 +17,8 @@
 #include"../GameObject/Stage/PointLight/PointLight.h"
 
 #include"../Scene/EditorScene/EditorScene.h"
+#include"../Scene/BaseScene/BaseScene.h"
+
 
 #include"../GameObject/Stage/StageObject.h"
 #include"../GameObject/Gimmick/StageGimmick.h"
@@ -34,6 +36,8 @@
 #include"SceneView/SceneView.h"
 
 #include"StageOwnedTypeInfo/StageOwnedTypeInfo.h"
+
+#include"../../Framework/GameObject/Component/ParentLink.h"
 
 void EditorManager::Init()
 {
@@ -238,6 +242,19 @@ void EditorManager::RestoreActiveStageByName(const std::string& stageName)
 			return;
 		}
 	}
+}
+
+bool EditorManager::IsEditing() const
+{
+
+	auto scene = SceneManager::Instance().GetCurrentScene<BaseScene>();
+
+	if (!scene)
+	{
+		return false;
+	}
+
+	return scene->IsEditing();
 }
 
 void EditorManager::BeginSceneViewRender()
@@ -562,7 +579,7 @@ void EditorManager::SelectStageOwnedByMouse()
 		// リストの中で現在の編集中のステージが親のオブジェクトをチェックする
 		[&activeStage](const std::shared_ptr<StageOwnedObject>& obj)
 		{
-			return obj->GetOwner() == activeStage;
+			return obj->GetParent() == activeStage;
 		});
 
 	// 選択したオブジェクトをセット
@@ -626,7 +643,7 @@ void EditorManager::SelectGimmickByMouse()
 					return priority == 0;
 				}
 
-				return gimmick->GetOwnerStage() == activeStage
+				return gimmick->GetParent() == activeStage
 					&& gimmick->GetSelectPriority() == priority;
 			});
 
@@ -657,7 +674,7 @@ void EditorManager::SelectAreaVolumeByMouse()
 			// Active Stageのものだけ選べる(Hierarchyの一覧と同じ)
 			auto areaVolume = std::dynamic_pointer_cast<StageGimmick>(obj);
 
-			return areaVolume && areaVolume->GetOwnerStage() == activeStage;
+			return areaVolume && areaVolume->GetParent() == activeStage;
 		});
 
 	SetSelectedObject(selectedObj);
@@ -717,11 +734,17 @@ void EditorManager::CreateGameObject(const std::string& className, const std::st
 	newObject->SetObjectName(MakeUniqueObjectName(baseName));
 	
 
-	// ギミックは、今のActive Stageを持ち主にする
-	if (auto gimmick = std::dynamic_pointer_cast<StageGimmick>(newObject))
+	if (auto parent = newObject->GetComponent<ParentLink>())
 	{
-		gimmick->SetOwnerStage(GetActiveStage());
+		// 現在有効なステージがあれば
+		if(auto activeStage = GetActiveStage())
+		{
+			parent->SetParentKeepWorld(activeStage, *newObject);
+			parent->SetLocalPos(Math::Vector3::Zero);
+			parent->Apply(*newObject);
+		}
 	}
+
 
 	SceneManager::Instance().AddObject(newObject);
 
@@ -742,18 +765,28 @@ bool EditorManager::CanCopyObject(const std::shared_ptr<KdGameObject>& obj) cons
 		return false;
 	}
 
-	return std::dynamic_pointer_cast<StageGimmick>(obj)
-		|| std::dynamic_pointer_cast<AABBCollision>(obj)
-		|| std::dynamic_pointer_cast<OBBCollision>(obj)
-		|| std::dynamic_pointer_cast<AIBlock>(obj)
-		|| std::dynamic_pointer_cast<PointLightObject>(obj)
-		|| std::dynamic_pointer_cast<WayPoint>(obj)
-		|| obj->GetObjectCategory() == KdGameObject::ObjectCategory::CheckPoint;
+	// チェックポイントとカテゴリが一致したら
+	if (obj->GetObjectCategory() == KdGameObject::ObjectCategory::CheckPoint)
+	{
+		return true;
+	}
+
+	// ParentLinkを持っていたら
+	if (auto parentObj = obj->GetComponent<ParentLink>())
+	{
+		// コピーができるかを返す
+		return obj->IsCopyable();
+	}
+
+	// いずれも当てはならなかったら
+	return false;
+
 }
 
 std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<KdGameObject>& src)
 {
-	if (!src)
+	// コピーができない場合nullptr
+	if (!CanCopyObject(src))
 	{
 		return nullptr;
 	}
@@ -762,11 +795,11 @@ std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<Kd
 
 	if (ownedObject)
 	{
-		for (const auto &table:GetStageOwnedTypeInfoTable())
+		for (const auto& table : GetStageOwnedTypeInfoTable())
 		{
 			if (table.second.isType(ownedObject))
 			{
-				auto copy = table.second.createObject(ownedObject->GetOwner());
+				auto copy = table.second.createObject(ownedObject->GetParent());
 
 				if (!copy)
 				{
@@ -780,97 +813,83 @@ std::shared_ptr<KdGameObject> EditorManager::CopyObject(const std::shared_ptr<Kd
 	}
 
 
-	//------------------------------------------------------------
-	// CheckPoint: 同じクラスを作り、保存データ(SaveData)の内容を読み込ませて写す
-	// (ステージには属さないので、持ち主は写さない)
-	//------------------------------------------------------------
-	if (src->GetObjectCategory() == KdGameObject::ObjectCategory::CheckPoint)
+	const std::string className = src->GetFactoryClassName();
+
+	// 未登録のクラス名はファクトリーがassertで止まってしまうので、先に調べる
+	if (!KdGameObjectFactory::Instance().GetCreateFunctions().contains(className))
 	{
-		const std::string className = src->GetFactoryClassName();
-
-		// 未登録のクラス名はファクトリーがassertで止まってしまうので、先に調べる
-		if (!KdGameObjectFactory::Instance().GetCreateFunctions().contains(className))
-		{
-			KdDebugGUI::Instance().AddErrorLog("Copy failed : unknown class '%s'\n", className.c_str());
-			return nullptr;
-		}
-
-		auto copy = KdGameObjectFactory::Instance().CreateGameObject(className);
-
-		if (!copy)
-		{
-			KdDebugGUI::Instance().AddErrorLog("Copy failed : create object\n");
-			return nullptr;
-		}
-
-		copy->Init();
-
-		copy->SetFactoryClassName(className);
-
-		// 表示名は、空いている最小の番号で付ける
-		copy->SetObjectName(MakeUniqueObjectName(className));
-
-		// 位置・大きさ・回転を元と同じにする
-		copy->SetScale(src->GetScale());
-		copy->SetRotation(src->GetRotation());
-		copy->SetPos(src->GetPos());
-
-		// 順番・半径を写す
-		copy->LoadData(src->SaveData());
-
-		SceneManager::Instance().AddObject(copy);
-
-		return copy;
+		KdDebugGUI::Instance().AddErrorLog("Copy failed : unknown class '%s'\n", className.c_str());
+		return nullptr;
 	}
 
-	//------------------------------------------------------------
-	// ギミック: 同じクラスを作り、保存データ(SaveData)の内容を読み込ませて写す
-	//------------------------------------------------------------
-	if (auto srcGimmick = std::dynamic_pointer_cast<StageGimmick>(src))
+	auto copy = KdGameObjectFactory::Instance().CreateGameObject(className);
+
+	if (!copy)
 	{
-		const std::string className = srcGimmick->GetFactoryClassName();
-
-		// 未登録のクラス名はファクトリーがassertで止まってしまうので、先に調べる
-		if (!KdGameObjectFactory::Instance().GetCreateFunctions().contains(className))
-		{
-			KdDebugGUI::Instance().AddErrorLog("Copy failed : unknown class '%s'\n", className.c_str());
-			return nullptr;
-		}
-
-		auto newObject = KdGameObjectFactory::Instance().CreateGameObject(className);
-
-		auto copy = std::dynamic_pointer_cast<StageGimmick>(newObject);
-
-		if (!copy)
-		{
-			KdDebugGUI::Instance().AddErrorLog("Copy failed : create object\n");
-			return nullptr;
-		}
-
-		copy->Init();
-
-		copy->SetFactoryClassName(className);
-
-		// 表示名は、空いている最小の番号で付ける("Room_0"がある状態でコピーすると"Room_1")
-		copy->SetObjectName(MakeUniqueObjectName(className));
-
-		// 位置・大きさ・回転を元と同じにする
-		copy->SetScale(srcGimmick->GetScale());
-		copy->SetRotation(srcGimmick->GetRotation());
-		copy->SetPos(srcGimmick->GetPos());
-
-		// そのクラス固有のデータ(Roomの設定、RoomGateのLinkedRoomなど)を写す
-		copy->LoadData(srcGimmick->SaveData());
-
-		// 持ち主(追従するステージ)も元と同じにする
-		copy->SetOwnerStage(srcGimmick->GetOwnerStage());
-
-		SceneManager::Instance().AddObject(copy);
-
-		return copy;
+		KdDebugGUI::Instance().AddErrorLog("Copy failed : create object\n");
+		return nullptr;
 	}
 
-	return nullptr;
+	copy->Init();
+
+	copy->SetFactoryClassName(className);
+
+	// 表示名は、空いている最小の番号で付ける
+	copy->SetObjectName(MakeUniqueObjectName(className));
+
+	// 位置・大きさ・回転を元と同じにする
+	copy->SetScale(src->GetScale());
+	copy->SetRotation(src->GetRotation());
+	copy->SetPos(src->GetPos());
+
+	// コピーするオブジェクトにコピー元のデータを渡す
+	nlohmann::json saveJson = src->SaveData();
+
+	// 部品の読込
+	copy->LoadComponentData(saveJson);
+
+	// 順番・半径を写す
+	copy->LoadData(saveJson);
+
+	SceneManager::Instance().AddObject(copy);
+
+	return copy;
+
+}
+
+bool EditorManager::CanChangeParent(const std::shared_ptr<KdGameObject>& obj) const
+{
+	if (!obj)
+	{
+		return false;
+	}
+
+	// ParentLinkがとれなければfalse
+	if (!obj->GetComponent<ParentLink>())
+	{
+		return false;
+	}
+
+
+	auto OwnedObj = std::dynamic_pointer_cast<StageOwnedObject>(obj);
+
+	if (!OwnedObj)
+	{
+		return true;
+	}
+
+	// 表に乗っていなければ
+	for (const auto& table : GetStageOwnedTypeInfoTable())
+	{
+
+		if (table.second.isType(OwnedObj))
+		{
+			return false;
+		}
+	}
+
+	// それ以外はtrue
+	return true;
 }
 
 std::shared_ptr<StageObject> EditorManager::FindPrimaryStage(const std::string& modelName) const

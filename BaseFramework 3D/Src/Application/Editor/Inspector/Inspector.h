@@ -27,6 +27,9 @@ private:
 	// ステージ削除の確認ダイアログ(ギミックも一緒に消えることを知らせる)
 	void DrawDeleteStagePopup(const std::shared_ptr<StageObject>& stage);
 
+	// 親(ステージ)の一覧を表示
+	void DrawParentSelector(const std::shared_ptr<KdGameObject>& obj);
+
 	// オブジェクトを削除する
 	void DeleteObject(const std::shared_ptr<KdGameObject>& obj);
 

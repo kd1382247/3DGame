@@ -123,16 +123,8 @@ void RoomGate::DrawDebug()
 	KdGameObject::DrawDebug();
 }
 
-void RoomGate::DrawInspectorHeader()
-{
-	KdGameObject::DrawBasicInspecter();
-}
-
 void RoomGate::DrawInspector()
 {
-	// 追従するステージ
-	m_stageFollower.DrawInspector();
-
 	// 紐づける部屋
 	const char* preview = m_linkedRoomName.empty() ? "(None)" : m_linkedRoomName.c_str();
 
@@ -210,9 +202,8 @@ void RoomGate::DrawInspector()
 
 nlohmann::json RoomGate::SaveData() const
 {
-	nlohmann::json json = KdGameObject::SaveData();
+	nlohmann::json json = StageGimmick::SaveData();
 
-	m_stageFollower.SaveData(json);
 
 	json["LinkedRoom"] = m_linkedRoomName;
 	json["OpenHeight"] = m_openHeight;
@@ -225,7 +216,7 @@ nlohmann::json RoomGate::SaveData() const
 
 void RoomGate::LoadData(const nlohmann::json& json)
 {
-	m_stageFollower.LoadData(json);
+	StageGimmick::LoadData(json);
 
 	if (json.contains("LinkedRoom"))
 	{

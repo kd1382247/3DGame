@@ -2,6 +2,8 @@
 
 #include"json.hpp"
 
+#include"Component/Component.h"
+
 // ゲーム上に存在するすべてのオブジェクトの基底となるクラス
 class KdGameObject : public std::enable_shared_from_this<KdGameObject>
 {
@@ -125,6 +127,32 @@ public:
 	//  ここでは各クラスが自分で追加したフィールドだけを読み込む)
 	virtual void LoadData(const nlohmann::json&) {}
 
+	void LoadComponentData(const nlohmann::json& json);
+
+	//========== コンポーネント ==========//
+
+	// 部品を追加する
+	template<class T>
+	std::shared_ptr<T> AddComponent();
+
+	// 部品を取り出す
+	template<class T>
+	std::shared_ptr<T>GetComponent();
+
+	// 各部品の更新
+	void UpdateComponents();
+	
+	// 各部品のInspector
+	void DrawComponentsInspector();
+
+	// コピーができるか 既定値はtrue(コピー可能)
+	virtual bool IsCopyable()const { return true; }
+
+private:
+
+	// 部品の配列
+	std::vector<std::shared_ptr<Component>> m_components;
+
 protected:
 
 	void Release() {}
@@ -175,3 +203,38 @@ protected:
 
 	bool m_isSelected = false;
 };
+
+template<class T>
+inline std::shared_ptr<T> KdGameObject::AddComponent()
+{
+
+	// Componentを受け取ったTが継承しているかを調べる
+	// 親(Component) 子(T)
+	static_assert(std::is_base_of_v<Component, T>, "Componentを継承した型だけ、指定できます");
+
+
+	// テンプレート型で実物を作る
+	auto component = std::make_shared<T>();
+
+	// 配列に追加
+	m_components.push_back(component);
+
+	return component;
+}
+
+template<class T>
+inline std::shared_ptr<T> KdGameObject::GetComponent()
+{
+	// 配列からキャストできる部品を探す
+	for (const auto& component : m_components)
+	{
+		// キャストに成功したら返す
+		if (auto typedComponent = std::dynamic_pointer_cast<T>(component))
+		{
+			return typedComponent;
+		}
+	}
+
+	// 見つからなかったら
+	return nullptr;
+}

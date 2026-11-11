@@ -57,14 +57,6 @@ void AreaVolume::DrawDebug()
 	KdGameObject::DrawDebug();
 }
 
-void AreaVolume::DrawInspectorHeader()
-{
-	KdGameObject::DrawBasicInspecter();
-
-	// 追従するステージ
-	m_stageFollower.DrawInspector();
-}
-
 void AreaVolume::DrawInspector()
 {
 	// AreaIDは自動で割り振るため、編集欄は無い
@@ -85,18 +77,12 @@ DirectX::BoundingBox AreaVolume::GetBox() const
 
 nlohmann::json AreaVolume::SaveData() const
 {
-	nlohmann::json areaJson = KdGameObject::SaveData();
-
-	m_stageFollower.SaveData(areaJson);
-
-
-	return areaJson;
-
+	return StageGimmick::SaveData();
 }
 
 void AreaVolume::LoadData(const nlohmann::json& json)
 {
-	m_stageFollower.LoadData(json);
+	StageGimmick::LoadData(json);
 }
 
 int AreaVolume::FindAvailableAreaID()

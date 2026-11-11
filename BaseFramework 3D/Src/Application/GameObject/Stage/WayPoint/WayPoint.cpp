@@ -24,8 +24,6 @@ void WayPoint::PreDraw()
 {
 	StageOwnedObject::PreDraw();
 
-
-
 	int AreaID = -1;
 
 	// エリアIDを決める
@@ -58,7 +56,7 @@ void WayPoint::DrawDebug()
 		return;
 	}
 
-	if (GetOwner() != EditorManager::Instance().GetActiveStage())
+	if (GetParent() != EditorManager::Instance().GetActiveStage())
 	{
 		return;
 	}
@@ -99,18 +97,6 @@ void WayPoint::DrawDebug()
 
 	m_pDebugWire->AddDebugSphere(GetPos(), 0.5f, color);
 	KdGameObject::DrawDebug();
-}
-
-void WayPoint::DrawInspectorHeader()
-{
-	// 座標変更(Stageからのローカル位置)
-	Math::Vector3 pos = GetLocalPos();
-
-	if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
-	{
-		SetLocalPos(pos);
-		EditorManager::Instance().MarkDirty();
-	}
 }
 
 void WayPoint::DrawInspector()
@@ -155,7 +141,7 @@ void WayPoint::DrawInspector()
 					continue;
 				}
 
-				if (wayPoint->GetOwner() != GetOwner())
+				if (wayPoint->GetParent() != GetParent())
 				{
 					continue;
 				}

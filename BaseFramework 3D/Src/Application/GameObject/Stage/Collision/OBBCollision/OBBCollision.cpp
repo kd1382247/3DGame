@@ -28,7 +28,7 @@ void OBBCollision::DrawDebug()
 	}
 
 	// Active StageのAABBだけ表示する
-	if (GetOwner() != EditorManager::Instance().GetActiveStage())
+	if (GetParent() != EditorManager::Instance().GetActiveStage())
 	{
 		return;
 	}

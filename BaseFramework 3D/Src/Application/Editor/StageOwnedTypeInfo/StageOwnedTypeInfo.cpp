@@ -74,6 +74,12 @@ namespace
 					return std::dynamic_pointer_cast<AABBCollision>(ownedObj) != nullptr;
 				};
 
+			// 親にしているAABBを消す
+			info.clearOwnerData = [](const StageObject* stageObj)
+				{
+					return AABBCollisionManager::Instance().RemoveByOwner(stageObj);
+				};
+
 			table[HierarchyCategory::AABB] = info;
 
 		}
@@ -121,6 +127,13 @@ namespace
 					return std::dynamic_pointer_cast<OBBCollision>(ownedObj) != nullptr;
 				};
 
+			// 親にしているOBBを消す
+			info.clearOwnerData = [](const StageObject* stageObj)
+				{
+					return OBBCollisionManager::Instance().RemoveByOwner(stageObj);
+				};
+
+
 			table[HierarchyCategory::OBB] = info;
 
 		}
@@ -163,6 +176,12 @@ namespace
 			info.isType = [](const std::shared_ptr<StageOwnedObject>& ownedObj)
 				{
 					return std::dynamic_pointer_cast<AIBlock>(ownedObj) != nullptr;
+				};
+
+			// 親にしているAIBlockを消す
+			info.clearOwnerData = [](const StageObject* stageObj)
+				{
+					return AIBlockManager::Instance().RemoveByOwner(stageObj);
 				};
 
 			table[HierarchyCategory::AIBlock] = info;
@@ -209,6 +228,13 @@ namespace
 					return std::dynamic_pointer_cast<WayPoint>(ownedObj) != nullptr;
 				};
 
+			// 親にしているWayPointを消す
+			info.clearOwnerData = [](const StageObject* stageObj)
+				{
+					return WayPointManager::Instance().RemoveByOwner(stageObj);
+				};
+
+
 			table[HierarchyCategory::WayPoint] = info;
 
 		}
@@ -251,6 +277,12 @@ namespace
 			info.isType = [](const std::shared_ptr<StageOwnedObject>& ownedObj)
 				{
 					return std::dynamic_pointer_cast<PointLightObject>(ownedObj) != nullptr;
+				};
+
+			// 親にしているPointLightを消す
+			info.clearOwnerData = [](const StageObject* stageObj)
+				{
+					return PointLightObjectManager::Instance().RemoveByOwner(stageObj);
 				};
 
 			table[HierarchyCategory::PointLight] = info;

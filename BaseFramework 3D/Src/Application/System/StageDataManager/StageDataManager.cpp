@@ -212,41 +212,41 @@ bool StageDataManager::SaveToFolder(const std::filesystem::path& folder)
 
 		for (const auto& wayPoint : WayPointManager::Instance().GetWayPoints())
 		{
-			if (wayPoint && !wayPoint->GetOwner())
+			if (wayPoint && !wayPoint->GetParent())
 			{
-				wayPoint->SetOwner(firstStage);
+				wayPoint->SetParent(firstStage);
 			}
 		}
 
 		for (const auto& aabb : AABBCollisionManager::Instance().GetAABBCollisionList())
 		{
-			if (aabb && !aabb->GetOwner())
+			if (aabb && !aabb->GetParent())
 			{
-				aabb->SetOwner(firstStage);
+				aabb->SetParent(firstStage);
 			}
 		}
 
 		for (const auto& obb : OBBCollisionManager::Instance().GetOBBCollisionList())
 		{
-			if (obb && !obb->GetOwner())
+			if (obb && !obb->GetParent())
 			{
-				obb->SetOwner(firstStage);
+				obb->SetParent(firstStage);
 			}
 		}
 
 		for (const auto& block : AIBlockManager::Instance().GetAIBlockList())
 		{
-			if (block && !block->GetOwner())
+			if (block && !block->GetParent())
 			{
-				block->SetOwner(firstStage);
+				block->SetParent(firstStage);
 			}
 		}
 
 		for (const auto& light : PointLightObjectManager::Instance().GetPointLights())
 		{
-			if (light && !light->GetOwner())
+			if (light && !light->GetParent())
 			{
-				light->SetOwner(firstStage);
+				light->SetParent(firstStage);
 			}
 		}
 	}
@@ -441,6 +441,9 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 
 		obj->SetRotation(rotation);
 
+		// 部品の読込
+		obj->LoadComponentData(objectJson);
+
 		// そのクラス固有の追加データを読み込む(何もオーバーライドしていなければ何もしない)
 		obj->LoadData(objectJson);
 
@@ -476,9 +479,9 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 
 		for (const auto& gimmick : Gimmicks)
 		{
-			if (!gimmick->HasOwnerStage())
+			if (!gimmick->HasParent())
 			{
-				gimmick->SetOwnerStage(ownerStage);
+				gimmick->SetParentKeepWorld(ownerStage);
 			}
 		}
 	}
@@ -495,18 +498,18 @@ bool StageDataManager::LoadFromFolder(const std::filesystem::path& folder)
 		for (const auto& gimmick : Gimmicks)
 		{
 			// 持ち主が決まっていないものは、上で引き取り済みなので対象外
-			if (!gimmick->HasOwnerStage())
+			if (!gimmick->HasParent())
 			{
 				continue;
 			}
 
-			if (stageNames.contains(gimmick->GetOwnerStageName()))
+			if (stageNames.contains(gimmick->GetParentName()))
 			{
 				continue;
 			}
 
 			KdDebugGUI::Instance().AddLog("持ち主のステージがないギミックを削除しました : %s (Stage : %s)\n",
-				gimmick->GetObjectName().c_str(), gimmick->GetOwnerStageName().c_str());
+				gimmick->GetObjectName().c_str(), gimmick->GetParentName().c_str());
 
 			gimmick->Destroy();
 		}

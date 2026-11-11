@@ -15,7 +15,7 @@ std::shared_ptr<OBBCollision> OBBCollisionManager::CreateOBBCollision(const std:
 
 	obb->SetID(id);
 
-	obb->SetOwner(owner);
+	obb->SetParent(owner);
 
 	// オブジェクトの名前をセット 後ろにID
 	std::string objName = "OBBCollision_" + std::to_string(id);
@@ -31,7 +31,7 @@ void OBBCollisionManager::RemoveByOwner(const StageObject* owner)
 
 	for (const auto& obb : GetOBBCollisionList())
 	{
-		if (obb->GetOwner().get() == owner)
+		if (obb->GetParent().get() == owner)
 		{
 			obb->Destroy();
 		}
@@ -47,7 +47,7 @@ bool OBBCollisionManager::Save(const std::string& filePath, const std::shared_pt
 	for (const auto& obb : GetOBBCollisionList())
 	{
 		if (!obb ||
-			obb->GetOwner() != owner)
+			obb->GetParent() != owner)
 		{
 			continue;
 		}

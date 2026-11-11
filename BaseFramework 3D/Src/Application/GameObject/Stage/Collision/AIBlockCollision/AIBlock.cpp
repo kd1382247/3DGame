@@ -24,7 +24,7 @@ void AIBlock::DrawDebug()
 	}
 
 	// Active StageのAIBlockだけ表示する
-	if (GetOwner() != EditorManager::Instance().GetActiveStage())
+	if (GetParent() != EditorManager::Instance().GetActiveStage())
 	{
 		return;
 	}

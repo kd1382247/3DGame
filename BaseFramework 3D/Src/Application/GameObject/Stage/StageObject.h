@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 class StageGimmick;
+class CharacterBase;
+
 
 class StageObject :public KdGameObject
 {
@@ -31,7 +33,14 @@ public:
 	// このステージを持ち主にしているギミック(Room / RoomGate / EnemySpawner / AreaVolume など)
 	std::vector<std::shared_ptr<StageGimmick>> GetOwnedGimmicks()const;
 
+	// このステージを持ち主にしているキャラクター
+	std::vector<std::shared_ptr<CharacterBase>> GetOwnedCharacters()const;
+
 private:
+
+	// ステージの回転
+	void DrawYawInspector();
+
 
 	// modelNameのステージモデル(レンダー用モデル)を読み込む
 	// Init()(新規オブジェクトのデフォルト読込)とLoadData()(セーブデータからの読込)の両方から呼ばれる

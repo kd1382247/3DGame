@@ -45,6 +45,10 @@ public :
 		m_objList.push_back(_obj);
 	}
 
+
+	bool IsEditing()const;
+
+
 protected :
 
 	// このシーンでEdit/Play切り替えを使うか
@@ -52,8 +56,6 @@ protected :
 	{
 		return false;
 	}
-
-	bool IsEditing()const;
 
 	// 更新を止めたいオブジェクトを、継承先シーンで指定する
 	// (trueを返したオブジェクトは、そのフレームのUpdateが呼ばれない)

@@ -447,6 +447,7 @@
     <ClInclude Include="Src\Application\GameObject\Gimmick\RoomGate\RoomGate.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\Room\Room.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\Room\RoomManager.h" />
+    <ClInclude Include="Src\Application\GameObject\Gimmick\StageGimmick.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\BossHPBar\BossHPBar.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.h" />
@@ -460,7 +461,6 @@
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\PointLight\PointLight.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\PointLight\PointLightManager.h" />
-    <ClInclude Include="Src\Application\GameObject\Stage\StageFollower.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\StageObject.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\StageOwnedObject\StageOwnedObject.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\WayPoint\WayPoint.h" />
@@ -688,6 +688,7 @@
     <ClCompile Include="Src\Application\GameObject\Gimmick\RoomGate\RoomGate.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\Room\Room.cpp" />
     <ClCompile Include="Src\Application\GameObject\Gimmick\Room\RoomManager.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Gimmick\StageGimmick.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\BossHPBar\BossHPBar.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.cpp" />
@@ -701,7 +702,6 @@
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\OBBCollision\OBBCollisionManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\PointLight\PointLight.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\PointLight\PointLightManager.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Stage\StageFollower.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\StageOwnedObject\StageOwnedObject.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\WayPoint\WayPoint.cpp" />

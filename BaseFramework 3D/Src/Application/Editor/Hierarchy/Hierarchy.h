@@ -56,6 +56,8 @@ private:
 
 
 
+	void DrawStageGimmickList(KdGameObject::ObjectCategory objCategory);
+
 	// 指定のカテゴリに登録されている生成候補を表示する
 	void DrawAddObjectList(KdGameObject::ObjectCategory objectCategory);
 

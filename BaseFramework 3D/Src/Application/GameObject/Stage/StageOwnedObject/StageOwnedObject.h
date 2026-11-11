@@ -8,19 +8,22 @@ class StageOwnedObject:public KdGameObject
 {
 public:
 
+	StageOwnedObject();
+
+
 	void PreDraw()override;
 
-	const Math::Vector3& GetLocalPos()const        { return m_parentLink.GetLocalPos(); }
+	const Math::Vector3& GetLocalPos()const        { return m_spParentLink->GetLocalPos(); }
 	void SetLocalPos(const Math::Vector3& pos)
 	{
-		m_parentLink.SetLocalPos(pos);
+		m_spParentLink->SetLocalPos(pos);
 		FollowOwner();
 	}
 
-	const Math::Vector3& GetLocalScale()const      { return m_parentLink.GetLocalScale(); }
+	const Math::Vector3& GetLocalScale()const      { return m_spParentLink->GetLocalScale(); }
 	void SetLocalScale(const Math::Vector3& scale)
 	{
-		m_parentLink.SetLocalScale(scale);
+		m_spParentLink->SetLocalScale(scale);
 		FollowOwner();
 	}
 
@@ -28,14 +31,22 @@ public:
 	void SetID(int id) { m_id = id; }
 
 	// 当たり判定の持ち主(ステージ)のポインタをセット
-	std::shared_ptr<StageObject> GetOwner()const;
-	void SetOwner(const std::shared_ptr<StageObject>& owner);
+	std::shared_ptr<StageObject> GetParent()const;
+	void SetParent(const std::shared_ptr<StageObject>& owner);
+
+	// 持ち主が決まっているか
+	bool HasParent()const { return m_spParentLink->HasParent(); }
+
+	// 持ち主のステージの名前(ステージがあるかは見ない)
+	const std::string& GetParentName()const { return m_spParentLink->GetParentName(); }
+
+
+	// ワールド位置を保ったまま親を付ける
+	void SetParentKeepWorld(const std::shared_ptr<StageObject>& stage);
 
 	// オブジェクトがコピーされるときに呼ばれる
 	virtual void CopyFrom(const std::shared_ptr<StageOwnedObject>& ownedObj);
 
-
-	// 位置・大きさは固定表示(スクロールしない)側に出す
 	void DrawInspectorHeader()override;
 
 private:
@@ -46,6 +57,6 @@ private:
 
 	int m_id = -1;
 
-	ParentLink m_parentLink;
+	std::shared_ptr<ParentLink> m_spParentLink = nullptr;
 
 };

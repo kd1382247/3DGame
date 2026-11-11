@@ -123,7 +123,65 @@ nlohmann::json KdGameObject::SaveData() const
 		{"z",rotation.z}
 	};
 
+	// 各部品のセーブを呼ぶ
+	for (const auto& component : m_components)
+	{
+		if (!component)
+		{
+			continue;
+		}
+
+		component->SaveData(json);
+	}
+
 	return json;
+}
+
+void KdGameObject::LoadComponentData(const nlohmann::json& json)
+{
+	// 各部品のロードを呼ぶ
+	for (const auto& component : m_components)
+	{
+		if (!component)
+		{
+			continue;
+		}
+
+		component->LoadData(json);
+	}
+
+}
+
+void KdGameObject::UpdateComponents()
+{
+	// 部品の更新を呼ぶ
+	for (const auto& component : m_components)
+	{
+		if (!component)
+		{
+			continue;
+		}
+
+		component->Update(*this);
+	}
+}
+
+void KdGameObject::DrawComponentsInspector()
+{
+	// 部品のInspectorを呼ぶ
+	for (const auto& component : m_components)
+	{
+		if (!component)
+		{
+			continue;
+		}
+
+		ImGui::PushID(component.get());
+
+		component->DrawInspector(*this);
+
+		ImGui::PopID();
+	}
 }
 
 void KdGameObject::DrawBasicInspecter()

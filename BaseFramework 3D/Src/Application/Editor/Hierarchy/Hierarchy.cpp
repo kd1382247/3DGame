@@ -19,6 +19,52 @@
 #include<algorithm>
 #include<cctype>
 
+namespace
+{
+
+	// クラスと番号に分ける
+	std::pair<std::string, int> SplitObjectName(const std::string& name)
+	{
+		size_t stPos = name.rfind('_');
+
+		// 文字無かったら
+		if (stPos == std::string::npos)
+		{
+			return { name,-1 };
+		}
+
+		// 見つかったら文字を分ける
+
+		std::string className = name.substr(0,stPos);
+		std::string id = name.substr(stPos+1);
+
+		// 文字を数字に変換する
+		int number = -1;
+
+		// 変換の結果を入れる
+		auto result = std::from_chars(id.data(), id.data() + id.size(), number);
+
+		// 成功したかつ、ptrが末尾なら
+		if (result.ec == std::errc()&&
+			result.ptr==id.data()+id.size())
+		{
+			return { className,number };
+		}
+
+		// 変換に失敗したら
+		return { name,-1 };
+
+	}
+
+	// 2つの名前を比べる
+	bool IsObjectNameLess(const std::string& nameA, const std::string& nameB)
+	{
+		return SplitObjectName(nameA) < SplitObjectName(nameB);
+	}
+
+
+}
+
 
 void Hierarchy::OnDraw()
 {
@@ -518,8 +564,18 @@ void Hierarchy::DrawStageOwnedObjects()
 	{
 		return;
 	}
+	// オブジェクトリストを移す
+	auto objects = info->getObjects();
 
-	for (const auto& ownedObj : info->getObjects())
+	// 配列の並びをIDでソートする
+	std::sort(objects.begin(), objects.end(),
+		[](const std::shared_ptr<StageOwnedObject>& a, const std::shared_ptr<StageOwnedObject>& b)
+		{
+			return a->GetID() < b->GetID();
+		});
+
+
+	for (const auto& ownedObj : objects)
 	{
 		if (!ownedObj)
 		{
@@ -527,7 +583,7 @@ void Hierarchy::DrawStageOwnedObjects()
 		}
 
 		// ownerが一致しない場合は飛ばす
-		if (ownedObj->GetOwner() != activeStage)
+		if (ownedObj->GetParent() != activeStage)
 		{
 			continue;
 		}
@@ -535,6 +591,41 @@ void Hierarchy::DrawStageOwnedObjects()
 		SelectHierarchyObject(ownedObj);
 	}
 
+}
+
+void Hierarchy::DrawStageGimmickList(KdGameObject::ObjectCategory objCategory)
+{
+	std::vector<std::shared_ptr<StageGimmick>> gimmickList;
+
+	// ギミックオブジェクトを集める
+	for (const auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto gimmick = std::dynamic_pointer_cast<StageGimmick>(obj);
+
+		if (!gimmick) { continue; }
+
+		// カテゴリが違ったり、現在編集中の親じゃない場合飛ばす
+		if (gimmick->GetObjectCategory() != objCategory||
+			gimmick->GetParent()!=EditorManager::Instance().GetActiveStage())
+		{
+			continue;
+		}
+
+		gimmickList.push_back(gimmick);
+	}
+
+	// 名前で比べてソートする
+	std::sort(gimmickList.begin(), gimmickList.end(),
+		[](const std::shared_ptr<StageGimmick>& a, const std::shared_ptr<StageGimmick>& b)
+		{
+			return IsObjectNameLess(a->GetObjectName(),b->GetObjectName());
+		});
+	
+	// 一覧表示
+	for (const auto& gimmick : gimmickList)
+	{
+		SelectHierarchyObject(gimmick);
+	}
 }
 
 void Hierarchy::DrawGameObjects()
@@ -560,53 +651,12 @@ void Hierarchy::DrawStage()
 
 void Hierarchy::DrawGimmick()
 {
-	auto activeStage = EditorManager::Instance().GetActiveStage();
-
-	for (const auto& obj : SceneManager::Instance().GetObjList())
-	{
-		if (!obj ||
-			obj->GetObjectCategory() != KdGameObject::ObjectCategory::Gimmick)
-		{
-			continue;
-		}
-
-		// 持ち主がActive Stageではないギミックは出さない
-		// (持ち主の仕組みを持たないギミックは、常に出す)
-		auto gimmick = std::dynamic_pointer_cast<StageGimmick>(obj);
-
-		if (gimmick &&
-			gimmick->GetOwnerStage() != activeStage)
-		{
-			continue;
-		}
-
-		SelectHierarchyObject(obj);
-	}
+	DrawStageGimmickList(KdGameObject::ObjectCategory::Gimmick);
 }
 
 void Hierarchy::DrawAreaVolume()
 {
-	auto activeStage = EditorManager::Instance().GetActiveStage();
-
-	for (const auto& obj : SceneManager::Instance().GetObjList())
-	{
-		if (!obj ||
-			obj->GetObjectCategory() != KdGameObject::ObjectCategory::AreaVolume)
-		{
-			continue;
-		}
-
-		// 持ち主がActive Stageではないものは出さない
-		auto areaVolume = std::dynamic_pointer_cast<StageGimmick>(obj);
-
-		if (areaVolume &&
-			areaVolume->GetOwnerStage() != activeStage)
-		{
-			continue;
-		}
-
-		SelectHierarchyObject(obj);
-	}
+	DrawStageGimmickList(KdGameObject::ObjectCategory::AreaVolume);
 }
 
 void Hierarchy::DrawCheckPoint()

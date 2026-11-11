@@ -29,7 +29,6 @@ public:
 		float& outToi,
 		Math::Vector3& outNormal)const = 0;
 
-
 	// このキャラに対して有効か
 	virtual bool IsActiveFor(const CharacterBase* character)const { return character!=nullptr; }
 

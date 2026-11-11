@@ -22,6 +22,9 @@ struct StageOwnedTypeInfo
 
 	// オブジェクトのタイプ
 	std::function<bool(const std::shared_ptr<StageOwnedObject>& ownedObj)>isType;
+
+	// 親が消えた場合子も消える
+	std::function<void(const StageObject*)>clearOwnerData;
 };
 
 

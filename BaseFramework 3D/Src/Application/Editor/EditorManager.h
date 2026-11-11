@@ -41,6 +41,11 @@ public:
 	bool IsEditMode() const { return m_editorMode == EditorMode::Edit; }
 	bool IsPlayMode() const { return m_editorMode == EditorMode::Play; }
 
+
+	// 現在のシーンがEditorSceneかつEditModeだったらtrue
+	bool IsEditing()const;
+
+
 	// レンダーターゲットを切り替え
 	void BeginSceneViewRender();
 	void EndSceneViewRender();
@@ -61,18 +66,21 @@ public:
 	// stageModelNameはステージ(StageObject)を作るときだけ使う。最初から読み込むステージモデルの名前
 	void CreateGameObject(const std::string& className, const std::string& stageModelName = "");
 
-	// コピーできるオブジェクトか(ギミック・AABB・OBB・AIBlock・PointLight)
+	// コピーできるオブジェクト
 	bool CanCopyObject(const std::shared_ptr<KdGameObject>& obj) const;
 
 	// オブジェクトをコピーする。コピーしたオブジェクトを返す(できなければnullptr)
 	// 名前は、空いている最小のIDで付ける。位置・大きさ・持ち主(追従するステージ)は元と同じ
 	std::shared_ptr<KdGameObject> CopyObject(const std::shared_ptr<KdGameObject>& src);
 
+	// 親を変えていいか
+	bool CanChangeParent(const std::shared_ptr<KdGameObject>& obj)const;
+
 
 	// 編集したかどうか
 	const bool IsDirty()const { return m_isDirty; }
-	void ClearDirty() { m_isDirty = false; }
-	void MarkDirty() { m_isDirty = true; }
+	void       ClearDirty() { m_isDirty = false; }
+	void       MarkDirty() { m_isDirty = true; }
 
 	std::shared_ptr<StageObject>GetActiveStage()const { return m_wpActiveStage.lock(); }
 	void SetActiveStage(const std::shared_ptr<StageObject>& stageObj) { m_wpActiveStage = stageObj; }

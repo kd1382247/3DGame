@@ -50,6 +50,9 @@ public:
 
 	void OnHit(const AttackInfo attackInfo) override;
 
+	// Playerはコピーできない
+	bool IsCopyable()const override { return false; }
+
 	//================================
 	// CharacterBaseが要求するパラメータ
 	//================================

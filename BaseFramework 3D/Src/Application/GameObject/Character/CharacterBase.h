@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include"../../../Framework/GameObject/Component/ParentLink.h"
+
 #include"AttackInfo.h"
 
 #include"Health.h"
@@ -18,6 +20,7 @@ public:
 	~CharacterBase()	override;
 
 	void Init()			override;
+	void PreDraw()      override;
 	void PreUpdate()    override;
 	void Update()		override;
 	void PostUpdate()	override;
@@ -169,9 +172,9 @@ protected:
 	// 押し戻し量をためる
 	Math::Vector3 m_totalPush = {};
 
-
-
 	Health m_health;
+
+	std::shared_ptr<ParentLink> m_spParentLink = nullptr;
 
 	// エリアID
 	int m_currentAreaID = -1;
