@@ -36,14 +36,20 @@ public:
 	void SetParentNameKeepWorld(const std::string& parentName);
 
 
+	// ローカルの座標
 	const Math::Vector3& GetLocalPos()const        { return m_localPos; }
-	void SetLocalPos(const Math::Vector3& pos)     { m_localPos = pos; }
+	void SetLocalPos(const Math::Vector3& pos)     { m_localPos = pos;  }
 
-	const Math::Vector3& GetLocalScale()const      { return m_localScale; }
+	// ローカルの大きさ
+	const Math::Vector3& GetLocalScale()const      { return m_localScale;  }
 	void SetLocalScale(const Math::Vector3& scale) { m_localScale = scale; }
 
+	// ローカルの回転
+	const Math::Vector3& GetLocalRotation()const   { return m_localRotation; }
+	void SetLocalRotation(const Math::Vector3& rot){ m_localRotation = rot;  }
 
-	void SaveData(nlohmann::json& json)const override;
+
+	void SaveData(nlohmann::json& json)const  override;
 	void LoadData(const nlohmann::json& json) override;
 
 
@@ -61,20 +67,41 @@ public:
 	void CalcLocalFromWorld(const KdGameObject& obj);
 
 
-	// 大きさを追従させるのか trueで追従する
+	// 大きさを追従させるのか trueで追従
 	void SetFollowScale(bool flg) { m_followScale = flg; }
+
+	bool IsFollowRotation()const { return m_followRotation; }
+
+	// 回転を追従させるのか trueで追従
+	void SetFollowRotation(bool flg) { m_followRotation = flg; }
+
+	void SetSwapScaleOnOddQuarter(bool flg) { m_swapScaleOnOddQuarter = flg; }
+
 
 private:
 
 
+	// 親の回転数が奇数かを返す
+	bool IsOddQuarter(const KdGameObject& parent)const;
+
 	// 親の名前を表示する
 	void DrawInspectorParentName();
 
-	// ローカル位置を編集する
-	void DrawInspectorLocalPos(KdGameObject &obj);
+	void DrawInspectorLocalPos     (KdGameObject &obj);
+	void DrawInspectorLocalScale   (KdGameObject& obj);
+	void DrawInspectorLocalRotation(KdGameObject& obj);
 
-	// ローカルの大きさを編集する
-	void DrawInspectorLocalScale(KdGameObject& obj);
+
+	// ローカルからワールドで追従
+	void FollowWorldPos     (const KdGameObject& parent,KdGameObject& obj);
+	void FollowWorldScale   (const KdGameObject& parent,KdGameObject& obj);
+	void FollowWorldRotation(const KdGameObject& parent,KdGameObject& obj);
+
+	// ワールドからローカルを逆算
+	void FollowLocalPos     (const KdGameObject& parent,Math::Vector3 pos);
+	void FollowLocalScale   (const KdGameObject& parent,Math::Vector3 scale);
+	void FollowLocalRotation(const KdGameObject& parent,Math::Vector3 rotation);
+	
 
 	static inline std::function<ParentResolver> m_findParentName;
 
@@ -86,15 +113,22 @@ private:
 	std::string                m_parentName = {};
 
 	// ローカルの位置と大きさ
-	Math::Vector3              m_localPos   = {};
-	Math::Vector3              m_localScale = Math::Vector3::One;
+	Math::Vector3              m_localPos      = {};
+	Math::Vector3              m_localScale    = Math::Vector3::One;
+	Math::Vector3              m_localRotation = {};
 
+	// ワールドからローカルの逆算をしたか
 	bool                       m_isCalcLocalWorld = false;
 
-	FollowMode                 m_followMode = FollowMode::Always;
 	bool                       m_isPlaced = false;
 
-	// 大きさを追従するのか
+	FollowMode                 m_followMode = FollowMode::Always;
+
+	// 親ステージの大きさ、回転に追従するのか
 	bool                       m_followScale = true;
+	bool                       m_followRotation = false;
+
+	// 大きさを入れ替えるのか
+	bool                       m_swapScaleOnOddQuarter = false;
 
 };

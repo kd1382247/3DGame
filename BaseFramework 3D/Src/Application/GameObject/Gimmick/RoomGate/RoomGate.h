@@ -12,6 +12,8 @@ class RoomGate :public StageGimmick,public IObstacle
 {
 public:
 
+	RoomGate() { SetFollowRotation(true); }
+
 	void Init()override;
 	void Update()override;
 

@@ -4,9 +4,9 @@
             "ID": 0,
             "Name": "AABBCollision_0",
             "Position": {
-                "x": 0.0,
+                "x": -7.0,
                 "y": 4.3,
-                "z": 7.0
+                "z": 0.0
             },
             "Scale": {
                 "x": 0.35,
@@ -18,9 +18,9 @@
             "ID": 1,
             "Name": "AABBCollision_1",
             "Position": {
-                "x": 14.0,
+                "x": 7.0,
                 "y": 4.3,
-                "z": 7.0
+                "z": 0.0
             },
             "Scale": {
                 "x": 0.35,
@@ -32,9 +32,9 @@
             "ID": 2,
             "Name": "AABBCollision_2",
             "Position": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": 4.3,
-                "z": 0.0
+                "z": -7.0
             },
             "Scale": {
                 "x": 14.0,
@@ -46,9 +46,9 @@
             "ID": 3,
             "Name": "AABBCollision_3",
             "Position": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": -0.2,
-                "z": 7.0
+                "z": 0.0
             },
             "Scale": {
                 "x": 14.0,
@@ -60,9 +60,9 @@
             "ID": 4,
             "Name": "AABBCollision_4",
             "Position": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": 9.0,
-                "z": 7.0
+                "z": 0.0
             },
             "Scale": {
                 "x": 14.0,
@@ -74,9 +74,9 @@
             "ID": 5,
             "Name": "AABBCollision_5",
             "Position": {
-                "x": 3.0,
+                "x": -4.0,
                 "y": 4.3,
-                "z": 14.0
+                "z": 7.0
             },
             "Scale": {
                 "x": 6.0,
@@ -88,9 +88,9 @@
             "ID": 6,
             "Name": "AABBCollision_6",
             "Position": {
-                "x": 11.0,
+                "x": 4.0,
                 "y": 4.3,
-                "z": 14.0
+                "z": 7.0
             },
             "Scale": {
                 "x": 6.0,
@@ -102,9 +102,9 @@
             "ID": 7,
             "Name": "AABBCollision_7",
             "Position": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": 5.8,
-                "z": 14.0
+                "z": 7.0
             },
             "Scale": {
                 "x": 2.0,

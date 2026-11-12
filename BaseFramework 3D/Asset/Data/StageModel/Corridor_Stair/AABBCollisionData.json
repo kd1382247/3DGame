@@ -4,9 +4,9 @@
             "ID": 80,
             "Name": "AABBCollision_80",
             "Position": {
-                "x": 0.0,
+                "x": -3.0,
                 "y": 4.0,
-                "z": 5.0
+                "z": 0.0
             },
             "Scale": {
                 "x": 0.35,
@@ -18,9 +18,9 @@
             "ID": 81,
             "Name": "AABBCollision_81",
             "Position": {
-                "x": 6.0,
+                "x": 3.0,
                 "y": 4.0,
-                "z": 5.0
+                "z": 0.0
             },
             "Scale": {
                 "x": 0.35,
@@ -32,9 +32,9 @@
             "ID": 82,
             "Name": "AABBCollision_82",
             "Position": {
-                "x": 3.0,
+                "x": 0.0,
                 "y": 7.5,
-                "z": 0.0
+                "z": -5.0
             },
             "Scale": {
                 "x": 6.0,
@@ -46,9 +46,9 @@
             "ID": 83,
             "Name": "AABBCollision_83",
             "Position": {
-                "x": 3.0,
+                "x": 0.0,
                 "y": 9.0,
-                "z": 5.0
+                "z": 0.0
             },
             "Scale": {
                 "x": 6.0,

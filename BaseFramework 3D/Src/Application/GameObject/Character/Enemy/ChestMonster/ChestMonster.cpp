@@ -258,7 +258,7 @@ void ChestMonster::UpdateAnimation()
 nlohmann::json ChestMonster::SaveData() const
 {
 	// 位置・回転・大きさなどの共通データ
-	nlohmann::json json = EnemyBase::SaveData();
+	nlohmann::json json = KdGameObject::SaveData();
 
 	// この1体だけの個別パラメータ
 	json["Parameter"] = m_parameter.ToJson();

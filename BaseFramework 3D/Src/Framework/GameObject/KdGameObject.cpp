@@ -60,6 +60,17 @@ void KdGameObject::SetRotation(const Math::Vector3& rotation)
 	m_rotation = rotation;
 }
 
+int KdGameObject::GetYawQuarterCount() const
+{
+	// 回転を90で割り、四捨五入下整数を入れる
+	int quarterCount = std::lround(GetRotation().y / 90);
+
+	// 0～3に収める
+	quarterCount = ((quarterCount % 4) + 4) % 4;
+
+	return quarterCount;
+}
+
 
 void KdGameObject::CalcDistSqrFromCamera(const Math::Vector3& camPos)
 {

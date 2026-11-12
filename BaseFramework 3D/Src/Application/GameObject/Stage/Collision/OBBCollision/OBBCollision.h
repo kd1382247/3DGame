@@ -16,7 +16,7 @@ public:
 		Walkable
 	};
 
-	OBBCollision() {}
+	OBBCollision() { SetFollowRotation(true); }
 	~OBBCollision()override {}
 
 	void Init()override;

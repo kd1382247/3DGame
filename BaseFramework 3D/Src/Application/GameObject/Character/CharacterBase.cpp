@@ -13,6 +13,8 @@ CharacterBase::CharacterBase()
 
 	m_spParentLink->SetFollowMode(ParentLink::FollowMode::PlaceOnce);
 	m_spParentLink->SetFollowScale(false);
+	m_spParentLink->SetFollowRotation(true);
+
 }
 
 CharacterBase::~CharacterBase()
@@ -107,7 +109,6 @@ void CharacterBase::DrawInspectorHeader()
 
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			DrawRotationInspector();
 			DrawScaleInspector();
 		}
 

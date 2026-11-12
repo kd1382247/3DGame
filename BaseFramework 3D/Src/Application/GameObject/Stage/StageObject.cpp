@@ -191,17 +191,14 @@ std::vector<std::shared_ptr<CharacterBase>> StageObject::GetOwnedCharacters() co
 void StageObject::DrawYawInspector()
 {
 
-	// 回転を90で割り、四捨五入下整数を入れる
-	int rotateCount = std::lround(GetRotation().y / 90);
-
-	// 0～3に収める
-	rotateCount = ((rotateCount % 4) + 4) % 4;
+	// 回転数を取得
+	int quarterCount = GetYawQuarterCount();
 
 	// どれだけ動かすのか
 	int rotateValue = 0;
 
 	// 回転角度を表示
-	ImGui::Text("Rotate %d", rotateCount * 90);
+	ImGui::Text("Rotate %d", quarterCount * 90);
 
 
 	// 2つのボタンの合計幅を、Position / Scale の入力欄と同じ幅にそろえる
@@ -218,21 +215,20 @@ void StageObject::DrawYawInspector()
 
 	if (ImGui::Button("+90##RotYPlus", ImVec2(buttonWidth, 0.0f)))
 	{
-		rotateValue = -1;
+		rotateValue = 1;
 	}
 
 
 	if (rotateValue != 0)
 	{
-		rotateCount += rotateValue;
+		quarterCount += rotateValue;
 		// 0～3に収める
-		rotateCount = ((rotateCount % 4) + 4) % 4;
+		quarterCount = ((quarterCount % 4) + 4) % 4;
 
-		SetRotation(Math::Vector3(0.0f, rotateCount * 90.0f, 0.0f));
+		SetRotation(Math::Vector3(0.0f, quarterCount * 90.0f, 0.0f));
 
 		EditorManager::Instance().MarkDirty();
 	}
-
 
 }
 

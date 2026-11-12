@@ -8,6 +8,8 @@
 #include"../../../Scene/SceneManager.h"
 #include"../../Gimmick/EnemySpawner/EnemySpawner.h"
 
+#include"../../Stage/StageObject.h"
+
 #include"../../../GameObject/Character/Player/Player.h"
 #include"../../Character/Boss/BossBase.h"
 #include"../../Character/Enemy/EnemyBase.h"
@@ -160,6 +162,13 @@ void Room::DrawDebug()
 		kGreenColor + kBlueColor);
 
 	KdGameObject::DrawDebug();
+}
+
+void Room::DrawInspectorHeader()
+{
+	DrawNameInspector();
+
+	ImGui::Separator();
 }
 
 void Room::DrawInspector()
@@ -331,16 +340,43 @@ bool Room::IsInsideCore(const Math::Vector3& pos, float bodyRadius) const
 
 DirectX::BoundingBox Room::GetCoreBox(float margin) const
 {
+	// 親のステージを受け取る
+	auto spParent = GetParent();
+
+	// 親ステージの回転数
+	int quarterCount = 0;
+
+	if (spParent)
+	{
+		quarterCount = spParent->GetYawQuarterCount();
+	}
+
 	DirectX::BoundingBox box;
 
+
+	// 回転行列を作る
+	Math::Matrix rotMat =
+		Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(quarterCount * 90.0f));
+
+	// 親の回転行列に合わせて、ずれを回す
+	Math::Vector3 rotateOffset = Math::Vector3::Transform(m_coreOffset, rotMat);
+
 	// 内側の箱は、部屋の中心からのずれと、決めた大きさで作る
-	box.Center = GetPos() + m_coreOffset;
+	box.Center = GetPos() + rotateOffset;
+
+	Math::Vector3 coreSize = m_coreSize;
+
+	// 奇数だったら大きさを入れ替える
+	if (quarterCount % 2 != 0)
+	{
+		std::swap(coreSize.x, coreSize.z);
+	}
 
 	box.Extents =
 	{
-		std::max(0.0f, m_coreSize.x * 0.5f - margin),
-		m_coreSize.y * 0.5f,
-		std::max(0.0f, m_coreSize.z * 0.5f - margin)
+		std::max(0.0f, coreSize.x * 0.5f - margin),
+		coreSize.y * 0.5f,
+		std::max(0.0f, coreSize.z * 0.5f - margin)
 	};
 
 	return box;

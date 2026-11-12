@@ -398,7 +398,7 @@ bool EnemySpawner::IsFinished() const
 
 nlohmann::json EnemySpawner::SaveData() const
 {
-	nlohmann::json roomJson = StageGimmick::SaveData();;
+	nlohmann::json roomJson = StageGimmick::SaveData();
 
 	roomJson["LinkedRoom"] = m_linkedRoomName;
 

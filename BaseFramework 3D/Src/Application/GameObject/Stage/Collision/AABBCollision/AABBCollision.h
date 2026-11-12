@@ -9,7 +9,7 @@ class AABBCollision :public StageOwnedObject,public IObstacle
 {
 
 public:
-	AABBCollision() {}
+	AABBCollision() { SetSwapScaleOnOddQuarter(true); }
 	~AABBCollision()override {}
 
 	void Init()override;

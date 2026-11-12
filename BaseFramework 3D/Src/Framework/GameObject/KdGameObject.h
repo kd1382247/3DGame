@@ -54,23 +54,32 @@ public:
 
 	virtual void SetAsset(const std::string&) {}
 
+	// 位置 
 	virtual void SetPos(const Math::Vector3& pos) { m_mWorld.Translation(pos); }
 	virtual Math::Vector3 GetPos() const { return m_mWorld.Translation(); }
 
-	// 拡大率を変更する関数
+	// 大きさ
 	void SetScale(float scalar);
 	virtual void SetScale(const Math::Vector3& scale);
 	virtual Math::Vector3 GetScale() const;
 
-	// 回転角度
+	// 回転
 	virtual void SetRotation(const Math::Vector3& rotation);
 	 Math::Vector3 GetRotation()const { return m_rotation; }
 
+	 // オブジェクトの回転数(0～3で表す)
+	 int GetYawQuarterCount()const;
+
+	 // 行列
 	const Math::Matrix& GetMatrix() const { return m_mWorld; }
 
+
+	// オブジェクトが有効か
 	virtual bool IsExpired() const { return m_isExpired; }
 	virtual void Destroy() { m_isExpired = true; }
 
+
+	// 描画するのか
 
 	virtual bool IsVisible()	const { return false; }
 	virtual bool IsRideable()	const { return false; }
@@ -84,6 +93,8 @@ public:
 	float GetDistSqrFromCamera() const { return m_distSqrFromCamera; }
 
 	UINT GetDrawType() const { return m_drawType; }
+
+	// ============== 当たり判定 ==============//
 
 	bool Intersects(const KdCollider::SphereInfo& targetShape, std::list<KdCollider::CollisionResult>* pResults);
 	bool Intersects(const KdCollider::BoxInfo& targetBox, std::list<KdCollider::CollisionResult>* pResults);

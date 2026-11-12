@@ -288,7 +288,12 @@
 				13,
 				20
 			],
-			"name":"Corridor_1"
+			"name":"Corridor_1",
+			"translation":[
+				-3,
+				0,
+				-3
+			]
 		}
 	],
 	"materials":[

@@ -8,7 +8,11 @@ void StageGimmick::DrawInspectorHeader()
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		StageOwnedObject::DrawInspectorHeader();
-		DrawRotationInspector();
+
+		if(!UsesLocalRotation())
+		{
+			DrawRotationInspector();
+		}
 	}
 
 }

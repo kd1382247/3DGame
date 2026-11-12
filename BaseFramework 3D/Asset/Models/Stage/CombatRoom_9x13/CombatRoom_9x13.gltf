@@ -1195,7 +1195,12 @@
 				115,
 				116
 			],
-			"name":"Room_9x13_T4_Tiles"
+			"name":"Room_9x13_T4_Tiles",
+			"translation":[
+				-9,
+				0,
+				13
+			]
 		},
 		{
 			"mesh":1,
@@ -3717,7 +3722,12 @@
 				286,
 				287
 			],
-			"name":"Room_9x13_T4_Walls"
+			"name":"Room_9x13_T4_Walls",
+			"translation":[
+				-9,
+				0,
+				13
+			]
 		},
 		{
 			"mesh":0,
@@ -5477,15 +5487,20 @@
 				404,
 				405
 			],
-			"name":"Room_9x13_T4_Ceiling"
+			"name":"Room_9x13_T4_Ceiling",
+			"translation":[
+				-9,
+				0,
+				13
+			]
 		},
 		{
 			"mesh":2,
 			"name":"ArchOpen",
 			"translation":[
-				6,
+				-3,
 				3,
-				-26
+				-13
 			]
 		},
 		{
@@ -5581,15 +5596,20 @@
 				415,
 				416
 			],
-			"name":"Stairs_middle"
+			"name":"Stairs_middle",
+			"translation":[
+				-9,
+				0,
+				13
+			]
 		},
 		{
 			"mesh":12,
 			"name":"ArchOpen.001",
 			"translation":[
-				6,
+				-3,
 				0,
-				0
+				13
 			]
 		},
 		{
@@ -5865,7 +5885,12 @@
 				435,
 				436
 			],
-			"name":"Room_9x13_T4_Torches"
+			"name":"Room_9x13_T4_Torches",
+			"translation":[
+				-9,
+				0,
+				13
+			]
 		}
 	],
 	"materials":[

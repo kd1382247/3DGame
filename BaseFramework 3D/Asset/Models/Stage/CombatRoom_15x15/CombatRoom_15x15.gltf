@@ -21,9 +21,9 @@
 			"mesh":0,
 			"name":"ArchOpen",
 			"translation":[
-				12,
+				-3,
 				0,
-				0
+				15
 			]
 		},
 		{
@@ -10329,7 +10329,12 @@
 				477,
 				775
 			],
-			"name":"Room_15x15_T5"
+			"name":"Room_15x15_T5",
+			"translation":[
+				-15,
+				0,
+				15
+			]
 		}
 	],
 	"materials":[

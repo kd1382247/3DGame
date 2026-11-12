@@ -12,7 +12,7 @@ class AIBlock :public StageOwnedObject
 {
 
 public:
-	AIBlock() {}
+	AIBlock() { SetSwapScaleOnOddQuarter(true); }
 	~AIBlock()override {}
 
 	void Init()override;

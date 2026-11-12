@@ -14,7 +14,7 @@ void StageOwnedObject::PreDraw()
 	UpdateComponents();
 }
 
-void StageOwnedObject::FollowOwner()
+void StageOwnedObject::FollowParent()
 {
 	m_spParentLink->Apply(*this);
 }
@@ -29,7 +29,7 @@ std::shared_ptr<StageObject> StageOwnedObject::GetParent() const
 void StageOwnedObject::SetParent(const std::shared_ptr<StageObject>& owner)
 {
 	m_spParentLink->SetParent(owner);
-	FollowOwner();
+	FollowParent();
 }
 
 void StageOwnedObject::SetParentKeepWorld(const std::shared_ptr<StageObject>& stage)
@@ -39,8 +39,9 @@ void StageOwnedObject::SetParentKeepWorld(const std::shared_ptr<StageObject>& st
 
 void StageOwnedObject::CopyFrom(const std::shared_ptr<StageOwnedObject>& ownedObj)
 {
-	SetLocalPos(ownedObj->GetLocalPos());
-	SetLocalScale(ownedObj->GetLocalScale());
+	SetLocalPos     (ownedObj->GetLocalPos());
+	SetLocalScale   (ownedObj->GetLocalScale());
+	SetLocalRotation(ownedObj->GetLocalRotation());
 }
 
 void StageOwnedObject::DrawInspectorHeader()

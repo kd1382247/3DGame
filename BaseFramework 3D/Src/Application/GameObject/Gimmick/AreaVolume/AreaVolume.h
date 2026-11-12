@@ -6,7 +6,7 @@ class AreaVolume :public StageGimmick
 {
 public:
 
-	AreaVolume(){}
+	AreaVolume(){ SetSwapScaleOnOddQuarter(true); }
 	~AreaVolume(){}
 
 	void Init()override;

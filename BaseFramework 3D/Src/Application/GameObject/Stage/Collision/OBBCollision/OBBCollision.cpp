@@ -117,11 +117,14 @@ void OBBCollision::DrawInspectorHeader()
 	StageOwnedObject::DrawInspectorHeader();
 
 	Math::Vector3 rotation = GetRotation();
-	// 回転(Stageには追従させず、OBB自身の回転をそのまま使う)
-	if (ImGui::DragFloat3("Rotation", &rotation.x, 0.01f))
+
+	if(!UsesLocalRotation())
 	{
-		SetRotation(rotation);
-		EditorManager::Instance().MarkDirty();
+		if (ImGui::DragFloat3("Rotation", &rotation.x, 0.01f))
+		{
+			SetRotation(rotation);
+			EditorManager::Instance().MarkDirty();
+		}
 	}
 
 	std::string collTypeName = m_collisionTypeName[static_cast<int>(GetCollisionType())];
@@ -159,8 +162,6 @@ void OBBCollision::CopyFrom(const std::shared_ptr<StageOwnedObject>& ownedObject
 	}
 
 	StageOwnedObject::CopyFrom(ownedObject);
-
-	SetRotation(ownedObject->GetRotation());
 
 	SetCollisionType(obb->GetCollisionType());
 }

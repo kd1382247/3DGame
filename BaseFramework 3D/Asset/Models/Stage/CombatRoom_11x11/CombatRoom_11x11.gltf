@@ -5559,15 +5559,20 @@
 				243,
 				417
 			],
-			"name":"Room_11x11_T4"
+			"name":"Room_11x11_T4",
+			"translation":[
+				-11,
+				0,
+				11
+			]
 		},
 		{
 			"mesh":2,
 			"name":"ArchOpen",
 			"translation":[
-				8,
+				-3,
 				0,
-				0
+				11
 			]
 		}
 	],

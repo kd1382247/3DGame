@@ -31,11 +31,16 @@ public:
 		Cleared		// クリア済み
 	};
 
+
+	Room() { SetSwapScaleOnOddQuarter(true); }
+	~Room() = default;
+
 	void Init()override;
 	void Update()override;
 
 	void DrawDebug()override;
 
+	void DrawInspectorHeader()override;
 	void DrawInspector()override;
 
 	void SetUpReference()override;

@@ -72,7 +72,7 @@ bool OBBCollisionManager::Save(const std::string& filePath, const std::shared_pt
 		OBBCollisionJson["Scale"]["z"] = InspectorUI::CeilToDigits(scale.z, 3);
 
 		// 回転(Stageには追従しない、OBB自身の回転)
-		const auto& rotation = obb->GetRotation();
+		const auto& rotation = obb->GetLocalRotation();
 		OBBCollisionJson["Rotation"]["x"] = InspectorUI::CeilToDigits(rotation.x, 3);
 		OBBCollisionJson["Rotation"]["y"] = InspectorUI::CeilToDigits(rotation.y, 3);
 		OBBCollisionJson["Rotation"]["z"] = InspectorUI::CeilToDigits(rotation.z, 3);
@@ -163,7 +163,7 @@ bool OBBCollisionManager::Load(const std::string& filePath, const std::shared_pt
 			});
 
 		// 回転(Stageには追従しない、OBB自身の回転)
-		obb->SetRotation({
+		obb->SetLocalRotation({
 			obbJson["Rotation"]["x"].get<float>(),
 			obbJson["Rotation"]["y"].get<float>(),
 			obbJson["Rotation"]["z"].get<float>()

@@ -11,17 +11,26 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				49,
-				128,
-				178,
+				0,
+				50,
+				129,
 				179,
-				190,
+				180,
 				191,
-				192
+				192,
+				193
 			]
 		}
 	],
 	"nodes":[
+		{
+			"name":"Room_7x7_T3_Tiles",
+			"translation":[
+				-7,
+				0,
+				7
+			]
+		},
 		{
 			"mesh":0,
 			"name":"Tile_0_0",
@@ -465,7 +474,6 @@
 		},
 		{
 			"children":[
-				0,
 				1,
 				2,
 				3,
@@ -513,9 +521,15 @@
 				45,
 				46,
 				47,
-				48
+				48,
+				49
 			],
-			"name":"Room_7x7_T3_Tiles"
+			"name":"Room_7x7_T3_Tiles.001",
+			"translation":[
+				-7,
+				0,
+				7
+			]
 		},
 		{
 			"mesh":1,
@@ -1576,7 +1590,6 @@
 		},
 		{
 			"children":[
-				50,
 				51,
 				52,
 				53,
@@ -1653,9 +1666,15 @@
 				124,
 				125,
 				126,
-				127
+				127,
+				128
 			],
-			"name":"Room_7x7_T3_Walls"
+			"name":"Room_7x7_T3_Walls",
+			"translation":[
+				-7,
+				0,
+				7
+			]
 		},
 		{
 			"mesh":0,
@@ -2345,7 +2364,6 @@
 		},
 		{
 			"children":[
-				129,
 				130,
 				131,
 				132,
@@ -2393,17 +2411,23 @@
 				174,
 				175,
 				176,
-				177
+				177,
+				178
 			],
-			"name":"Room_7x7_T3_Ceiling"
+			"name":"Room_7x7_T3_Ceiling",
+			"translation":[
+				-7,
+				0,
+				7
+			]
 		},
 		{
 			"mesh":2,
 			"name":"ArchOpen",
 			"translation":[
-				4,
+				-3,
 				0,
-				-14
+				-7
 			]
 		},
 		{
@@ -2552,7 +2576,6 @@
 		},
 		{
 			"children":[
-				180,
 				181,
 				182,
 				183,
@@ -2561,26 +2584,32 @@
 				186,
 				187,
 				188,
-				189
+				189,
+				190
 			],
-			"name":"Room_7x7_T3_Torches"
+			"name":"Room_7x7_T3_Torches",
+			"translation":[
+				-7,
+				0,
+				7
+			]
 		},
 		{
 			"mesh":11,
 			"name":"Door",
 			"translation":[
-				6,
+				-1,
 				0,
-				0
+				7
 			]
 		},
 		{
 			"mesh":12,
 			"name":"ArchOpen.001",
 			"translation":[
-				4,
+				-3,
 				0,
-				0
+				7
 			]
 		}
 	],
@@ -2780,7 +2809,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Tile",
+			"name":"Tile.001",
 			"primitives":[
 				{
 					"attributes":{

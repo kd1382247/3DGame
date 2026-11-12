@@ -54,9 +54,14 @@
             },
             "IntroDuration": 2.0,
             "LocalPos": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": 4.3,
-                "z": 7.0
+                "z": 0.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 14.0,
@@ -67,9 +72,9 @@
             "OutroDuration": 2.0,
             "ParentName": "Room_7x7_0",
             "Position": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": 4.3,
-                "z": 7.0
+                "z": 0.0
             },
             "RoomType": "Safe",
             "Rotation": {
@@ -87,9 +92,9 @@
             "Class": "StageObject",
             "Name": "Corridor_0",
             "Position": {
-                "x": 4.0,
+                "x": 0.0,
                 "y": 0.0,
-                "z": 20.0
+                "z": 10.1
             },
             "Rotation": {
                 "x": 0.0,
@@ -107,9 +112,9 @@
             "Class": "StageObject",
             "Name": "Corridor_1",
             "Position": {
-                "x": 4.0,
+                "x": 0.0,
                 "y": 0.0,
-                "z": 26.0
+                "z": 16.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -127,9 +132,9 @@
             "Class": "StageObject",
             "Name": "CombatRoom_9x13_0",
             "Position": {
-                "x": -2.0,
+                "x": 0.0,
                 "y": 0.0,
-                "z": 26.0
+                "z": 32.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -142,36 +147,6 @@
                 "z": 1.0
             },
             "StageModel": "CombatRoom_9x13"
-        },
-        {
-            "Class": "Player",
-            "LocalPos": {
-                "x": 7.0,
-                "y": 0.2,
-                "z": 6.0
-            },
-            "LocalScale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "Name": "Player_0",
-            "ParentName": "Room_7x7_0",
-            "Position": {
-                "x": 7.0,
-                "y": 0.2,
-                "z": 6.0
-            },
-            "Rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
         },
         {
             "BossDefeatDuration": 3.0,
@@ -188,9 +163,14 @@
             },
             "IntroDuration": 2.0,
             "LocalPos": {
-                "x": 9.0,
+                "x": 0.0,
                 "y": 5.6,
-                "z": 13.0
+                "z": 0.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 18.0,
@@ -201,9 +181,9 @@
             "OutroDuration": 2.0,
             "ParentName": "CombatRoom_9x13_0",
             "Position": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": 5.6,
-                "z": 39.0
+                "z": 32.0
             },
             "RoomType": "Wave",
             "Rotation": {
@@ -222,14 +202,19 @@
             "CloseDuration": 0.6,
             "LinkedRoom": "Room_1",
             "LocalPos": {
-                "x": 9.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": -13.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
             "LocalScale": {
                 "x": 2.2,
                 "y": 3.0,
-                "z": 0.5
+                "z": 0.35
             },
             "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
             "Name": "RoomGate_0",
@@ -237,9 +222,9 @@
             "OpenHeight": 3.0,
             "ParentName": "CombatRoom_9x13_0",
             "Position": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": 0.0,
-                "z": 26.0
+                "z": 19.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -249,7 +234,7 @@
             "Scale": {
                 "x": 2.2,
                 "y": 3.0,
-                "z": 0.5
+                "z": 0.35
             }
         },
         {
@@ -257,14 +242,19 @@
             "CloseDuration": 0.6,
             "LinkedRoom": "Room_1",
             "LocalPos": {
-                "x": 9.0,
+                "x": 0.0,
                 "y": 3.0,
-                "z": 26.0
+                "z": 13.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 2.2,
                 "y": 3.0,
-                "z": 0.5
+                "z": 0.35
             },
             "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
             "Name": "RoomGate_1",
@@ -272,9 +262,9 @@
             "OpenHeight": 3.0,
             "ParentName": "CombatRoom_9x13_0",
             "Position": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": 3.0,
-                "z": 52.0
+                "z": 45.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -284,16 +274,16 @@
             "Scale": {
                 "x": 2.2,
                 "y": 3.0,
-                "z": 0.5
+                "z": 0.35
             }
         },
         {
             "Class": "StageObject",
             "Name": "Corridor_2",
             "Position": {
-                "x": 4.0,
+                "x": 0.0,
                 "y": 3.0,
-                "z": 58.0
+                "z": 48.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -311,9 +301,9 @@
             "Class": "StageObject",
             "Name": "Corridor_3",
             "Position": {
-                "x": 4.0,
+                "x": 0.0,
                 "y": 3.0,
-                "z": 64.0
+                "z": 54.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -331,9 +321,9 @@
             "Class": "StageObject",
             "Name": "CombatRoom_21x15_0",
             "Position": {
-                "x": 7.0,
-                "y": 2.5,
-                "z": 79.0
+                "x": 0.0,
+                "y": 3.0,
+                "z": 72.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -366,6 +356,11 @@
                 "y": 7.0,
                 "z": 0.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 42.0,
                 "y": 16.0,
@@ -375,9 +370,9 @@
             "OutroDuration": 2.0,
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 7.0,
-                "y": 9.5,
-                "z": 79.0
+                "x": 0.0,
+                "y": 10.0,
+                "z": 72.0
             },
             "RoomType": "AllKill",
             "Rotation": {
@@ -400,10 +395,15 @@
                 "y": 0.0,
                 "z": -15.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 2.2,
                 "y": 3.0,
-                "z": 0.5
+                "z": 0.35
             },
             "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
             "Name": "RoomGate_2",
@@ -411,9 +411,9 @@
             "OpenHeight": 3.0,
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 7.1,
-                "y": 2.5,
-                "z": 64.0
+                "x": 0.1,
+                "y": 3.0,
+                "z": 57.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -423,7 +423,7 @@
             "Scale": {
                 "x": 2.2,
                 "y": 3.0,
-                "z": 0.5
+                "z": 0.35
             }
         },
         {
@@ -435,10 +435,15 @@
                 "y": 0.0,
                 "z": 15.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 2.2,
                 "y": 3.0,
-                "z": 0.5
+                "z": 0.35
             },
             "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
             "Name": "RoomGate_3",
@@ -446,9 +451,9 @@
             "OpenHeight": 3.0,
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 7.0,
-                "y": 2.5,
-                "z": 94.0
+                "x": 0.0,
+                "y": 3.0,
+                "z": 87.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -458,16 +463,16 @@
             "Scale": {
                 "x": 2.2,
                 "y": 3.0,
-                "z": 0.5
+                "z": 0.35
             }
         },
         {
             "Class": "StageObject",
             "Name": "Corridor_4",
             "Position": {
-                "x": 4.0,
+                "x": 0.0,
                 "y": 3.0,
-                "z": 100.0
+                "z": 90.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -485,9 +490,9 @@
             "Class": "StageObject",
             "Name": "Corridor_5",
             "Position": {
-                "x": 4.0,
+                "x": 0.0,
                 "y": 3.0,
-                "z": 106.0
+                "z": 96.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -505,9 +510,14 @@
             "Class": "EnemySpawner",
             "LinkedRoom": "Room_1",
             "LocalPos": {
-                "x": 4.1,
+                "x": -5.0,
                 "y": 6.5,
-                "z": 21.0
+                "z": 9.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 1.0,
@@ -518,9 +528,9 @@
             "Name": "EnemySpawner_0",
             "ParentName": "CombatRoom_9x13_0",
             "Position": {
-                "x": 2.1,
+                "x": -5.0,
                 "y": 6.5,
-                "z": 47.0
+                "z": 41.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -592,6 +602,11 @@
                 "y": 3.0,
                 "z": -10.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 45.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 1.0,
                 "y": 1.0,
@@ -626,9 +641,9 @@
             },
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": -9.0,
-                "y": 5.5,
-                "z": 69.0
+                "x": -16.0,
+                "y": 6.0,
+                "z": 62.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -648,6 +663,11 @@
                 "x": 16.0,
                 "y": 3.0,
                 "z": -10.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": -45.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 1.0,
@@ -683,9 +703,9 @@
             },
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 23.0,
-                "y": 5.5,
-                "z": 69.0
+                "x": 16.0,
+                "y": 6.0,
+                "z": 62.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -705,6 +725,11 @@
                 "x": -16.0,
                 "y": 3.0,
                 "z": 10.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 135.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 1.0,
@@ -740,9 +765,9 @@
             },
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": -9.0,
-                "y": 5.5,
-                "z": 89.0
+                "x": -16.0,
+                "y": 6.0,
+                "z": 82.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -762,6 +787,11 @@
                 "x": 16.0,
                 "y": 3.0,
                 "z": 10.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 225.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 1.0,
@@ -797,13 +827,13 @@
             },
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 23.0,
-                "y": 5.5,
-                "z": 89.0
+                "x": 16.0,
+                "y": 6.0,
+                "z": 82.0
             },
             "Rotation": {
                 "x": 0.0,
-                "y": -135.0,
+                "y": 225.0,
                 "z": 0.0
             },
             "Scale": {
@@ -819,6 +849,11 @@
                 "y": 0.0,
                 "z": 0.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 18.0,
                 "y": 5.0,
@@ -827,9 +862,9 @@
             "Name": "AreaVolume_0",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 7.0,
-                "y": 2.5,
-                "z": 79.0
+                "x": 0.0,
+                "y": 3.0,
+                "z": 72.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -846,6 +881,11 @@
             "Class": "AreaVolume",
             "LocalPos": {
                 "x": 15.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
@@ -857,9 +897,9 @@
             "Name": "AreaVolume_1",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 22.0,
-                "y": 2.5,
-                "z": 79.0
+                "x": 15.0,
+                "y": 3.0,
+                "z": 72.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -878,6 +918,11 @@
                 "x": 6.0,
                 "y": 5.0,
                 "z": 12.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 6.0,
@@ -887,9 +932,9 @@
             "Name": "AreaVolume_2",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 13.0,
-                "y": 7.5,
-                "z": 91.0
+                "x": 6.0,
+                "y": 8.0,
+                "z": 84.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -908,6 +953,11 @@
                 "x": 6.0,
                 "y": 5.0,
                 "z": -12.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 6.0,
@@ -917,9 +967,9 @@
             "Name": "AreaVolume_3",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 13.0,
-                "y": 7.5,
-                "z": 67.0
+                "x": 6.0,
+                "y": 8.0,
+                "z": 60.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -939,6 +989,11 @@
                 "y": 5.0,
                 "z": 9.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 12.0,
                 "y": 5.0,
@@ -947,9 +1002,9 @@
             "Name": "AreaVolume_4",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 22.0,
-                "y": 7.5,
-                "z": 88.0
+                "x": 15.0,
+                "y": 8.0,
+                "z": 81.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -969,6 +1024,11 @@
                 "y": 5.0,
                 "z": -9.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 12.0,
                 "y": 5.0,
@@ -977,9 +1037,9 @@
             "Name": "AreaVolume_5",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 22.0,
-                "y": 7.5,
-                "z": 70.0
+                "x": 15.0,
+                "y": 8.0,
+                "z": 63.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -999,6 +1059,11 @@
                 "y": 5.0,
                 "z": -12.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 6.0,
                 "y": 5.0,
@@ -1007,9 +1072,9 @@
             "Name": "AreaVolume_8",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 1.0,
-                "y": 7.5,
-                "z": 67.0
+                "x": -6.0,
+                "y": 8.0,
+                "z": 60.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1029,6 +1094,11 @@
                 "y": 5.0,
                 "z": 12.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 6.0,
                 "y": 5.0,
@@ -1037,9 +1107,9 @@
             "Name": "AreaVolume_9",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 1.0,
-                "y": 7.5,
-                "z": 91.0
+                "x": -6.0,
+                "y": 8.0,
+                "z": 84.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1059,6 +1129,11 @@
                 "y": 5.0,
                 "z": -9.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 12.0,
                 "y": 5.0,
@@ -1067,9 +1142,9 @@
             "Name": "AreaVolume_10",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": -8.0,
-                "y": 7.5,
-                "z": 70.0
+                "x": -15.0,
+                "y": 8.0,
+                "z": 63.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1089,6 +1164,11 @@
                 "y": 5.0,
                 "z": 9.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 12.0,
                 "y": 5.0,
@@ -1097,9 +1177,9 @@
             "Name": "AreaVolume_11",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": -8.0,
-                "y": 7.5,
-                "z": 88.0
+                "x": -15.0,
+                "y": 8.0,
+                "z": 81.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1116,6 +1196,11 @@
             "Class": "AreaVolume",
             "LocalPos": {
                 "x": -15.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
@@ -1127,9 +1212,9 @@
             "Name": "AreaVolume_12",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": -8.0,
-                "y": 2.5,
-                "z": 79.0
+                "x": -15.0,
+                "y": 3.0,
+                "z": 72.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1149,6 +1234,11 @@
                 "y": 0.0,
                 "z": -12.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 6.0,
                 "y": 5.0,
@@ -1157,9 +1247,9 @@
             "Name": "AreaVolume_13",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 7.0,
-                "y": 2.5,
-                "z": 67.0
+                "x": 0.0,
+                "y": 3.0,
+                "z": 60.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1179,6 +1269,11 @@
                 "y": 0.0,
                 "z": 12.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 6.0,
                 "y": 5.0,
@@ -1187,9 +1282,9 @@
             "Name": "AreaVolume_14",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 7.0,
-                "y": 2.5,
-                "z": 91.0
+                "x": 0.0,
+                "y": 3.0,
+                "z": 84.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1209,6 +1304,11 @@
                 "y": 5.0,
                 "z": 0.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 6.0,
                 "y": 5.0,
@@ -1217,9 +1317,9 @@
             "Name": "AreaVolume_6",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": -11.0,
-                "y": 7.5,
-                "z": 79.0
+                "x": -18.0,
+                "y": 8.0,
+                "z": 72.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1239,6 +1339,11 @@
                 "y": 5.0,
                 "z": 0.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 6.0,
                 "y": 5.0,
@@ -1247,9 +1352,9 @@
             "Name": "AreaVolume_7",
             "ParentName": "CombatRoom_21x15_0",
             "Position": {
-                "x": 25.0,
-                "y": 7.5,
-                "z": 79.0
+                "x": 18.0,
+                "y": 8.0,
+                "z": 72.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1266,9 +1371,9 @@
             "Class": "StageObject",
             "Name": "CombatRoom_15x15_0",
             "Position": {
-                "x": -8.0,
+                "x": 0.0,
                 "y": 9.0,
-                "z": 126.0
+                "z": 134.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1286,9 +1391,9 @@
             "Class": "StageObject",
             "Name": "Corridor_Stair_0",
             "Position": {
-                "x": 4.0,
+                "x": 0.0,
                 "y": 3.0,
-                "z": 106.0
+                "z": 104.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1309,6 +1414,11 @@
                 "y": 0.5,
                 "z": 19.0
             },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 180.0,
+                "z": 0.0
+            },
             "LocalScale": {
                 "x": 1.0,
                 "y": 1.0,
@@ -1317,9 +1427,9 @@
             "Name": "Mage_0",
             "ParentName": "CombatRoom_15x15_0",
             "Position": {
-                "x": 7.0,
+                "x": 15.0,
                 "y": 9.5,
-                "z": 145.0
+                "z": 153.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1337,14 +1447,19 @@
             "CloseDuration": 0.6,
             "LinkedRoom": "Room_3",
             "LocalPos": {
-                "x": 14.9,
+                "x": 0.0,
+                "y": 0.0,
+                "z": -15.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
             "LocalScale": {
                 "x": 2.2,
                 "y": 3.0,
-                "z": 0.5
+                "z": 0.35
             },
             "ModelPath": "Asset/Models/Gimmick/RoomGate.gltf",
             "Name": "RoomGate_4",
@@ -1352,9 +1467,9 @@
             "OpenHeight": 3.0,
             "ParentName": "CombatRoom_15x15_0",
             "Position": {
-                "x": 6.9,
+                "x": 0.0,
                 "y": 9.0,
-                "z": 126.0
+                "z": 119.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1364,7 +1479,7 @@
             "Scale": {
                 "x": 2.2,
                 "y": 3.0,
-                "z": 0.5
+                "z": 0.35
             }
         },
         {
@@ -1382,9 +1497,14 @@
             },
             "IntroDuration": 2.0,
             "LocalPos": {
-                "x": 15.0,
+                "x": 0.0,
                 "y": 7.2,
-                "z": 15.001
+                "z": 0.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 30.0,
@@ -1395,9 +1515,9 @@
             "OutroDuration": 2.0,
             "ParentName": "CombatRoom_15x15_0",
             "Position": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": 16.2,
-                "z": 141.001
+                "z": 134.0
             },
             "RoomType": "Boss",
             "Rotation": {
@@ -1415,9 +1535,14 @@
             "Class": "EnemySpawner",
             "LinkedRoom": "Room_3",
             "LocalPos": {
-                "x": 5.0,
+                "x": -11.0,
                 "y": 3.5,
-                "z": 5.0
+                "z": -11.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 1.0,
@@ -1428,9 +1553,9 @@
             "Name": "EnemySpawner_2",
             "ParentName": "CombatRoom_15x15_0",
             "Position": {
-                "x": -3.0,
+                "x": -11.0,
                 "y": 12.5,
-                "z": 131.0
+                "z": 123.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1454,9 +1579,14 @@
             "Class": "EnemySpawner",
             "LinkedRoom": "Room_3",
             "LocalPos": {
-                "x": 25.0,
+                "x": 11.0,
                 "y": 3.5,
-                "z": 5.0
+                "z": -11.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 1.0,
@@ -1467,9 +1597,9 @@
             "Name": "EnemySpawner_3",
             "ParentName": "CombatRoom_15x15_0",
             "Position": {
-                "x": 17.0,
+                "x": 11.0,
                 "y": 12.5,
-                "z": 131.0
+                "z": 123.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1493,9 +1623,14 @@
             "Class": "EnemySpawner",
             "LinkedRoom": "Room_3",
             "LocalPos": {
-                "x": 5.0,
+                "x": -11.0,
                 "y": 3.5,
-                "z": 25.001
+                "z": 11.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 1.0,
@@ -1506,9 +1641,9 @@
             "Name": "EnemySpawner_4",
             "ParentName": "CombatRoom_15x15_0",
             "Position": {
-                "x": -3.0,
+                "x": -11.0,
                 "y": 12.5,
-                "z": 151.001
+                "z": 145.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1532,9 +1667,14 @@
             "Class": "EnemySpawner",
             "LinkedRoom": "Room_3",
             "LocalPos": {
-                "x": 25.0,
+                "x": 11.0,
                 "y": 3.5,
-                "z": 25.001
+                "z": 11.0
+            },
+            "LocalRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "LocalScale": {
                 "x": 1.0,
@@ -1545,9 +1685,9 @@
             "Name": "EnemySpawner_5",
             "ParentName": "CombatRoom_15x15_0",
             "Position": {
-                "x": 17.0,
+                "x": 11.0,
                 "y": 12.5,
-                "z": 151.001
+                "z": 145.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1613,9 +1753,9 @@
             "Class": "StageObject",
             "Name": "Corridor_Stair_1",
             "Position": {
-                "x": 4.0,
+                "x": 0.0,
                 "y": 6.0,
-                "z": 116.0
+                "z": 114.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1630,8 +1770,13 @@
             "StageModel": "Corridor_Stair"
         },
         {
-            "Class": "StarFish",
+            "Class": "Player",
             "LocalPos": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "LocalRotation": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
@@ -1641,12 +1786,12 @@
                 "y": 1.0,
                 "z": 1.0
             },
-            "Name": "StarFish_0",
+            "Name": "Player_0",
             "ParentName": "",
             "Position": {
-                "x": 4.5,
-                "y": 2.1,
-                "z": 2.9
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "Rotation": {
                 "x": 0.0,

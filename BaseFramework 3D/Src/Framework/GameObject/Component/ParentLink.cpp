@@ -13,15 +13,9 @@ void ParentLink::DrawInspector(KdGameObject& obj)
 	// 親の名前を表示する
 	DrawInspectorParentName();
 
-	// ローカル位置を編集する
-	DrawInspectorLocalPos(obj);
-
-	if(m_followScale)
-	{
-		// ローカルの大きさを編集する
-		DrawInspectorLocalScale(obj);
-	}
-
+	DrawInspectorLocalPos     (obj);
+	DrawInspectorLocalScale   (obj);
+	DrawInspectorLocalRotation(obj);
 }
 
 void ParentLink::Update(KdGameObject& obj)
@@ -112,6 +106,17 @@ void ParentLink::SetParentNameKeepWorld(const std::string& parentName)
 	m_isPlaced = false;
 }
 
+bool ParentLink::IsOddQuarter(const KdGameObject& parent) const
+{
+	// 奇数の場合trueを返す
+	if (parent.GetYawQuarterCount() % 2 != 0)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void ParentLink::DrawInspectorParentName()
 {
 	ImGui::Text("ParentName   : %s", m_parentName.c_str());
@@ -134,6 +139,12 @@ void ParentLink::DrawInspectorLocalPos(KdGameObject& obj)
 
 void ParentLink::DrawInspectorLocalScale(KdGameObject& obj)
 {
+	// 大きさを追従しない場合表示しない
+	if (!m_followScale)
+	{
+		return;
+	}
+
 	Math::Vector3 scale = GetLocalScale();
 
 	// 大きさ変更(親からのローカル大きさ)
@@ -146,6 +157,114 @@ void ParentLink::DrawInspectorLocalScale(KdGameObject& obj)
 	}
 }
 
+void ParentLink::DrawInspectorLocalRotation(KdGameObject& obj)
+{
+	// 回転を追従しない場合表示しない
+	if (!m_followRotation)
+	{
+		return;
+	}
+
+	Math::Vector3 rotation = GetLocalRotation();
+
+	if (ImGui::DragFloat3("LocalRotation", &rotation.x))
+	{
+		SetLocalRotation(rotation);
+		Apply(obj);
+
+		EditorManager::Instance().MarkDirty();
+	}
+	
+}
+
+void ParentLink::FollowWorldPos(const KdGameObject& parent,KdGameObject& obj)
+{
+	// 位置と大きさだけを親に追従させる
+	obj.SetPos(Math::Vector3::Transform(m_localPos, parent.GetMatrix()));
+}
+
+void ParentLink::FollowWorldScale(const KdGameObject& parent,KdGameObject& obj)
+{
+	if (!m_followScale)
+	{
+		return;
+	}
+
+	Math::Vector3 worldScale = m_localScale * parent.GetScale();
+
+	if (IsOddQuarter(parent) && m_swapScaleOnOddQuarter)
+	{
+		// 大きさを入れ替える
+		std::swap(worldScale.x, worldScale.z);
+	}
+
+	obj.SetScale(worldScale);
+
+}
+
+void ParentLink::FollowWorldRotation(const KdGameObject& parent,KdGameObject& obj)
+{
+	if (m_followRotation)
+	{
+		obj.SetRotation({
+			m_localRotation.x,
+			m_localRotation.y + parent.GetRotation().y,
+			m_localRotation.z });
+	}
+
+}
+
+void ParentLink::FollowLocalPos(const KdGameObject& parent, Math::Vector3 pos)
+{
+	// ローカル座標
+	Math::Vector3 localPos = {};
+
+	Math::Matrix invParent = parent.GetMatrix().Invert();
+
+	localPos = Math::Vector3::Transform(pos, invParent);
+
+	SetLocalPos(localPos);
+}
+
+void ParentLink::FollowLocalScale(const KdGameObject& parent, Math::Vector3 scale)
+{
+	if (!m_followScale)
+	{
+		return;
+	}
+
+	// 親の大きさ
+	Math::Vector3 parentScale = parent.GetScale();
+
+	// ローカルの大きさ 持ち主の大きさ / 親の大きさ
+	Math::Vector3 localScale = Math::Vector3::One;
+
+	if (m_swapScaleOnOddQuarter && IsOddQuarter(parent))
+	{
+		// 大きさを入れ替える
+		std::swap(scale.x, scale.z);
+	}
+
+	if (parentScale.x != 0.0f) localScale.x = scale.x / parentScale.x;
+	if (parentScale.y != 0.0f) localScale.y = scale.y / parentScale.y;
+	if (parentScale.z != 0.0f) localScale.z = scale.z / parentScale.z;
+
+
+	SetLocalScale(localScale);
+}
+
+void ParentLink::FollowLocalRotation(const KdGameObject& parent, Math::Vector3 rotation)
+{
+	if (!m_followRotation)
+	{
+		return;
+	}
+	Math::Vector3 localRotation = rotation;
+
+	localRotation.y -= parent.GetRotation().y;
+
+	SetLocalRotation(localRotation);
+}
 
 void ParentLink::SaveData(nlohmann::json& json) const
 {
@@ -170,7 +289,17 @@ void ParentLink::SaveData(nlohmann::json& json) const
 		{ "y",scale.y },
 		{ "z",scale.z }
 	};
+
+	// ローカルの回転を保存
+	const Math::Vector3& rotation = GetLocalRotation();
+	json["LocalRotation"] =
+	{
+		{ "x",rotation.x },
+		{ "y",rotation.y },
+		{ "z",rotation.z }
+	};
 }
+
 
 void ParentLink::LoadData(const nlohmann::json & json)
 {
@@ -214,6 +343,17 @@ void ParentLink::LoadData(const nlohmann::json & json)
 		SetLocalScale(localScale);
 	}
 
+	// ローカルの回転をセット
+	if (json.contains("LocalRotation"))
+	{
+		Math::Vector3 localRotation = {};
+
+		localRotation.x = json["LocalRotation"]["x"].get<float>();
+		localRotation.y = json["LocalRotation"]["y"].get<float>();
+		localRotation.z = json["LocalRotation"]["z"].get<float>();
+
+		SetLocalRotation(localRotation);	
+	}
 }
 
 void ParentLink::SetParentResolver(const std::function<ParentResolver>& findFunk)
@@ -229,35 +369,9 @@ void ParentLink::CalcLocalFromWorld(const KdGameObject& obj)
 		return;
 	}
 
-	// 親の座標と大きさ
-	Math::Vector3 parentPos = spParent->GetPos();
-	Math::Vector3 parentScale = spParent->GetScale();
-
-	// 持ち主の座標と大きさ
-	Math::Vector3 pos = obj.GetPos();
-	Math::Vector3 scale = obj.GetScale();
-
-	// ローカル座標 (ワールド位置 - 親の位置) / 親の大きさ
-	Math::Vector3 localPos = {};
-
-	if (parentScale.x != 0.0f) localPos.x = (pos.x - parentPos.x) / parentScale.x;
-	if (parentScale.y != 0.0f) localPos.y = (pos.y - parentPos.y) / parentScale.y;
-	if (parentScale.z != 0.0f) localPos.z = (pos.z - parentPos.z) / parentScale.z;
-
-	SetLocalPos(localPos);
-
-	if(m_followScale)
-	{
-		// ローカルの大きさ 持ち主の大きさ / 親の大きさ
-		Math::Vector3 localScale = Math::Vector3::One;
-
-		if (parentScale.x != 0.0f) localScale.x = scale.x / parentScale.x;
-		if (parentScale.y != 0.0f) localScale.y = scale.y / parentScale.y;
-		if (parentScale.z != 0.0f) localScale.z = scale.z / parentScale.z;
-
-
-		SetLocalScale(localScale);
-	}
+	FollowLocalPos     (*spParent, obj.GetPos());
+	FollowLocalScale   (*spParent, obj.GetScale());
+	FollowLocalRotation(*spParent, obj.GetRotation());
 
 	m_isCalcLocalWorld = false;
 }
@@ -276,13 +390,11 @@ bool ParentLink::Apply(KdGameObject& obj)
 		CalcLocalFromWorld(obj);
 	}
 
-	// 位置と大きさだけを親に追従させる
-	obj.SetPos(spParent->GetPos() + m_localPos * spParent->GetScale());
-
-	if(m_followScale)
-	{
-		obj.SetScale(m_localScale * spParent->GetScale());
-	}
+	
+	FollowWorldPos     (*spParent, obj);
+	FollowWorldScale   (*spParent, obj);
+	FollowWorldRotation(*spParent, obj);
+	
 
 	return true;
 
