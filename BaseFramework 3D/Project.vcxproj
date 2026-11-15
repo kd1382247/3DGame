@@ -409,7 +409,7 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\PlayerInput.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\SpinAttack\PlayerSpinAttack.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpinChargeState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerDieState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerGuardState.h" />
@@ -654,7 +654,7 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\Player.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\SpinAttack\PlayerSpinAttack.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerChargeAttackState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpinChargeState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDieState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerGuardState.cpp" />

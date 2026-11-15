@@ -9,7 +9,6 @@ public:
 	void Init()				override;
 	void PreDraw()			override;
 
-
 	// 「絶対変更しません！見るだけ！」な書き方
 	const std::shared_ptr<KdCamera>& GetCamera() const
 	{
@@ -41,6 +40,9 @@ public:
 		m_wpHitObjectList.push_back(object);
 	}
 
+	// カメラの向いている角度をセット
+	void SetDegAngle(const Math::Vector3& degAngle) { m_DegAng = degAngle; }
+
 	void SetUpReference()override;
 
 	// マウスでのカメラ回転を止める / 再開する (メニューをマウスで操作する時などに止める)
@@ -55,7 +57,6 @@ public:
 
 		m_isMouseRotateLock = isLock;
 	}
-
 
 protected:
 	// カメラ回転用角度

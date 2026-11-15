@@ -8,14 +8,17 @@ enum class PlayerAnimationType
 	Attack1,
 	Attack2,
 	Attack3,
-	AttackSpin,
+
+	// 回転切
+	SpinAttack,
 
 	// チャージ中
-	ChargeAttackIDLE,
-	ChargeAttackBWD,
-	ChargeAttackFWD,
-	ChargeAttackLFT,
-	ChargeAttackRGT,
+	SpinChargeIDLE,
+	SpinChargeBWD,
+	SpinChargeFWD,
+	SpinChargeLFT,
+	SpinChargeRGT,
+	SpinChargeStart,
 
 	//ガード
 	GuardStart,

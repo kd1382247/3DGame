@@ -100,6 +100,7 @@ void TPSCamera::Init()
 
 	m_currentFov = kNormalFov;
 	m_isFovWide = false;
+
 }
 
 void TPSCamera::PostUpdate()

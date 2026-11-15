@@ -49,6 +49,9 @@ public:
 	// 到達済みか (今の記録の順番以下なら、到達済みとみなす)
 	bool IsReached()const { return m_isReached; }
 
+	Math::Vector3 GetRespawnAngle()const { return Math::Vector3(0.0f, m_respawnAngle, 0.0f); }
+
+
 private:
 
 	// デバッグの線を出すか(DrawDebugの最初に呼ぶ)
@@ -58,6 +61,9 @@ private:
 
 	// 到達した時点の、プレイ時間とクリア条件を満たした部屋を、CheckPointManagerに覚えさせる
 	void SaveProgress()const;
+
+	// チェックポイント通過後に光らせる
+	void UpdateEmissive();
 
 	// 新しく置いたときの、範囲の半径
 	static constexpr float kDefaultRadius = 3.0f;
@@ -74,10 +80,18 @@ private:
 	// 到達済みか(デバッグ線の色を変えるために覚えておく)
 	bool m_isReached = false;
 
+	// リスポーンした時の向き
+	float m_respawnAngle = 0.0f;
+
 	std::weak_ptr< KdEffekseerObject>m_wpEffekseerObj;
 
 	std::shared_ptr<KdModelData>m_spModel = nullptr;
 
 	// プレイヤー(範囲に入ったかの判定と、回復に使う)
 	std::weak_ptr<Player> m_wpPlayer;
+
+
+	// Emissiveカラー
+	Math::Vector3 m_emissiveColor = {};
+	float         m_emissivePower = 0.0f;
 };

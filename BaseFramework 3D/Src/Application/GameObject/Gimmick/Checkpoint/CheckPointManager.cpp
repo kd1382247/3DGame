@@ -8,7 +8,7 @@ void CheckPointManager::Reset()
 	m_clearedRoomNames.clear();
 }
 
-bool CheckPointManager::TryReach(const int order, const Math::Vector3& pos)
+bool CheckPointManager::TryReach(const int order, const Math::Vector3& pos,const Math::Vector3& angle)
 {
 	// 今の記録より大きい順番だけ記録する(同じ順番・小さい順番は無視)
 	if (order <= m_reachedOrder)
@@ -18,6 +18,7 @@ bool CheckPointManager::TryReach(const int order, const Math::Vector3& pos)
 
 	m_reachedOrder = order;
 	m_respawnPos = pos;
+	m_respawnAngle = angle;
 
 	return true;
 }

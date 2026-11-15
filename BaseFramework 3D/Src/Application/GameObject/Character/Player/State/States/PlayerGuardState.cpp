@@ -51,6 +51,7 @@ void PlayerGuardState::OnUpdate(Player * owner)
 		{
 			m_pMachine->ChangeState<PlayerNormalState>();
 		}
+
 		return;
 	}
 

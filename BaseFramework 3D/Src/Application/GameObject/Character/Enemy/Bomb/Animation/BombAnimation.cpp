@@ -32,28 +32,28 @@ void BombAnimation::Animations(BombAnimationType type)
 	case BombAnimationType::None:
 		break;
 	case BombAnimationType::Attack:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack"), false);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack"), false, 0.03f);
 		m_animSpeed = 1.0f;
 		break;
 	case BombAnimationType::AttackCharge:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("AttackCharge"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("AttackCharge"), true, 0.08f);
 		m_animSpeed = 1.0f;
 		break;
 	case BombAnimationType::GetHit:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false, 0.05f);
 		m_animSpeed = 1.0f;
 		break;
 	case BombAnimationType::Idle:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Idle"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Idle"), true, 0.2f);
 		m_animSpeed = 1.5f;
 		break;
 	case BombAnimationType::Walk:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Walk"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Walk"), true, 0.15f);
 		m_animSpeed = 1.0f;
 		break;
 
 	case BombAnimationType::Die:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false, 0.1f);
 		m_animSpeed = 1.0f;
 		break;
 	}

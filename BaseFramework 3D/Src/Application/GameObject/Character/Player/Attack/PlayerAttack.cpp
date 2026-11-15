@@ -148,17 +148,17 @@ PlayerAnimationType PlayerAttack::GetChargeMoveAnimation(const PlayerInput::Move
 	switch (moveType)
 	{
 	case PlayerInput::MoveType::IDLE:
-		return PlayerAnimationType::ChargeAttackIDLE;
+		return PlayerAnimationType::SpinChargeIDLE;
 	case PlayerInput::MoveType::BWD:
-		return PlayerAnimationType::ChargeAttackBWD;
+		return PlayerAnimationType::SpinChargeBWD;
 	case PlayerInput::MoveType::FWD:
-		return PlayerAnimationType::ChargeAttackFWD;
+		return PlayerAnimationType::SpinChargeFWD;
 	case PlayerInput::MoveType::LFT:
-		return PlayerAnimationType::ChargeAttackLFT;
+		return PlayerAnimationType::SpinChargeLFT;
 	case PlayerInput::MoveType::RGT:
-		return PlayerAnimationType::ChargeAttackRGT;
+		return PlayerAnimationType::SpinChargeRGT;
 	default:
-		return PlayerAnimationType::ChargeAttackIDLE;
+		return PlayerAnimationType::SpinChargeIDLE;
 	}
 
 }

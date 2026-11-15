@@ -13,7 +13,7 @@ void AnimationBase::Update(const float deltaTime)
 	float animDelta = deltaTime *60.0f* m_animSpeed;
 
 	// アニメーション更新
-	m_spAnimator->AdvanceTime(m_spModel->WorkNodes(),animDelta);
+	m_spAnimator->AdvanceTime(m_spModel->WorkNodes(),animDelta,deltaTime);
 
 	if (m_spModel->NeedCalcNodeMatrices())
 	{

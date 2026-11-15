@@ -218,6 +218,7 @@ void KdEffekseerManager::LoadEffekseer(const std::string& fileName)
 
 	if (effect == nullptr)
 	{
+
 		assert(0 && "Effekseerのエフェクト作成失敗");
 	}
 

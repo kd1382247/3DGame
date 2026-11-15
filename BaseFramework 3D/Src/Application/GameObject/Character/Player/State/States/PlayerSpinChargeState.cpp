@@ -1,11 +1,9 @@
-﻿#include "PlayerChargeAttackState.h"
-
+﻿#include "PlayerSpinChargeState.h"
 
 #include"../../Player.h"
 
 #include"PlayerNormalState.h"
 #include"PlayerSpinAttackState.h"
-
 
 namespace
 {
@@ -16,47 +14,48 @@ namespace
 	}
 }
 
-void PlayerChargeAttackState::OnStart(Player* owner)
+void PlayerSpinChargeState::OnStart(Player* owner)
 {
 	PlayerAttack& attack = owner->GetAttack();
 
 	attack.ResetCombo();
 	attack.StartCharge();
 
-	owner->PlayAnimation(GetChargeAnimation(owner));
+	owner->PlayAnimation(PlayerAnimationType::SpinChargeStart);
 
 	m_isPlaySE = false;
+
+	// チャージ開始フラグ
+	m_spinChargeStart = true;
 }
 
-void PlayerChargeAttackState::OnUpdate(Player * owner)
+void PlayerSpinChargeState::OnUpdate(Player * owner)
 {
 	PlayerAttack& attack = owner->GetAttack();
 
 	owner->UpdateAttackMove();
 
-	owner->PlayAnimation(GetChargeAnimation(owner));
-
 	// 足音再生
 	owner->UpdateWalkSE(0.5);
+
+	// チャージの構える
+	if (m_spinChargeStart)
+	{
+		if (owner->IsAnimationFinished())
+		{
+			m_spinChargeStart = false;
+		}
+
+		return;
+	}
+
+	owner->PlayAnimation(GetChargeAnimation(owner));
 
 	attack.UpdateChargeTime(owner->GetDeltaTime());
 
 	if (attack.IsChargeComplete())
 	{
-		if(!m_isPlaySE)
-		{
-			m_isPlaySE = true;
-			// SEを流す
-			KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/AttackCharge/AttackCharge.wav");
-			m_wpSoundInst = KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/AttackCharge/ChargeKeep.wav", true);
-		}
-		auto spEffekseerObj = m_wpEffekseerObj.lock();
-
-		if (!spEffekseerObj || !spEffekseerObj->IsPlaying())
-		{
-			m_wpEffekseerObj = KdEffekseerManager::GetInstance().
-				Play("Player/Charge/Charge.efkefc", owner->GetPos() + Math::Vector3(0.0f, 0.0f, 0.0f), 0.8f, 2.5f, false, 30, 90);
-		}
+		PlaySpinAttackChargeFX(owner->GetPos());
 	}
 
 	EffectUpdate(owner);
@@ -74,7 +73,7 @@ void PlayerChargeAttackState::OnUpdate(Player * owner)
 	}
 }
 
-void PlayerChargeAttackState::OnExit(Player * owner)
+void PlayerSpinChargeState::OnExit(Player * owner)
 {
 
 	owner->GetAttack().EndCharge();
@@ -100,7 +99,25 @@ void PlayerChargeAttackState::OnExit(Player * owner)
 	
 }
 
-void PlayerChargeAttackState::EffectUpdate(Player* owner)
+void PlayerSpinChargeState::PlaySpinAttackChargeFX(const Math::Vector3& effectPos)
+{
+	if (!m_isPlaySE)
+	{
+		m_isPlaySE = true;
+		// SEを流す
+		KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/AttackCharge/AttackCharge.wav");
+		m_wpSoundInst = KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/AttackCharge/ChargeKeep.wav", true);
+	}
+	auto spEffekseerObj = m_wpEffekseerObj.lock();
+
+	if (!spEffekseerObj || !spEffekseerObj->IsPlaying())
+	{
+		m_wpEffekseerObj = KdEffekseerManager::GetInstance().
+			Play("Player/Charge/Charge.efkefc", effectPos, 0.8f, 2.5f, false, 30, 90);
+	}
+}
+
+void PlayerSpinChargeState::EffectUpdate(Player* owner)
 {
 	auto spEffekseerObj = m_wpEffekseerObj.lock();
 

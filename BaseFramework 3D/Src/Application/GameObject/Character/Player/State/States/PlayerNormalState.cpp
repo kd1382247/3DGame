@@ -1,10 +1,9 @@
 ﻿#include "PlayerNormalState.h"
 
-
 #include"../../Player.h"
 
 #include"PlayerAttackState.h"
-#include"PlayerChargeAttackState.h"
+#include"PlayerSpinChargeState.h"
 #include"PlayerJumpStartState.h"
 #include"PlayerGuardState.h"
 
@@ -32,8 +31,8 @@ void PlayerNormalState::OnUpdate(Player* owner)
 		owner->PlayAnimation(PlayerAnimationType::Idle);
 	}
 
-
-	if (input.IsGuardTrigger())
+	// ガード
+	if (input.IsGuardTrigger()||input.IsGuardDown())
 	{
 		m_pMachine->ChangeState<PlayerGuardState>();
 		return;
@@ -54,7 +53,7 @@ void PlayerNormalState::OnUpdate(Player* owner)
 
 	if (input.IsAttackLongPressed())
 	{
-		m_pMachine->ChangeState<PlayerChargeAttackState>();
+		m_pMachine->ChangeState<PlayerSpinChargeState>();
 	}
 }
 

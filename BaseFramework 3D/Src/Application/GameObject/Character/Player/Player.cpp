@@ -15,10 +15,8 @@
 
 #include"State/States/PlayerNormalState.h"
 #include"State/States/PlayerAttackState.h"
-#include"State/States/PlayerChargeAttackState.h"
 #include"State/States/PlayerSpinAttackState.h"
 #include"State/States/PlayerGuardState.h"
-#include"State/States/PlayerParryState.h"
 #include"State/States/PlayerDamageState.h"
 #include"State/States/PlayerDieState.h"
 #include"State/States/PlayerIntroWaitState.h"

@@ -4,6 +4,7 @@
 
 #include"../../../Editor/InspectorWidgets.h"
 #include"../../../System/GameObjectFinder/GameObjectFinder.h"
+#include"../../../System/TimeManager/TimeManager.h"
 
 #include"../../Character/Player/Player.h"
 #include"../Room/Room.h"
@@ -24,7 +25,7 @@ void CheckPoint::Init()
 	if (!m_spModel)
 	{
 		m_spModel = std::make_shared<KdModelData>();
-		m_spModel->Load("Asset/Models/Gimmick/CheckPoint/CheckPoint.gltf");
+		m_spModel->Load("Asset/Models/Gimmick/CheckPoint/CheckPoint2.gltf");
 	}
 }
 
@@ -49,6 +50,7 @@ void CheckPoint::Update()
 
 	if (m_isReached)
 	{
+		UpdateEmissive();
 		return;
 	}
 
@@ -70,7 +72,7 @@ void CheckPoint::Update()
 	}
 
 	// 今の記録より大きい順番のときだけ、記録される
-	if (!manager.TryReach(m_order, GetPos()))
+	if (!manager.TryReach(m_order, GetPos(),GetRespawnAngle()))
 	{
 		return;
 	}
@@ -97,7 +99,7 @@ void CheckPoint::DrawLit()
 		return;
 	}
 	
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld,kWhiteColor,m_emissiveColor);
 }
 
 bool CheckPoint::ShouldDrawDebug()
@@ -155,6 +157,13 @@ void CheckPoint::DrawInspector()
 	{
 		m_radius = (std::max)(m_radius, kRadius);
 	}
+
+	// リスポーンする際のキャラの向きい
+	if (InspectorUI::Degree("RespawnAngle", m_respawnAngle))
+	{
+		// 360度を越えないようにする
+		m_respawnAngle = std::clamp(m_respawnAngle, 0.0f, 360.0f);
+	}
 }
 
 void CheckPoint::SaveProgress() const
@@ -185,6 +194,23 @@ void CheckPoint::SaveProgress() const
 	CheckPointManager::Instance().SaveProgress(playTime, clearedRoomNames);
 }
 
+void CheckPoint::UpdateEmissive()
+{
+
+	if (m_emissiveColor == Math::Vector3::One)
+	{
+		return;
+	}
+
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	m_emissivePower += deltaTime * 1.0f;
+
+	m_emissivePower = std::clamp( m_emissivePower,0.0f,1.0f);
+
+	m_emissiveColor = { m_emissivePower,m_emissivePower,m_emissivePower };
+}
+
 void CheckPoint::SetUpReference()
 {
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
@@ -194,14 +220,16 @@ nlohmann::json CheckPoint::SaveData() const
 {
 	nlohmann::json checkPointJson = KdGameObject::SaveData();
 
-	checkPointJson["Order"] = m_order;
-	checkPointJson["Radius"] = m_radius;
+	checkPointJson["Order"]        = m_order;
+	checkPointJson["Radius"]       = m_radius;
+	checkPointJson["RespawnAngle"] = m_respawnAngle;
 
 	return checkPointJson;
 }
 
 void CheckPoint::LoadData(const nlohmann::json& json)
 {
-	m_order = json.value("Order", 0);
-	m_radius = json.value("Radius", kDefaultRadius);
+	m_order        = json.value("Order", 0);
+	m_radius       = json.value("Radius", kDefaultRadius);
+	m_respawnAngle = json.value("RespawnAngle", 0.0f);
 }

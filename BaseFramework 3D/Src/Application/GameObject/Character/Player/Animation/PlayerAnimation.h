@@ -19,4 +19,6 @@ private:
 
 	PlayerAnimationType m_currentAnimation = PlayerAnimationType::None;
 
+	const float MoveBlendTime = 0.15f;
+
 };

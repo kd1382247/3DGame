@@ -57,7 +57,6 @@ std::shared_ptr<KdGameObject> ParentLink::GetParent() const
 	
 	auto spParent = m_wpParent.lock();
 
-
 	if (spParent)
 	{
 		return spParent;

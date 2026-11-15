@@ -8,6 +8,7 @@
 
 #include"../../System/StageDataManager/StageDataManager.h"
 #include"../../System/ReferenceManager/ReferenceManager.h"
+#include"../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../BGMManager/BGMManager.h"
 #include"../../GameObject/Character/Enemy/EnemyBase.h"
 #include"../../GameObject/Character/Enemy/SpawnableEnemies.h"
@@ -67,14 +68,8 @@ void GameScene::NotifyGameOver()
 }
 
 void GameScene::SetupObjectReferences()
-{/*
-	std::shared_ptr<Player> player=FindObject<Player>("Player");
-	std::shared_ptr<TPSCamera> camera=FindObject<TPSCamera>("TPSCamera");
-	std::shared_ptr<Ground> ground=FindObject<Ground>("Ground");
+{
 
-
-	player->RegistHitObject(ground);
-	camera->SetTarget(player);*/
 }
 void GameScene::Event()
 {
@@ -290,6 +285,7 @@ void GameScene::RestoreFromCheckPoint()
 			// 移動前の位置も同じにする (離れたままだと、最初のフレームで移動したことになる)
 			player->SetPos(checkPointManager.GetRespawnPos());
 			player->SetPrevPos(checkPointManager.GetRespawnPos());
+			player->SetRotation(checkPointManager.GetRespawnAngle());
 
 			if (auto parentObj = player->GetComponent<ParentLink>())
 			{
@@ -309,6 +305,15 @@ void GameScene::RestoreFromCheckPoint()
 				room->RestoreCleared();
 			}
 		}
+	}
+
+
+	auto camera = GameObjectFinder::Instance().FindObject<CameraBase>();
+
+	if (camera)
+	{
+		// カメラの向きをリスポーンしたキャラの角度と同じにする
+		camera->SetDegAngle(checkPointManager.GetRespawnAngle());
 	}
 
 

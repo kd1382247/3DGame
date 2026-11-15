@@ -120,6 +120,29 @@ bool KdAnimationData::Node::InterpolateScales(Math::Vector3& result, float time)
 	return true;
 }
 
+void KdAnimationData::Node::InterpolateBlend(Math::Matrix& rDst, float time, const NodePose& pose, float t)
+{
+	
+	NodePose newPose = {};
+
+	InterpolateScales      (newPose.m_scale, time);
+	InterpolateRotations(newPose.m_rotation, time);
+	InterpolateTranslations(newPose.m_translation, time);
+
+	// tの割合で混ぜる
+	Math::Vector3    scale = Math::Vector3::   Lerp(pose.m_scale, newPose.m_scale, t);
+	Math::Quaternion rot   = Math::Quaternion::Slerp(pose.m_rotation, newPose.m_rotation, t);
+	Math::Vector3    trans = Math::Vector3::   Lerp(pose.m_translation, newPose.m_translation, t);
+
+	// 行列を作る
+	Math::Matrix scaleMat = Math::Matrix::CreateScale(scale);
+	Math::Matrix rotMat   = Math::Matrix::CreateFromQuaternion(rot);
+	Math::Matrix transMat = Math::Matrix::CreateTranslation(trans);
+
+	rDst = scaleMat * rotMat * transMat;
+
+}
+
 void KdAnimationData::Node::Interpolate(Math::Matrix& rDst, float time)
 {
 	// ベクターによる拡縮補間
@@ -155,9 +178,40 @@ void KdAnimationData::Node::Interpolate(Math::Matrix& rDst, float time)
 	}
 }
 
-void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed)
+void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed, float deltaTime)
 {
 	if (!m_spAnimation) { return; }
+
+
+	if (m_needSnapshot)
+	{
+		m_blendFromPoses.resize(rNodes.size());
+
+		for (size_t i = 0; i < rNodes.size(); i++)
+		{
+			auto& pose = m_blendFromPoses[i];
+
+			if (!rNodes[i].m_localTransform.Decompose(pose.m_scale, pose.m_rotation, pose.m_translation))
+			{
+				// いずれかの行列が壊れていた場合、初期値を入れる
+				pose = NodePose{};
+			}
+		}
+
+		m_needSnapshot = false;
+
+	}
+
+	// ブレンドするのか
+	bool isBlend = m_blendDuration > 0;
+
+	float t = 0.0f;
+
+	// 混ぜる割合を求める
+	if (isBlend)
+	{
+		t = std::clamp(m_blendElapsed / m_blendDuration, 0.0f, 1.0f);
+	}
 
 	// 全てのアニメーションノード（モデルの行列を補間する情報）の行列補間を実行する
 	for (auto& rAnimNode : m_spAnimation->m_nodes)
@@ -167,14 +221,34 @@ void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed
 
 		auto prev = rNodes[idx].m_localTransform;
 
-		// アニメーションデータによる行列補間
-		rAnimNode.Interpolate(rNodes[idx].m_localTransform, m_time);
+		if (isBlend)
+		{
+			// 前の姿勢と現在の姿勢を少しずつ混ぜる
+			rAnimNode.InterpolateBlend(rNodes[idx].m_localTransform, m_time, m_blendFromPoses[idx], t);
+		}
+		else
+		{
+			// アニメーションデータによる行列補間
+			rAnimNode.Interpolate(rNodes[idx].m_localTransform, m_time);
+		}
 
 		prev = rNodes[idx].m_localTransform;
 	}
 
 	// アニメーションのフレームを進める
 	m_time += speed;
+
+	// 混ぜる時間を進める
+	if (isBlend)
+	{
+		m_blendElapsed += deltaTime;
+
+		// ブレンド終了
+		if (m_blendElapsed >= m_blendDuration)
+		{
+			m_blendDuration = 0.0f;
+		}
+	}
 
 	// アニメーションデータの最後のフレームを超えたら
 	if (m_time >= m_spAnimation->m_maxLength)

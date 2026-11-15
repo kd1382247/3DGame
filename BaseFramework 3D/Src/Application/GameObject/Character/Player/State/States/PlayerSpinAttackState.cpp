@@ -7,7 +7,7 @@
 void PlayerSpinAttackState::OnStart(Player* owner)
 {
 	owner->StartSpinAttack();
-	owner->PlayAnimation(PlayerAnimationType::AttackSpin);
+	owner->PlayAnimation(PlayerAnimationType::SpinAttack);
 
 	// SEを流す
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/SpinAttack/SpinAttack.wav");

@@ -1410,9 +1410,9 @@
         {
             "Class": "Mage",
             "LocalPos": {
-                "x": 15.0,
-                "y": 0.5,
-                "z": 19.0
+                "x": 0.0,
+                "y": 0.7,
+                "z": 4.0
             },
             "LocalRotation": {
                 "x": 0.0,
@@ -1427,9 +1427,9 @@
             "Name": "Mage_0",
             "ParentName": "CombatRoom_15x15_0",
             "Position": {
-                "x": 15.0,
-                "y": 9.5,
-                "z": 153.0
+                "x": 0.0,
+                "y": 9.7,
+                "z": 138.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -1712,11 +1712,12 @@
             "Name": "CheckPoint_0",
             "Order": 0,
             "Position": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": 2.96,
-                "z": 60.0
+                "z": 50.7
             },
             "Radius": 2.0,
+            "RespawnAngle": 0.0,
             "Rotation": {
                 "x": 0.0,
                 "y": 0.0,
@@ -1733,11 +1734,12 @@
             "Name": "CheckPoint_1",
             "Order": 1,
             "Position": {
-                "x": 7.0,
+                "x": 0.0,
                 "y": 2.96,
-                "z": 103.0
+                "z": 93.0
             },
             "Radius": 2.0,
+            "RespawnAngle": 0.0,
             "Rotation": {
                 "x": 0.0,
                 "y": 0.0,
@@ -1802,6 +1804,28 @@
                 "x": 1.0,
                 "y": 1.0,
                 "z": 1.0
+            }
+        },
+        {
+            "Class": "CheckPoint",
+            "Name": "CheckPoint_2",
+            "Order": 3,
+            "Position": {
+                "x": 0.0,
+                "y": 2.96,
+                "z": 55.3
+            },
+            "Radius": 2.0,
+            "RespawnAngle": 0.0,
+            "Rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 2.0,
+                "y": 1.0,
+                "z": 2.0
             }
         }
     ]

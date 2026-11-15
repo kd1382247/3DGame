@@ -4,7 +4,7 @@
 
 #include"../../Player.h"
 
-#include"PlayerChargeAttackState.h"
+#include"PlayerSpinChargeState.h"
 
 void PlayerAttackState::OnStart(Player* owner)
 {
@@ -27,7 +27,7 @@ void PlayerAttackState::OnUpdate(Player * owner)
 
 		if (owner->GetInput().IsAttackLongPressed())
 		{
-			m_pMachine->ChangeState<PlayerChargeAttackState>();
+			m_pMachine->ChangeState<PlayerSpinChargeState>();
 			return;
 		}
 

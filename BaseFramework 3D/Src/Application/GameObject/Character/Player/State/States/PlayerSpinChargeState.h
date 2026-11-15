@@ -4,10 +4,9 @@ class Player;
 
 #include"../../../StateMachine/StateBase.h"
 
-class PlayerChargeAttackState :public StateBase<Player>
+class PlayerSpinChargeState :public StateBase<Player>
 {
 public:
-
 
 
 	void OnStart(Player* owner)override;
@@ -15,6 +14,9 @@ public:
 	void OnExit(Player* owner)override;
 
 private:
+
+	// チャージ完了のエフェクトとSEを再生
+	void PlaySpinAttackChargeFX(const Math::Vector3& effectPos);
 
 	void EffectUpdate(Player* owner);
 
@@ -24,4 +26,5 @@ private:
 
 	bool m_isPlaySE = false;
 
+	bool m_spinChargeStart = false;
 };

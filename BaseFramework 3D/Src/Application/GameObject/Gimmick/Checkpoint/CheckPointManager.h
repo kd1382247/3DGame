@@ -22,7 +22,7 @@ public:
 	// チェックポイントに到達したことを記録する
 	// 今の記録より大きい順番のときだけ記録して、trueを返す
 	// (同じ順番や、小さい順番には記録しない。戻っても、順番が下がらない)
-	bool TryReach(const int order, const Math::Vector3& pos);
+	bool TryReach(const int order, const Math::Vector3& pos, const Math::Vector3& angle);
 
 	// 到達した時点の進行を記録する (TryReachがtrueのときに呼ぶ)
 	// playTime        : そのときのプレイ時間(秒)
@@ -37,6 +37,8 @@ public:
 
 	// 再開する位置 (記録がなければ原点)
 	const Math::Vector3& GetRespawnPos()const { return m_respawnPos; }
+
+	const Math::Vector3& GetRespawnAngle()const { return m_respawnAngle; }
 
 	// 再開するときのプレイ時間 (秒)
 	float GetPlayTime()const { return m_playTime; }
@@ -54,6 +56,9 @@ private:
 
 	// 再開する位置
 	Math::Vector3 m_respawnPos = Math::Vector3::Zero;
+
+	// 再開する向き
+	Math::Vector3 m_respawnAngle = Math::Vector3::Zero;
 
 	// 到達した時点のプレイ時間 (秒)
 	float m_playTime = 0.0f;

@@ -34,29 +34,29 @@ void ChestMonsterAnimation::Animations(ChestMonsterAnimationType type)
 		break;
 
 	case ChestMonsterAnimationType::Attack:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack"), false);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack"), false, 0.08f);
 		m_animSpeed = 1.0f;
 		break;
 	case ChestMonsterAnimationType::GetHit:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false, 0.05f);
 		m_animSpeed = 1.0f;
 		break;
 
 	case ChestMonsterAnimationType::GenerateMinion:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GenerateMinion"), false);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GenerateMinion"), false, 0.1f);
 		m_animSpeed = 0.8f;
 		break;
 	case ChestMonsterAnimationType::Idle:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Idle"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Idle"), true, 0.2f);
 		m_animSpeed = 1.0f;
 		break;
 	case ChestMonsterAnimationType::Walk:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Walk"), true);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Walk"), true, 0.15f);
 		m_animSpeed = 1.0f;
 		break;
 
 	case ChestMonsterAnimationType::Die:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false, 0.1f);
 		m_animSpeed = 1.0f;
 		break;
 	}

@@ -6,7 +6,7 @@ void EditorCamera::Init()
 	
 	SetObjectCategory(ObjectCategory::None);
 
-	m_mWorld = Math::Matrix::CreateTranslation(Math::Vector3(0.0f, 5.0f, -10.0f));
+	m_mWorld = Math::Matrix::CreateTranslation(Math::Vector3(0.0f, 5.0f, 0.0f));
 }
 
 void EditorCamera::Update()
@@ -32,8 +32,8 @@ void EditorCamera::Update()
 		float         speed = 0.2f;
 
 		Math::Vector3 forward = m_mWorld.Backward();
-		Math::Vector3 right = m_mWorld.Right();
-		Math::Vector3 up = m_mWorld.Up();
+		Math::Vector3 right   = m_mWorld.Right();
+		Math::Vector3 up      = m_mWorld.Up();
 
 		if (GetAsyncKeyState('W') & 0x8000)move += forward;
 		if (GetAsyncKeyState('S') & 0x8000)move -= forward;

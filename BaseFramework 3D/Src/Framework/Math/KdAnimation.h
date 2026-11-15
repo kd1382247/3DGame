@@ -14,6 +14,14 @@ struct KdAnimKeyVector3
 	Math::Vector3		m_vec;			// 3Dベクトルデータ
 };
 
+// 1ノード分の姿勢。拡縮、回転、位置の３つを持つ
+struct NodePose
+{
+	Math::Vector3    m_scale = Math::Vector3::One;
+	Math::Quaternion m_rotation = {};
+	Math::Vector3    m_translation = {};
+};
+
 //============================
 // アニメーションデータ
 //============================
@@ -35,6 +43,7 @@ struct KdAnimationData
 		std::vector<KdAnimKeyVector3>		m_scales;		// 拡縮キーリスト
 
 		void Interpolate(Math::Matrix& rDst, float time);
+		void InterpolateBlend(Math::Matrix& rDst, float time, const NodePose& pose, float t);
 		bool InterpolateTranslations(Math::Vector3& result, float time);
 		bool InterpolateRotations(Math::Quaternion& result, float time);
 		bool InterpolateScales(Math::Vector3& result, float time);
@@ -48,10 +57,29 @@ class KdAnimator
 {
 public:
 
-	inline void SetAnimation(const std::shared_ptr<KdAnimationData>& rData, bool isLoop = true)
+	inline void SetAnimation(const std::shared_ptr<KdAnimationData>& rData, bool isLoop = true,float blendTime=0.0f)
 	{
+
+		// 切り替える前にアニメが入っていたか
+		bool hadAnimation = m_spAnimation != nullptr;
+
 		m_spAnimation = rData;
 		m_isLoop = isLoop;
+
+
+		// ブレンドするのか
+		if (blendTime > 0 && hadAnimation)
+		{
+			m_blendDuration = blendTime;
+			m_needSnapshot = true;
+		}
+		else
+		{
+			m_blendDuration = 0.0f;
+			m_needSnapshot = false;
+		}
+		
+		m_blendElapsed = 0.0f;
 
 		m_time = 0.0f;
 	}
@@ -73,7 +101,7 @@ public:
 	}
 
 	// アニメーションの更新
-	void AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed = 1.0f);
+	void AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed = 1.0f,float deltaTime=0.0f);
 
 private:
 
@@ -82,4 +110,18 @@ private:
 	float m_time = 0.0f;
 
 	bool m_isLoop = false;
+
+	// アニメを切り替えた際の固定した姿勢を格納
+	std::vector<NodePose> m_blendFromPoses;
+
+	// ブレンドにかける時間
+	float m_blendDuration = 0.0f;
+
+	// ブレンドを始めてからの経過時間
+	float m_blendElapsed = 0.0f;
+
+	// AdvanceTimeで写真をとるという合図
+	bool  m_needSnapshot = false;
+
+
 };
