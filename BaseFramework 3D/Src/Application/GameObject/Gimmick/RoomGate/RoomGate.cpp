@@ -23,8 +23,8 @@ void RoomGate::Init()
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::Gate, shared_from_this());
 
-	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("RoomGate",GetCollisionBox(),KdCollider::Type::TypeBump);
+	// KdColliderの箱を作る(位置・大きさ・回転はm_mWorldが掛かるので、単位箱で持つ)
+	UpdateColliderBox();
 
 	LoadModel();
 }
@@ -42,6 +42,8 @@ void RoomGate::Update()
 		m_openRate = shouldClose ? 0.0f : 1.0f;
 		m_shouldClose = shouldClose;
 		m_needSnap = false;
+
+		UpdateColliderBox();
 		return;
 	}
 
@@ -71,6 +73,8 @@ void RoomGate::Update()
 	}
 
 	m_openRate = std::clamp(m_openRate, 0.0f, 1.0f);
+
+	UpdateColliderBox();
 
 }
 
@@ -253,26 +257,10 @@ void RoomGate::LoadData(const nlohmann::json& json)
 
 DirectX::BoundingOrientedBox RoomGate::GetCollisionBox() const
 {
-	DirectX::BoundingOrientedBox box;
+	// 大きさと向きはKdGameObject共通の箱。中心だけ、持ち上がり量を足した位置にする
+	DirectX::BoundingOrientedBox box = GetWorldOBB();
 
 	box.Center = GetBoxCenter();
-
-	box.Extents =
-	{
-		GetScale().x * 0.5f,
-		GetScale().y * 0.5f,
-		GetScale().z * 0.5f
-	};
-
-	const Math::Quaternion quaternion = GetRotationQuaternion();
-
-	box.Orientation =
-	{
-		quaternion.x,
-		quaternion.y,
-		quaternion.z,
-		quaternion.w
-	};
 
 	return box;
 }
@@ -370,12 +358,22 @@ Math::Vector3 RoomGate::GetBoxCenter() const
 	return GetPos() + Math::Vector3(0.0f, GetScale().y * 0.5f + GetLift(), 0.0f);
 }
 
-Math::Quaternion RoomGate::GetRotationQuaternion() const
+void RoomGate::UpdateColliderBox()
 {
-	const Math::Vector3 rot = GetRotation();
+	const float lift = GetLift();
 
-	return Math::Quaternion::CreateFromYawPitchRoll(
-		DirectX::XMConvertToRadians(rot.y),
-		DirectX::XMConvertToRadians(rot.x),
-		DirectX::XMConvertToRadians(rot.z));
+	// 持ち上がり量が変わっていなければ、作り直さない
+	if (lift == m_colliderLift)
+	{
+		return;
+	}
+
+	m_colliderLift = lift;
+
+	// Posは足元の中心なので、単位箱の中心は0.5だけ上。
+	// 持ち上がり量はワールドの長さなので、Scale.yで割って、ローカルの長さに直す
+	const float scaleY = std::max(GetScale().y, 0.0001f);
+
+	RegisterUnitBoxCollider("RoomGate", KdCollider::TypeBump, true,
+		Math::Vector3(0.0f, 0.5f + lift / scaleY, 0.0f));
 }

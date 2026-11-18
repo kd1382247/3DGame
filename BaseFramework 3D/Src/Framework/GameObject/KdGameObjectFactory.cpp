@@ -37,28 +37,8 @@
 #include"../../Application/GameObject/Gimmick/AreaVolume/AreaVolume.h"
 #include"../../Application/GameObject/Gimmick/Checkpoint/CheckPoint.h"
 
-
 // エフェクト
 #include"../../Application/GameObject/Effect/Stun/StunEffect.h"
-#include"../../Application/GameObject/Effect/HitEffect/HitEffect.h"
-
-// 爆発
-#include"../../Application/GameObject/Explosion/Explosion.h"
-
-// エネルギー弾
-#include"../../Application/GameObject/EnergyBullet/EnergyBullet.h"
-
-// Mageの魔法円
-#include"../../Application/GameObject/Character/Boss/Mage/MageMagicCircle/MageMagicCircle.h"
-
-// Mageの扇型
-#include"../../Application/GameObject/Character/Boss/Mage/MageMagicSector/MageMagicSector.h"
-
-// Mageのビーム
-#include"../../Application/GameObject/Character/Boss/Mage/MageBeam/MageBeam.h"
-
-// Mageの魔法弾
-#include"../../Application/GameObject/Character/Boss/Mage/MageBolt/MageBolt.h"
 
 
 void KdGameObjectFactory::Init()
@@ -151,26 +131,6 @@ void KdGameObjectFactory::Init()
 	// エフェクト
 	//===================================================================
 	Register<StunEffect>     ("Stun",            KdGameObject::ObjectCategory::Effect);
-	Register<HitEffect>      ("HitEffect",       KdGameObject::ObjectCategory::Effect);
-
-	// Explosion(爆発の当たり判定専用オブジェクト)
-	Register<Explosion>      ("Explosion",       KdGameObject::ObjectCategory::Effect);
-
-	// EnergyBullet(StarFishなどの遠隔攻撃弾)
-	Register<EnergyBullet>   ("EnergyBullet",    KdGameObject::ObjectCategory::Effect);
-
-	// MageMagicCircle(Mageの魔法円攻撃の当たり判定)
-	Register<MageMagicCircle>("MageMagicCircle", KdGameObject::ObjectCategory::Effect);
-
-	// MageMagicCircle(Mageの扇形攻撃の当たり判定)
-	Register<MageMagicSector>("MageMagicSector", KdGameObject::ObjectCategory::Effect);
-
-	// MageBeam(Mageのビーム攻撃の当たり判定)
-	Register<MageBeam>       ("MageBeam",        KdGameObject::ObjectCategory::Effect);
-
-	// MageBolt(Mageの魔法弾。弾の当たり判定・移動)
-	Register<MageBolt>       ("MageBolt",        KdGameObject::ObjectCategory::Effect);
-
 
 }
 

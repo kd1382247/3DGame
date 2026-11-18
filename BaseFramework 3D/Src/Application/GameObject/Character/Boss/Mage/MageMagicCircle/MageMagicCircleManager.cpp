@@ -2,15 +2,12 @@
 
 #include"MageMagicCircle.h"
 
-#include"../../../../../../Framework/GameObject/KdGameObjectFactory.h"
 #include"../../../../../Scene/SceneManager.h"
 
 std::shared_ptr<MageMagicCircle> MageMagicCircleManager::CreateMagicCircle(const MageMagicCircleDesc& desc)
 {
 
-	auto obj = KdGameObjectFactory::Instance().CreateGameObject("MageMagicCircle");
-
-	auto magicCircle = std::dynamic_pointer_cast<MageMagicCircle>(obj);
+	auto magicCircle = std::make_shared<MageMagicCircle>();
 
 	if (!magicCircle)
 	{

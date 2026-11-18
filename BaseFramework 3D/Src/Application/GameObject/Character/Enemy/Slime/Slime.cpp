@@ -94,14 +94,6 @@ void Slime::SetUpReference()
 		CreateHPBar(shared_from_this(), Math::Vector3(-0.7f, 1.5f, 0.0f));
 }
 
-void Slime::DrawDebug()
-{
-	DrawBumpDebugSphere();
-
-	// 追加したデバッグ線を描画して消す(描画しないと頂点が溜まり続ける)
-	m_pDebugWire->Draw();
-}
-
 void Slime::SetScale(const Math::Vector3&)
 {
 	// スライムの大きさはステージ側のScale値に関わらず、常にm_slimeSizeに応じた固定値にする

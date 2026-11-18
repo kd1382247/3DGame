@@ -298,9 +298,6 @@
     <Filter Include="Src\Application\GameObject\Effect\Stun">
       <UniqueIdentifier>{0aabc58d-459f-45a1-83c3-738a0b4c9810}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Effect\HitEffect">
-      <UniqueIdentifier>{1abbad69-0810-4909-9389-b72d3a2ff439}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Character\StateMachine">
       <UniqueIdentifier>{ba4483d1-320e-45fe-8273-427f2d4cdea8}</UniqueIdentifier>
     </Filter>
@@ -480,6 +477,12 @@
     </Filter>
     <Filter Include="Src\Framework\GameObject\Component">
       <UniqueIdentifier>{f6fb55bf-d47b-4cb9-b3bf-aba7cd6713e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\NormalAttack">
+      <UniqueIdentifier>{40380f73-2049-4521-abd2-b64cac02e495}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet">
+      <UniqueIdentifier>{e9eb9552-d07b-411a-a399-a2cdfb9bbff0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -957,9 +960,6 @@
     <ClInclude Include="Src\Application\GameObject\Effect\Stun\StunEffect.h">
       <Filter>Src\Application\GameObject\Effect\Stun</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.h">
-      <Filter>Src\Application\GameObject\Effect\HitEffect</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpinChargeState.h">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClInclude>
@@ -1040,9 +1040,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\Parameter\BeholderParameter.h">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\Parameter</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\BeholderState.h">
-      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalState.h">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
@@ -1305,6 +1302,24 @@
     <ClInclude Include="Src\Application\GameObject\Gimmick\StageGimmick.h">
       <Filter>Src\Application\GameObject\Gimmick</Filter>
     </ClInclude>
+    <ClInclude Include="BeholderState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalAttackState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\NormalAttack\BeholderNormalAttack.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\NormalAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBullet.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletDesc.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletManager.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1365,9 +1380,6 @@
       <Filter>Src\Framework\Math</Filter>
     </ClCompile>
     <ClCompile Include="Src\Framework\GameObject\KdGameObject.cpp">
-      <Filter>Src\Framework\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Framework\GameObject\KdGameObjectFactory.cpp">
       <Filter>Src\Framework\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Src\Framework\Input\KdInput.cpp">
@@ -1715,9 +1727,6 @@
     <ClCompile Include="Src\Application\GameObject\Effect\EffectBase.cpp">
       <Filter>Src\Application\GameObject\Effect\Stun</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.cpp">
-      <Filter>Src\Application\GameObject\Effect\HitEffect</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpinChargeState.cpp">
       <Filter>Src\Application\GameObject\Character\Player\State\States</Filter>
     </ClCompile>
@@ -2005,6 +2014,21 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\ChestMonster.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalAttackState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\NormalAttack\BeholderNormalAttack.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\NormalAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\GameObject\KdGameObjectFactory.cpp">
+      <Filter>Src\Framework\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBullet.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletManager.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

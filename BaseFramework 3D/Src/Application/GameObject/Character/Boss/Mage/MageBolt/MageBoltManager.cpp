@@ -2,14 +2,12 @@
 
 #include"MageBolt.h"
 
-#include"../../../../../../Framework/GameObject/KdGameObjectFactory.h"
 #include"../../../../../Scene/SceneManager.h"
 
 std::shared_ptr<MageBolt> MageBoltManager::CreateBolt(const std::shared_ptr<CharacterBase>& owner, const MageBoltDesc& desc)
 {
-	auto obj = KdGameObjectFactory::Instance().CreateGameObject("MageBolt");
-
-	auto bolt = std::dynamic_pointer_cast<MageBolt>(obj);
+	
+	auto bolt = std::make_shared<MageBolt>();
 
 	if (!bolt)
 	{

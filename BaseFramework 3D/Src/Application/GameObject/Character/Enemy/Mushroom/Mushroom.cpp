@@ -82,14 +82,6 @@ void Mushroom::PostUpdate()
 	EnemyBase::PostUpdate();
 }
 
-void Mushroom::DrawDebug()
-{
-	DrawBumpDebugSphere();
-
-	// 追加したデバッグ線を描画して消す(描画しないと頂点が溜まり続ける)
-	m_pDebugWire->Draw();
-}
-
 void Mushroom::DrawParameterInspector()
 {
 	m_parameter.DrawInspecter();

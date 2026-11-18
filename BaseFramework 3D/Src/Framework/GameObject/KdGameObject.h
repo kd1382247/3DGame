@@ -100,6 +100,15 @@ public:
 	bool Intersects(const KdCollider::BoxInfo& targetBox, std::list<KdCollider::CollisionResult>* pResults);
 	bool Intersects(const KdCollider::RayInfo& targetShape, std::list<KdCollider::CollisionResult>* pResults);
 
+	// ワールド空間での箱を作る(中心=Pos、各辺の長さ=Scale)
+	// ※ KdColliderに登録する形ではない。登録するときはRegisterUnitBoxColliderを使う
+	DirectX::BoundingBox         GetWorldAABB() const;
+	// 回転あり(向きはRotationから作る)
+	DirectX::BoundingOrientedBox GetWorldOBB()  const;
+
+	// Rotation(度)から作ったクォータニオン
+	Math::Quaternion GetRotationQuaternion() const;
+
 
 	// オブジェクト名(Hierarchy/Inspectorに表示される名前。"Slime_0"のような自動採番込みの名前)
 	const std::string& GetObjectName() const { return m_objectName; }
@@ -179,6 +188,13 @@ protected:
 	void DrawPositionInspector();
 	void DrawRotationInspector();
 	void DrawScaleInspector();
+
+	// 単位箱(各辺の長さが1の箱)のコライダーを作って登録する(m_pColliderはここで作り直す。形状は1つだけ)
+	// KdColliderの形はオブジェクトのローカル空間で持ち、判定のたびにm_mWorldで位置・大きさ・回転が掛かる。
+	// だから、ワールド空間の箱(GetWorldAABBなど)を登録すると二重に変換されてしまう。箱はこの関数で登録する
+	// localCenter: 単位箱の中心。Posが足元のオブジェクトなら(0, 0.5, 0)にする
+	void RegisterUnitBoxCollider(std::string_view name, UINT type, bool isOriented,
+		const Math::Vector3& localCenter = Math::Vector3::Zero);
 
 
 

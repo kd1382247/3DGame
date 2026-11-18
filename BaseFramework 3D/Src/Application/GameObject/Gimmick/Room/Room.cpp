@@ -23,8 +23,8 @@ void Room::Init()
 	SetObjectCategory(KdGameObject::ObjectCategory::Gimmick);
 
 
-	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("Room", GetBox(), KdCollider::TypeEvent);
+	// KdColliderには単位箱を登録する(位置と大きさはm_mWorldが掛ける)
+	RegisterUnitBoxCollider("Room", KdCollider::TypeEvent, false);
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -313,17 +313,7 @@ void Room::LoadData(const nlohmann::json& json)
 
 DirectX::BoundingBox Room::GetBox()const
 {
-	DirectX::BoundingBox box;
-
-	box.Center = GetPos();
-	box.Extents =
-	{
-		GetScale().x * 0.5f,
-		GetScale().y * 0.5f,
-		GetScale().z * 0.5f
-	};
-
-	return box;
+	return GetWorldAABB();
 }
 
 bool Room::IsInside(const Math::Vector3& pos) const

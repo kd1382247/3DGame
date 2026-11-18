@@ -27,6 +27,8 @@ void EnemyBase::Init()
 	SetObjectCategory(ObjectCategory::Character);
 
 	m_bumpPushRate = 1.0f;
+
+
 }
 
 void EnemyBase::PreUpdate()
@@ -66,6 +68,12 @@ void EnemyBase::DrawInspector()
 void EnemyBase::SetUpReference()
 {
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
+}
+
+void EnemyBase::DrawDebug()
+{
+	DrawBumpDebugSphere();
+	m_pDebugWire->Draw();
 }
 
 void EnemyBase::InheritSpawnerTo(const std::shared_ptr<EnemyBase>& child)const
@@ -130,7 +138,6 @@ Math::Vector3 EnemyBase::CreateSpawnDirection()
 void EnemyBase::PlayHitEffect()
 {
 
-
 	auto spPlayer = m_wpPlayer.lock();
 
 	Math::Vector3 playerPos = {};
@@ -150,7 +157,8 @@ void EnemyBase::PlayHitEffect()
 	bossDir.Normalize();
 
 	// ボスから見てプレイヤーの方向に、エフェクトの位置を持っていく
-	Math::Vector3 effectPos = GetPos() + bossDir * m_effectDist + Math::Vector3(0.0f, 0.8f, 0.0f);
+	// エフェクトの位置は、キャラの大きさに合わせる
+	Math::Vector3 effectPos = GetPos() + bossDir * (m_effectDist * GetSizeScale()) + Math::Vector3(0.0f, 0.8f * GetScale().y, 0.0f);
 
 	KdEffekseerManager::GetInstance().
 		Play("Common/Hit/Slash_hit.efkefc", effectPos, 0.3f, 0.8f, false);
@@ -179,7 +187,6 @@ void EnemyBase::UpdateDirectChase()
 
 	Math::Vector3 targetDir = spPlayer->GetPos() - pos;
 
-
 	// Y成分はいらない
 	targetDir.y = 0;
 
@@ -187,7 +194,9 @@ void EnemyBase::UpdateDirectChase()
 
 	const float distance = targetDir.Length();
 
-	float reachDistanceMargin = m_reachDistance+0.5f;
+	// 到達判定の距離と、到達後に「離れた」とみなす余白は、キャラの大きさに合わせる
+	const float reachDistance = GetReachDistance();
+	const float reachDistanceMargin = reachDistance + 0.5f * GetSizeScale();
 
 	if (m_hasReachedTarget)
 	{
@@ -203,7 +212,7 @@ void EnemyBase::UpdateDirectChase()
 	}
 	else
 	{
-		if (distance < m_reachDistance)
+		if (distance < reachDistance)
 		{
 			m_hasReachedTarget = true;
 			return;
@@ -289,7 +298,7 @@ void EnemyBase::UpdateFollowPath()
 
 	float distance = targetDir.Length();
 
-	float         moveSpeed = GetMoveSpeed();
+	float moveSpeed = GetMoveSpeed();
 
 	if (distance < moveSpeed)
 	{
@@ -628,8 +637,8 @@ bool EnemyBase::UpdateMeleeAttackCollision(float knockBackPower, float damage, f
 		return false;
 	}
 
-	// 攻撃する位置
-	Math::Vector3 attackPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
+	// 攻撃する位置(胴体の中心)
+	Math::Vector3 attackPos = GetBodyCenter();
 
 	// 攻撃する方向
 	Math::Vector3 attackDir = m_mWorld.Backward();
@@ -640,13 +649,16 @@ bool EnemyBase::UpdateMeleeAttackCollision(float knockBackPower, float damage, f
 		return false;
 	}
 
-	// プレイヤーの少し前に出す
-	attackPos += attackDir * forwardOffset;
+	// m_mWorldのBackwardにはScaleが含まれているので、向きだけにしてから、大きさの倍率を掛ける
+	attackDir.Normalize();
+
+	// プレイヤーの少し前に出す(前に出す距離と半径は、キャラの大きさに合わせる)
+	attackPos += attackDir * (forwardOffset * GetSizeScale());
 
 	DirectX::BoundingSphere sphere;
 
 	sphere.Center = attackPos;
-	sphere.Radius = sphereRadius;
+	sphere.Radius = sphereRadius * GetSizeScale();
 
 	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
 

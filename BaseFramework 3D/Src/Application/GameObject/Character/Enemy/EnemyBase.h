@@ -39,6 +39,8 @@ public:
 
 	void SetUpReference()override;
 
+	void DrawDebug()override;
+
 	virtual int GetAttackPower()const { return int(); }
 
 	// 飛び出す
@@ -76,7 +78,8 @@ public:
 	void InheritSpawnerTo(const std::shared_ptr<EnemyBase>& child)const;
 
 	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
-	float GetReachDistance()const { return m_reachDistance; }
+	// (パラメータの値にScaleを掛けた、ワールド空間での距離)
+	float GetReachDistance()const { return m_reachDistance * GetSizeScale(); }
 
 	void  CreateDeathSmoke();
 
@@ -192,7 +195,7 @@ protected:
 	float m_smokeEffectScale = 0.6f;
 
 	// エフェクトの距離
-	float m_effectDist = 0.6f;
+	float m_effectDist = 0.4f;
 
 	MeleeAttackData m_meleeAttack = {};
 

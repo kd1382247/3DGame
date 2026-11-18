@@ -25,8 +25,6 @@ public:
 	bool IsAttack()const { return m_attackFlg; }
 	bool IsLaunch()const { return m_launchFlg; }
 
-
-
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 

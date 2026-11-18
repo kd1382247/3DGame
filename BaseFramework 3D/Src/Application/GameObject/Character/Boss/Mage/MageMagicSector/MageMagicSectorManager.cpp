@@ -2,15 +2,11 @@
 
 #include"MageMagicSector.h"
 
-#include"../../../../../../Framework/GameObject/KdGameObjectFactory.h"
 #include"../../../../../Scene/SceneManager.h"
 
 std::shared_ptr<MageMagicSector> MageMagicSectorManager::CreateMagicSector(const MageMagicSectorDesc& desc)
 {
-
-	auto obj = KdGameObjectFactory::Instance().CreateGameObject("MageMagicSector");
-
-	auto magicSector = std::dynamic_pointer_cast<MageMagicSector>(obj);
+	auto magicSector = std::make_shared<MageMagicSector>();
 
 	if (!magicSector)
 	{

@@ -10,8 +10,7 @@ void AIBlock::Init()
 
 	// エディタでクリックして選択するための判定
 	// (CollisionManagerには登録しないので、キャラクターとは当たらない)
-	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("AIBlock", GetBox(), KdCollider::TypeBump);
+	RegisterUnitBoxCollider("AIBlock", KdCollider::TypeBump, false);
 
 	SetPos(Math::Vector3::Zero);
 }
@@ -48,16 +47,5 @@ void AIBlock::DrawDebug()
 
 DirectX::BoundingBox AIBlock::GetBox() const
 {
-	DirectX::BoundingBox box;
-
-	box.Center = GetPos();
-
-	box.Extents =
-	{
-		GetScale().x * 0.5f,
-		GetScale().y * 0.5f,
-		GetScale().z * 0.5f
-	};
-
-	return box;
+	return GetWorldAABB();
 }

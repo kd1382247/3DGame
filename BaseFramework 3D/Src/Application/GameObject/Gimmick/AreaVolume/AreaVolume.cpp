@@ -7,8 +7,8 @@ void AreaVolume::Init()
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("AreaVolume",GetBox(),KdCollider::TypeBump);
+	// KdColliderには単位箱を登録する(位置と大きさはm_mWorldが掛ける)
+	RegisterUnitBoxCollider("AreaVolume", KdCollider::TypeBump, false);
 
 	// エリアIDが未割り当てなら、使われていない最小のIDを自動で割り振る
 	// (自分自身はまだ登録前なので、数えられない)
@@ -64,15 +64,7 @@ void AreaVolume::DrawInspector()
 
 DirectX::BoundingBox AreaVolume::GetBox() const
 {
-
-
-	DirectX::BoundingBox box;
-
-	box.Center = GetPos();
-
-	box.Extents = GetScale() * 0.5;
-
-	return box;
+	return GetWorldAABB();
 }
 
 nlohmann::json AreaVolume::SaveData() const

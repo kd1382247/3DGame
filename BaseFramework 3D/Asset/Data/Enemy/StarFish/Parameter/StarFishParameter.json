@@ -8,7 +8,7 @@
     "BulletRadius": 0.3,
     "BulletSpawnForward": 0.3,
     "BulletSpawnHeight": 0.8,
-    "BulletSpeed": 0.08,
+    "BulletSpeed": 0.1,
     "BumpSphereOffsetY": 0.5,
     "BumpSphereRadius": 0.5,
     "JumpPower": 0.4,

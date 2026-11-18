@@ -110,13 +110,6 @@ private:
 	// ステートマシン
 	StateMachine<Mage> m_stateMachine;
 
-	// 攻撃のクールダウン
-	float m_attackCooldown = 0.0f;
-	// クールダウンの長さ(Parameterの値をInitでセットする)
-	float m_attackCooldownDuration = 0.0f;
-
-	bool m_attackFlg = false;
-
 	// デバッグキーで固定した攻撃パターン(空なら、通常の抽選をする)
 	std::optional<MageAttackPattern> m_debugFixedPattern;
 

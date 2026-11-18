@@ -2,15 +2,13 @@
 
 #include"Explosion.h"
 
-#include"../../../Framework/GameObject/KdGameObjectFactory.h"
 #include"../../Scene/SceneManager.h"
 
 
 void ExplosionManager::CreateExplosion(const Math::Vector3& pos, float radius, float damage, float knockBackPower)
 {
-	auto obj = KdGameObjectFactory::Instance().CreateGameObject("Explosion");
-
-	auto explosion = std::dynamic_pointer_cast<Explosion>(obj);
+	
+	auto explosion = std::make_shared<Explosion>();
 
 	if (!explosion)
 	{

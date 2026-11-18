@@ -23,8 +23,6 @@ public:
 	void PostUpdate()override;
 	void SetUpReference()override;
 
-	void DrawDebug()override;
-
 	// スライムの大きさに応じた拡大率を固定で適用する(引数のScale値は無視する)
 	void SetScale(const Math::Vector3& scale)override;
 

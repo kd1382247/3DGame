@@ -366,14 +366,19 @@ void Mage::FireBolt()
 		return;
 	}
 
+	// パラメータを取得
 	const auto& param = m_parameter.GetParam().m_bolt;
 
+	// 発射位置をセット
 	Math::Vector3 spawnPos = GetPos() + Math::Vector3(0.0f, param.m_spawnHeight, 0.0f);
 
+	// 位置を少し前方にする
 	spawnPos += m_mWorld.Backward() * 1.5f;
 
+	// 飛ばす方向を作る
 	Math::Vector3 dir = (spPlayer->GetPos() + Math::Vector3(0.0f, param.m_aimHeight, 0.0f)) - spawnPos;
 
+	// 正規化
 	if (dir.LengthSquared() > 0.000001f)
 	{
 		dir.Normalize();
@@ -381,6 +386,7 @@ void Mage::FireBolt()
 
 	MageBoltDesc desc;
 
+	// パラメータをセット
 	desc.pos = spawnPos;
 	desc.dir = dir;
 	desc.speed = param.m_speed;
@@ -389,6 +395,7 @@ void Mage::FireBolt()
 	desc.knockBackPower = param.m_knockBack;
 	desc.lifeTime = param.m_lifeTime;
 
+	// マネージャー経由で弾を作る
 	MageBoltManager::Instance().CreateBolt(
 		std::dynamic_pointer_cast<CharacterBase>(shared_from_this()),
 		desc);

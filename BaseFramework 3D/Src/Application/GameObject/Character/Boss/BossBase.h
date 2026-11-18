@@ -102,6 +102,12 @@ protected:
 
 	bool  m_introRequested = false;
 
+	// 攻撃のクールダウン
+	float m_attackCooldown = 0.0f;
+	// クールダウンの長さ(Parameterの値をInitでセットする)
+	float m_attackCooldownDuration = 0.0f;
+
+	bool m_attackFlg = false;
 
 	bool          m_initPos = false;
 	Math::Vector3 m_roomCenter = {};

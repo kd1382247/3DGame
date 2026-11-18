@@ -7,6 +7,22 @@
 
 #include"../Gimmick/AreaVolume/AreaVolume.h"
 
+namespace
+{
+	// 半径が0以下だと、衝突判定が成り立たないので下限を決めておく
+	constexpr float MinBumpRadius = 0.01f;
+
+	// 胴体の中心の高さ(足元から、Scale 1 のとき)
+	constexpr float BodyCenterHeight = 0.5f;
+
+	// Scaleの最大の成分
+	// (KdSphereCollisionが使うBoundingSphere::Transformは、半径に最大の拡大率を掛けるので、それに合わせる)
+	float MaxScaleComponent(const Math::Vector3& scale)
+	{
+		return std::max(std::max(std::abs(scale.x), std::abs(scale.y)), std::abs(scale.z));
+	}
+}
+
 CharacterBase::CharacterBase()
 {
 	m_spParentLink = AddComponent<ParentLink>();
@@ -61,6 +77,17 @@ void CharacterBase::PostUpdate()
 	UpdateOverlay();
 
 	UpdateMatrix();
+}
+
+void CharacterBase::DrawDebug()
+{
+	if (!m_pDebugWire)
+	{
+		return;
+	}
+
+	DrawBumpDebugSphere();
+	m_pDebugWire->Draw();
 }
 
 // 描画
@@ -146,21 +173,67 @@ DirectX::BoundingSphere CharacterBase::GetBumpSphere() const
 
 DirectX::BoundingSphere CharacterBase::GetBumpSphereAt(const Math::Vector3& pos) const
 {
+	// KdColliderに登録した球は、ワールド行列(Scale込み)で変換されるので、
+	// ここでもScaleを掛けて、同じ大きさ・同じ位置の球にする
+	const Math::Vector3 scale = GetScale();
+
 	DirectX::BoundingSphere sphere;
 
-	sphere.Center = pos + Math::Vector3(0.0f, m_bumpSphereOffsetY, 0.0f);
-	sphere.Radius = m_bumpSphereRadius;
+	sphere.Center = pos + Math::Vector3(0.0f, m_bumpSphereOffsetY * scale.y, 0.0f);
+	sphere.Radius = m_bumpSphereRadius * MaxScaleComponent(scale);
 
 	return sphere;
 }
 
+float CharacterBase::GetBumpSphereRadius() const
+{
+	return m_bumpSphereRadius * MaxScaleComponent(GetScale());
+}
+
+float CharacterBase::GetBumpSphereOffsetY() const
+{
+	return m_bumpSphereOffsetY * GetScale().y;
+}
+
+float CharacterBase::GetSizeScale() const
+{
+	return MaxScaleComponent(GetScale());
+}
+
+Math::Vector3 CharacterBase::GetBodyCenter() const
+{
+	return GetPos() + Math::Vector3(0.0f, BodyCenterHeight * GetScale().y, 0.0f);
+}
+
 void CharacterBase::SetBumpSphere(float offsetY, float radius)
 {
-	// 半径が0以下だと、衝突判定が成り立たないので下限を決めておく
-	constexpr float MinRadius = 0.01f;
+	const float newRadius = (radius > MinBumpRadius) ? radius : MinBumpRadius;
+
+	// 値が変わっていなければ何もしない(Editorでは毎フレーム呼ばれるため)
+	if (m_bumpSphereOffsetY == offsetY && m_bumpSphereRadius == newRadius)
+	{
+		return;
+	}
 
 	m_bumpSphereOffsetY = offsetY;
-	m_bumpSphereRadius  = (radius > MinRadius) ? radius : MinRadius;
+	m_bumpSphereRadius  = newRadius;
+
+	// KdColliderの形状も新しい値に合わせる
+	RebuildBumpCollider();
+}
+
+void CharacterBase::RebuildBumpCollider()
+{
+	// InitCharacterModelの前は、まだコライダーを作らない
+	if (m_bumpColliderName.empty())
+	{
+		return;
+	}
+
+	// RegisterCollisionShapeは同じ名前の形状を上書きしないので、コライダーごと作り直す
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape(m_bumpColliderName,
+		Math::Vector3(0.0f, m_bumpSphereOffsetY, 0.0f), m_bumpSphereRadius, KdCollider::TypeBump);
 }
 
 
@@ -197,8 +270,13 @@ void CharacterBase::InitCharacterModel(const std::string& modelPath, const std::
 	m_spModel = std::make_shared<KdModelWork>();
 	m_spModel->SetModelData(modelPath);
 
-	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape(colliderName, colliderOffset, colliderRadius, KdCollider::TypeBump);
+	// 当たり判定(押し戻し)球の大きさを覚えて、KdColliderの形状もその値から作る
+	// (球の中心は足元の真上なので、offsetはYだけ使う)
+	m_bumpColliderName  = colliderName;
+	m_bumpSphereOffsetY = colliderOffset.y;
+	m_bumpSphereRadius  = (colliderRadius > MinBumpRadius) ? colliderRadius : MinBumpRadius;
+
+	RebuildBumpCollider();
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 

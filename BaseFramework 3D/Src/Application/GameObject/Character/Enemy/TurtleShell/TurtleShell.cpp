@@ -75,14 +75,6 @@ void TurtleShell::PostUpdate()
 	EnemyBase::PostUpdate();
 }
 
-void TurtleShell::DrawDebug()
-{
-	DrawBumpDebugSphere();
-
-	// 追加したデバッグ線を描画して消す(描画しないと頂点が溜まり続ける)
-	m_pDebugWire->Draw();
-}
-
 void TurtleShell::DrawParameterInspector()
 {
 	m_parameter.DrawInspecter();
@@ -166,8 +158,8 @@ void TurtleShell::UpdateAttackCollision()
 
 	DirectX::BoundingSphere sphere;
 
-	sphere.Center = GetPos()+Math::Vector3(0.0f,0.5f,0.0f);
-	sphere.Radius = param.m_spinHitRadius;
+	sphere.Center = GetBodyCenter();
+	sphere.Radius = param.m_spinHitRadius * GetSizeScale();
 
 	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump, sphere);
 

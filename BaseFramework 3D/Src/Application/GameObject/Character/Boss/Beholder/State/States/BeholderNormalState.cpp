@@ -2,6 +2,8 @@
 
 #include"../../Beholder.h"
 
+#include"BeholderNormalAttackState.h"
+
 void BeholderNormalState::OnStart(Beholder* beholder)
 {
 	beholder->PlayAnimation(BeholderAnimationType::Idle);
@@ -9,6 +11,14 @@ void BeholderNormalState::OnStart(Beholder* beholder)
 
 void BeholderNormalState::OnUpdate(Beholder* beholder)
 {
+	beholder->UpdateFacingDirection();
+	beholder->UpdateMove();
+
+	if (beholder->IsAttack())
+	{
+		m_pMachine->ChangeState<BeholderNormalAttackState>();
+	}
+
 
 }
 

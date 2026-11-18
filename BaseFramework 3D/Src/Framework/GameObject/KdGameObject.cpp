@@ -99,6 +99,85 @@ bool KdGameObject::Intersects(const KdCollider::RayInfo& targetShape, std::list<
 }
 
 
+DirectX::BoundingBox KdGameObject::GetWorldAABB() const
+{
+	DirectX::BoundingBox box;
+
+	box.Center = GetPos();
+
+	box.Extents =
+	{
+		GetScale().x * 0.5f,
+		GetScale().y * 0.5f,
+		GetScale().z * 0.5f
+	};
+
+	return box;
+}
+
+DirectX::BoundingOrientedBox KdGameObject::GetWorldOBB() const
+{
+	DirectX::BoundingOrientedBox box;
+
+	box.Center = GetPos();
+
+	box.Extents =
+	{
+		GetScale().x * 0.5f,
+		GetScale().y * 0.5f,
+		GetScale().z * 0.5f
+	};
+
+	const Math::Quaternion quaternion = GetRotationQuaternion();
+
+	box.Orientation =
+	{
+		quaternion.x,
+		quaternion.y,
+		quaternion.z,
+		quaternion.w
+	};
+
+	return box;
+}
+
+Math::Quaternion KdGameObject::GetRotationQuaternion() const
+{
+	const Math::Vector3 rot = GetRotation();
+
+	return Math::Quaternion::CreateFromYawPitchRoll(
+		DirectX::XMConvertToRadians(rot.y),
+		DirectX::XMConvertToRadians(rot.x),
+		DirectX::XMConvertToRadians(rot.z));
+}
+
+void KdGameObject::RegisterUnitBoxCollider(std::string_view name, UINT type, bool isOriented, const Math::Vector3& localCenter)
+{
+	m_pCollider = std::make_unique<KdCollider>();
+
+	const Math::Vector3 halfSize(0.5f, 0.5f, 0.5f);
+
+	if (isOriented)
+	{
+		DirectX::BoundingOrientedBox box;
+
+		box.Center      = localCenter;
+		box.Extents     = halfSize;
+		box.Orientation = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+		m_pCollider->RegisterCollisionShape(name, box, type);
+	}
+	else
+	{
+		DirectX::BoundingBox box;
+
+		box.Center  = localCenter;
+		box.Extents = halfSize;
+
+		m_pCollider->RegisterCollisionShape(name, box, type);
+	}
+}
+
 nlohmann::json KdGameObject::SaveData() const
 {
 	nlohmann::json json;

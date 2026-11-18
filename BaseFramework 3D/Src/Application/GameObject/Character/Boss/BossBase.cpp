@@ -87,10 +87,13 @@ void BossBase::UpdateMove()
 
 	float distance = targetDir.Length();
 
+	// 到達判定の距離は、キャラの大きさに合わせる
+	const float sizeScale = GetSizeScale();
+
 
 	if (m_hasReachedTarget)
 	{
-		if (distance > m_reachDistanceMargin)
+		if (distance > m_reachDistanceMargin * sizeScale)
 		{
 			m_hasReachedTarget = false;
 			PlayWalkAnimation();
@@ -103,7 +106,7 @@ void BossBase::UpdateMove()
 	}
 	else
 	{
-		if (distance < m_reachDistance)
+		if (distance < m_reachDistance * sizeScale)
 		{
 			m_hasReachedTarget = true;
 			PlayIdleAnimation();
@@ -311,7 +314,8 @@ void BossBase::PlayHitEffect()
 	bossDir.Normalize();
 
 	// ボスから見てプレイヤーの方向に、エフェクトの位置を持っていく
-	Math::Vector3 effectPos = GetPos() + bossDir * 1.2f+Math::Vector3(0.0f, 0.8f, 0.0f);
+	// エフェクトの位置は、キャラの大きさに合わせる
+	Math::Vector3 effectPos = GetPos() + bossDir * (0.8f * GetSizeScale()) + Math::Vector3(0.0f, 0.8f * GetScale().y, 0.0f);
 
 
 	KdEffekseerManager::GetInstance().

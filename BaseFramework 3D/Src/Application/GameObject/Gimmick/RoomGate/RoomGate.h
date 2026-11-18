@@ -76,7 +76,8 @@ private:
 	// 当たり判定の箱の中心(Posは柵の足元の中心)
 	Math::Vector3 GetBoxCenter()const;
 
-	Math::Quaternion GetRotationQuaternion()const;
+	// KdColliderの箱を、今の持ち上がり量に合わせる(カメラの判定が、見た目のゲートに追従する)
+	void UpdateColliderBox();
 
 private:
 
@@ -105,5 +106,8 @@ private:
 	bool m_shouldClose = false;
 
 	bool m_isPlaySE = false;
+
+	// 今のKdColliderの箱に反映している持ち上がり量(変わった時だけ作り直す。-1は未反映)
+	float m_colliderLift = -1.0f;
 
 };

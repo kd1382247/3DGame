@@ -21,8 +21,6 @@ public:
 
 	void SetUpReference()override;
 
-	void DrawDebug()override;
-
 	bool IsAttack()const { return m_attackFlg; }
 	bool IsLaunch()const { return m_launchFlg; }
 

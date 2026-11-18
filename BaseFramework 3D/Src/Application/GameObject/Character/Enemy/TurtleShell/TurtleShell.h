@@ -18,8 +18,6 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-	void DrawDebug()override;
-
 	void SetUpReference()override;
 
 

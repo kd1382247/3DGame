@@ -86,14 +86,6 @@ void Cactas::SetUpReference()
 		CreateHPBar(shared_from_this(),Math::Vector3(-0.7f,1.5f,0.0f));
 }
 
-void Cactas::DrawDebug()
-{
-	DrawBumpDebugSphere();
-
-	// 追加したデバッグ線を描画して消す(描画しないと頂点が溜まり続ける)
-	m_pDebugWire->Draw();
-}
-
 void Cactas::DrawParameterInspector()
 {
 	m_parameter.DrawInspecter();

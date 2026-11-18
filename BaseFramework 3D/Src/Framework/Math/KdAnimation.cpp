@@ -126,7 +126,7 @@ void KdAnimationData::Node::InterpolateBlend(Math::Matrix& rDst, float time, con
 	NodePose newPose = {};
 
 	InterpolateScales      (newPose.m_scale, time);
-	InterpolateRotations(newPose.m_rotation, time);
+	InterpolateRotations   (newPose.m_rotation, time);
 	InterpolateTranslations(newPose.m_translation, time);
 
 	// tの割合で混ぜる

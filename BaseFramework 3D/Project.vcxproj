@@ -273,6 +273,7 @@
     <ClInclude Include="..\Library\tinygltf\stb_image.h" />
     <ClInclude Include="..\Library\tinygltf\stb_image_write.h" />
     <ClInclude Include="..\Library\tinygltf\tiny_gltf.h" />
+    <ClInclude Include="BeholderState.h" />
     <ClInclude Include="Src\Application\BGMManager\BGMManager.h" />
     <ClInclude Include="Src\Application\Editor\EditorManager.h" />
     <ClInclude Include="Src\Application\Editor\EditorPanel\EditorPanel.h" />
@@ -293,8 +294,12 @@
     <ClInclude Include="Src\Application\GameObject\Character\AttackInfo.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\Animation\BeholderAnimation.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\Beholder.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\NormalAttack\BeholderNormalAttack.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\Parameter\BeholderParameter.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\BeholderState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBullet.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletDesc.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletManager.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalAttackState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\BossBase.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Golem\Animation\GolemAnimation.h" />
@@ -425,7 +430,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\StateMachine\StateMachine.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\EffectBase.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\EffectManager.h" />
-    <ClInclude Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\Stun\StunEffect.h" />
     <ClInclude Include="Src\Application\GameObject\EffekseerAssets\EffekseerAssets.h" />
     <ClInclude Include="Src\Application\GameObject\EnemyCounter\EnemyCounter.h" />
@@ -558,7 +562,11 @@
     <ClCompile Include="Src\Application\GameObject\Character\Animation\AnimationBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\Animation\BeholderAnimation.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\Beholder.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\NormalAttack\BeholderNormalAttack.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\Parameter\BeholderParameter.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBullet.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletManager.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalAttackState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\BossBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Golem\Animation\GolemAnimation.cpp" />
@@ -668,7 +676,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\SwordTrail\PlayerSwordTrail.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\EffectBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\EffectManager.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Effect\HitEffect\HitEffect.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\Stun\StunEffect.cpp" />
     <ClCompile Include="Src\Application\GameObject\EnemyCounter\EnemyCounter.cpp" />
     <ClCompile Include="Src\Application\GameObject\EnergyBullet\EnergyBullet.cpp" />

@@ -12,8 +12,8 @@ void AABBCollision::Init()
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("AABB",GetBox(),KdCollider::TypeBump);
+	// KdColliderには単位箱を登録する(位置と大きさはm_mWorldが掛ける)
+	RegisterUnitBoxCollider("AABB", KdCollider::TypeBump, false);
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::AABB, shared_from_this());
 
@@ -78,16 +78,5 @@ bool AABBCollision::SweepSphere(const Math::Vector3& start, const Math::Vector3&
 
 DirectX::BoundingBox AABBCollision::GetBox() const
 {
-	DirectX::BoundingBox box;
-
-	box.Center = GetPos();
-
-	box.Extents =
-	{
-		GetScale().x * 0.5f,
-		GetScale().y * 0.5f,
-		GetScale().z * 0.5f
-	};
-
-	return box;
+	return GetWorldAABB();
 }

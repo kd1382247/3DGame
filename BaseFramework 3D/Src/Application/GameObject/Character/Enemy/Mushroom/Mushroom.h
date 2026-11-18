@@ -22,8 +22,6 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-	void DrawDebug()override;
-
 	void SetUpReference()override;
 
 	bool IsAttack()const { return m_attackFlg; }

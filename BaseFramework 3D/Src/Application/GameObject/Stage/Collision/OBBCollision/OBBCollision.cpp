@@ -12,8 +12,8 @@ void OBBCollision::Init()
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("OBB", GetBox(), KdCollider::TypeBump);
+	// KdColliderには単位箱を登録する(位置・大きさ・回転はm_mWorldが掛ける)
+	RegisterUnitBoxCollider("OBB", KdCollider::TypeBump, true);
 
 	CollisionManager::Instance().RegisterObject(CollisionLayer::OBB, shared_from_this());
 
@@ -79,36 +79,7 @@ void OBBCollision::SetCollisionType(const std::string& typeName)
 
 DirectX::BoundingOrientedBox OBBCollision::GetBox() const
 {
-	DirectX::BoundingOrientedBox box;
-
-	box.Center = GetPos();
-
-	box.Extents =
-	{
-		GetScale().x * 0.5f,
-		GetScale().y * 0.5f,
-		GetScale().z * 0.5f
-	};
-
-
-	Math::Vector3 rot = GetRotation();
-
-	Math::Quaternion quaternion =
-		Math::Quaternion::CreateFromYawPitchRoll(
-			DirectX::XMConvertToRadians(rot.y),
-			DirectX::XMConvertToRadians(rot.x),
-			DirectX::XMConvertToRadians(rot.z)
-		);
-
-	box.Orientation =
-	{
-		quaternion.x,
-		quaternion.y,
-		quaternion.z,
-		quaternion.w
-	};
-
-	return box;
+	return GetWorldOBB();
 }
 
 void OBBCollision::DrawInspectorHeader()

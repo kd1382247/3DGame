@@ -2,15 +2,12 @@
 
 #include"MageBeam.h"
 
-#include"../../../../../../Framework/GameObject/KdGameObjectFactory.h"
 #include"../../../../../Scene/SceneManager.h"
 
 std::shared_ptr<MageBeam> MageBeamManager::CreateBeam(const MageBeamDesc& desc)
 {
 
-	auto obj = KdGameObjectFactory::Instance().CreateGameObject("MageBeam");
-
-	auto beam = std::dynamic_pointer_cast<MageBeam>(obj);
+	auto beam = std::make_shared<MageBeam>();
 
 	if (!beam)
 	{

@@ -7,6 +7,7 @@
 #include"../../StateMachine/StateMachine.h"
 
 
+
 class Beholder :public BossBase
 {
 public:
@@ -18,14 +19,25 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
 	float GetMoveSpeed()const override { return m_parameter.GetParam().m_moveSpeed; }
 
 	void PlayAnimation(BeholderAnimationType type);
 
+	void FireBolt();
+
+
+
+	bool IsAttack()const { return m_attackFlg; }
+
 private:
 
+
+	void UpdateAttack();
+	void EndAttack();
+
+	void PlayWalkAnimation()override;
+	void PlayIdleAnimation()override;
 
 	void DrawParameterInspector()override;
 
@@ -41,6 +53,9 @@ private:
 
 	// ステートマシン
 	StateMachine<Beholder> m_stateMachine;
+
+
+
 
 
 };

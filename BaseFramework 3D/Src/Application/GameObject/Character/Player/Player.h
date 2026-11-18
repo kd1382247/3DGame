@@ -147,7 +147,7 @@ private:
 	void UpdateInput();
 
 	// ボスの登場演出中は、操作を受け付けない待機ステートにする
-	void UpdateBossIntroLock();
+	void UpdateIntroLock();
 
 	void UpdateAnimation();
 

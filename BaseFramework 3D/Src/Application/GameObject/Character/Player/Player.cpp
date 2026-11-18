@@ -96,7 +96,7 @@ void Player::Update()
 	UpdateInput();
 
 	// ボスの登場演出中は操作できないようにする
-	UpdateBossIntroLock();
+	UpdateIntroLock();
 
 	// 各ステートの更新
 	m_stateMachine.Update();
@@ -340,8 +340,8 @@ void Player::UpdateAttackCollision(const AttackType type)
 
 DirectX::BoundingSphere Player::CreateAttackSphere() const
 {
-	// 攻撃判定を出す位置
-	Math::Vector3 attackPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
+	// 攻撃判定を出す位置(胴体の中心)
+	Math::Vector3 attackPos = GetBodyCenter();
 	// プレイヤーの向いてる方向
 	Math::Vector3 attackDir = m_mWorld.Backward();
 
@@ -353,25 +353,23 @@ DirectX::BoundingSphere Player::CreateAttackSphere() const
 
 	attackDir.Normalize();
 
-	// プレイヤーの少し前に出す
-	attackPos += attackDir * m_parameter.GetAttack().m_hitForwardOffset;
+	// プレイヤーの少し前に出す(前に出す距離と半径は、キャラの大きさに合わせる)
+	attackPos += attackDir * (m_parameter.GetAttack().m_hitForwardOffset * GetSizeScale());
 
 	// 攻撃判定用のスフィアを作成
 	DirectX::BoundingSphere sphere;
 	sphere.Center = attackPos;
-	sphere.Radius = m_parameter.GetAttack().m_hitRadius;
+	sphere.Radius = m_parameter.GetAttack().m_hitRadius * GetSizeScale();
 
 	return sphere;
 }
 
 DirectX::BoundingSphere Player::CreateSpinAttackSphere() const
 {
-	Math::Vector3 spherePos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
-
 	DirectX::BoundingSphere sphere;
 
-	sphere.Center = spherePos;
-	sphere.Radius = m_parameter.GetSpinAttack().m_hitRadius;
+	sphere.Center = GetBodyCenter();
+	sphere.Radius = m_parameter.GetSpinAttack().m_hitRadius * GetSizeScale();
 
 	return sphere;
 
@@ -379,14 +377,12 @@ DirectX::BoundingSphere Player::CreateSpinAttackSphere() const
 
 DirectX::BoundingSphere Player::CreateParrySphere() const
 {
-	Math::Vector3 spherePos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
-
 	DirectX::BoundingSphere sphere;
 
 	const auto& parryParam = m_parameter.GetParry();
 
-	sphere.Center = spherePos;
-	sphere.Radius = parryParam.m_parryKnockBackRadius;
+	sphere.Center = GetBodyCenter();
+	sphere.Radius = parryParam.m_parryKnockBackRadius * GetSizeScale();
 
 	return sphere;
 }
@@ -414,7 +410,7 @@ void Player::UpdateAttackMove()
 	FacingDirectionToCamera();
 }
 
-void Player::UpdateBossIntroLock()
+void Player::UpdateIntroLock()
 {
 	// 戦闘前の演出中(ミッションの文字・ボスの登場演出)は、操作できないようにする
 	if (!RoomManager::Instance().IsIntro()&&
@@ -850,9 +846,13 @@ void Player::OnParrySuccess()
 	// 範囲内の相手にノックバックさせる
 	m_hitChecker.Check(*this, sphere, hitParam);
 
-	Math::Vector3 effectPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
+	// m_mWorldのBackwardにはScaleが含まれているので、向きだけにしてから、大きさの倍率を掛ける
+	Math::Vector3 effectDir = m_mWorld.Backward();
+	effectDir.Normalize();
 
-	effectPos += m_mWorld.Backward() * 0.3;
+	Math::Vector3 effectPos = GetBodyCenter();
+
+	effectPos += effectDir * (0.3f * GetSizeScale());
 	// パリィエフェクト
 	KdEffekseerManager::GetInstance().Play("Player/Parry/Parry.efkefc", effectPos, 0.3f, 1.0f, false,0,36,GetRotation());
 
