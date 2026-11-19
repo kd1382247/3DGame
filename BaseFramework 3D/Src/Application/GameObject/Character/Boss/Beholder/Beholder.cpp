@@ -2,15 +2,24 @@
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
 
-#include"State/States/BeholderNormalState.h"
 
-#include"SparkBullet/BeholderSparkBulletManager.h"
-#include"SparkBullet/BeholderSparkBulletDesc.h"
+#include"../../Player/Player.h"
+
+#include"State/States/BeholderNormalState.h"
+#include"State/States/BeholderDieState.h"
+#include"State/States/BeholderDizzyState.h"
+
 
 namespace
 {
-	// 追従弾の軌道が膨らむ向き[°](パラメータにはせず、プログラム側で固定する。45°なら右上に膨らむ)
-	constexpr float SparkBulletCurveAngle = 45.0f;
+	// モデルの目玉のローカルでの正面
+	constexpr Math::Vector3 EyeForwardLocal = { 0,-1,0 };
+
+	// 目玉の上限の回転角度
+	constexpr float MaxEyeAngle = 30.0f;
+
+	// 混ぜる割合の速度
+	constexpr float EyeFollowSpeed = 10.0f;
 }
 
 void Beholder::Init()
@@ -52,25 +61,18 @@ void Beholder::Init()
 
 void Beholder::Update()
 {
-
-	static bool key = false;
-
 	if (GetAsyncKeyState('F') & 0x8000)
 	{
-		if (!key)
-		{
-			FireBolt();
-			key = true;
-		}
+		m_isEyeTracking = true;
 	}
-	else
+	if (GetAsyncKeyState('G') & 0x8000)
 	{
-		key = false;
+		m_isEyeTracking = false;
 	}
 
 	UpdateAttack();
 
-	UpdateGravity();
+	//UpdateGravity();
 
 	m_stateMachine.Update();
 }
@@ -78,8 +80,10 @@ void Beholder::Update()
 void Beholder::PostUpdate()
 {
 	BossBase::PostUpdate();
-
+	
 	UpdateAnimation();
+
+	UpdateEyeRotationX();
 
 	DrawBumpDebugSphere();
 
@@ -107,40 +111,98 @@ void Beholder::UpdateAnimation()
 	m_animation.Update(m_deltaTime);
 }
 
+Math::Quaternion Beholder::CalcEyeTargetRotation(const Math::Matrix& eyeWorldMat)
+{
+
+	auto spPlayer = m_wpPlayer.lock();
+	if (!spPlayer)
+	{ 
+		return Math::Quaternion::Identity;
+	}
+
+	// 高さのオフセット値を含んだ位置
+	Math::Vector3 playerPos = spPlayer->GetBumpSphere().Center;
+
+	// 目の位置を取得
+	Math::Vector3 eyePos = eyeWorldMat.Translation();
+
+	// 向きたい方向ベクトルを計算
+	Math::Vector3 toDir = playerPos - eyePos;
+	toDir.Normalize();
+
+	// 目から見た方向に変換(目の正面は(0,-1,0))
+	Math::Vector3 toLocal = Math::Vector3::TransformNormal(toDir, eyeWorldMat.Invert());
+	toLocal.Normalize();
+
+	// ローカルの正面と目標の内積をとる
+	float cosAngle = std::clamp(EyeForwardLocal.Dot(toLocal), -1.0f, 1.0f);
+
+	float angle = std::min( acos(cosAngle),DirectX::XMConvertToRadians(MaxEyeAngle));
+
+	// どの軸で回すかを外積でとる
+	Math::Vector3 axis = EyeForwardLocal.Cross(toLocal);
+
+	if (axis.Length() < 0.0001f)
+	{
+		return Math::Quaternion::Identity;
+	}
+
+	axis.Normalize();
+
+	return Math::Quaternion::CreateFromAxisAngle(axis, angle);
+}
+
+void Beholder::UpdateEyeRotationX()
+{
+
+	// 目標の回転
+	Math::Quaternion targetQuaternion = Math::Quaternion::Identity;
+
+	// モデルの目のボーンを取得
+	KdModelWork::Node* pNode = m_spModel->FindWorkNode("EyeBallCTRL");
+
+	if (!pNode) { return; }
+
+	// 追従する
+	if (m_isEyeTracking)
+	{
+		Math::Matrix eyeWorldMat = pNode->m_worldTransform * GetMatrix();
+		targetQuaternion = CalcEyeTargetRotation(eyeWorldMat);
+	}
+
+	m_eyeQuaternion =
+		Math::Quaternion::Slerp(m_eyeQuaternion, targetQuaternion, 1 - std::exp(-EyeFollowSpeed * m_deltaTime));
+
+	Math::Matrix eyeRotMat = Math::Matrix::CreateFromQuaternion(m_eyeQuaternion);
+
+	pNode->m_localTransform = eyeRotMat * pNode->m_localTransform;
+
+	m_spModel->CalcNodeMatrices();
+
+}
+
 void Beholder::PlayAnimation(BeholderAnimationType type)
 {
 	m_animation.Play(type);
 }
 
-void Beholder::FireBolt()
+void Beholder::CreateSparkBullet()
 {
-	const auto& param = m_parameter.GetParam();
-	const auto& spark = param.m_sparkBullet;
+	const auto& spark = m_parameter.GetParam().m_sparkBullet;
+	
+	// 弾の生成
+	m_sparkAttack.CreateSparkBullet(
+		std::dynamic_pointer_cast<CharacterBase>(shared_from_this()), spark);
+}
 
-	BeholderSparkBulletDesc desc;
+void Beholder::FireSparkBullet()
+{
+	m_sparkAttack.StartFiring();
+}
 
-	desc.pos = GetPos() + Math::Vector3(0.0f,param.m_bumpSphereOffsetY,0.0f);
-
-	// 軌道が膨らむ向きは、コード側で固定
-	desc.curveAngle = SparkBulletCurveAngle;
-
-	// パラメータをセット
-	desc.curveRate = spark.m_curveRate;
-	desc.damage = spark.m_damage;
-	desc.knockBackPower = spark.m_knockBack;
-	desc.speed = spark.m_speed;
-	desc.trackingstopDistance = spark.m_trackingStopDistance;
-	desc.vanishT = spark.m_vanishT;
-	desc.radius = spark.m_radius;
-	desc.reflectSpeed = spark.m_reflectSpeed;
-
-	desc.effect.size = spark.m_effect.m_size;
-	desc.effect.speed = spark.m_effect.m_speed;
-	desc.effect.startFrame = static_cast<float>(spark.m_effect.m_startFrame);
-	desc.effect.endFrame = static_cast<float>(spark.m_effect.m_endFrame);
-
-	BeholderSparkBulletManager::Instance().CreateBolt(
-		std::dynamic_pointer_cast<CharacterBase>(shared_from_this()), desc);
+bool Beholder::IsStandbySparkBullet()
+{
+	return m_sparkAttack.IsStandbySparkBullet();
 }
 
 void Beholder::PlayWalkAnimation()

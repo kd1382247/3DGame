@@ -1,12 +1,15 @@
 ﻿#pragma once
 
-class BeholderNormalAttack
+class BeholderChargeShot
 {
 public:
 
 
 
+
+
 private:
+
 
 
 

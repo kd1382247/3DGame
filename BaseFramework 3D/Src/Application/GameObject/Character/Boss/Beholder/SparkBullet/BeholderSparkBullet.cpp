@@ -13,7 +13,7 @@ namespace
  	static const int angleNum = 6;
 
 	float curveAngle[angleNum] = {
-		{},{},{},{},{},{}
+		{ 135 },{ 225 },{ 270 },{ 0 },{ 45 },{ 90 }
 	};
 
 	float GetCurveAngle(int number)
@@ -22,6 +22,18 @@ namespace
 
 		return curveAngle[number];
 	}
+
+	float reflectCurveAngle[angleNum] = {
+		{ 45 },{ 315 },{ 270 },{ 180 },{ 135 },{ 90 }
+	};
+
+	float GetReflectCurveAngle(int number)
+	{
+		number = std::clamp(number, 0, angleNum);
+
+		return reflectCurveAngle[number];
+	}
+
 }
 
 void BeholderSparkBullet::Init()
@@ -39,7 +51,7 @@ void BeholderSparkBullet::Setup(const BeholderSparkBulletDesc& desc)
 	m_desc = desc;
 
 	// 膨らむ方向
-	m_desc.curveAngle = GetCurveAngle(desc.spawnNumber);
+	m_desc.curveAngle = GetCurveAngle(desc.nullPointNumber);
 
 
 	SetPos(desc.pos);
@@ -101,6 +113,8 @@ bool BeholderSparkBullet::Move(float deltaTime)
 	Math::Vector3 sideDir = right * std::cos(DirectX::XMConvertToRadians(m_desc.curveAngle)) +
 		                      up2 * std::sin(DirectX::XMConvertToRadians(m_desc.curveAngle));
 
+
+
 	// 中間点を決める
 	m_controlPos = (m_startPos + m_endPos) / 2 + sideDir * controlDist * m_desc.curveRate;
 
@@ -134,6 +148,26 @@ bool BeholderSparkBullet::Move(float deltaTime)
 	m_t += moveSpeed;
 
 	return true;
+}
+
+void BeholderSparkBullet::ReflectSetUp()
+{
+	// 反射用の角度を入れる
+	m_desc.curveAngle=GetReflectCurveAngle(m_desc.nullPointNumber);
+
+	// スタートは弾のいる位置
+	m_startPos = GetPos();
+
+	// 目標点は持ち主
+	if (auto spOwner = m_wpOwner.lock())
+	{
+		m_endPos = spOwner->GetBumpSphere().Center;
+	}
+
+	m_desc.speed = m_desc.reflectSpeed;
+
+	// 進み具合をリセット
+	m_t = 0.0f;
 }
 
 bool BeholderSparkBullet::IsHitMap(const KdCollider::SphereInfo& sphereInfo)const
@@ -191,6 +225,7 @@ void BeholderSparkBullet::HitPlayer(const KdCollider::SphereInfo& sphereInfo)
 	if (spPlayer->GetParry().GetIsParrySuccess())
 	{
 		m_fireState = FireState::Reflect;
+		ReflectSetUp();
 	}
 	else
 	{
@@ -240,6 +275,42 @@ void BeholderSparkBullet::PlayEffect(const Math::Vector3& pos)
 		m_desc.effect.endFrame);
 }
 
+void BeholderSparkBullet::UpdatePreparationEffect()
+{
+	// 一度だけエフェクト再生を再生
+	if (!m_isPlayEffect)
+	{
+		auto spEffect = m_wpEffect.lock();
+		if (!spEffect || !spEffect->IsPlaying())
+		{
+			m_wpEffect = KdEffekseerManager::GetInstance().Play(
+				m_desc.effect.fileName,
+				GetPos(),
+				m_desc.effect.size,
+				0.2f,
+				false,
+				0, 10);
+
+			m_isPlayEffect = true;
+		}
+	}
+	else
+	{
+		// エフェクトの再生が終わったら待機状態にする
+		auto spEffect = m_wpEffect.lock();
+
+		if (!spEffect || !spEffect->IsPlaying())
+		{
+			PlayEffect(GetPos());
+			m_fireState = FireState::Standby;
+		}
+		else
+		{
+			spEffect->SetPos(GetPos());
+		}
+	}
+}
+
 void BeholderSparkBullet::UpdateEffect()
 {
 	auto spEffect = m_wpEffect.lock();
@@ -256,28 +327,40 @@ void BeholderSparkBullet::UpdateEffect()
 	}
 }
 
-const Math::Vector3& BeholderSparkBullet::GetNullPointNodePos() const
+void BeholderSparkBullet::UpdateNullPointNodePos()
 {
 	auto spOwner = m_wpOwner.lock();
 
 	if (!spOwner) { return; }
 
 	// 数字を文字に変換
-	std::string number = std::to_string(m_desc.spawnNumber);
+	std::string number = std::to_string(m_desc.nullPointNumber);
 
-	KdModelWork::Node* pNode=
+	const KdModelWork::Node* pNode = spOwner->GetModel()->FindNode("AttackPoint" + number);
 
+	if (!pNode) { return; }
+
+	// 行列作成
+	Math::Matrix worldMat = pNode->m_worldTransform * spOwner->GetMatrix();
+
+	m_startPos = worldMat.Translation();
+
+	SetPos(worldMat.Translation());
 }
 
 void BeholderSparkBullet::UpdatePreparation()
 {
-	
+	// NullPointの座標を更新
+	UpdateNullPointNodePos();
 
-
+	// エフェクト更新
+	UpdatePreparationEffect();
 }
 
 void BeholderSparkBullet::UpdateStandby()
 {
+	UpdateNullPointNodePos();
+
 	// 終着地点
 	if (auto spPlayer = m_wpPlayer.lock())
 	{
@@ -294,7 +377,6 @@ void BeholderSparkBullet::UpdateStandby()
 
 void BeholderSparkBullet::UpdateFiring()
 {
-
 	const float deltaTime = TimeManager::Instance().GetDeltaTime();
 
 	if (!Move(deltaTime))
@@ -316,6 +398,7 @@ void BeholderSparkBullet::UpdateFiring()
 		Vanish();
 		return;
 	}
+
 	HitPlayer(sphereInfo);
 
 	UpdateEffect();
@@ -330,8 +413,19 @@ void BeholderSparkBullet::UpdateReflect()
 		return;
 	}
 
+	const float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	if (!Move(deltaTime))
+	{
+		Vanish();
+		return;
+	}
+
 	// 反射された弾の持ち主のSphereを作る
-	DirectX::BoundingSphere sphere = spOwner->GetBumpSphereAt(spOwner->GetPos());
+	DirectX::BoundingSphere sphere;
+
+	sphere.Center = GetPos();
+	sphere.Radius = m_desc.radius;
 
 	KdCollider::SphereInfo sphereInfo(KdCollider::TypeBump,sphere);
 

@@ -17,8 +17,8 @@ struct BeholderSparkBulletDesc
 	// 生成位置
 	Math::Vector3 pos = {};
 
-	// 生成する位置の番号
-	int   spawnNumber = -1;
+	// 生成するNullPointNodeの番号
+	int   nullPointNumber = -1;
 
 	// tがどれだけ進んだら弾を消すのか
 	float vanishT = 1.0f;

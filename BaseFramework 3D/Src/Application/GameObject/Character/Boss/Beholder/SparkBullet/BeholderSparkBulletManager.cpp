@@ -4,34 +4,36 @@
 
 #include"../../../../../Scene/SceneManager.h"
 
-void BeholderSparkBulletManager::CreateBolt(const std::shared_ptr<CharacterBase>& owner, const BeholderSparkBulletDesc& desc)
+std::shared_ptr<BeholderSparkBullet> BeholderSparkBulletManager::CreateBolt(const std::shared_ptr<CharacterBase>& owner, const BeholderSparkBulletDesc& desc)
 {
 
-	auto bolt = std::make_shared<BeholderSparkBullet>();
+	auto spark = std::make_shared<BeholderSparkBullet>();
 
-	if (!bolt)
+	if (!spark)
 	{
-		return;
+		return nullptr;
 	}
 	
-	bolt->Init();
-	bolt->Setup(desc);
-	bolt->SetOwner(owner);
+	spark->Init();
+	spark->Setup(desc);
+	spark->SetOwner(owner);
 
-	SceneManager::Instance().AddObject(bolt);
+	SceneManager::Instance().AddObject(spark);
+
+	return spark;
 }
 
 void BeholderSparkBulletManager::CancelAll()
 {
 	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
-		const auto bolt = std::dynamic_pointer_cast<BeholderSparkBullet>(obj);
+		const auto spark = std::dynamic_pointer_cast<BeholderSparkBullet>(obj);
 
-		if (!bolt)
+		if (!spark)
 		{
 			continue;
 		}
 
-		bolt->Cancel();
+		spark->Cancel();
 	}
 }

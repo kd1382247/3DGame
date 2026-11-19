@@ -11,7 +11,6 @@ class BeholderSparkBullet :public KdGameObject
 {
 public:
 
-
 	enum FireState
 	{
 		Preparation, // 発射準備
@@ -39,6 +38,14 @@ public:
 	// 弾を取り消す(エフェクトを止めて、オブジェクトも消す)
 	void Cancel() { Vanish(); }
 
+	// 発射準備中か
+	bool IsPreparing()const { return m_fireState == FireState::Preparation; }
+	// 発射待機状態か
+	bool IsStandby()const { return m_fireState == FireState::Standby; }
+
+	// 弾を発射
+	void StartFiring() { m_fireState = FireState::Firing; }
+
 private:
 
 	// 状態ごとの更新
@@ -53,6 +60,9 @@ private:
 	// 移動
 	bool Move(float deltaTime);
 
+	// 反射した際のパラメータの変更
+	void ReflectSetUp();
+
 	// マップ(AABB/OBB)と当たっているか
 	bool IsHitMap(const KdCollider::SphereInfo& sphereInfo)const;
 
@@ -62,25 +72,18 @@ private:
 	// 反射された後の、発射したボスとの当たり判定
 	void HitOwner(const KdCollider::SphereInfo& sphereInfo);
 
+
 	// エフェクトを指定位置で再生する
-	// (KdEffekseerManagerのIsLoop=trueは再生の度に別インスタンスを内部生成してしまい、
-	//  外部から止められなくなるため、ループはこちらで管理する)
 	void PlayEffect(const Math::Vector3& pos);
+
+	// 発射準備中のエフェクト更新
+	void UpdatePreparationEffect();
 
 	// エフェクトを弾の位置に追従させる(区間の再生が終わっていたら再生し直す)
 	void UpdateEffect();
 	
-	// モデルのNullPointNodeの座標を返す
-	const Math::Vector3& GetNullPointNodePos()const;
-
-
-	// 発射準備中か
-	bool IsPreparing()const { return m_fireState == FireState::Preparation; }
-	// 発射待機状態か
-	bool IsStandby()const { return m_fireState == FireState::Standby; }
-
-	// 弾を発射
-	void StartFiring() { m_fireState = FireState::Firing; }
+	// モデルのNullPointNodeの位置を更新
+	void UpdateNullPointNodePos();
 
 private:
 
@@ -112,4 +115,5 @@ private:
 	// プレイヤーに打ち返されたか
 	bool m_isReflect = false;
 
+	bool m_isPlayEffect = false;
 };

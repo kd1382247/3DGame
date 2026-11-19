@@ -7,6 +7,8 @@
 #include"../../StateMachine/StateMachine.h"
 
 
+#include"SparkAttack/BeholderSparkAttack.h"
+
 
 class Beholder :public BossBase
 {
@@ -24,17 +26,31 @@ public:
 
 	void PlayAnimation(BeholderAnimationType type);
 
-	void FireBolt();
+
+	// SparkBullet関連
+	void CreateSparkBullet();
+	void FireSparkBullet();
+	bool IsStandbySparkBullet();
 
 
+	// 目をプレイヤーに追従させるかをセット
+	void SetEyeTracking(bool flg) { m_isEyeTracking = flg; }
+
+
+
+	bool IsAnimationFinished()const { return m_animation.IsFinished(); }
+	float AnimProgress()      const { return m_animation.AnimProgress(); }
 
 	bool IsAttack()const { return m_attackFlg; }
-
-private:
 
 
 	void UpdateAttack();
 	void EndAttack();
+
+
+private:
+
+
 
 	void PlayWalkAnimation()override;
 	void PlayIdleAnimation()override;
@@ -43,7 +59,15 @@ private:
 
 	void UpdateAnimation();
 
+	Math::Quaternion CalcEyeTargetRotation(const Math::Matrix& eyeWorldMat);
+
+	// モデルの目の回転(X軸)
+	void UpdateEyeRotationX();
+
 private:
+
+	// 攻撃クラス(SparkBullet)
+	BeholderSparkAttack m_sparkAttack;
 
 
 	// アニメーションクラス
@@ -55,7 +79,9 @@ private:
 	StateMachine<Beholder> m_stateMachine;
 
 
+	// 目の回転を持つ
+	Math::Quaternion m_eyeQuaternion = {};
 
-
+	bool  m_isEyeTracking = true;
 
 };

@@ -178,6 +178,18 @@ void KdAnimationData::Node::Interpolate(Math::Matrix& rDst, float time)
 	}
 }
 
+float KdAnimator::AnimProgress()
+{
+	float maxLength = m_spAnimation->m_maxLength;
+
+	if (maxLength<=0)
+	{
+		return 0.0f;
+	}
+
+	return m_time/maxLength;
+}
+
 void KdAnimator::AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed, float deltaTime)
 {
 	if (!m_spAnimation) { return; }

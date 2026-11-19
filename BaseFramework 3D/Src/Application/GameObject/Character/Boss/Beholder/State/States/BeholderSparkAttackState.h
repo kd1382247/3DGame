@@ -4,7 +4,7 @@
 
 #include"../../Beholder.h"
 
-class BeholderNormalAttackState :public StateBase<Beholder>
+class BeholderSparkAttackState :public StateBase<Beholder>
 {
 
 public:
@@ -12,5 +12,9 @@ public:
 	void OnStart(Beholder* owner)override;
 	void OnUpdate(Beholder* owner)override;
 	void OnExit(Beholder* owner)override;
+
+private:
+
+	bool m_startFire=false;
 
 };

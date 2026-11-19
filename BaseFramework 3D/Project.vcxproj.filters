@@ -478,11 +478,17 @@
     <Filter Include="Src\Framework\GameObject\Component">
       <UniqueIdentifier>{f6fb55bf-d47b-4cb9-b3bf-aba7cd6713e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\NormalAttack">
-      <UniqueIdentifier>{40380f73-2049-4521-abd2-b64cac02e495}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet">
       <UniqueIdentifier>{e9eb9552-d07b-411a-a399-a2cdfb9bbff0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\SparkAttack">
+      <UniqueIdentifier>{40380f73-2049-4521-abd2-b64cac02e495}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\ChargeShot">
+      <UniqueIdentifier>{0f84329c-0030-4191-a7f3-284837922947}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\ChargeSparkBullet">
+      <UniqueIdentifier>{b650b623-6bc6-4209-9617-03052de87c1e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1305,11 +1311,8 @@
     <ClInclude Include="BeholderState.h">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\State</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalAttackState.h">
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderSparkAttackState.h">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\NormalAttack\BeholderNormalAttack.h">
-      <Filter>Src\Application\GameObject\Character\Boss\Beholder\NormalAttack</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBullet.h">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
@@ -1319,6 +1322,27 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletManager.h">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkAttack\BeholderSparkAttack.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDizzyState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDieState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderChargeShotState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\ChargeSparkBullet\BeholderChargeSparkBullet.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\ChargeSparkBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\ChargeShot\BeholderChargeShot.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\ChargeShot</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\ChargeSparkBullet\BeholderChargeSparkBulletDesc.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\ChargeSparkBullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2015,11 +2039,8 @@
     <ClCompile Include="Src\Application\GameObject\Character\Enemy\ChestMonster\ChestMonster.cpp">
       <Filter>Src\Application\GameObject\Character\Enemy\ChestMonster</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalAttackState.cpp">
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderSparkAttackState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\NormalAttack\BeholderNormalAttack.cpp">
-      <Filter>Src\Application\GameObject\Character\Boss\Beholder\NormalAttack</Filter>
     </ClCompile>
     <ClCompile Include="Src\Framework\GameObject\KdGameObjectFactory.cpp">
       <Filter>Src\Framework\GameObject</Filter>
@@ -2029,6 +2050,24 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletManager.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkAttack\BeholderSparkAttack.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDizzyState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDieState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderChargeShotState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\ChargeSparkBullet\BeholderChargeSparkBullet.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\ChargeSparkBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\ChargeShot\BeholderChargeShot.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\ChargeShot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -12,6 +12,8 @@ public:
 	bool IsFinished() const;
 	bool IsLoop()const;
 
+	float AnimProgress()const;
+
 protected:
 
 	std::shared_ptr<KdModelWork>m_spModel = nullptr;

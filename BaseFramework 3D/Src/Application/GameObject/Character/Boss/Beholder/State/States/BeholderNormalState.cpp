@@ -2,7 +2,7 @@
 
 #include"../../Beholder.h"
 
-#include"BeholderNormalAttackState.h"
+#include"BeholderSparkAttackState.h"
 
 void BeholderNormalState::OnStart(Beholder* beholder)
 {
@@ -16,7 +16,7 @@ void BeholderNormalState::OnUpdate(Beholder* beholder)
 
 	if (beholder->IsAttack())
 	{
-		m_pMachine->ChangeState<BeholderNormalAttackState>();
+		m_pMachine->ChangeState<BeholderSparkAttackState>();
 	}
 
 

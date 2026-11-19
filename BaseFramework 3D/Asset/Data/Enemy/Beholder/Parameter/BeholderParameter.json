@@ -1,5 +1,5 @@
 {
-    "AttackPower": 10.0,
+    "AttackCooldown": 2.0,
     "BumpSphereOffsetY": 0.6,
     "BumpSphereRadius": 0.7,
     "JumpPower": 0.4,
@@ -7,5 +7,17 @@
     "MoveSpeed": 0.15,
     "ReachDistance": 8.0,
     "ReachDistanceMargin": 9.0,
+    "SparkBulletCurveRate": 0.2,
+    "SparkBulletDamage": 10.0,
+    "SparkBulletEffectEndFrame": 50,
+    "SparkBulletEffectSize": 0.5,
+    "SparkBulletEffectSpeed": 0.8,
+    "SparkBulletEffectStartFrame": 10,
+    "SparkBulletKnockBack": 0.2,
+    "SparkBulletRadius": 0.5,
+    "SparkBulletReflectSpeed": 0.15,
+    "SparkBulletSpeed": 0.12,
+    "SparkBulletTrackingStopDistance": 2.0,
+    "SparkBulletVanishT": 1.5,
     "TurnSpeed": 12.0
 }

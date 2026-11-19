@@ -40,3 +40,13 @@ bool AnimationBase::IsLoop() const
 
 	return m_spAnimator->IsAnimationLoop();
 }
+
+float AnimationBase::AnimProgress() const
+{
+	if (!m_spAnimator)
+	{
+		return 0.0f;
+	}
+
+	return m_spAnimator->AnimProgress();
+}

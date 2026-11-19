@@ -4,9 +4,9 @@ enum class BeholderAnimationType
 {
 	None,
 	NormalAttack,
-	BeamAttackST,
-	BeamAttackRPT,
-	BeamAttackEND,
+	EnergyChargeST,
+	EnergyChargeRPT,
+	EnergyShot,
 	EnergyAttack,
 	Die,
 	Dizzy,

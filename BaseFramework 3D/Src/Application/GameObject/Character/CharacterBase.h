@@ -104,7 +104,7 @@ public:
 	
 
 	//===========================================================
-    // Parameter
+    // KnockBack
     //===========================================================
 
 	// ノックバック
@@ -160,9 +160,15 @@ public:
 	// その他
 	//===========================================================
 
+	const std::shared_ptr<KdModelWork>& GetModel()const       { return m_spModel; }
+
 	void  SetDeltaTime(const float deltaTime)                 { m_deltaTime = deltaTime; }
 	float GetDeltaTime() const                                { return m_deltaTime; }
 
+	
+	//===========================================================
+	// アニメーション
+	//===========================================================
 
 	// 現在のアニメーション経過フレーム数(攻撃判定・トレイル表示区間などのフレーム指定に使う)
 	float GetAnimFrame()const { return m_animFrame; }

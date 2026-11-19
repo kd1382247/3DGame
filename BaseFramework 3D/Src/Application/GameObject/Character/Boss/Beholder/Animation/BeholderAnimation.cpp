@@ -22,16 +22,16 @@ void BeholderAnimation::Play(BeholderAnimationType _animType)
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("NormalAttack"), false);
 		m_animSpeed = 1.0f;
 		break;
-	case BeholderAnimationType::BeamAttackST:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("BeamAttackST"), false);
+	case BeholderAnimationType::EnergyChargeST:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("EnergyChargeST"), false);
 		m_animSpeed = 1.0f;
 		break;
-	case BeholderAnimationType::BeamAttackRPT:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("BeamAttackRPT"), true);
+	case BeholderAnimationType::EnergyChargeRPT:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("EnergyChargeRPT"), true);
 		m_animSpeed = 1.0f;
 		break;
-	case BeholderAnimationType::BeamAttackEND:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("BeamAttackEND"), false);
+	case BeholderAnimationType::EnergyShot:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("EnergyShot"), false);
 		m_animSpeed = 1.0f;
 		break;
 	case BeholderAnimationType::EnergyAttack:
@@ -39,8 +39,12 @@ void BeholderAnimation::Play(BeholderAnimationType _animType)
 		m_animSpeed = 1.0f;
 		break;
 	case BeholderAnimationType::Die:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false);
+		m_animSpeed = 1.0f;
 		break;
 	case BeholderAnimationType::Dizzy:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Dizzy"), false);
+		m_animSpeed = 1.0f;
 		break;
 	case BeholderAnimationType::GetHit:
 		break;
