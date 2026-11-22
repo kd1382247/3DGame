@@ -1,12 +1,16 @@
 ﻿#include "BeholderSparkAttack.h"
 
-#include"../SparkBullet/BeholderSparkBulletManager.h"
 #include"../SparkBullet/BeholderSparkBullet.h"
 
+#include"../../../../../Scene/SceneManager.h"
 #include"../../../CharacterBase.h"
 
 void BeholderSparkAttack::CreateSparkBullet(const std::shared_ptr<CharacterBase>& owner,const SparkParam& sParam)
 {
+
+	// 生成前にリストを空にする
+	m_sparkBullets.clear();
+
 	Desc desc;
 
 	// 弾のパラメータをセット
@@ -30,14 +34,17 @@ void BeholderSparkAttack::CreateSparkBullet(const std::shared_ptr<CharacterBase>
 
 		desc.pos = worldMat.Translation();
 
-		auto spark = BeholderSparkBulletManager::Instance().CreateBolt(owner, desc);
+		auto spark = std::make_shared<BeholderSparkBullet>();
 
-		if (spark)
-		{
-			m_sparkBullets.push_back(spark);
-		}
+		spark->Init();
+		spark->Setup(desc);
+		spark->SetOwner(owner);
+
+		SceneManager::Instance().AddObject(spark);
+
+		m_sparkBullets.push_back(spark);
+		
 	}
-
 
 	// 生成が終わったら配列をクリア
 	m_nullPointNodeNumbers.clear();
@@ -70,9 +77,17 @@ void BeholderSparkAttack::StartFiring()
 		// 発射状態にする
 		spSpark->StartFiring();
 	}
+}
 
-	// 発射まで終わったら要素を空にする
-	m_sparkBullets.clear();
+void BeholderSparkAttack::CancelAll()
+{
+	for (auto weakSpark : m_sparkBullets)
+	{
+		auto spSpark = weakSpark.lock();
+		if (!spSpark) { continue; }
+
+		spSpark->Cancel();
+	}
 }
 
 void BeholderSparkAttack::SetParameter(const SparkParam& sParam, Desc& desc)

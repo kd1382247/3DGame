@@ -33,27 +33,39 @@ namespace
 	{
 		nlohmann::json json;
 
-		json["MaxHP"] = param.m_maxHP;
-		json["BumpSphereRadius"] = InspectorUI::CeilToDigits(param.m_bumpSphereRadius, 2);
-		json["BumpSphereOffsetY"] = InspectorUI::CeilToDigits(param.m_bumpSphereOffsetY, 2);
-		json["MoveSpeed"] = InspectorUI::CeilToDigits(param.m_moveSpeed, 3);
-		json["TurnSpeed"] = InspectorUI::CeilToDigits(param.m_turnSpeed, 1);
-		json["ReachDistance"] = InspectorUI::CeilToDigits(param.m_reachDistance, 2);
+		json["MaxHP"]               = param.m_maxHP;
+		json["BumpSphereRadius"]    = InspectorUI::CeilToDigits(param.m_bumpSphereRadius, 2);
+		json["BumpSphereOffsetY"]   = InspectorUI::CeilToDigits(param.m_bumpSphereOffsetY, 2);
+		json["MoveSpeed"]           = InspectorUI::CeilToDigits(param.m_moveSpeed, 3);
+		json["TurnSpeed"]           = InspectorUI::CeilToDigits(param.m_turnSpeed, 1);
+		json["ReachDistance"]       = InspectorUI::CeilToDigits(param.m_reachDistance, 2);
 		json["ReachDistanceMargin"] = InspectorUI::CeilToDigits(param.m_reachDistanceMargin, 2);
-		json["JumpPower"] = InspectorUI::CeilToDigits(param.m_jumpPow, 3);
-		json["AttackCooldown"] = InspectorUI::CeilToDigits(param.m_attackCooldown, 2);
+		json["GravityAcceleration"]           = InspectorUI::CeilToDigits(param.m_gravityAcceleration, 1);
+		json["AttackCooldown"]      = InspectorUI::CeilToDigits(param.m_attackCooldown, 2);
 
 		//---- SparkBullet ----
 		const auto& spark = param.m_sparkBullet;
-		json["SparkBulletVanishT"] = InspectorUI::CeilToDigits(spark.m_vanishT, 2);
-		json["SparkBulletCurveRate"] = InspectorUI::CeilToDigits(spark.m_curveRate, 2);
+		json["SparkBulletVanishT"]              = InspectorUI::CeilToDigits(spark.m_vanishT, 2);
+		json["SparkBulletCurveRate"]            = InspectorUI::CeilToDigits(spark.m_curveRate, 2);
 		json["SparkBulletTrackingStopDistance"] = InspectorUI::CeilToDigits(spark.m_trackingStopDistance, 2);
-		json["SparkBulletSpeed"] = InspectorUI::CeilToDigits(spark.m_speed, 3);
-		json["SparkBulletRadius"] = InspectorUI::CeilToDigits(spark.m_radius, 2);
-		json["SparkBulletReflectSpeed"] = InspectorUI::CeilToDigits(spark.m_reflectSpeed, 3);
-		json["SparkBulletDamage"] = InspectorUI::CeilToDigits(spark.m_damage, 1);
-		json["SparkBulletKnockBack"] = InspectorUI::CeilToDigits(spark.m_knockBack, 3);
+		json["SparkBulletSpeed"]                = InspectorUI::CeilToDigits(spark.m_speed, 3);
+		json["SparkBulletRadius"]               = InspectorUI::CeilToDigits(spark.m_radius, 2);
+		json["SparkBulletReflectSpeed"]         = InspectorUI::CeilToDigits(spark.m_reflectSpeed, 3);
+		json["SparkBulletDamage"]               = InspectorUI::CeilToDigits(spark.m_damage, 1);
+		json["SparkBulletKnockBack"]            = InspectorUI::CeilToDigits(spark.m_knockBack, 3);
 		WriteEffect(json, "SparkBulletEffect", spark.m_effect);
+
+		//---- ChargeSparkBullet ----
+		const auto& charge = param.m_chargeSparkBullet;
+		json["ChargeSparkBulletChargeTime"]   = InspectorUI::CeilToDigits(charge.m_chargeTime, 2);
+		json["ChargeSparkBulletRadius"]       = InspectorUI::CeilToDigits(charge.m_radius, 2);
+		json["ChargeSparkBulletTargetSize"]   = InspectorUI::CeilToDigits(charge.m_targetSize, 2);
+		json["ChargeSparkBulletSpeed"]        = InspectorUI::CeilToDigits(charge.m_speed, 3);
+		json["ChargeSparkBulletReflectSpeed"] = InspectorUI::CeilToDigits(charge.m_reflectSpeed, 3);
+		json["ChargeSparkBulletLifeTime"]     = InspectorUI::CeilToDigits(charge.m_lifeTime, 2);
+		json["ChargeSparkBulletDamage"]       = InspectorUI::CeilToDigits(charge.m_damage, 1);
+		json["ChargeSparkBulletKnockBack"]    = InspectorUI::CeilToDigits(charge.m_knockBack, 3);
+		WriteEffect(json, "ChargeSparkBulletEffect", charge.m_effect);
 
 		return json;
 	}
@@ -68,7 +80,7 @@ namespace
 		ParameterJson::Read(json, "TurnSpeed", param.m_turnSpeed);
 		ParameterJson::Read(json, "ReachDistance", param.m_reachDistance);
 		ParameterJson::Read(json, "ReachDistanceMargin", param.m_reachDistanceMargin);
-		ParameterJson::Read(json, "JumpPower", param.m_jumpPow);
+		ParameterJson::Read(json, "GravityAcceleration", param.m_gravityAcceleration);
 		ParameterJson::Read(json, "AttackCooldown", param.m_attackCooldown);
 
 		// 古いjsonには、全攻撃共通のダメージ(AttackPower)しか無い。
@@ -89,6 +101,18 @@ namespace
 		ParameterJson::Read(json, "SparkBulletDamage", spark.m_damage);
 		ParameterJson::Read(json, "SparkBulletKnockBack", spark.m_knockBack);
 		ReadEffect(json, "SparkBulletEffect", spark.m_effect);
+
+		//---- ChargeSparkBullet ----
+		auto& charge = param.m_chargeSparkBullet;
+		ParameterJson::Read(json, "ChargeSparkBulletChargeTime", charge.m_chargeTime);
+		ParameterJson::Read(json, "ChargeSparkBulletRadius", charge.m_radius);
+		ParameterJson::Read(json, "ChargeSparkBulletTargetSize", charge.m_targetSize);
+		ParameterJson::Read(json, "ChargeSparkBulletSpeed", charge.m_speed);
+		ParameterJson::Read(json, "ChargeSparkBulletReflectSpeed", charge.m_reflectSpeed);
+		ParameterJson::Read(json, "ChargeSparkBulletLifeTime", charge.m_lifeTime);
+		ParameterJson::Read(json, "ChargeSparkBulletDamage", charge.m_damage);
+		ParameterJson::Read(json, "ChargeSparkBulletKnockBack", charge.m_knockBack);
+		ReadEffect(json, "ChargeSparkBulletEffect", charge.m_effect);
 	}
 }
 
@@ -137,7 +161,7 @@ namespace
 			InspectorUI::DegreePerFrame("TurnSpeed", param.m_turnSpeed);
 			InspectorUI::Meter("ReachDistance", param.m_reachDistance);
 			InspectorUI::Meter("ReachDistanceMargin", param.m_reachDistanceMargin);
-			InspectorUI::Power("JumpPower", param.m_jumpPow);
+			InspectorUI::Acceleration("GravityAccel", param.m_gravityAcceleration);
 
 			InspectorUI::EndGroup();
 		}
@@ -162,6 +186,27 @@ namespace
 			InspectorUI::Damage("Damage", spark.m_damage);
 			InspectorUI::Power("KnockBack", spark.m_knockBack);
 			DrawEffect_("Effect", spark.m_effect);
+
+			InspectorUI::EndGroup();
+		}
+
+		if (InspectorUI::BeginGroup("ChargeSparkBullet"))
+		{
+			auto& charge = param.m_chargeSparkBullet;
+
+			ImGui::PushID("ChargeSparkBullet");
+
+			InspectorUI::Seconds("ChargeTime", charge.m_chargeTime);
+			InspectorUI::Meter("Radius", charge.m_radius);
+			InspectorUI::Scale("TargetSize", charge.m_targetSize);
+			InspectorUI::MeterPerFrame("Speed", charge.m_speed);
+			InspectorUI::MeterPerFrame("ReflectSpeed", charge.m_reflectSpeed);
+			InspectorUI::Seconds("LifeTime", charge.m_lifeTime);
+			InspectorUI::Damage("Damage", charge.m_damage);
+			InspectorUI::Power("KnockBack", charge.m_knockBack);
+			DrawEffect_("Effect", charge.m_effect);
+
+			ImGui::PopID();
 
 			InspectorUI::EndGroup();
 		}

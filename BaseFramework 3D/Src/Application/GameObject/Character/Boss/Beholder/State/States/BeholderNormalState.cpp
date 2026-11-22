@@ -3,6 +3,10 @@
 #include"../../Beholder.h"
 
 #include"BeholderSparkAttackState.h"
+#include"BeholderChargeShotState.h"
+#include"BeholderDizzyState.h"
+
+
 
 void BeholderNormalState::OnStart(Beholder* beholder)
 {
@@ -16,7 +20,9 @@ void BeholderNormalState::OnUpdate(Beholder* beholder)
 
 	if (beholder->IsAttack())
 	{
-		m_pMachine->ChangeState<BeholderSparkAttackState>();
+		//m_pMachine->ChangeState<BeholderSparkAttackState>();
+		//m_pMachine->ChangeState<BeholderDizzyState>();
+		m_pMachine->ChangeState<BeholderChargeShotState>();
 	}
 
 

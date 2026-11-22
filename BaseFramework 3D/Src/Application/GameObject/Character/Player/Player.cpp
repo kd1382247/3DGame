@@ -72,6 +72,7 @@ void Player::Init()
 		
 		m_health.           Init(m_parameter.GetBody().m_maxHP);
 		m_bumpPushRate = m_parameter.GetBody().m_bumpPushRate;
+		SetGravityAcceleration(m_parameter.GetBody().m_gravityAcceleration);
 
 		// 当たり判定(押し戻し)球の大きさをパラメータから反映
 		SetBumpSphere(m_parameter.GetBody().m_bumpSphereOffsetY, m_parameter.GetBody().m_bumpSphereRadius);

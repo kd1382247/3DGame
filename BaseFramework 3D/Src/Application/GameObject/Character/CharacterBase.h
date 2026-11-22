@@ -122,9 +122,6 @@ public:
 	virtual float GetTurnSpeed()const = 0;
 	virtual float GetMoveSpeed()const = 0;
 
-	// 重力加速度(既定値。キャラごとに変えたい時はoverrideする)
-	virtual float GetGravityAcceleration()const { return 72.0f; }
-
 
 	//===========================================================
 	// Movement
@@ -144,9 +141,15 @@ public:
 	void          SetPrevPos(const Math::Vector3& pos)        { m_prevPos = pos; }
 	Math::Vector3 GetPrevPos()const                           { return m_prevPos; }
 
+	// 重力を加算して、落下分の移動量を追加する(毎フレーム、ステートの更新より前に呼ぶ)
+	void UpdateGravity();
+
 	// 重力を返す
 	float         GetGravity()const                           { return m_gravity; }
 	void          SetGravity(float gravity)                   { m_gravity = gravity; }
+
+	// 重力加速度をセット(各キャラのInitで、パラメータから渡す)
+	void          SetGravityAcceleration(float accel)         { m_gravityAcceleration = accel; }
 
 	// 地面に着いているか
 	void SetIsGrounded(const bool flg)                        { m_isGrounded = flg; }
@@ -217,10 +220,6 @@ protected:
 	// (KdCollider::RegisterCollisionShapeは同じ名前を上書きしないので、コライダーごと作り直す)
 	void RebuildBumpCollider();
 
-	// 重力を加算して、落下分の移動量を追加する(毎フレーム、ステートの更新より前に呼ぶ)
-	void UpdateGravity();
-
-
 
 	//===========================================================
 	// モデル
@@ -244,6 +243,7 @@ protected:
 	Math::Vector3 m_prevPos = {};
 
 	float		  m_gravity = 0;
+	float		  m_gravityAcceleration = 55.0f;   // [m/s^2] 重力加速度
 	bool          m_isGrounded = false;
 
 	// エリアID

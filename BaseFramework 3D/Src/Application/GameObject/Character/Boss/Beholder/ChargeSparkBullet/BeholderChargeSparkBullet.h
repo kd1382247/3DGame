@@ -5,7 +5,7 @@
 class Player;
 class CharacterBase;
 
-class BeholderChargeSparkBullet :KdGameObject
+class BeholderChargeSparkBullet :public KdGameObject
 {
 public:
 
@@ -69,11 +69,11 @@ private:
 	// エフェクトを指定位置で再生する
 	void PlayEffect(const Math::Vector3& pos);
 
-	// 発射準備中のエフェクト更新
-	void UpdatePreparationEffect();
-
-	// 前方方向の座標を計算
+	// 前方向の座標を計算
 	void UpdateFowardPos();
+
+	// 目標の大きさまで弾のサイズを拡大する
+	void UpdateBulletSize();
 
 	// エフェクトを弾の位置に追従させる(区間の再生が終わっていたら再生し直す)
 	void UpdateEffect();
@@ -96,10 +96,13 @@ private:
 
 	Math::Vector3 m_targetDir = {};
 
+
+	float m_bulletSize = 0.1f;
+
 	// プレイヤーに打ち返されたか
-	bool m_isReflect = false;
+	bool m_isReflect   = false;
 
-	bool m_isPlayEffect = false;
+	float m_chargeTime = 0.0f;
 
-	float m_lifeTime = 0.0f;
+	float m_lifeTime   = 0.0f;
 };

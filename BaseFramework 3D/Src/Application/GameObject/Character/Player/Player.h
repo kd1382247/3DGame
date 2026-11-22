@@ -59,7 +59,6 @@ public:
 
 	float GetTurnSpeed() const override { return m_parameter.GetBody().m_turnSpeed; }
 	float GetMoveSpeed() const override { return m_parameter.GetMove().m_moveSpeed; }
-	float GetGravityAcceleration() const override { return m_parameter.GetBody().m_gravityAcceleration; }
 
 	//================================
 	// 部品へのアクセス(ステートが状態を直接聞くために使う)

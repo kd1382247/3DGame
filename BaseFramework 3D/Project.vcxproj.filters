@@ -1320,9 +1320,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletDesc.h">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletManager.h">
-      <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkAttack\BeholderSparkAttack.h">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkAttack</Filter>
     </ClInclude>
@@ -1343,6 +1340,9 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\ChargeSparkBullet\BeholderChargeSparkBulletDesc.h">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\ChargeSparkBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDamageState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2048,9 +2048,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBullet.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletManager.cpp">
-      <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkBullet</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkAttack\BeholderSparkAttack.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\SparkAttack</Filter>
     </ClCompile>
@@ -2068,6 +2065,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\ChargeShot\BeholderChargeShot.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\ChargeShot</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDamageState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

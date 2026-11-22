@@ -442,7 +442,7 @@ void CharacterBase::AddKnockBack(const Math::Vector3& dir, const float power)
 
 void CharacterBase::UpdateGravity()
 {
-	m_gravity += 55.0f * m_deltaTime;
+	m_gravity += m_gravityAcceleration * m_deltaTime;
 
 	Math::Vector3 gravityMove = { 0.0f,-m_gravity * m_deltaTime ,0.0f };
 

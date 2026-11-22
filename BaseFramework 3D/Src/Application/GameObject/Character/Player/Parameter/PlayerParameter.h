@@ -17,7 +17,7 @@ public:
 	{
 		int   m_maxHP = 100;                        // [HP]  最大HP
 		float m_turnSpeed = 12.0f;                  // [°/F] 回転速度(1フレームに回転できる最大角度)
-		float m_gravityAcceleration = 72.0f;        // [m/s^2] 重力加速度
+		float m_gravityAcceleration = 55.0f;        // [m/s^2] 重力加速度
 
 		float m_bumpPushRate = 0.1f;                // 押し戻しの影響を受ける割合(0〜1。小さいほど押されにくい)
 		float m_maxWalkableSlopeAngle = 45.0f;      // [°]  登れる坂の最大角度

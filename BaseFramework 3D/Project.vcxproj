@@ -301,8 +301,8 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkAttack\BeholderSparkAttack.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBullet.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletDesc.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletManager.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderChargeShotState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDamageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDieState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDizzyState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderSparkAttackState.h" />
@@ -573,8 +573,8 @@
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\Parameter\BeholderParameter.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkAttack\BeholderSparkAttack.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBullet.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\SparkBullet\BeholderSparkBulletManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderChargeShotState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDamageState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDieState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDizzyState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderSparkAttackState.cpp" />

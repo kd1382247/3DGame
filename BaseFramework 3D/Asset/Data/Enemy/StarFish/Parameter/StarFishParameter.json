@@ -11,7 +11,7 @@
     "BulletSpeed": 0.1,
     "BumpSphereOffsetY": 0.5,
     "BumpSphereRadius": 0.5,
-    "JumpPower": 0.4,
+    "GravityAcceleration": 30.0,
     "MaxHP": 30,
     "MoveSpeed": 0.08,
     "ReachDistance": 5.0,

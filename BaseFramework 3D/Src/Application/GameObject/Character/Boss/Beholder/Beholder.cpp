@@ -7,6 +7,7 @@
 
 #include"State/States/BeholderNormalState.h"
 #include"State/States/BeholderDieState.h"
+#include"State/States/BeholderDamageState.h"
 #include"State/States/BeholderDizzyState.h"
 
 
@@ -20,6 +21,10 @@ namespace
 
 	// 混ぜる割合の速度
 	constexpr float EyeFollowSpeed = 10.0f;
+
+	// 元の位置に復帰するまでの時間
+	constexpr float FloatRecoveryDuration = 1.0f;
+
 }
 
 void Beholder::Init()
@@ -40,6 +45,9 @@ void Beholder::Init()
 
 		// 当たり判定(押し戻し)球の大きさをパラメータから反映
 		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
+
+		// 重力加速度をパラメータから反映
+		SetGravityAcceleration(param.m_gravityAcceleration);
 
 		m_reachDistance = param.m_reachDistance;
 		m_reachDistanceMargin = param.m_reachDistanceMargin;
@@ -72,7 +80,6 @@ void Beholder::Update()
 
 	UpdateAttack();
 
-	//UpdateGravity();
 
 	m_stateMachine.Update();
 }
@@ -87,6 +94,29 @@ void Beholder::PostUpdate()
 
 	DrawBumpDebugSphere();
 
+}
+
+void Beholder::OnHit(const AttackInfo attackInfo)
+{
+	// 倒された後は攻撃を受けない
+	if (m_health.IsDead())
+	{
+		return;
+	}
+
+	// 倒された時は、撃破ヒットストップが入って、やられ状態へ切り替わる
+	if (ApplyDamage(attackInfo))
+	{
+		m_stateMachine.ChangeState<BeholderDieState>();
+	}
+	else
+	{
+		// 混乱中じゃなかったら
+		if(!m_stateMachine.IsState<BeholderDizzyState>())
+		{
+			m_stateMachine.ChangeState<BeholderDamageState>();
+		}
+	}
 }
 
 void Beholder::UpdateAttack()
@@ -104,7 +134,6 @@ void Beholder::EndAttack()
 	m_attackFlg = false;
 	m_attackCooldown = m_attackCooldownDuration;
 }
-
 
 void Beholder::UpdateAnimation()
 {
@@ -203,6 +232,129 @@ void Beholder::FireSparkBullet()
 bool Beholder::IsStandbySparkBullet()
 {
 	return m_sparkAttack.IsStandbySparkBullet();
+}
+
+void Beholder::CancelSparkBullet()
+{
+	m_sparkAttack.CancelAll();
+}
+
+void Beholder::CreateChargeSparkBullet()
+{
+	const auto& param = m_parameter.GetParam().m_chargeSparkBullet;
+
+	m_chargeShot.CreateChargeSparkBullet(
+		std::dynamic_pointer_cast<CharacterBase>(shared_from_this()), param);
+}
+
+void Beholder::FireChargeSparkBullet()
+{
+	m_chargeShot.StartFiring();
+}
+
+bool Beholder::IsStandbyChargeSparkBullet()
+{
+	return m_chargeShot.IsStandbySparkBullet();
+}
+
+void Beholder::CancelChargeSparkBullet()
+{
+	m_chargeShot.Cancel();
+}
+
+void Beholder::StartDizzy()
+{
+	// 落下状態にする
+	m_dizzyState = DizzyState::Falling;
+
+	m_dizzyTime = m_dizzyDuration;
+
+	m_floatRecoveryTime = 0.0f;
+
+	m_t = 0.0f;
+
+	// 今いる高さを保存
+	m_originalPosY = GetPos().y;
+
+	m_dizzyCount = 0;
+}
+
+void Beholder::UpdateDizzy()
+{
+	switch (m_dizzyState)
+	{
+	case Beholder::DizzyState::Falling:
+		UpdateFalling();
+		break;
+	case Beholder::DizzyState::Dizzy:
+		UpdateDizzyTimeCountDown();
+		break;
+	case Beholder::DizzyState::Returning:
+		UpdateReturnIngHeight();
+		break;
+	}
+}
+
+void Beholder::DizzyCountUp()
+{
+	m_dizzyCount++;
+
+	if (m_dizzyCount >= m_dizzyCountMax)
+	{
+		m_stateMachine.ChangeState<BeholderDizzyState>();
+	}
+}
+
+void Beholder::UpdateFalling()
+{
+	UpdateGravity();
+
+	// 地面に着いたら混乱状態にする
+	if (IsGrounded())
+	{
+		m_dizzyState = DizzyState::Dizzy;
+	}
+}
+
+void Beholder::UpdateDizzyTimeCountDown()
+{
+	// 地面に着いたら時間を減らしていく
+	m_dizzyTime -= m_deltaTime;
+
+	// 時間が0以下になったら、元の高さに戻る状態にする
+	if (m_dizzyTime <= 0.0f)
+	{
+		m_dizzyState = DizzyState::Returning;
+
+		m_fallStartY = GetPos().y;
+
+		PlayAnimation(BeholderAnimationType::Idle);
+	}
+}
+
+void Beholder::UpdateReturnIngHeight()
+{
+
+	m_floatRecoveryTime += m_deltaTime;
+	
+	m_t = std::clamp(m_floatRecoveryTime / FloatRecoveryDuration, 0.0f, 1.0f);
+	
+	float currentPosY = GetPos().y;
+
+	// 今フレームで上がるYを求める
+	float nextPosY = std::lerp(m_fallStartY, m_originalPosY, m_t);
+
+	// Yの移動量を求める
+	float moveY = nextPosY - currentPosY;
+
+	if (m_t >= 1.0f)
+	{
+		m_dizzyState = DizzyState::FloatRecovered;
+		moveY = m_originalPosY - currentPosY;
+	}
+
+	AddPendingMove({0.0f,moveY,0.0f});
+
 }
 
 void Beholder::PlayWalkAnimation()

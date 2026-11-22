@@ -136,7 +136,7 @@ public:
 		float m_turnSpeed = 12.0f;   // [°/F] 回転速度(1フレームに回転できる最大角度)
 		float m_reachDistance = 5.0f;   // [m] 到達判定の距離(この距離まで近づいたら攻撃を開始する)
 		float m_reachDistanceMargin = 6.0f;   // [m] 到達後、この距離より離れたら再び追いかける
-		float m_jumpPow = 0.4f;   // ジャンプ力(飛び出しの勢い)
+		float m_gravityAcceleration = 55.0f;   // [m/s^2] 重力加速度
 
 		//---- Attack(全攻撃で共通) ----
 		float m_attackCooldown = 2.0f;   // [秒] 攻撃後、次の攻撃までの待ち時間

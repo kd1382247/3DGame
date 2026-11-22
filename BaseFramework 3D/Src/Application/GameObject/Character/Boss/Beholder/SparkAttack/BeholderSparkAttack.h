@@ -18,11 +18,14 @@ public:
 
 	void CreateSparkBullet(const std::shared_ptr<CharacterBase>& owner, const SparkParam& sParam);
 
-	// 生成された弾が全て待機状態になったのか
+	// 生成された弾が待機状態になったのか
 	bool IsStandbySparkBullet();
 
 	// 弾を発射
 	void StartFiring();
+
+	// 生成した弾を消す(ボスが倒れた時のため)
+	void CancelAll();
 
 private:
  

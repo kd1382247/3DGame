@@ -32,6 +32,9 @@ void StarFish::Init()
 		// 当たり判定(押し戻し)球の大きさをパラメータから反映
 		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
 
+		// 重力加速度をパラメータから反映
+		SetGravityAcceleration(param.m_gravityAcceleration);
+
 		m_attackCooldownDuration = param.m_attackCooldown;
 
 		// この距離まで近づいたら攻撃(Energy弾を発射)する

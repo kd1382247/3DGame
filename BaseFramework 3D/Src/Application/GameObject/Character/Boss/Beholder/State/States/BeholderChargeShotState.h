@@ -12,4 +12,9 @@ public:
 	void OnUpdate(Beholder* owner)override;
 	void OnExit(Beholder* owner)override;
 
+
+private:
+
+	bool m_isFire = false;
+
 };

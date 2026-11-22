@@ -2,6 +2,7 @@
 
 #include"../../../CharacterBase.h"
 #include"../../../Player/Player.h"
+#include"../../Beholder/Beholder.h"
 #include"../../../AttackInfo.h"
 
 #include"../../../../../System/GameObjectFinder/GameObjectFinder.h"
@@ -235,7 +236,7 @@ void BeholderSparkBullet::HitPlayer(const KdCollider::SphereInfo& sphereInfo)
 
 void BeholderSparkBullet::HitOwner(const KdCollider::SphereInfo& sphereInfo)
 {
-	auto spOwner = m_wpOwner.lock();
+	auto spOwner = std::dynamic_pointer_cast<Beholder>( m_wpOwner.lock());
 
 	if (!spOwner) { return; }
 
@@ -258,6 +259,8 @@ void BeholderSparkBullet::HitOwner(const KdCollider::SphereInfo& sphereInfo)
 	attackInfo.m_canReflect     = true;
 
 	spOwner->OnHit(attackInfo);
+
+	spOwner->DizzyCountUp();
 
 	Vanish();
 }

@@ -23,6 +23,9 @@ void Golem::Init()
 		// 当たり判定(押し戻し)球の大きさをパラメータから反映
 		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
 
+		// 重力加速度をパラメータから反映
+		SetGravityAcceleration(param.m_gravityAcceleration);
+
 		m_reachDistance = param.m_reachDistance;
 		m_reachDistanceMargin = param.m_reachDistanceMargin;
 

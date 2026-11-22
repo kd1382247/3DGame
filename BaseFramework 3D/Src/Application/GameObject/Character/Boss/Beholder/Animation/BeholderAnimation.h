@@ -14,7 +14,7 @@ public:
 
 	void Play(BeholderAnimationType _animType);
 
-
+	BeholderAnimationType GetPlayAnimType()const {return m_currentAnimation; }
 
 private:
 

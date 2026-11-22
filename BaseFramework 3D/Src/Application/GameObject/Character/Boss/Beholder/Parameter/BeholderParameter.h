@@ -12,10 +12,10 @@ public:
 	//==================================================================
 	struct EffectParam
 	{
-		float m_size = 0.5f;     // [倍] エフェクトの大きさ
-		float m_speed = 0.8f;    // [倍] 再生速度
+		float m_size       = 0.5f;     // [倍] エフェクトの大きさ
+		float m_speed      = 0.8f;    // [倍] 再生速度
 		int   m_startFrame = 10;   // [F] 再生を始めるフレーム
-		int   m_endFrame = 50;     // [F] 再生を終えるフレーム
+		int   m_endFrame   = 50;     // [F] 再生を終えるフレーム
 	};
 
 	//==================================================================
@@ -26,16 +26,36 @@ public:
 	// 追従弾
 	struct SparkBullet
 	{
-		float m_vanishT = 1.5f;   // [進行度] 弾が消える進行度(1.0で目標地点に着いた時点。1より大きいと、通り過ぎてから消える)
-		float m_curveRate = 0.4f;   // [倍] 軌道の膨らみの大きさ(発射位置から目標までの距離に対する割合)
+		float m_vanishT              = 1.5f;   // [進行度] 弾が消える進行度(1.0で目標地点に着いた時点。1より大きいと、通り過ぎてから消える)
+		float m_curveRate            = 0.4f;   // [倍] 軌道の膨らみの大きさ(発射位置から目標までの距離に対する割合)
 		float m_trackingStopDistance = 2.0f;   // [m] 追尾をやめる距離(※今は追尾の処理を止めているため、まだ使われていない)
-		float m_speed = 0.1f;   // [m/F] 弾の速さ
-		float m_radius = 0.5f;   // [m] 弾の当たり判定の半径
-		float m_reflectSpeed = 0.15f;   // [m/F] パリィで打ち返された後の速さ(※打ち返しの処理が未実装のため、まだ使われていない)
-		float m_damage = 10.0f;   // 弾のダメージ
-		float m_knockBack = 0.2f;   // 弾が当たった時のノックバックの強さ
+		float m_speed                = 0.1f;   // [m/F] 弾の速さ
+		float m_radius               = 0.5f;   // [m] 弾の当たり判定の半径
+		float m_reflectSpeed         = 0.15f;   // [m/F] パリィで打ち返された後の速さ(※打ち返しの処理が未実装のため、まだ使われていない)
+		float m_damage               = 10.0f;   // 弾のダメージ
+		float m_knockBack            = 0.2f;   // 弾が当たった時のノックバックの強さ
 
 		EffectParam m_effect;
+	};
+
+	// 溜めショット
+	struct ChargeSparkBullet
+	{
+		float m_chargeTime   = 2.0f; // チャージ時間
+
+		float m_radius       = 0.8;  // 当たり判定の半径
+		float m_targetSize = 1.0f; // 目標の大きさ
+
+		float m_speed        = 0.15f;// 弾の速度
+		float m_reflectSpeed = 0.20f;// 反射後の弾の速度
+
+		float m_lifeTime     = 5.0f; // 弾の寿命
+
+		float m_damage       = 30.0f;// 弾のダメージ
+		float m_knockBack    = 0.2f; // 弾が当たった時のノックバックの強さ
+
+		EffectParam m_effect;
+
 	};
 
 
@@ -50,13 +70,15 @@ public:
 		float m_turnSpeed = 12.0f;   // [°/F] 回転速度(1フレームに回転できる最大角度)
 		float m_reachDistance = 5.0f;   // [m] 到達判定の距離(この距離まで近づいたら攻撃を開始する)
 		float m_reachDistanceMargin = 6.0f;   // [m] 到達後、この距離より離れたら再び追いかける
-		float m_jumpPow = 0.4f;   // ジャンプ力(飛び出しの勢い)
+		float m_gravityAcceleration = 55.0f;   // [m/s^2] 重力加速度
 
 		//---- Attack(全攻撃で共通) ----
 		float m_attackCooldown = 2.0f;   // [秒] 攻撃後、次の攻撃までの待ち時間
 
 		//---- 攻撃ごと ----
 		SparkBullet m_sparkBullet;
+
+		ChargeSparkBullet m_chargeSparkBullet;
 
 		//---- Collision ----
 		float m_bumpSphereRadius = 0.5f;   // [m] 押し戻し判定の球の半径

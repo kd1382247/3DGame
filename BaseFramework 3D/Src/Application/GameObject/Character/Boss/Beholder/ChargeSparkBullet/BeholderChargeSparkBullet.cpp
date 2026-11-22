@@ -1,12 +1,24 @@
 ﻿#include "BeholderChargeSparkBullet.h"
 
 #include"../../../CharacterBase.h"
+#include"../../Beholder/Beholder.h"
 #include"../../../Player/Player.h"
 #include"../../../AttackInfo.h"
 
 #include"../../../../../System/GameObjectFinder/GameObjectFinder.h"
 #include"../../../../../System/TimeManager/TimeManager.h"
 #include"../../../../../System/CollisionManager/CollisionManager.h"
+
+
+namespace
+{
+
+	// 弾とOwnerの距離
+	constexpr float OwnerDist = 1.5f;
+
+	// 始めの弾の大きさ
+	constexpr float StartBulletSize = 0.1f;
+}
 
 void BeholderChargeSparkBullet::Init()
 {
@@ -20,9 +32,8 @@ void BeholderChargeSparkBullet::SetUpReference()
 
 void BeholderChargeSparkBullet::Setup(const BeholderChargeSparkBulletDesc& desc)
 {
-	m_desc = desc;
-	m_lifeTime = m_desc.lifeTime;
-	SetPos(desc.pos);
+	m_desc       = desc;
+	m_lifeTime   = m_desc.lifeTime;
 }
 
 void BeholderChargeSparkBullet::Update()
@@ -59,6 +70,10 @@ void BeholderChargeSparkBullet::Update()
 		UpdateReflect();
 		break;
 	}
+
+	// エフェクト更新
+	UpdateEffect();
+
 }
 
 void BeholderChargeSparkBullet::ReflectSetUp()
@@ -144,7 +159,7 @@ void BeholderChargeSparkBullet::HitPlayer(const KdCollider::SphereInfo& sphereIn
 
 void BeholderChargeSparkBullet::HitOwner(const KdCollider::SphereInfo& sphereInfo)
 {
-	auto spOwner = m_wpOwner.lock();
+	auto spOwner = std::dynamic_pointer_cast<Beholder>(m_wpOwner.lock());
 
 	if (!spOwner) { return; }
 
@@ -168,6 +183,8 @@ void BeholderChargeSparkBullet::HitOwner(const KdCollider::SphereInfo& sphereInf
 
 	spOwner->OnHit(attackInfo);
 
+	spOwner->DizzyCountUp();
+
 	Vanish();
 }
 
@@ -177,60 +194,33 @@ void BeholderChargeSparkBullet::PlayEffect(const Math::Vector3& pos)
 	m_wpEffect = KdEffekseerManager::GetInstance().Play(
 		m_desc.effect.fileName,
 		pos,
-		m_desc.effect.size,
+		m_bulletSize,
 		m_desc.effect.speed,
 		false,
 		m_desc.effect.startFrame,
 		m_desc.effect.endFrame);
 }
 
-void BeholderChargeSparkBullet::UpdatePreparationEffect()
-{
-	// 一度だけエフェクト再生を再生
-	if (!m_isPlayEffect)
-	{
-		auto spEffect = m_wpEffect.lock();
-		if (!spEffect || !spEffect->IsPlaying())
-		{
-			m_wpEffect = KdEffekseerManager::GetInstance().Play(
-				m_desc.effect.fileName,
-				GetPos(),
-				m_desc.effect.size,
-				0.2f,
-				false,
-				0, 10);
-
-			m_isPlayEffect = true;
-		}
-	}
-	else
-	{
-		// エフェクトの再生が終わったら待機状態にする
-		auto spEffect = m_wpEffect.lock();
-
-		if (!spEffect || !spEffect->IsPlaying())
-		{
-			PlayEffect(GetPos());
-			m_fireState = FireState::Standby;
-		}
-		else
-		{
-			spEffect->SetPos(GetPos());
-		}
-	}
-}
-
 void BeholderChargeSparkBullet::UpdateFowardPos()
 {
-	auto spOwner = m_wpOwner.lock();
-	if (!spOwner)
+
+	Math::Vector3 pos = {};
+	if (auto spOwner = m_wpOwner.lock())
 	{
-		return;
+		pos = spOwner->GetBumpSphere().Center;
+		pos += spOwner->GetMatrix().Backward() * OwnerDist;
 	}
 
-	Math::Matrix worldMat = GetMatrix() * spOwner->GetMatrix();
+	SetPos(pos);
+}
 
-	SetPos(worldMat.Translation());
+void BeholderChargeSparkBullet::UpdateBulletSize()
+{
+	
+	float t = std::clamp( m_chargeTime / m_desc.chargeTime,0.0f,1.0f);
+
+	// 目標の大きさに近づけていく
+	m_bulletSize = std::lerp(StartBulletSize, m_desc.targetSize, t);
 }
 
 void BeholderChargeSparkBullet::UpdateEffect()
@@ -246,6 +236,7 @@ void BeholderChargeSparkBullet::UpdateEffect()
 	if (spEffect)
 	{
 		spEffect->SetPos(GetPos());
+		spEffect->SetScale(m_bulletSize);
 	}
 }
 
@@ -258,32 +249,34 @@ void BeholderChargeSparkBullet::StartFiring()
 	{
 		Math::Vector3 playerPos = spPlayer->GetBumpSphere().Center;
 		m_targetDir = playerPos - GetPos();
+
+		m_targetDir.Normalize();
 	}
 }
 
 void BeholderChargeSparkBullet::UpdatePreparation()
 {
 
+	float deltaTime = TimeManager::Instance().GetDeltaTime();
+
+	m_chargeTime += deltaTime ;
+	if (m_chargeTime >= m_desc.chargeTime)
+	{
+		// チャージが終わったら待機状態にする
+		m_fireState = FireState::Standby;
+
+		m_bulletSize = m_desc.targetSize;
+	}
+
 	UpdateFowardPos();
 
-	// エフェクト更新
-	UpdatePreparationEffect();
+	UpdateBulletSize();
+
 }
 
 void BeholderChargeSparkBullet::UpdateStandby()
 {
 	UpdateFowardPos();
-
-	// 終着地点
-	if (auto spPlayer = m_wpPlayer.lock())
-	{
-		Math::Vector3 playerPos = spPlayer->GetPos();
-		Math::Vector3 offsetPos = {};
-
-		offsetPos.y = spPlayer->GetBumpSphereOffsetY();
-	}
-
-	UpdateEffect();
 }
 
 void BeholderChargeSparkBullet::UpdateFiring()
@@ -308,8 +301,6 @@ void BeholderChargeSparkBullet::UpdateFiring()
 	}
 
 	HitPlayer(sphereInfo);
-
-	UpdateEffect();
 }
 
 void BeholderChargeSparkBullet::UpdateReflect()
@@ -329,15 +320,13 @@ void BeholderChargeSparkBullet::UpdateReflect()
 
 	// ボスに当たるかを見る
 	HitOwner(sphereInfo);
-
-	UpdateEffect();
 }
 
 void BeholderChargeSparkBullet::UpdateMove()
 {
 	float deltaTime = TimeManager::Instance().GetDeltaTime();
 
-	m_lifeTime -= deltaTime * 60.0f;
+	m_lifeTime -= deltaTime;
 	if (m_lifeTime <= 0)
 	{
 		Vanish();
@@ -346,7 +335,7 @@ void BeholderChargeSparkBullet::UpdateMove()
 
 	Math::Vector3 pos = GetPos();
 
-	pos += m_targetDir * m_desc.speed * deltaTime;
+	pos += m_targetDir * m_desc.speed * deltaTime*60.0f;
 
 	SetPos(pos);
 
@@ -359,7 +348,7 @@ void BeholderChargeSparkBullet::Vanish()
 		spEffect->StopEffect();
 	}
 
-	KdEffekseerManager::GetInstance().Play("Boss/Beholder/Spark/SparkBreak.efkefc", GetPos(), 0.6, 1.0f, false, 30, 60);
+	KdEffekseerManager::GetInstance().Play("Boss/Beholder/Spark/SparkBreak.efkefc", GetPos(), 1.0f, 1.0f, false, 30, 60);
 
 	Destroy();
 }

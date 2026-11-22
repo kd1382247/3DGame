@@ -14,20 +14,25 @@ struct BeholderChargeSparkBulletEffect
 // 弾1発分の設定(生成時にMageBoltへ渡す)
 struct BeholderChargeSparkBulletDesc
 {
-	// 生成位置
-	Math::Vector3 pos = {};
+	// 溜めの時間
+	float chargeTime = 0.0f;
 
 	// 弾の速度
 	float speed = 0.0f;
 
+	// 目標の大きさ
+	float targetSize = 0.0f;
+
+	// 反射後のスピード
+	float reflectSpeed = 0.0f;
+
 	// [m] 弾の当たり判定の半径
 	float radius = 0.0f;
-
-	float reflectSpeed = 0.0f;
 
 	float damage = 0.0f;
 	float knockBackPower = 0.0f;
 
+	// 弾の寿命
 	float lifeTime = 0.0f;
 
 	BeholderChargeSparkBulletEffect effect = {};

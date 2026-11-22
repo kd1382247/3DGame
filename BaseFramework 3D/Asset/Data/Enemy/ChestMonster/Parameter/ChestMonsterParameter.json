@@ -2,7 +2,7 @@
     "AttackPower": 10.0,
     "BumpSphereOffsetY": 0.8,
     "BumpSphereRadius": 0.8,
-    "JumpPower": 0.4,
+    "GravityAcceleration": 30.0,
     "MaxHP": 100,
     "MaxSpawnedAlive": 10,
     "MaxTotalEnemies": 40,
@@ -11,15 +11,15 @@
     "Scale": 2.0,
     "SpawnEndFrame": 60.0,
     "SpawnEnemies": [
+        "Bomb",
+        "Cactas",
         "Mushroom",
-        "Slime",
-        "StarFish",
-        "TurtleShell"
+        "StarFish"
     ],
     "SpawnHeight": 2.0,
     "SpawnInterval": 2.0,
-    "SpawnLaunchPower": 0.2,
-    "SpawnLaunchSpeed": 0.04,
+    "SpawnLaunchPower": 0.16,
+    "SpawnLaunchSpeed": 0.03,
     "SpawnStartFrame": 40.0,
     "SpawnWaitFrame": 8.0,
     "TurnSpeed": 12.0
