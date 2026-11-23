@@ -14,14 +14,12 @@
 #include"../../Character/Boss/BossBase.h"
 #include"../../Character/Enemy/EnemyBase.h"
 #include"../../Camera/CameraBase.h"
-#include"../../RoomIntroUI/RoomIntroUI.h"
 
 void Room::Init()
 {
 	SetObjectName("Room");
 
 	SetObjectCategory(KdGameObject::ObjectCategory::Gimmick);
-
 
 	// KdColliderには単位箱を登録する(位置と大きさはm_mWorldが掛ける)
 	RegisterUnitBoxCollider("Room", KdCollider::TypeEvent, false);
@@ -35,7 +33,13 @@ void Room::Init()
 
 void Room::Update()
 {
-	
+
+	// クリア状態であれば処理を飛ばす
+	if (m_roomState == RoomState::Cleared)
+	{
+		return;
+	}
+
 	auto spPlayer = m_wpPlayer.lock();
 
 	if (!spPlayer)
@@ -72,9 +76,15 @@ void Room::Update()
 			// 初めて入ったときだけ、戦闘前の演出に進む
 			if (m_roomState == RoomState::Unvisited)
 			{
+				// 安全部屋はクリア状態にする
 				if (m_roomType == RoomType::Safe)
 				{
 					ChangeState(RoomState::Cleared);
+				}
+				// 通常部屋はイントロをせずすぐ戦闘開始
+				else if (m_roomType == RoomType::Normal)
+				{
+					ChangeState(RoomState::InCombat);
 				}
 				else
 				{
@@ -84,12 +94,6 @@ void Room::Update()
 					SetCameraLock(true);
 
 					m_waitBossIntro = StartBossIntro();
-
-					// ボスの登場演出がない部屋は、ミッションの文字を出す
-					if (!m_waitBossIntro)
-					{
-						m_waitMissionUI = StartMissionIntro();
-					}
 				}
 			}
 		}
@@ -97,25 +101,7 @@ void Room::Update()
 		m_isPlayerInCore = isPlayerInCore;
 	}
 
-	// 状態ごとの処理
-	switch (m_roomState)
-	{
-	case RoomState::Intro:
-		UpdateIntro();
-		break;
-
-	case RoomState::InCombat:
-		UpdateCombat();
-		break;
-
-	case RoomState::BossDefeat:
-		UpdateBossDefeat();
-		break;
-
-	case RoomState::Outro:
-		UpdateOutro();
-		break;
-	}
+	UpdateRoomState();
 
 }
 
@@ -377,7 +363,7 @@ void Room::SetRoomType(const std::string& typeName)
 	// 古い保存データ:Normalは無くなったので、Waveとして読む
 	if (typeName == "Normal")
 	{
-		SetRoomType(RoomType::Wave);
+		SetRoomType(RoomType::Normal);
 
 		return;
 	}
@@ -443,37 +429,6 @@ void Room::ChangeState(RoomState next)
 	m_stateTimer = 0.0f;
 }
 
-bool Room::StartMissionIntro()
-{
-	// 部屋の種類ごとに、出すミッションの文字を決める
-	RoomIntroUI::Mission mission = RoomIntroUI::Mission::Wave;
-
-	switch (m_roomType)
-	{
-	case RoomType::Wave:
-		mission = RoomIntroUI::Mission::Wave;
-		break;
-
-	case RoomType::AllKill:
-		mission = RoomIntroUI::Mission::AllKill;
-		break;
-
-	default:
-		// ボス部屋など、出す文字がない部屋
-		return false;
-	}
-
-	std::shared_ptr<RoomIntroUI> missionUI = std::make_shared<RoomIntroUI>();
-	missionUI->Init();
-	missionUI->Start(mission);
-
-	SceneManager::Instance().AddObject(missionUI);
-
-	m_wpMissionUI = missionUI;
-
-	return true;
-}
-
 void Room::SetCameraLock(bool isLock)
 {
 	auto spCamera = m_wpCamera.lock();
@@ -495,15 +450,6 @@ void Room::FinishIntro()
 	}
 
 	m_waitBossIntro = false;
-	m_waitMissionUI = false;
-
-	// ミッションの文字が残っていたら消す
-	auto spMissionUI = m_wpMissionUI.lock();
-
-	if (spMissionUI)
-	{
-		spMissionUI->Destroy();
-	}
 
 	// プレイヤーの視点を動かせるように戻す
 	SetCameraLock(false);
@@ -515,19 +461,6 @@ void Room::UpdateIntro()
 {
 	if (m_waitBossIntro)
 	{
-		return;
-	}
-
-	// ミッションの文字が消え終わったら、戦闘開始
-	if (m_waitMissionUI)
-	{
-		auto spMissionUI = m_wpMissionUI.lock();
-
-		if (!spMissionUI || spMissionUI->IsFinished())
-		{
-			FinishIntro();
-		}
-
 		return;
 	}
 
@@ -576,9 +509,6 @@ void Room::StartBossDefeat()
 
 	// ボスが演出を終えて FinishBossDefeat() を呼ぶまで、時間では終わらせない
 	m_waitBossDefeat = true;
-
-	// 部屋の中の敵を、ボスと同時に全員倒す
-	KillAllEnemies();
 }
 
 void Room::FinishBossDefeat()
@@ -668,9 +598,6 @@ void Room::DebugForceClear()
 		FinishIntro();
 	}
 
-	// 部屋の中の敵を、全員倒す (倒れるモーションを見せる)
-	KillAllEnemies();
-
 	// クリア後の流れへ進める (扉が開く演出 → クリア済み)
 	// 戦闘中ではなくなるので、スポナーは次の敵を出さなくなる
 	ChangeState(RoomState::Outro);
@@ -716,25 +643,29 @@ bool Room::SpawnerFinished()
 	return true;
 }
 
-void Room::KillAllEnemies()
+void Room::UpdateRoomState()
 {
-	for (const auto& obj : SceneManager::Instance().GetObjList())
+	// 状態ごとの処理
+	switch (m_roomState)
 	{
-		const auto enemy = std::dynamic_pointer_cast<EnemyBase>(obj);
+	case RoomState::Intro:
+		UpdateIntro();
+		break;
 
-		if (!enemy)
-		{
-			continue;
-		}
+	case RoomState::InCombat:
+		UpdateCombat();
+		break;
 
-		// 部屋の外にいる敵は倒さない
-		if (!IsInside(enemy->GetPos()))
-		{
-			continue;
-		}
+	case RoomState::BossDefeat:
+		UpdateBossDefeat();
+		break;
 
-		enemy->ForceKill();
+	case RoomState::Outro:
+		UpdateOutro();
+		break;
 	}
+
+
 }
 
 int Room::CountAliveEnemies() const

@@ -664,6 +664,11 @@ void EnemySpawner::CreateEnemy(const std::string& enemyName)
 	// 生成元をスポナー(自分)にして、分裂などで生まれた敵にも引き継げるようにする
 	enemy->SetSpawner(std::dynamic_pointer_cast<EnemySpawner>(shared_from_this()));
 
+	// このスポナーが紐づく部屋を、生まれた敵にも引き継ぐ(部屋に紐づけていない時はNone)
+	RoomLink roomLink;
+	roomLink.SetRoomName(m_linkedRoomName);
+	enemy->SetRoomLink(roomLink);
+
 	SceneManager::Instance().AddObject(enemy);
 
 	RegisterSpawnedEnemy(enemy);

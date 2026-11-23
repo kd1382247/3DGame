@@ -24,7 +24,7 @@ public:
 
 	void SetUpReference()override;
 
-	bool IsAttack()const { return m_attackFlg; }
+	bool IsAttack()const { return IsAttackReady(); }
 	bool IsLaunch()const { return m_launchFlg; }
 
 

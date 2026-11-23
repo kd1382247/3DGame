@@ -26,7 +26,7 @@ public:
 	// スライムの大きさに応じた拡大率を固定で適用する(引数のScale値は無視する)
 	void SetScale(const Math::Vector3& scale)override;
 
-	bool IsAttack()const { return m_attackFlg; }
+	bool IsAttack()const { return IsAttackReady(); }
 	bool IsLaunch()const { return m_launchFlg; }
 
 	// パラメータのゲッター

@@ -17,6 +17,9 @@ public:
 		return m_wpCurrentRoom.lock().get() == room;
 	}
 
+	// オブジェクトが入っている部屋を返す
+	std::shared_ptr<Room>GetInsideRoom(const std::shared_ptr<KdGameObject>& obj);
+
 	// 戦闘中かどうか
 	bool IsCombat()const;
 

@@ -23,7 +23,7 @@
     "BumpPushRate": 0.1,
     "BumpSphereOffsetY": 0.5,
     "BumpSphereRadius": 0.55,
-    "GravityAcceleration": 65.0,
+    "GravityAcceleration": 55.0,
     "GroundRayLength": 100.0,
     "GuardAngle": 180.0,
     "GuardBreakCount": 5,

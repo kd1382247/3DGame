@@ -20,8 +20,6 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-	void DrawInspectorHeader()override;
-
 	void SetUpReference()override;
 
 	bool IsSpawnEnemy() const { return m_isSpawnEnemy; }
@@ -110,7 +108,7 @@ private:
 	SpawnTiming m_spawnTiming;
 
 	// 対応する部屋(戦闘中だけ召喚する)
-	RoomLink m_roomLink;
+	//RoomLink m_roomLink;
 
 	// 自分が出した敵のリスト(同時に生きている数を数える)
 	std::vector<std::weak_ptr<EnemyBase>> m_spawnedEnemies;

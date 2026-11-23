@@ -68,8 +68,8 @@ void CharacterPusher::AccumulatePush(const Characters& characters)
 			auto& charaA = characters[i];
 			auto& charaB = characters[j];
 
-			if (charaA->GetHealth().IsDead() ||
-				charaB->GetHealth().IsDead())
+			if (!charaA->IsCollisionEnabled() ||
+				!charaB->IsCollisionEnabled())
 			{
 				continue;
 			}

@@ -66,8 +66,6 @@ void TurtleShell::Update()
 	{
 		UpdateAttack();
 	}
-
-	UpdateEmissive();
 }
 
 void TurtleShell::PostUpdate()
@@ -108,8 +106,6 @@ void TurtleShell::RePlayAnimation(TurtleShellAnimationType type)
 
 void TurtleShell::StartSpinAttack()
 {
-	m_emissiveEnable = false;
-
 	// 回転攻撃の持続時間
 	m_spinAttackRemaining = m_spinAttackDuration;
 

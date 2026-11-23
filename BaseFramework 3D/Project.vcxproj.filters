@@ -418,9 +418,6 @@
     <Filter Include="Src\Application\GameObject\GameResultUI">
       <UniqueIdentifier>{9de79ddf-a3a1-4894-8362-589a76cb7628}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\RoomIntroUI">
-      <UniqueIdentifier>{a546b915-f675-4e6f-aaae-b46528e2ff91}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Character\Boss\Mage\MageBeam">
       <UniqueIdentifier>{3ee0f68e-da6e-4764-8c82-1abb93037ba5}</UniqueIdentifier>
     </Filter>
@@ -1185,9 +1182,6 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageDieState.h">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\RoomIntroUI\RoomIntroUI.h">
-      <Filter>Src\Application\GameObject\RoomIntroUI</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\GameResultUI\ResultUI.h">
       <Filter>Src\Application\GameObject\GameResultUI</Filter>
     </ClInclude>
@@ -1342,6 +1336,9 @@
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\ChargeSparkBullet</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDamageState.h">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderIntroState.h">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1949,9 +1946,6 @@
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Mage\State\States\MageDieState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Mage\State\States</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\RoomIntroUI\RoomIntroUI.cpp">
-      <Filter>Src\Application\GameObject\RoomIntroUI</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\GameResultUI\ResultUI.cpp">
       <Filter>Src\Application\GameObject\GameResultUI</Filter>
     </ClCompile>
@@ -2067,6 +2061,9 @@
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\ChargeShot</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDamageState.cpp">
+      <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderIntroState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
     </ClCompile>
   </ItemGroup>

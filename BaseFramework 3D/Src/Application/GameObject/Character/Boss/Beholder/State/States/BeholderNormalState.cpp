@@ -6,8 +6,6 @@
 #include"BeholderChargeShotState.h"
 #include"BeholderDizzyState.h"
 
-
-
 void BeholderNormalState::OnStart(Beholder* beholder)
 {
 	beholder->PlayAnimation(BeholderAnimationType::Idle);

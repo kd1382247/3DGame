@@ -8,6 +8,8 @@
 
 #include"../../../Explosion/ExplosionManager.h"
 
+#include"State/States/BombAttackState.h"
+#include"State/States/BombChargeState.h"
 #include"State/States/BombNormalState.h"
 #include"State/States/BombDamageState.h"
 #include"State/States/BombDieState.h"
@@ -66,7 +68,6 @@ void Bomb::Update()
 		UpdateAttack();
 	}
 
-	UpdateEmissive();
 }
 
 void Bomb::PostUpdate()
@@ -194,11 +195,15 @@ void Bomb::OnHit(const AttackInfo attackInfo)
 	{
 		m_stateMachine.ChangeState<BombDieState>();
 	}
-	else if (!IsAttack())
+	else
 	{
-		// 爆発中は怯まない
-		m_stateMachine.ChangeState<BombDamageState>();
-		RePlayAnimation(BombAnimationType::GetHit);
+		// 攻撃中かつチャージ中じゃなかったら
+		if(!m_stateMachine.IsState<BombAttackState>()&&
+			!m_stateMachine.IsState<BombChargeState>())
+		{
+			m_stateMachine.ChangeState<BombDamageState>();
+			RePlayAnimation(BombAnimationType::GetHit);
+		}
 	}
 }
 

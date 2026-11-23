@@ -100,7 +100,8 @@ void CharacterBase::DrawLit()
 
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos());
 	Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(GetRotation().y));
-	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale());
+	// 描画だけ m_drawScaleRate 倍する(足元の位置は変わらず、上に向かって大きくなる)
+	Math::Matrix scaleMat = Math::Matrix::CreateScale(GetScale() * m_drawScaleRate);
 
 	Math::Matrix localMat = scaleMat * rotYMat * transMat;
 
@@ -111,7 +112,7 @@ void CharacterBase::DrawLit()
 
 	KdShaderManager::Instance().m_StandardShader.SetColorOverlay(m_overlayColor, GetOverlayRate());
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, localMat,kWhiteColor,m_emissiveColor);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, localMat,kWhiteColor);
 
 	KdShaderManager::Instance().m_StandardShader.SetSelected(false);
 

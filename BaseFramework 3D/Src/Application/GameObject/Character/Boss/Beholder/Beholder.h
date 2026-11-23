@@ -69,6 +69,8 @@ public:
 
 	BeholderAnimationType GetPlayAnimType()const { return m_animation.GetPlayAnimType(); }
 
+	void CreateHPBar();
+
 private:
 
 	//==========混乱==========//

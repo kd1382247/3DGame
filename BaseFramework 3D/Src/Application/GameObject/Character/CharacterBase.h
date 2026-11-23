@@ -89,6 +89,9 @@ public:
 
 	float GetMaxWalkableSlopeAngle()const { return m_maxWalkableSlopeAngle; }
 
+	// 当たり判定を行うのか
+	virtual bool IsCollisionEnabled()const { return !m_health.IsDead(); }
+
 	// 被弾時の処理。各キャラクターが必要に応じてoverrideする
 	virtual void  OnHit(const AttackInfo attackInfo) {}
 
@@ -305,7 +308,8 @@ protected:
 	float m_maxOverlayRate       = 0.0f;
 	Math::Vector3 m_overlayColor = {};
 
-	Math::Vector3 m_emissiveColor = {};
+	// 描画だけの拡縮の倍率(1.0で元の大きさ)。当たり判定・到達距離などの計算には影響しない
+	float m_drawScaleRate = 1.0f;
 
 
 };

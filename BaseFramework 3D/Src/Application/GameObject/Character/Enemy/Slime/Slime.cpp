@@ -75,8 +75,6 @@ void Slime::Update()
 	{
 		UpdateAttack();
 	}
-
-	UpdateEmissive();
 }
 
 void Slime::PostUpdate()
@@ -155,6 +153,9 @@ void Slime::Split()
 
 		// 自分を出したスポナーを引き継ぐ(ウェーブが、分裂した小スライムの全滅まで次に進まないようにする)
 		InheritSpawnerTo(slime);
+
+		// 自分が紐づく部屋を、分裂した小さいスライムにも引き継ぐ
+		slime->SetRoomLink(m_roomLink);
 
 		SceneManager::Instance().AddObject(slime);
 	}

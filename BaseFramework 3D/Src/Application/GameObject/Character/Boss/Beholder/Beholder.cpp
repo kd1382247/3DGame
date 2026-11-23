@@ -1,7 +1,9 @@
 ﻿#include "Beholder.h"
 
 #include"../../../../System/CollisionManager/CollisionManager.h"
+#include"../../../../Scene/SceneManager.h"
 
+#include"../../../HPBar/BossHPBar/BossHPBar.h"
 
 #include"../../Player/Player.h"
 
@@ -303,6 +305,17 @@ void Beholder::DizzyCountUp()
 	{
 		m_stateMachine.ChangeState<BeholderDizzyState>();
 	}
+}
+
+void Beholder::CreateHPBar()
+{
+	std::shared_ptr<BossHPBar>hpBar = std::make_shared<BossHPBar>();
+
+	hpBar->SetNamePrateParam(GetFactoryClassName(), 227, 50);
+	hpBar->Init();
+	hpBar->SetBoss(std::dynamic_pointer_cast<BossBase>(shared_from_this()));
+
+	SceneManager::Instance().AddObject(hpBar);
 }
 
 void Beholder::UpdateFalling()

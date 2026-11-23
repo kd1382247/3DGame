@@ -73,8 +73,6 @@ void Mushroom::Update()
 	{
 		UpdateAttack();
 	}
-
-	UpdateEmissive();
 }
 
 void Mushroom::PostUpdate()

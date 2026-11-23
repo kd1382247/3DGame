@@ -24,6 +24,14 @@ public:
 
 	const std::string& GetRoomName()const { return m_roomName; }
 
+	// 部屋の名前を直接セットする(スポナーなど、名前しか持っていない側から紐づける時に使う)
+	void SetRoomName(const std::string& name)
+	{
+		m_roomName = name;
+		m_wpRoom.reset();
+		m_warnedMissingRoom = false;
+	}
+
 	// 紐づけた部屋を返す(紐づけていない・見つからない時はnullptr)
 	std::shared_ptr<Room> GetRoom()
 	{

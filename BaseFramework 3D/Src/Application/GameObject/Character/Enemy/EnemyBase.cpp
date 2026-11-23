@@ -28,21 +28,16 @@ void EnemyBase::Init()
 
 	m_bumpPushRate = 1.0f;
 
-
 }
 
 void EnemyBase::PreUpdate()
 {
 	CharacterBase::PreUpdate();
 
-	auto room = RoomManager::Instance().GetCurrentRoom();
-	if (room)
+	// 部屋がクリア状態になったら
+	if (IsRoomCleared())
 	{
-		// クリアした部屋に敵が生きている場合再度確認
-		if (room->IsOutro()||room->IsBossDefeat())
-		{
-			room->KillAllEnemies();
-		}
+		ForceKill();
 	}
 }
 
@@ -63,6 +58,14 @@ void EnemyBase::DrawInspector()
 
 	// 各敵のパラメータ(到達距離・攻撃・クールタイムなども各Parameterの中に含まれる)
 	DrawParameterInspector();
+}
+
+void EnemyBase::DrawInspectorHeader()
+{
+	CharacterBase::DrawInspectorHeader();
+
+	// 対応する部屋(None のときは、部屋に関係なく召喚する)
+	m_roomLink.DrawCombo();
 }
 
 void EnemyBase::SetUpReference()
@@ -102,7 +105,9 @@ void EnemyBase::StartAttack()
 {
 	m_hitTarget = false;
 	m_animFrame = 0.0f;
-	m_emissiveEnable = false;
+
+	// 攻撃中は元の大きさにしておく
+	m_drawScaleRate = 1.0f;
 }
 
 void EnemyBase::UpdateAttackCollision()
@@ -133,6 +138,19 @@ Math::Vector3 EnemyBase::CreateSpawnDirection()
 	launchVec.Normalize();
 
 	return launchVec;
+}
+
+bool EnemyBase::IsRoomCleared()
+{
+	// 部屋と紐づいているか
+	if (!m_roomLink.HasLink()) { return false; }
+
+	auto spRoom = m_roomLink.GetRoom();
+
+	if (!spRoom) { return false; }
+
+	// クリア、ボスの撃破演出状態ならばtrueを返す
+	return spRoom->IsOutro()||spRoom->IsBossDefeat();
 }
 
 void EnemyBase::PlayHitEffect()
@@ -378,24 +396,19 @@ bool EnemyBase::IsBlockedByAIBlock(const Math::Vector3& from, const Math::Vector
 	return false;
 }
 
-bool EnemyBase::CanDirectChase()
+void EnemyBase::CanDirectChase()
 {
-	// プレイヤーに到達していたらスキップ
-	if (m_hasReachedTarget)
-	{
-		return false;
-	}
 
 	auto spPlayer = m_wpPlayer.lock();
 
 	if (!spPlayer)
 	{
-		return false;
+		return;
 	}
 
 	if (GetAreaID() < 0 || spPlayer->GetAreaID()<0)
 	{
-		return true;
+		return;
 	}
 
 	// 敵とプレイヤーが同じAreaIDだったら直接追跡
@@ -410,15 +423,14 @@ bool EnemyBase::CanDirectChase()
 		else if(!WayPointManager::Instance().GetWayPoints().empty())
 		{
 			m_nextMoveState = MoveState::FollowPath;
+
+			m_hasReachedTarget = false;
 		}
 	}
 	else
 	{
 		m_nextMoveState = MoveState::DirectChase;
 	}
-
-	return true;
-
 }
 
 void EnemyBase::SelectStartWayPoint()
@@ -498,14 +510,16 @@ void EnemyBase::UpdateMove()
 		return;
 	}
 
-	if (CanDirectChase())
-	{
-		PlayWalkAnimation();
-	}
-	else
+	if (m_hasReachedTarget)
 	{
 		PlayIdleAnimation();
 	}
+	else
+	{
+		PlayWalkAnimation();
+	}
+
+	CanDirectChase();
 
 	ChangeMoveState(m_nextMoveState);
 
@@ -541,6 +555,9 @@ void EnemyBase::ForceKill()
 
 	m_isForceKilled = true;
 
+	// 拡縮の途中でも、元の大きさに戻してからやられ状態にする
+	ResetAttackPulse();
+
 	// HPを0にしてから、ダメージ0の攻撃を当てる
 	// (各敵のOnHitは、HPが0ならやられ状態へ切り替える。
 	//  ダメージが0なので、ダメージ表示・ヒットエフェクト・ヒットストップは出ない)
@@ -557,22 +574,6 @@ void EnemyBase::CreateDeathSmoke()
 	// SEを流す
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Enemy/Death/Death.wav");
 
-}
-
-void EnemyBase::UpdateEmissive()
-{
-	if (!m_emissiveEnable)
-	{
-		m_emissivePower = 0.0f;
-		m_emissiveTime = 0.0f;
-		m_emissiveColor = Math::Vector3::Zero;
-		return;
-	}
-
-	m_emissiveTime += m_deltaTime;
-	m_emissivePower = 0.5f + 0.5f * sinf(m_emissiveTime * 20.0f);
-
-	m_emissiveColor = { m_emissivePower,m_emissivePower ,m_emissivePower };
 }
 
 void EnemyBase::UpdateAttack()
@@ -593,11 +594,22 @@ void EnemyBase::UpdateAttack()
 	{
 		float rate = m_attackCooldown / m_attackCooldownDuration;
 
-		// もうすぐ攻撃をするときにEmissiveで光らせるフラグを立てる
+		// もうすぐ攻撃をするとき
 		if (rate <= 0.6)
 		{
-			m_emissiveEnable = true;
+			// モデルを2回、大きくして元に戻す
+			UpdateAttackPulse();
 		}
+		else
+		{
+			// クールタイムがまだ長い(攻撃が終わった直後など)ときは、拡縮を最初からにしておく
+			ResetAttackPulse();
+		}
+	}
+	else if (m_attackFlg)
+	{
+		// クールタイムが無い敵は、攻撃フラグが立ったらすぐ拡縮を始める
+		UpdateAttackPulse();
 	}
 
 	// クールタイムがある場合は攻撃しない
@@ -611,8 +623,44 @@ void EnemyBase::UpdateAttack()
 	else
 	{
 		m_attackCooldown = m_attackCooldownDuration;
-		m_emissiveEnable = false;
+
+		// 攻撃しないことになったので、拡縮も途中でやめて元の大きさに戻す
+		ResetAttackPulse();
 	}
+}
+
+void EnemyBase::UpdateAttackPulse()
+{
+	// 決められた回数を終えたら、元の大きさのまま攻撃を待つ
+	if (m_isScalePulseFinished)
+	{
+		m_drawScaleRate = 1.0f;
+		return;
+	}
+
+	m_scalePulseTime += m_deltaTime;
+
+	const float totalTime = kAttackPulseCount * kAttackPulseDuration;
+
+	if (m_scalePulseTime >= totalTime)
+	{
+		m_isScalePulseFinished = true;
+		m_drawScaleRate = 1.0f;
+		return;
+	}
+
+	// 1回分の中での進み具合(0〜1)
+	const float phase = fmodf(m_scalePulseTime, kAttackPulseDuration) / kAttackPulseDuration;
+
+	// 元の大きさ → 一番大きく → 元の大きさ、と滑らかに変える(1回の終わりでちょうど1.0に戻る)
+	m_drawScaleRate = 1.0f + kAttackPulseScaleUp * sinf(DirectX::XM_PI * phase);
+}
+
+void EnemyBase::ResetAttackPulse()
+{
+	m_scalePulseTime = 0.0f;
+	m_isScalePulseFinished = false;
+	m_drawScaleRate = 1.0f;
 }
 
 bool EnemyBase::UpdateMeleeAttackCollision(float knockBackPower, float damage, float sphereRadius, float forwardOffset)
@@ -696,11 +744,31 @@ void EnemyBase::EndAttack()
 	m_attackCooldown = m_attackCooldownDuration;
 }
 
+nlohmann::json EnemyBase::SaveData() const
+{
+	// 位置・回転・大きさなどの共通データ
+	nlohmann::json json = CharacterBase::SaveData();
+
+	// 自分が設置された部屋の名前(選んでいない時は空 = None)
+	m_roomLink.SaveData(json);
+
+	return json;
+}
+
+void EnemyBase::LoadData(const nlohmann::json& json)
+{
+	CharacterBase::LoadData(json);
+
+	// キーが無い古いステージは、部屋と紐づけない(None)まま動く
+	m_roomLink.LoadData(json);
+}
+
 bool EnemyBase::ApplyDamage(const AttackInfo& attackInfo)
 {
 
 
-	EmissiveDisable();
+	// 攻撃前の拡縮の途中で被弾したら、拡縮はやめて元の大きさに戻す
+	ResetAttackPulse();
 
 	const bool isDead = m_health.TakeDamage(attackInfo.m_damage);
 

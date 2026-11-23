@@ -77,15 +77,6 @@ void ChestMonster::PostUpdate()
 
 }
 
-void ChestMonster::DrawInspectorHeader()
-{
-	EnemyBase::DrawInspectorHeader();
-	
-	// 対応する部屋(None のときは、部屋に関係なく召喚する)
-	m_roomLink.DrawCombo();
-
-}
-
 void ChestMonster::SetUpReference()
 {
 	EnemyBase::SetUpReference();
@@ -199,8 +190,6 @@ void ChestMonster::OnHit(const AttackInfo attackInfo)
 	}
 }
 
-
-
 void ChestMonster::CreateEnemy(const std::string& enemyName)
 {
 	// 未登録の名前をファクトリーに渡すとassertで止まるので、先に調べる
@@ -242,6 +231,9 @@ void ChestMonster::CreateEnemy(const std::string& enemyName)
 	// 関連付け
 	enemy->SetUpReference();
 
+	// 自分が紐づく部屋を、出した敵にも引き継ぐ
+	enemy->SetRoomLink(m_roomLink);
+
 	SceneManager::Instance().AddObject(enemy);
 
 	// 自分が出した敵として覚えておく
@@ -257,23 +249,19 @@ void ChestMonster::UpdateAnimation()
 
 nlohmann::json ChestMonster::SaveData() const
 {
-	// 位置・回転・大きさなどの共通データ
-	nlohmann::json json = KdGameObject::SaveData();
+	// 位置・回転・大きさ・対応する部屋(EnemyBaseが保存する)
+	nlohmann::json json = EnemyBase::SaveData();
 
 	// この1体だけの個別パラメータ
 	json["Parameter"] = m_parameter.ToJson();
-
-	// 対応する部屋
-	m_roomLink.SaveData(json);
 
 	return json;
 }
 
 void ChestMonster::LoadData(const nlohmann::json& json)
 {
+	// 位置・回転・大きさ・対応する部屋はEnemyBaseが読み込む
 	EnemyBase::LoadData(json);
-
-	m_roomLink.LoadData(json);
 
 	// キーが無い古いステージは、共通JSONのデフォルト値のまま動く
 	if (json.contains("Parameter"))

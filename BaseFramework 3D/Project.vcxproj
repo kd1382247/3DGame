@@ -305,6 +305,7 @@
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDamageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDieState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDizzyState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderIntroState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderSparkAttackState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Boss\BossBase.h" />
@@ -462,7 +463,6 @@
     <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\PlayerHPBar\PlayerHPBar.h" />
-    <ClInclude Include="Src\Application\GameObject\RoomIntroUI\RoomIntroUI.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollision.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.h" />
     <ClInclude Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlock.h" />
@@ -577,6 +577,7 @@
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDamageState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDieState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderDizzyState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderIntroState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderSparkAttackState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderNormalState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Boss\BossBase.cpp" />
@@ -711,7 +712,6 @@
     <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBar.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\EnemyHPBar\EnemyHPBarManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\HPBar\PlayerHPBar\PlayerHPBar.cpp" />
-    <ClCompile Include="Src\Application\GameObject\RoomIntroUI\RoomIntroUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollision.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AABBCollision\AABBCollisionManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Stage\Collision\AIBlockCollision\AIBlock.cpp" />

@@ -63,8 +63,6 @@ void StarFish::Update()
 	{
 		UpdateAttack();
 	}
-
-	UpdateEmissive();
 }
 
 void StarFish::PostUpdate()
@@ -124,8 +122,6 @@ void StarFish::StartAttack()
 	m_hitTarget = false;
 	m_hasFiredBullet = false;
 	SetAttackTiming();
-
-	m_emissiveEnable = false;
 
 	Math::Vector3 effectPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
 	effectPos += m_mWorld.Backward() * 0.3f;

@@ -67,8 +67,6 @@ void Cactas::Update()
 	{
 		UpdateAttack();
 	}
-
-	UpdateEmissive();
 }
 
 void Cactas::PostUpdate()
