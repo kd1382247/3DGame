@@ -14,7 +14,7 @@
         "MoveSpeed": 0.04,
         "ReachDistance": 1.5,
         "Scale": 1.3,
-        "TurnSpeed": 12.0
+        "TurnSpeed": 8.0
     },
     "Small": {
         "AttackCooldown": 0.45,

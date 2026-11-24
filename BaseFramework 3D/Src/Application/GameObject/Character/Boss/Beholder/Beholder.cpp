@@ -36,26 +36,12 @@ void Beholder::Init()
 		// パラメータ初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
 		m_parameter.Init();
 
-		const auto& param = m_parameter.GetParam();
+		ApplyParameter();
 
-		InitCharacterModel("Asset/Models/Boss/Beholder/Beholder.gltf", "Beholder",
-			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "Beholder");
+		InitCharacterModel("Asset/Models/Boss/Beholder/Beholder.gltf", "Beholder", "Beholder");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
-		m_health.Init(param.m_maxHP);
-
-		// 当たり判定(押し戻し)球の大きさをパラメータから反映
-		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
-
-		// 重力加速度をパラメータから反映
-		SetGravityAcceleration(param.m_gravityAcceleration);
-
-		m_reachDistance = param.m_reachDistance;
-		m_reachDistanceMargin = param.m_reachDistanceMargin;
-
-		m_attackCooldownDuration = param.m_attackCooldown;
-		m_attackCooldown = m_attackCooldownDuration;
 
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<BeholderNormalState>();
@@ -71,17 +57,8 @@ void Beholder::Init()
 
 void Beholder::Update()
 {
-	if (GetAsyncKeyState('F') & 0x8000)
-	{
-		m_isEyeTracking = true;
-	}
-	if (GetAsyncKeyState('G') & 0x8000)
-	{
-		m_isEyeTracking = false;
-	}
 
 	UpdateAttack();
-
 
 	m_stateMachine.Update();
 }
@@ -316,6 +293,26 @@ void Beholder::CreateHPBar()
 	hpBar->SetBoss(std::dynamic_pointer_cast<BossBase>(shared_from_this()));
 
 	SceneManager::Instance().AddObject(hpBar);
+}
+
+void Beholder::ApplyParameter()
+{
+	const auto& param = m_parameter.GetParam();
+
+	m_health.Init(param.m_maxHP);
+
+	// スフィアの高さと半径
+	m_bumpSphereOffsetY = param.m_bumpSphereOffsetY;
+	m_bumpSphereRadius  = param.m_bumpSphereRadius;
+
+	// 重力加速度をパラメータから反映
+	SetGravityAcceleration(param.m_gravityAcceleration);
+
+	m_reachDistance       = param.m_reachDistance;
+	m_reachDistanceMargin = param.m_reachDistanceMargin;
+
+	m_attackCooldownDuration = param.m_attackCooldown;
+	m_attackCooldown         = m_attackCooldownDuration;
 }
 
 void Beholder::UpdateFalling()

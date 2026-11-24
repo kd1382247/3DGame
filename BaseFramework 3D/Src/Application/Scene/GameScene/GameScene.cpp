@@ -23,7 +23,7 @@
 #include"../../GameObject/Camera/CameraBase.h"
 #include"../../System/Mouse/CursorVisibility.h"
 
-#include"../../../Framework/GameObject/Component/ParentLink.h"
+#include"../../../Framework/GameObject/Component/Components/ParentLink/ParentLink.h"
 
 namespace
 {

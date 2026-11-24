@@ -4,14 +4,16 @@
 
 class KdGameObject;
 
-class Component
+class ComponentBase
 {
 public:
 
-	Component() = default;
-	virtual ~Component() = default;
+	ComponentBase() = default;
+	virtual ~ComponentBase() = default;
 
+	virtual void PreUpdate(KdGameObject& obj)         {}
 	virtual void Update( KdGameObject& obj)           {}
+	virtual void PostUpdate( KdGameObject& obj)       {}
 
 	virtual void SaveData(nlohmann::json& json)const  {}
 	virtual void LoadData(const nlohmann::json& json) {}

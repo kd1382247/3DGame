@@ -44,27 +44,13 @@ void Mage::Init()
 		// パラメータ初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
 		m_parameter.Init();
 
-		const auto& param = m_parameter.GetParam();
+		ApplyParameter();
 
-		InitCharacterModel("Asset/Models/Boss/Mage/Mage.gltf", "Mage",
-			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "Mage");
+		InitCharacterModel("Asset/Models/Boss/Mage/Mage.gltf", "Mage", "Mage");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
-		m_health.Init(param.m_maxHP);
-
-		// 当たり判定(押し戻し)球の大きさをパラメータから反映
-		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
-
-		// 重力加速度をパラメータから反映
-		SetGravityAcceleration(param.m_gravityAcceleration);
-
-		m_reachDistance = param.m_reachDistance;
-		m_reachDistanceMargin = param.m_reachDistanceMargin;
-
-		m_attackCooldownDuration = param.m_attackCooldown;
-		m_attackCooldown = m_attackCooldownDuration;
-
+		
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<MageIntroState>();
 	}
@@ -148,6 +134,27 @@ void Mage::PlayWalkAnimation()
 void Mage::PlayIdleAnimation()
 {
 	PlayAnimation(MageAnimationType::Idle);
+}
+
+void Mage::ApplyParameter()
+{
+	const auto& param = m_parameter.GetParam();
+
+	m_health.Init(param.m_maxHP);
+
+	// スフィアの高さと半径
+	m_bumpSphereOffsetY = param.m_bumpSphereOffsetY;
+	m_bumpSphereRadius = param.m_bumpSphereRadius;
+
+	// 重力加速度をパラメータから反映
+	SetGravityAcceleration(param.m_gravityAcceleration);
+
+	m_reachDistance = param.m_reachDistance;
+	m_reachDistanceMargin = param.m_reachDistanceMargin;
+
+	m_attackCooldownDuration = param.m_attackCooldown;
+	m_attackCooldown = m_attackCooldownDuration;
+
 }
 
 void Mage::UpdateAnimation()

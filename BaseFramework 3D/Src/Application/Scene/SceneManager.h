@@ -4,7 +4,7 @@ class BaseScene;
 
 #include"SceneTransition/SceneTransition.h"
 
-#include"../../Framework/GameObject/Component/ParentLink.h"
+#include"../../Framework/GameObject/Component/Components/ParentLink/ParentLink.h"
 
 
 class SceneManager

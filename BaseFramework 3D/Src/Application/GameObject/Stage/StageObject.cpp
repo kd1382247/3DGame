@@ -13,7 +13,6 @@
 
 #include"../Gimmick/StageGimmick.h"
 #include"../Character/CharacterBase.h"
-#include"../../../Framework/GameObject/Component/ParentLink.h"
 
 #include"../../Editor/StageOwnedTypeInfo/StageOwnedTypeInfo.h"
 

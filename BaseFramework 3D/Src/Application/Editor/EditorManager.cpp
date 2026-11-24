@@ -37,8 +37,6 @@
 
 #include"StageOwnedTypeInfo/StageOwnedTypeInfo.h"
 
-#include"../../Framework/GameObject/Component/ParentLink.h"
-
 void EditorManager::Init()
 {
 	if(!m_spHierarchy)

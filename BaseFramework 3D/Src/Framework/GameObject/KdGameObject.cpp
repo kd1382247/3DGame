@@ -242,17 +242,36 @@ void KdGameObject::LoadComponentData(const nlohmann::json& json)
 
 }
 
+void KdGameObject::PreUpdateComponents()
+{
+	// 部品の前更新を呼ぶ
+	for (const auto& component : m_components)
+	{
+		if (!component) { continue; }
+
+		component->PreUpdate(*this);
+	}
+}
+
 void KdGameObject::UpdateComponents()
 {
 	// 部品の更新を呼ぶ
 	for (const auto& component : m_components)
 	{
-		if (!component)
-		{
-			continue;
-		}
+		if (!component) { continue; }
 
 		component->Update(*this);
+	}
+}
+
+void KdGameObject::PostUpdateComponents()
+{
+	// 部品の後更新を呼ぶ
+	for (const auto& component : m_components)
+	{
+		if (!component) { continue; }
+
+		component->PostUpdate(*this);
 	}
 }
 

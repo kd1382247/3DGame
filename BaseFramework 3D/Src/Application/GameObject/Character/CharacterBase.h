@@ -1,10 +1,14 @@
 ﻿#pragma once
 
-#include"../../../Framework/GameObject/Component/ParentLink.h"
 
 #include"AttackInfo.h"
 
 #include"Health.h"
+
+class ParentLink;
+class CameraDistanceFade;
+
+class CameraBase;
 
 class CharacterBase : public KdGameObject
 {
@@ -25,10 +29,11 @@ public:
 	void Update()		override;
 	void PostUpdate()	override;
 
+	void SetUpReference()override;
+
 	void DrawDebug()    override;
 
 	void DrawLit()		override;
-	void GenerateDepthMapFromLight()	override;
 
 	// 固定表示(スクロールしない)側:名前・位置・回転・大きさ
 	void DrawInspectorHeader()override;
@@ -196,6 +201,12 @@ public:
 	void  UpdateOverlay();
 
 	//===========================================================
+	// カメラ
+	//===========================================================
+	Math::Vector3 GetCameraPos();
+
+
+	//===========================================================
 	// HP
 	//===========================================================
 
@@ -213,8 +224,7 @@ protected:
 
 	// キャラクターの初期化で共通する処理をまとめる
 	// (モデル生成・当たり判定コライダー登録・デバッグワイヤー生成・オブジェクト名設定)
-	void InitCharacterModel(const std::string& modelPath, const std::string& colliderName,
-		const Math::Vector3& colliderOffset, float colliderRadius, const std::string& objectName);
+	void InitCharacterModel(const std::string& modelPath, const std::string& colliderName, const std::string& objectName);
 
 	// デバッグ用に、当たり判定(押し戻し)球を描画する
 	void DrawBumpDebugSphere();
@@ -229,6 +239,12 @@ protected:
 	//===========================================================
 
 	std::shared_ptr<KdModelWork>  m_spModel = nullptr;
+
+	//===========================================================
+	// カメラ
+	//===========================================================
+
+	std::weak_ptr<CameraBase>m_wpCamera;
 
 	// デルタタイム
 	float m_deltaTime = 0.0f;
@@ -283,7 +299,11 @@ protected:
 
 	Health m_health;
 
+	// 親のステージ
 	std::shared_ptr<ParentLink> m_spParentLink = nullptr;
+
+	// カメラの距離に応じて半透明にする
+	std::shared_ptr<CameraDistanceFade>m_spCamDistFade = nullptr;
 
 	//===========================================================
 	// Combat

@@ -70,6 +70,8 @@ void EnemyBase::DrawInspectorHeader()
 
 void EnemyBase::SetUpReference()
 {
+	CharacterBase::SetUpReference();
+
 	m_wpPlayer = GameObjectFinder::Instance().FindObject<Player>();
 }
 

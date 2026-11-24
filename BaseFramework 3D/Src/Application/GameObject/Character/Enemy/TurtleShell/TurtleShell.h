@@ -56,6 +56,8 @@ public:
 
 private:
 
+	// パラメータの適用
+	void ApplyParameter();
 
 	void HitCoolDownRemaining();
 

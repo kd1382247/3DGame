@@ -47,7 +47,7 @@
     "ForwardSectorHitEndProgress": 0.6,
     "ForwardSectorRadius": 6.5,
     "ForwardSectorTelegraph": 0.8,
-    "JumpPower": 0.4,
+    "GravityAcceleration": 55.0,
     "MaxHP": 200,
     "MoveSpeed": 0.085,
     "NovaCircleCastDelay": 0.6,
@@ -84,5 +84,5 @@
     "TargetCircleShotCount": 4,
     "TargetCircleShotInterval": 1.0,
     "TargetCircleTelegraph": 0.8,
-    "TurnSpeed": 12.0
+    "TurnSpeed": 8.0
 }

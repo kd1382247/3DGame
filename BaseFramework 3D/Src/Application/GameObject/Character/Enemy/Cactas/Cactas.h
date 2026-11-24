@@ -40,6 +40,8 @@ public:
 
 private:
 
+	void ApplyParameter();
+
 	void UpdateAnimation();
 
 	void PlayWalkAnimation() override;

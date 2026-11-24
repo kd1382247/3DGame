@@ -487,6 +487,15 @@
     <Filter Include="Src\Application\GameObject\Character\Boss\Beholder\ChargeSparkBullet">
       <UniqueIdentifier>{b650b623-6bc6-4209-9617-03052de87c1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Framework\GameObject\Component\Compoents">
+      <UniqueIdentifier>{c92b31e8-0cdc-4677-91cb-dd47cbc89677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Framework\GameObject\Component\Compoents\ParentLink">
+      <UniqueIdentifier>{91d68cef-dce0-4dab-86a4-046bbca359d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Framework\GameObject\Component\Compoents\CameraDistanceFade">
+      <UniqueIdentifier>{15de264d-4a82-475c-98e9-39ae65b8cc50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -1293,12 +1302,6 @@
     <ClInclude Include="Src\Application\Editor\StageOwnedTypeInfo\StageOwnedTypeInfo.h">
       <Filter>Src\Application\Editor\StageOwnedTypeInfo</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Framework\GameObject\Component\Component.h">
-      <Filter>Src\Framework\GameObject\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Framework\GameObject\Component\ParentLink.h">
-      <Filter>Src\Framework\GameObject\Component</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Gimmick\StageGimmick.h">
       <Filter>Src\Application\GameObject\Gimmick</Filter>
     </ClInclude>
@@ -1340,6 +1343,15 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderIntroState.h">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\GameObject\Component\ComponentBase.h">
+      <Filter>Src\Framework\GameObject\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\GameObject\Component\Components\ParentLink\ParentLink.h">
+      <Filter>Src\Framework\GameObject\Component\Compoents\ParentLink</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Framework\GameObject\Component\Components\CameraDistanceFade\CameraDistanceFade.h">
+      <Filter>Src\Framework\GameObject\Component\Compoents\CameraDistanceFade</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2021,12 +2033,6 @@
     <ClCompile Include="Src\Application\Editor\StageOwnedTypeInfo\StageOwnedTypeInfo.cpp">
       <Filter>Src\Application\Editor\StageOwnedTypeInfo</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Framework\GameObject\Component\Component.cpp">
-      <Filter>Src\Framework\GameObject\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Framework\GameObject\Component\ParentLink.cpp">
-      <Filter>Src\Framework\GameObject\Component</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Gimmick\StageGimmick.cpp">
       <Filter>Src\Application\GameObject\Gimmick</Filter>
     </ClCompile>
@@ -2065,6 +2071,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Character\Boss\Beholder\State\States\BeholderIntroState.cpp">
       <Filter>Src\Application\GameObject\Character\Boss\Beholder\State\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\GameObject\Component\Components\ParentLink\ParentLink.cpp">
+      <Filter>Src\Framework\GameObject\Component\Compoents\ParentLink</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Framework\GameObject\Component\Components\CameraDistanceFade\CameraDistanceFade.cpp">
+      <Filter>Src\Framework\GameObject\Component\Compoents\CameraDistanceFade</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

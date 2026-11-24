@@ -17,16 +17,14 @@ void ChestMonster::Init()
 		// パラメータ初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
 		m_parameter.Init();
 
-		const auto& param = m_parameter.GetParam();
+		ApplyParameter();
 
-		InitCharacterModel("Asset/Models/Enemy/ChestMonster/ChestMonster.gltf", "ChestMonster",
-			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "ChestMonster");
+		InitCharacterModel("Asset/Models/Enemy/ChestMonster/ChestMonster.gltf", "ChestMonster", "ChestMonster");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
-		// Parameterの値を反映(HP・到達距離・召喚間隔)
-		ApplyParameter();
-
+	
+		
 		// ノーマルステートで初期化
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<ChestMonsterNormalState>();
@@ -346,8 +344,9 @@ void ChestMonster::ApplyParameter()
 
 	m_health.Init(param.m_maxHP);
 
-	// 当たり判定(押し戻し)球の大きさをパラメータから反映
-	SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
+	// スフィアの高さと半径
+	m_bumpSphereOffsetY = param.m_bumpSphereOffsetY;
+	m_bumpSphereRadius = param.m_bumpSphereRadius;
 
 	// 重力加速度をパラメータから反映
 	SetGravityAcceleration(param.m_gravityAcceleration);
@@ -355,7 +354,7 @@ void ChestMonster::ApplyParameter()
 	m_reachDistance = param.m_reachDistance;
 
 	// 敵を呼び出す間隔(秒)
-	m_spawnInterval = param.m_spawnInterval;
+	m_spawnInterval  = param.m_spawnInterval;
 	m_spawnCountDown = m_spawnInterval;
 }
 

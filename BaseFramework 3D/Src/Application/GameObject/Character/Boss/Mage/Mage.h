@@ -86,6 +86,9 @@ public:
 	
 private:
 
+	// パラメータの適用
+	void ApplyParameter();
+
 	void UpdateAnimation();
 
 	// デバッグキーで攻撃パターンを固定する(4〜9キー:固定 / 0キー:通常の抽選に戻す)

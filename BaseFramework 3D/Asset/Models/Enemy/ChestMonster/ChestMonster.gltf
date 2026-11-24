@@ -6887,11 +6887,6 @@
 		},
 		{
 			"doubleSided":true,
-			"emissiveFactor":[
-				0.7991030812263489,
-				0.7529425024986267,
-				0.35640019178390503
-			],
 			"name":"Emission",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{

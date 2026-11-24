@@ -14,6 +14,7 @@ void Mushroom::Init()
 	{
 		// パラメータクラス初期化(Angryになる確率を使うため、タイプの抽選より先に行う)
 		m_parameter.Init();
+		ApplyParameter();
 
 		// 一定確率でAngryタイプを抽選する
 		LotteryMushroomType();
@@ -22,34 +23,14 @@ void Mushroom::Init()
 			"Asset/Models/Enemy/Mushroom/MushroomAngry/MushroomAngry.gltf" :
 			"Asset/Models/Enemy/Mushroom/MushroomSmile/MushroomSmile.gltf";
 
-		const auto& param = m_parameter.GetParam(m_mushroomType);
 
-		InitCharacterModel(modelPath, "Mushroom",
-			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "Mushroom");
+		InitCharacterModel(modelPath, "Mushroom", "Mushroom");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 
-		m_health.Init(param.m_maxHP);
-
-		// 当たり判定(押し戻し)球の大きさをパラメータから反映
-		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
-
-		// 重力加速度をパラメータから反映
-		SetGravityAcceleration(param.m_gravityAcceleration);
-
-		m_reachDistance = param.m_reachDistance;
-		m_attackCooldownDuration = param.m_attackCooldown;
-
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<MushroomNormalState>();
-
-		// 近接攻撃パラメータをセット
-		m_meleeAttack.m_attackTiming.hitStart = param.m_hitStartFrame;
-		m_meleeAttack.m_attackTiming.hitEnd = param.m_hitEndFrame;
-		m_meleeAttack.m_sphereRadius = param.m_hitRadius;
-		m_meleeAttack.m_forwardOffset = param.m_hitForwardOffset;
-		m_meleeAttack.m_knockBackPower = param.m_knockBackPower;
 
 	}
 
@@ -125,6 +106,34 @@ void Mushroom::RePlayAnimation(MushroomAnimationType type)
 	m_animation.RePlay(type);
 }
 
+
+void Mushroom::ApplyParameter()
+{
+
+	const auto& param = m_parameter.GetParam(m_mushroomType);
+
+	// スフィアの高さと半径
+	m_bumpSphereOffsetY = param.m_bumpSphereOffsetY;
+	m_bumpSphereRadius = param.m_bumpSphereRadius;
+
+	m_health.Init(param.m_maxHP);
+
+	// 重力加速度をパラメータから反映
+	SetGravityAcceleration(param.m_gravityAcceleration);
+
+	m_reachDistance = param.m_reachDistance;
+	m_attackCooldownDuration = param.m_attackCooldown;
+
+	// 近接攻撃パラメータをセット
+	m_meleeAttack.m_attackTiming.hitStart = param.m_hitStartFrame;
+	m_meleeAttack.m_attackTiming.hitEnd = param.m_hitEndFrame;
+	m_meleeAttack.m_sphereRadius = param.m_hitRadius;
+	m_meleeAttack.m_forwardOffset = param.m_hitForwardOffset;
+	m_meleeAttack.m_knockBackPower = param.m_knockBackPower;
+
+
+
+}
 
 void Mushroom::UpdateAnimation()
 {

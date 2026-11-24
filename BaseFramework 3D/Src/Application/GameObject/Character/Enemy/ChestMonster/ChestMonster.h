@@ -71,7 +71,7 @@ private:
 
 	void SetSpawnTiming();
 
-	// Parameterの値を、このクラスのメンバーへ反映する(Init後・LoadData後に呼ぶ)
+	// パラメータの適用
 	void ApplyParameter();
 
 	// 紐づけた部屋が戦闘中か(部屋に紐づけていないときは、常にtrue)

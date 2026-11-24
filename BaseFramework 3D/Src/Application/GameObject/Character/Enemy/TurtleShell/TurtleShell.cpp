@@ -23,27 +23,12 @@ void TurtleShell::Init()
 		// パラメータ初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
 		m_parameter.Init();
 
-		const auto& param = m_parameter.GetParam();
-
-		InitCharacterModel("Asset/Models/Enemy/TurtleShell/TurtleShell.gltf", "TurtleShell",
-			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "TurtleShell");
+		ApplyParameter();
+		
+		InitCharacterModel("Asset/Models/Enemy/TurtleShell/TurtleShell.gltf", "TurtleShell", "TurtleShell");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
-
-		m_health.Init(param.m_maxHP);
-
-		// 当たり判定(押し戻し)球の大きさをパラメータから反映
-		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
-
-		// 重力加速度をパラメータから反映
-		SetGravityAcceleration(param.m_gravityAcceleration);
-
-		m_reachDistance = param.m_reachDistance;
-		m_attackCooldownDuration = param.m_attackCooldown;
-		m_dizzyDuration = param.m_dizzyDuration;
-		m_spinAttackDuration = param.m_spinDuration;
-		m_hitCooldownDuration = param.m_spinHitCooldown;
 
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<TurtleShellNormalState>();
@@ -293,6 +278,27 @@ bool TurtleShell::DizyyRemaining()
 	}
 
 	return false;
+}
+
+void TurtleShell::ApplyParameter()
+{
+	const auto& param = m_parameter.GetParam();
+
+	// スフィアの高さと半径
+	m_bumpSphereOffsetY = param.m_bumpSphereOffsetY;
+	m_bumpSphereRadius = param.m_bumpSphereRadius;
+
+	m_health.Init(param.m_maxHP);
+
+	// 重力加速度をパラメータから反映
+	SetGravityAcceleration(param.m_gravityAcceleration);
+
+	m_reachDistance = param.m_reachDistance;
+	m_attackCooldownDuration = param.m_attackCooldown;
+	m_dizzyDuration = param.m_dizzyDuration;
+	m_spinAttackDuration = param.m_spinDuration;
+	m_hitCooldownDuration = param.m_spinHitCooldown;
+
 }
 
 void TurtleShell::HitCoolDownRemaining()

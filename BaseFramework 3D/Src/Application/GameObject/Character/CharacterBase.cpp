@@ -5,7 +5,14 @@
 #include"../../System/CollisionManager/CollisionManager.h"
 #include"../../System/TimeManager/TimeManager.h"
 
+#include"../../System/GameObjectFinder/GameObjectFinder.h"
+
 #include"../Gimmick/AreaVolume/AreaVolume.h"
+
+#include"../Camera/CameraBase.h"
+
+#include"../../../Framework/GameObject/Component/Components/ParentLink/ParentLink.h"
+#include"../../../Framework/GameObject/Component/Components/CameraDistanceFade/CameraDistanceFade.h"
 
 namespace
 {
@@ -25,11 +32,20 @@ namespace
 
 CharacterBase::CharacterBase()
 {
+	// 部品を生成
 	m_spParentLink = AddComponent<ParentLink>();
 
+	// 追従の設定をする
 	m_spParentLink->SetFollowMode(ParentLink::FollowMode::PlaceOnce);
 	m_spParentLink->SetFollowScale(false);
 	m_spParentLink->SetFollowRotation(true);
+
+
+	// 部品を生成
+	m_spCamDistFade = AddComponent<CameraDistanceFade>();
+
+	// オブジェクトの地面からの高さをセット
+	m_spCamDistFade->SetFadePivotHeight(GetBumpSphereOffsetY());
 
 }
 
@@ -77,6 +93,19 @@ void CharacterBase::PostUpdate()
 	UpdateOverlay();
 
 	UpdateMatrix();
+
+	// カメラの位置を渡す
+	m_spCamDistFade->UpdateCameraPos(GetCameraPos());
+
+	KdGameObject::PostUpdateComponents();
+}
+
+void CharacterBase::SetUpReference()
+{
+	if (!m_wpCamera.lock())
+	{
+		m_wpCamera = GameObjectFinder::Instance().FindObject<CameraBase>();
+	}
 }
 
 void CharacterBase::DrawDebug()
@@ -98,6 +127,7 @@ void CharacterBase::DrawLit()
 		return;
 	}
 
+	// 描画用のローカル行列を作る
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(GetPos());
 	Math::Matrix rotYMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(GetRotation().y));
 	// 描画だけ m_drawScaleRate 倍する(足元の位置は変わらず、上に向かって大きくなる)
@@ -105,26 +135,22 @@ void CharacterBase::DrawLit()
 
 	Math::Matrix localMat = scaleMat * rotYMat * transMat;
 
+	// オブジェクトが選択されているか
 	if (IsSelected())
 	{
 		KdShaderManager::Instance().m_StandardShader.SetSelected(true);
 	}
 
+	// フェード率をセット
+	KdShaderManager::Instance().m_StandardShader.SetDitherRate(m_spCamDistFade->GetFadeRate());
+
+	// ダメージを受けた際に白色に点滅させる
 	KdShaderManager::Instance().m_StandardShader.SetColorOverlay(m_overlayColor, GetOverlayRate());
 
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, localMat,kWhiteColor);
 
 	KdShaderManager::Instance().m_StandardShader.SetSelected(false);
 
-}
-
-void CharacterBase::GenerateDepthMapFromLight()
-{
-	/*if (m_spModel)
-	{
-		KdShaderManager::Instance().
-			m_StandardShader.DrawModel(*m_spModel, m_mWorld);
-	}*/
 }
 
 void CharacterBase::DrawInspectorHeader()
@@ -260,22 +286,31 @@ void CharacterBase::UpdateOverlay()
 	}
 }
 
+Math::Vector3 CharacterBase::GetCameraPos()
+{
+	auto spCamera = m_wpCamera.lock();
+	if (!spCamera)
+	{
+		return Math::Vector3::Zero;
+	}
+
+	return spCamera->GetPos();
+}
+
 // 解放
 void CharacterBase::Release()
 {
 	m_spModel = nullptr;
 }
 
-void CharacterBase::InitCharacterModel(const std::string& modelPath, const std::string& colliderName, const Math::Vector3& colliderOffset, float colliderRadius, const std::string& objectName)
+void CharacterBase::InitCharacterModel(const std::string& modelPath, const std::string& colliderName, const std::string& objectName)
 {
 	m_spModel = std::make_shared<KdModelWork>();
 	m_spModel->SetModelData(modelPath);
 
 	// 当たり判定(押し戻し)球の大きさを覚えて、KdColliderの形状もその値から作る
-	// (球の中心は足元の真上なので、offsetはYだけ使う)
-	m_bumpColliderName  = colliderName;
-	m_bumpSphereOffsetY = colliderOffset.y;
-	m_bumpSphereRadius  = (colliderRadius > MinBumpRadius) ? colliderRadius : MinBumpRadius;
+	m_bumpColliderName = colliderName;
+	m_bumpSphereRadius = (m_bumpSphereRadius > MinBumpRadius) ? m_bumpSphereRadius : MinBumpRadius;
 
 	RebuildBumpCollider();
 

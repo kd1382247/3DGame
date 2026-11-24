@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include"Component.h"
+#include"../../ComponentBase.h"
 
-class ParentLink:public Component
+class ParentLink:public ComponentBase
 {
 public:
 

@@ -2,7 +2,7 @@
 
 #include"json.hpp"
 
-#include"Component/Component.h"
+#include"Component/ComponentBase.h"
 
 // ゲーム上に存在するすべてのオブジェクトの基底となるクラス
 class KdGameObject : public std::enable_shared_from_this<KdGameObject>
@@ -160,7 +160,9 @@ public:
 	std::shared_ptr<T>GetComponent();
 
 	// 各部品の更新
+	void PreUpdateComponents();
 	void UpdateComponents();
+	void PostUpdateComponents();
 	
 	// 各部品のInspector
 	void DrawComponentsInspector();
@@ -171,7 +173,7 @@ public:
 private:
 
 	// 部品の配列
-	std::vector<std::shared_ptr<Component>> m_components;
+	std::vector<std::shared_ptr<ComponentBase>> m_components;
 
 protected:
 
@@ -234,11 +236,9 @@ protected:
 template<class T>
 inline std::shared_ptr<T> KdGameObject::AddComponent()
 {
-
 	// Componentを受け取ったTが継承しているかを調べる
 	// 親(Component) 子(T)
-	static_assert(std::is_base_of_v<Component, T>, "Componentを継承した型だけ、指定できます");
-
+	static_assert(std::is_base_of_v<ComponentBase, T>, "Componentを継承した型だけ、指定できます");
 
 	// テンプレート型で実物を作る
 	auto component = std::make_shared<T>();

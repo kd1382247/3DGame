@@ -53,6 +53,9 @@ public:
 
 private:
 
+	// パラメータの適用
+	void ApplyParameter();
+
 	void UpdateAnimation();
 
 	void PlayWalkAnimation() override;

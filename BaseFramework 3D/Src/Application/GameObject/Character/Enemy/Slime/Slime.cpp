@@ -19,39 +19,15 @@ void Slime::Init()
 		// パラメータ初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
 		m_parameter.Init();
 
-		const auto& param = m_parameter.GetParam(m_slimeSize);
+		ApplyParameter();
 
-		InitCharacterModel("Asset/Models/Enemy/Slime/Slime.gltf", "Slime",
-			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "Slime");
+		InitCharacterModel("Asset/Models/Enemy/Slime/Slime.gltf", "Slime", "Slime");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
 
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<SlimeNormalState>();
-
-		m_health.Init(param.m_maxHP);
-
-		// 当たり判定(押し戻し)球の大きさをパラメータから反映
-		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
-
-		// 重力加速度をパラメータから反映
-		SetGravityAcceleration(param.m_gravityAcceleration);
-
-		m_reachDistance = param.m_reachDistance;
-		m_attackCooldownDuration = param.m_attackCooldown;
-
-		// 近接攻撃パラメータをセット
-		m_meleeAttack.m_attackTiming.hitStart = param.m_hitStartFrame;
-		m_meleeAttack.m_attackTiming.hitEnd = param.m_hitEndFrame;
-		m_meleeAttack.m_sphereRadius = param.m_hitRadius;
-		m_meleeAttack.m_forwardOffset = param.m_hitForwardOffset;
-		m_meleeAttack.m_knockBackPower = param.m_knockBackPower;
-
-		if (m_slimeSize == SlimeSize::Small)
-		{
-			m_smokeEffectScale = 0.3;
-		}
 
 	}
 
@@ -158,6 +134,36 @@ void Slime::Split()
 		slime->SetRoomLink(m_roomLink);
 
 		SceneManager::Instance().AddObject(slime);
+	}
+}
+
+void Slime::ApplyParameter()
+{
+
+	const auto& param = m_parameter.GetParam(m_slimeSize);
+
+	// スフィアの高さと半径
+	m_bumpSphereOffsetY = param.m_bumpSphereOffsetY;
+	m_bumpSphereRadius = param.m_bumpSphereRadius;
+	
+	m_health.Init(param.m_maxHP);
+
+	// 重力加速度をパラメータから反映
+	SetGravityAcceleration(param.m_gravityAcceleration);
+
+	m_reachDistance          = param.m_reachDistance;
+	m_attackCooldownDuration = param.m_attackCooldown;
+
+	// 近接攻撃パラメータをセット
+	m_meleeAttack.m_attackTiming.hitStart = param.m_hitStartFrame;
+	m_meleeAttack.m_attackTiming.hitEnd   = param.m_hitEndFrame;
+	m_meleeAttack.m_sphereRadius          = param.m_hitRadius;
+	m_meleeAttack.m_forwardOffset         = param.m_hitForwardOffset;
+	m_meleeAttack.m_knockBackPower        = param.m_knockBackPower;
+
+	if (m_slimeSize == SlimeSize::Small)
+	{
+		m_smokeEffectScale = 0.3;
 	}
 }
 

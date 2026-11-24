@@ -1,6 +1,6 @@
 ﻿#include "ParentLink.h"
 
-#include"../../../Application/Editor/EditorManager.h"
+#include"../../../../../Application/Editor/EditorManager.h"
 
 void ParentLink::DrawInspector(KdGameObject& obj)
 {

@@ -19,26 +19,12 @@ void StarFish::Init()
 		// パラメータ初期化(当たり判定の大きさに使うので、モデル生成より先に読み込む)
 		m_parameter.Init();
 
-		const auto& param = m_parameter.GetParam();
+		ApplyParameter();
 
-		InitCharacterModel("Asset/Models/Enemy/StarFish/StarFish.gltf", "StarFish",
-			Math::Vector3(0.0f, param.m_bumpSphereOffsetY, 0.0f), param.m_bumpSphereRadius, "StarFish");
+		InitCharacterModel("Asset/Models/Enemy/StarFish/StarFish.gltf", "StarFish", "StarFish");
 
 		// アニメーションクラス初期化
 		m_animation.Init(m_spModel);
-
-		m_health.Init(param.m_maxHP);
-
-		// 当たり判定(押し戻し)球の大きさをパラメータから反映
-		SetBumpSphere(param.m_bumpSphereOffsetY, param.m_bumpSphereRadius);
-
-		// 重力加速度をパラメータから反映
-		SetGravityAcceleration(param.m_gravityAcceleration);
-
-		m_attackCooldownDuration = param.m_attackCooldown;
-
-		// この距離まで近づいたら攻撃(Energy弾を発射)する
-		m_reachDistance = param.m_reachDistance;
 
 		m_stateMachine.Start(this);
 		m_stateMachine.ChangeState<StarFishNormalState>();
@@ -127,6 +113,26 @@ void StarFish::StartAttack()
 	effectPos += m_mWorld.Backward() * 0.3f;
 
 	KdEffekseerManager::GetInstance().Play("Enemy/Shot/Shot.efkefc",effectPos , 0.3f, 1.4f);
+
+}
+
+void StarFish::ApplyParameter()
+{
+	const auto& param = m_parameter.GetParam();
+
+	// スフィアの高さと半径
+	m_bumpSphereOffsetY = param.m_bumpSphereOffsetY;
+	m_bumpSphereRadius = param.m_bumpSphereRadius;
+
+	m_health.Init(param.m_maxHP);
+
+	// 重力加速度をパラメータから反映
+	SetGravityAcceleration(param.m_gravityAcceleration);
+
+	m_attackCooldownDuration = param.m_attackCooldown;
+
+	// この距離まで近づいたら攻撃(Energy弾を発射)する
+	m_reachDistance = param.m_reachDistance;
 
 }
 

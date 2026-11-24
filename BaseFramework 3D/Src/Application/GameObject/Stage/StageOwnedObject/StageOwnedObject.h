@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include"../../../../Framework/GameObject/Component/ParentLink.h"
+#include"../../../../Framework/GameObject/Component/Components/ParentLink/ParentLink.h"
 
 class StageObject;
 

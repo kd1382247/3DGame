@@ -40,7 +40,6 @@ public:
 	void PostUpdate()		override;
 	void SetUpReference()	override;
 
-	void DrawLit()			override;
 	void DrawEffect()       override;
 	void DrawBright()       override;
 
@@ -135,9 +134,12 @@ public:
 	void SetGroundYPos(const float pos) { m_groundYPos = pos; }
 	float GetGroundYPos() const { return m_groundYPos; }
 
-	std::weak_ptr<CameraBase>GetCamera()const { return m_wpCamera; }
+	//std::weak_ptr<CameraBase>GetCamera()const { return m_wpCamera; }
 
 private:
+
+	// パラメータを適用
+	void ApplyParameter();
 
 	// デバッグ用のコマンド(Tキーで回復)
 	void UpdateDebugCommand();
@@ -149,9 +151,6 @@ private:
 	void UpdateIntroLock();
 
 	void UpdateAnimation();
-
-	// カメラとの距離に応じて、プレイヤーを透けさせる度合い(フェード率)を更新する
-	void UpdateCameraFade();
 
 	// 地面に着いているか
 	void UpdateIsGrounded();
@@ -208,12 +207,6 @@ private:
 
 	// プレイヤーがいる地面の高さ
 	float           m_groundYPos = 0.0f;
-
-	// カメラ
-	std::weak_ptr<CameraBase> m_wpCamera;
-
-	// カメラが近い時に透けさせる度合い(0:不透明 ～ 1:完全に透明)
-	float m_fadeRate = 0.0f;
 
 	// アニメーションクラス
 	PlayerAnimation           m_animation;

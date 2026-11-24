@@ -58,10 +58,8 @@ public:
 	// 追跡/経路移動の共通処理
 	void UpdateMove();
 
-
 	// スポーン方向を作る
 	Math::Vector3 CreateSpawnDirection();
-
 
 	// 行動を止めて、待機モーションにする
 	// (ゲームオーバー中など、Updateを止めている間、毎フレーム呼ぶ)

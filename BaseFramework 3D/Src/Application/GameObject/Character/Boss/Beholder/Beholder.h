@@ -73,6 +73,10 @@ public:
 
 private:
 
+
+	// パラメータの適用
+	void ApplyParameter();
+
 	//==========混乱==========//
 
 	// 落下中
