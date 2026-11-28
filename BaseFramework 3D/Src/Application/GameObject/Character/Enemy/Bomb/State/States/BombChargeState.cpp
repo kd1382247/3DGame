@@ -8,13 +8,17 @@ void BombChargeState::OnStart(Bomb* bomb)
 {
 	bomb->PlayAnimation(BombAnimationType::AttackCharge);
 
+	// 音を再生
+	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Enemy/Bomb/FuseBurn/FuseBurn.wav");
+
 	bomb->StartCharge();
 	// ためている間から爆発範囲を表示し、プレイヤーに危険を知らせる
 	bomb->CreateExplosionRange();
 
-	KdEffekseerManager::GetInstance().Play("Enemy/Charge/Charge.efkefc", bomb->GetPos(),0.4f,0.6f);
-	KdEffekseerManager::GetInstance().Play("Enemy/Charge/Charge2.efkefc", bomb->GetPos(),0.4f,0.6f);
-	KdEffekseerManager::GetInstance().Play("Enemy/Charge/Charge3.efkefc", bomb->GetPos(),0.4f,0.6f);
+
+	m_effectObjects.push_back(KdEffekseerManager::Instance().Play("Enemy/Charge/Charge.efkefc", bomb->GetPos(), 0.4f, 0.6f));
+	m_effectObjects.push_back(KdEffekseerManager::Instance().Play("Enemy/Charge/Charge2.efkefc", bomb->GetPos(), 0.4f, 0.6f));
+	m_effectObjects.push_back(KdEffekseerManager::Instance().Play("Enemy/Charge/Charge3.efkefc", bomb->GetPos(), 0.4f, 0.6f));
 }
 
 void BombChargeState::OnUpdate(Bomb * bomb)
@@ -22,6 +26,8 @@ void BombChargeState::OnUpdate(Bomb * bomb)
 	bomb->UpdateCharge();
 
 	bomb->UpdateExplosionRange();
+
+	UpdateEffects(bomb->GetPos());
 
 	if (bomb->IsChargeFinished())
 	{
@@ -33,4 +39,20 @@ void BombChargeState::OnUpdate(Bomb * bomb)
 void BombChargeState::OnExit(Bomb * bomb)
 {
 
+}
+
+void BombChargeState::UpdateEffects(const Math::Vector3& pos)
+{
+
+	for (const auto& weakEffect : m_effectObjects)
+	{
+		auto spEffect = weakEffect.lock();
+
+		if (!spEffect)
+		{
+			continue;
+		}
+
+		spEffect->SetPos(pos);
+	}
 }

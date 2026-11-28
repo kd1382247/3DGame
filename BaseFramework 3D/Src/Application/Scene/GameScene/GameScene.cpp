@@ -260,7 +260,7 @@ void GameScene::PreloadEffekseerAssets()
 	// ファイルパスからエフェクトをロード
 	for (const auto& fileName : EffekseerAssets::EffekseerPaths)
 	{
-		KdEffekseerManager::GetInstance().LoadEffekseer(fileName);
+		KdEffekseerManager::Instance().LoadEffekseer(fileName);
 	}
 }
 
@@ -394,6 +394,9 @@ void GameScene::SetPaused(bool isPaused)
 
 	// 時間を止める / 動かす
 	TimeManager::Instance().SetPause(isPaused);
+
+	// エフェクト更新を停止/再開
+	KdEffekseerManager::Instance().SetPause(isPaused);
 
 	// ポーズ中はカーソルを表示、ゲームに戻る時は消す
 	SetCursorVisible(isPaused);

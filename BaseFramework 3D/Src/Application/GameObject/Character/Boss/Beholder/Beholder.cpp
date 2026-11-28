@@ -12,7 +12,6 @@
 #include"State/States/BeholderDamageState.h"
 #include"State/States/BeholderDizzyState.h"
 
-
 namespace
 {
 	// モデルの目玉のローカルでの正面
@@ -239,6 +238,14 @@ bool Beholder::IsStandbyChargeSparkBullet()
 void Beholder::CancelChargeSparkBullet()
 {
 	m_chargeShot.Cancel();
+}
+ Beholder::BeholderAttackPattern Beholder::SelectAttackPattern()
+{
+	 // 0か1の50%の確率で攻撃を決める
+	 int index = KdRandom::GetInt(0, 1);
+
+	 return static_cast<BeholderAttackPattern>(index);
+
 }
 
 void Beholder::StartDizzy()

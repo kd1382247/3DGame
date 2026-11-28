@@ -10,6 +10,7 @@
 #include"SparkAttack/BeholderSparkAttack.h"
 #include"ChargeShot/BeholderChargeShot.h"
 
+
 class Beholder :public BossBase
 {
 public:
@@ -21,7 +22,6 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 
-	
 	void OnHit(const AttackInfo attackInfo)override;
 
 	float GetTurnSpeed()const override { return m_parameter.GetParam().m_turnSpeed; }
@@ -46,6 +46,17 @@ public:
 	bool IsAttack()const { return m_attackFlg; }
 	void UpdateAttack();
 	void EndAttack();
+
+
+	// Beholderの攻撃パターン
+	enum class BeholderAttackPattern
+	{
+		SparkAttack,
+		ChargeShot
+	};
+
+	// 攻撃パターンを返す
+	BeholderAttackPattern SelectAttackPattern();
 
 
 	//==========混乱==========//

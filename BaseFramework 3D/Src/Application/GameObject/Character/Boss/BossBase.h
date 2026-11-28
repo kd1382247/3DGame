@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include"../../Character/CharacterBase.h"
+#include"../../Gimmick/Room/RoomLink.h"
 
 class Player;
 
@@ -16,7 +17,17 @@ public:
 	void PostUpdate()override;
 	void SetUpReference()override;
 
+	// 固定表示(スクロールしない)側:名前・位置・回転・大きさ・対応する部屋
+	void DrawInspectorHeader()override;
+
 	void DrawInspector()override;
+
+	// 位置・回転・大きさ+自分が設置された部屋の名前(StateData.jsonに保存される)
+	nlohmann::json SaveData()const override;
+	void LoadData(const nlohmann::json& json)override;
+
+	const RoomLink& GetRoomLink()const { return m_roomLink; }
+	void SetRoomLink(const RoomLink& link) { m_roomLink = link; }
 
 	void OnHit(const AttackInfo attackInfo)override;
 	
@@ -108,6 +119,9 @@ protected:
 	float m_attackCooldownDuration = 0.0f;
 
 	bool m_attackFlg = false;
+
+	// 自分が設置された部屋(選んでいない時は None)
+	RoomLink m_roomLink;
 
 	bool          m_initPos = false;
 	Math::Vector3 m_roomCenter = {};

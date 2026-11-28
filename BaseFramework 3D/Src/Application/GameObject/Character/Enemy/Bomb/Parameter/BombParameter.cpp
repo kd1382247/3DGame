@@ -21,6 +21,7 @@ namespace
 		json["MoveSpeed"] = InspectorUI::CeilToDigits(param.m_moveSpeed, 3);
 		json["TurnSpeed"] = InspectorUI::CeilToDigits(param.m_turnSpeed, 1);
 		json["ReachDistance"] = InspectorUI::CeilToDigits(param.m_reachDistance, 2);
+		json["ReachDistanceMargin"] = InspectorUI::CeilToDigits(param.m_reachDistanceMargin, 2);
 		json["GravityAcceleration"] = InspectorUI::CeilToDigits(param.m_gravityAcceleration, 1);
 		json["AttackPower"] = InspectorUI::CeilToDigits(param.m_attackPow, 1);
 		json["AttackCooldown"] = InspectorUI::CeilToDigits(param.m_attackCooldown, 2);
@@ -40,6 +41,7 @@ namespace
 		ParameterJson::Read(json, "MoveSpeed", param.m_moveSpeed);
 		ParameterJson::Read(json, "TurnSpeed", param.m_turnSpeed);
 		ParameterJson::Read(json, "ReachDistance", param.m_reachDistance);
+		ParameterJson::Read(json, "ReachDistanceMargin", param.m_reachDistanceMargin);
 		ParameterJson::Read(json, "GravityAcceleration", param.m_gravityAcceleration);
 		ParameterJson::Read(json, "AttackPower", param.m_attackPow);
 		ParameterJson::Read(json, "AttackCooldown", param.m_attackCooldown);
@@ -79,6 +81,7 @@ namespace
 			InspectorUI::MeterPerFrame("MoveSpeed", param.m_moveSpeed);
 			InspectorUI::DegreePerFrame("TurnSpeed", param.m_turnSpeed);
 			InspectorUI::Meter("ReachDistance", param.m_reachDistance);
+			InspectorUI::Meter("ReachDistanceMargin", param.m_reachDistanceMargin);
 			InspectorUI::Acceleration("GravityAccel", param.m_gravityAcceleration);
 
 			InspectorUI::EndGroup();

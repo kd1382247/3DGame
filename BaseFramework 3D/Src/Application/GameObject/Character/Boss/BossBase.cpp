@@ -40,9 +40,36 @@ void BossBase::SetUpReference()
 	m_wpCamera = GameObjectFinder::Instance().FindObject<TPSCamera>();
 }
 
+void BossBase::DrawInspectorHeader()
+{
+	CharacterBase::DrawInspectorHeader();
+
+	// 対応する部屋(None のときは、部屋に関係なく動く)
+	m_roomLink.DrawCombo();
+}
+
 void BossBase::DrawInspector()
 {
 	DrawParameterInspector();
+}
+
+nlohmann::json BossBase::SaveData() const
+{
+	// 位置・回転・大きさなどの共通データ
+	nlohmann::json json = CharacterBase::SaveData();
+
+	// 自分が設置された部屋の名前(選んでいない時は空 = None)
+	m_roomLink.SaveData(json);
+
+	return json;
+}
+
+void BossBase::LoadData(const nlohmann::json& json)
+{
+	CharacterBase::LoadData(json);
+
+	// キーが無い古いステージは、部屋と紐づけない(None)まま動く
+	m_roomLink.LoadData(json);
 }
 
 void BossBase::OnHit(const AttackInfo attackInfo)
@@ -240,7 +267,7 @@ bool BossBase::IsBossIntroPlaying()
 void BossBase::PlayDeathSmoke()
 {
 
-	KdEffekseerManager::GetInstance().
+	KdEffekseerManager::Instance().
 		Play("Common/Smoke/Smoke_purple.efkefc", GetPos(), 1.0f, 0.7f, false);
 
 	// SEを流す
@@ -318,12 +345,12 @@ void BossBase::PlayHitEffect()
 	Math::Vector3 effectPos = GetPos() + bossDir * (0.8f * GetSizeScale()) + Math::Vector3(0.0f, 0.8f * GetScale().y, 0.0f);
 
 
-	KdEffekseerManager::GetInstance().
+	KdEffekseerManager::Instance().
 		Play("Common/Hit/Slash_hit.efkefc", effectPos, 0.3f, 0.8f, false);
 
-	KdEffekseerManager::GetInstance().
+	KdEffekseerManager::Instance().
 		Play("Common/Hit/Star_hit.efkefc", effectPos, 0.3f, 0.6f, false);
 
-	KdEffekseerManager::GetInstance().
+	KdEffekseerManager::Instance().
 		Play("Common/Hit/Flash_hit.efkefc", effectPos, 0.4f, 0.6f, false);
 }

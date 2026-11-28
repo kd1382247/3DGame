@@ -123,7 +123,7 @@ public:
 	// ライト定数バッファ用構造体
 	struct cbLight
 	{
-		static const int	MaxPointLightNum = 100;
+		static const int	MaxPointLightNum = 200;
 
 		// 環境光
 		Math::Vector4		AmbientLight = { 0.3f, 0.3f, 0.3f, 1.0f };

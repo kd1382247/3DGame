@@ -40,14 +40,17 @@ enum class PlayerAnimationType
 	GetHit,
 	GetUp,
 
-	// 
 	Idle,
 	IdleNormal,
+
+	// ジャンプ
 	JumpStart,
-	JumpAir,
+	JumpRise,
+	JumpFall,
 	JumpLand,
 	JumpSpin,
 	
+	// 移動
 	MoveBWD,
 	MoveFWD,
 	MoveLFT,

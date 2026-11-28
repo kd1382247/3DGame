@@ -59,7 +59,7 @@ cbuffer cbLight : register(b9)
 	    float	    Radius;			// 半径
 	    float3	    Pos;			// 座標
 	    int			IsBright;		// 明度用ライトかどうか
-	} g_PointLights[100];
+	} g_PointLights[200];
 };
 
 //------------------------------

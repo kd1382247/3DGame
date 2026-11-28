@@ -10,7 +10,9 @@ void CactasDieState::OnStart(Cactas* cactas)
 
 void CactasDieState::OnUpdate(Cactas * cactas)
 {
-	if (cactas->IsAnimationFinished())
+
+	// アニメーションが終わったかつ地面に着いていたら
+	if (cactas->IsAnimationFinished()&&cactas->IsGrounded())
 	{
 		cactas->CreateDeathSmoke();
 		cactas->Destroy();

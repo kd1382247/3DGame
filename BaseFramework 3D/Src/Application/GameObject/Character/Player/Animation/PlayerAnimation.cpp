@@ -126,9 +126,13 @@ void PlayerAnimation::Play(PlayerAnimationType _animType)
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("JumpStart"), false,0.03);
 		m_animSpeed = 2.5f;
 		break;
-	case PlayerAnimationType::JumpAir:
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("JumpLoop"), true,0.1);
-		m_animSpeed = 0.5f;
+	case PlayerAnimationType::JumpRise:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("JumpRise"), true,0.2);
+		m_animSpeed = 0.8f;
+		break;
+	case PlayerAnimationType::JumpFall:
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("JumpFall"), true,0.2);
+		m_animSpeed = 0.8f;
 		break;
 	case PlayerAnimationType::JumpLand:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("JumpLand"), false);

@@ -110,6 +110,7 @@ void Bomb::ApplyParameter()
 	SetGravityAcceleration(param.m_gravityAcceleration);
 
 	m_reachDistance = param.m_reachDistance;
+	m_reachDistanceMargin = param.m_reachDistanceMargin;
 	m_attackCooldownDuration = param.m_attackCooldown;
 
 	m_explosionRadius = param.m_explosionRadius;
@@ -158,10 +159,10 @@ void Bomb::Explode()
 		explosionPos, m_explosionRadius, m_parameter.GetParam().m_attackPow, m_parameter.GetParam().m_explosionKnockBack);
 
 	// 爆発エフェクト
-	KdEffekseerManager::GetInstance().
+	KdEffekseerManager::Instance().
 		Play("Enemy/Explosion/Explosion.efkefc", explosionPos, 0.6f, 1.4f, false);
 
-	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Enemy/Explosion/Explosion.wav");
+	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Enemy/Bomb/Explosion/Explosion.wav");
 }
 
 void Bomb::CreateExplosionRange()

@@ -12,7 +12,6 @@
 #include"../../Player/Player.h"
 
 #include"State/States/TurtleShellNormalState.h"
-#include"State/States/TurtleShellDizzyState.h"
 #include"State/States/TurtleShellDamageState.h"
 #include"State/States/TurtleShellDieState.h"
 
@@ -294,6 +293,7 @@ void TurtleShell::ApplyParameter()
 	SetGravityAcceleration(param.m_gravityAcceleration);
 
 	m_reachDistance = param.m_reachDistance;
+	m_reachDistanceMargin = param.m_reachDistanceMargin;
 	m_attackCooldownDuration = param.m_attackCooldown;
 	m_dizzyDuration = param.m_dizzyDuration;
 	m_spinAttackDuration = param.m_spinDuration;

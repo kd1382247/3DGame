@@ -7,8 +7,11 @@ struct AttackInfo
 	// ノックバック方向
 	Math::Vector3 m_knockBackDir = Math::Vector3::Zero;
 
-	// ノックバックの強さ
-	float m_knockBackPower = 0.0f;
+	// ノックバックの距離
+	float m_knockBackDist = 0.0f;
+
+	// 上方向に浮き上がる量
+	float m_knockBackHeight = 0.0f;
 
 	// ヒットストップの時間
 	float m_hitStop = 0.0f;

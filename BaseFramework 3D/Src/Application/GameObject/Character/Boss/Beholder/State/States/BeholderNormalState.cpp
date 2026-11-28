@@ -4,7 +4,6 @@
 
 #include"BeholderSparkAttackState.h"
 #include"BeholderChargeShotState.h"
-#include"BeholderDizzyState.h"
 
 void BeholderNormalState::OnStart(Beholder* beholder)
 {
@@ -16,14 +15,21 @@ void BeholderNormalState::OnUpdate(Beholder* beholder)
 	beholder->UpdateFacingDirection();
 	beholder->UpdateMove();
 
+
 	if (beholder->IsAttack())
 	{
-		//m_pMachine->ChangeState<BeholderSparkAttackState>();
-		//m_pMachine->ChangeState<BeholderDizzyState>();
-		m_pMachine->ChangeState<BeholderChargeShotState>();
+		switch (beholder->SelectAttackPattern())
+		{
+		case Beholder::BeholderAttackPattern::SparkAttack:
+			m_pMachine->ChangeState<BeholderSparkAttackState>();
+
+			break;
+		case Beholder::BeholderAttackPattern::ChargeShot:
+			m_pMachine->ChangeState<BeholderChargeShotState>();
+
+			break;
+		}
 	}
-
-
 }
 
 void BeholderNormalState::OnExit(Beholder* beholder)

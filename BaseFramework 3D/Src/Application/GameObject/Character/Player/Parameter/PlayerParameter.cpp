@@ -28,13 +28,13 @@ void PlayerParameter::DrawInspecter()
 
 		if (InspectorUI::BeginGroup("Body"))
 		{
-			InspectorUI::HP            ("MaxHP",           m_body.m_maxHP);
-			InspectorUI::DegreePerFrame("TurnSpeed",       m_body.m_turnSpeed);
-			InspectorUI::Acceleration  ("GravityAccel",    m_body.m_gravityAcceleration);
-			InspectorUI::Rate          ("BumpPushRate",    m_body.m_bumpPushRate);
-			InspectorUI::Degree        ("MaxSlopeAngle",   m_body.m_maxWalkableSlopeAngle);
-			InspectorUI::Meter         ("StepHeight",      m_body.m_stepHeight);
-			InspectorUI::Meter         ("GroundRayLength", m_body.m_groundRayLength);
+			InspectorUI::HP            ("MaxHP",             m_body.m_maxHP);
+			InspectorUI::DegreePerFrame("TurnSpeed",         m_body.m_turnSpeed);
+			InspectorUI::Acceleration  ("GravityAccel",      m_body.m_gravityAcceleration);
+			InspectorUI::Rate          ("BumpPushRate",      m_body.m_bumpPushRate);
+			InspectorUI::Degree        ("MaxSlopeAngle",     m_body.m_maxWalkableSlopeAngle);
+			InspectorUI::Meter         ("StepHeight",        m_body.m_stepHeight);
+			InspectorUI::Meter         ("GroundRayLength",   m_body.m_groundRayLength);
 			InspectorUI::Meter         ("BumpSphereRadius",  m_body.m_bumpSphereRadius);
 			InspectorUI::Meter         ("BumpSphereOffsetY", m_body.m_bumpSphereOffsetY);
 
@@ -71,7 +71,8 @@ void PlayerParameter::DrawInspecter()
 					HitParam& hit = m_attack.m_hitParam[i];
 
 					InspectorUI::Damage ("AttackPower",      hit.m_attackPower);
-					InspectorUI::Power  ("KnockBackPower",   hit.m_knockBackPower);
+					InspectorUI::Power  ("KnockBackDistance",hit.m_knockBackDist);
+					InspectorUI::Meter  ("KnockBackHeight",  hit.m_knockBackHeight);
 					InspectorUI::Seconds("HitStop",          hit.m_hitStop);
 					InspectorUI::Seconds("KillHitStop",      hit.m_killHitStop);
 					InspectorUI::Scale  ("SlowScale",        hit.m_SlowScale);
@@ -87,7 +88,8 @@ void PlayerParameter::DrawInspecter()
 		if (InspectorUI::BeginGroup("SpinAttack"))
 		{
 			InspectorUI::Damage		  ("AttackPower",      m_spinAttack.m_hitParam.m_attackPower);
-			InspectorUI::Power		  ("KnockBackPower",   m_spinAttack.m_hitParam.m_knockBackPower);
+			InspectorUI::Power		  ("KnockBackDistance",m_spinAttack.m_hitParam.m_knockBackDist);
+			InspectorUI::Meter		  ("KnockBackHeight",  m_spinAttack.m_hitParam.m_knockBackHeight);
 			InspectorUI::Seconds	  ("HitStop",          m_spinAttack.m_hitParam.m_hitStop);
 			InspectorUI::Seconds	  ("KillHitStop",      m_spinAttack.m_hitParam.m_killHitStop);
 			InspectorUI::Scale        ("SlowScale",        m_spinAttack.m_hitParam.m_SlowScale);
@@ -112,7 +114,7 @@ void PlayerParameter::DrawInspecter()
 				InspectorUI::Seconds("HitStop",         m_parry.m_parryHitStop);
 				InspectorUI::Scale  ("SlowScale",       m_parry.m_parrySlowScale);
 				InspectorUI::Seconds("SlowDuration",    m_parry.m_parrySlowDuration);
-				InspectorUI::Power  ("KnockBackPower",  m_parry.m_parryKnockBackPower);
+				InspectorUI::Power  ("KnockBackDistance",  m_parry.m_parryKnockBackDist);
 				InspectorUI::Meter  ("KnockBackRadius", m_parry.m_parryKnockBackRadius);
 				
 				InspectorUI::EndGroup();
@@ -157,8 +159,11 @@ void PlayerParameter::SaveToJson()
 	
 		paramJson[paramName] = InspectorUI::CeilToDigits(hit.m_attackPower, 1);
 
-		paramName = attackNum + "KnockBack";
-		paramJson[paramName] = InspectorUI::CeilToDigits(hit.m_knockBackPower, 3);
+		paramName = attackNum + "KnockBackDistance";
+		paramJson[paramName] = InspectorUI::CeilToDigits(hit.m_knockBackDist, 3);
+
+		paramName = attackNum + "KnockBackHeight";
+		paramJson[paramName] = InspectorUI::CeilToDigits(hit.m_knockBackHeight, 3);
 
 		paramName = attackNum + "HitStop";
 		paramJson[paramName] = InspectorUI::CeilToDigits(hit.m_hitStop, 2);
@@ -183,7 +188,8 @@ void PlayerParameter::SaveToJson()
 	//--------------------------------------------------------
 
 	paramJson["SpinAttackPower"]            = InspectorUI::CeilToDigits(m_spinAttack.m_hitParam.m_attackPower, 1);
-	paramJson["SpinAttackKnockBackPower"]   = InspectorUI::CeilToDigits(m_spinAttack.m_hitParam.m_knockBackPower, 3);
+	paramJson["SpinAttackKnockBackDistance"]= InspectorUI::CeilToDigits(m_spinAttack.m_hitParam.m_knockBackDist, 3);
+	paramJson["SpinAttackKnockBackHeight"]  = InspectorUI::CeilToDigits(m_spinAttack.m_hitParam.m_knockBackHeight, 3);
 	paramJson["SpinAttackHitStop"]          = InspectorUI::CeilToDigits(m_spinAttack.m_hitParam.m_hitStop, 2);
 	paramJson["SpinAttackKillHitStop"]      = InspectorUI::CeilToDigits(m_spinAttack.m_hitParam.m_killHitStop, 2);
 	paramJson["SpinAttackSlowScale"]        = InspectorUI::CeilToDigits(m_spinAttack.m_hitParam.m_SlowScale, 2);
@@ -208,9 +214,8 @@ void PlayerParameter::SaveToJson()
 	paramJson["ParryHitStop"]         = InspectorUI::CeilToDigits(m_parry.m_parryHitStop, 2);
 	paramJson["ParrySlowScale"]       = InspectorUI::CeilToDigits(m_parry.m_parrySlowScale, 2);
 	paramJson["ParrySlowDuration"]    = InspectorUI::CeilToDigits(m_parry.m_parrySlowDuration, 2);
-	paramJson["ParryKnockBackPower"]  = InspectorUI::CeilToDigits(m_parry.m_parryKnockBackPower, 3);
+	paramJson["ParryKnockBackDistance"]  = InspectorUI::CeilToDigits(m_parry.m_parryKnockBackDist, 3);
 	paramJson["ParryKnockBackRadius"] = InspectorUI::CeilToDigits(m_parry.m_parryKnockBackRadius, 2);
-
 
 
 	std::ofstream file("Asset/Data/Player/Parameter/PlayerParameter.json");
@@ -279,8 +284,11 @@ void PlayerParameter::LoadFromJson()
 			std::string paramName = attackNum + "Power";
 			ParameterJson::Read(paramJson, paramName.c_str(), hit.m_attackPower);
 
-			paramName = attackNum + "KnockBack";
-			ParameterJson::Read(paramJson, paramName.c_str(), hit.m_knockBackPower);
+			paramName = attackNum + "KnockBackDistance";
+			ParameterJson::Read(paramJson, paramName.c_str(), hit.m_knockBackDist);
+
+			paramName = attackNum + "KnockBackHeight";
+			ParameterJson::Read(paramJson, paramName.c_str(), hit.m_knockBackHeight);
 
 			paramName = attackNum + "HitStop";
 			ParameterJson::Read(paramJson, paramName.c_str(), hit.m_hitStop);
@@ -304,7 +312,8 @@ void PlayerParameter::LoadFromJson()
 		//  必殺技パラメータ
 		//--------------------------------------------------------
 		ParameterJson::Read(paramJson, "SpinAttackPower",            m_spinAttack.m_hitParam.m_attackPower);
-		ParameterJson::Read(paramJson, "SpinAttackKnockBackPower",   m_spinAttack.m_hitParam.m_knockBackPower);
+		ParameterJson::Read(paramJson, "SpinAttackKnockBackDistance",m_spinAttack.m_hitParam.m_knockBackDist);
+		ParameterJson::Read(paramJson, "SpinAttackKnockBackHeight",  m_spinAttack.m_hitParam.m_knockBackHeight);
 		ParameterJson::Read(paramJson, "SpinAttackHitStop",          m_spinAttack.m_hitParam.m_hitStop);
 		ParameterJson::Read(paramJson, "SpinAttackKillHitStop",      m_spinAttack.m_hitParam.m_killHitStop);
 		ParameterJson::Read(paramJson, "SpinAttackSlowScale",        m_spinAttack.m_hitParam.m_SlowScale);
@@ -325,12 +334,12 @@ void PlayerParameter::LoadFromJson()
 		//--------------------------------------------------------
 		//  ガードパラメータ
 		//--------------------------------------------------------
-		ParameterJson::Read(paramJson, "ParryWindow",          m_parry.m_parryWindow);
-		ParameterJson::Read(paramJson, "ParryHitStop",         m_parry.m_parryHitStop);
-		ParameterJson::Read(paramJson, "ParrySlowScale",       m_parry.m_parrySlowScale);
-		ParameterJson::Read(paramJson, "ParrySlowDuration",    m_parry.m_parrySlowDuration);
-		ParameterJson::Read(paramJson, "ParryKnockBackPower",  m_parry.m_parryKnockBackPower);
-		ParameterJson::Read(paramJson, "ParryKnockBackRadius", m_parry.m_parryKnockBackRadius);
+		ParameterJson::Read(paramJson, "ParryWindow",           m_parry.m_parryWindow);
+		ParameterJson::Read(paramJson, "ParryHitStop",          m_parry.m_parryHitStop);
+		ParameterJson::Read(paramJson, "ParrySlowScale",        m_parry.m_parrySlowScale);
+		ParameterJson::Read(paramJson, "ParrySlowDuration",     m_parry.m_parrySlowDuration);
+		ParameterJson::Read(paramJson, "ParryKnockBackDistance",m_parry.m_parryKnockBackDist);
+		ParameterJson::Read(paramJson, "ParryKnockBackRadius",  m_parry.m_parryKnockBackRadius);
 
 	}
 	catch (const nlohmann::json::exception& e)

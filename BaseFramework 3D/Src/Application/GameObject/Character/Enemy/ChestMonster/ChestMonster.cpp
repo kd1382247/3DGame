@@ -5,7 +5,6 @@
 
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 
-
 #include"State/States/ChestMonsterNormalState.h"
 #include"State/States/ChestMonsterDieState.h"
 #include"State/States/ChestMonsterDamageState.h"
@@ -176,6 +175,7 @@ void ChestMonster::OnHit(const AttackInfo attackInfo)
 	AttackInfo info = attackInfo;
 
 	info.m_knockBackDir = Math::Vector3::Zero;
+	info.m_knockBackHeight = 0.0f;
 
 	if (ApplyDamage(info))
 	{
@@ -350,7 +350,7 @@ void ChestMonster::ApplyParameter()
 
 	// 重力加速度をパラメータから反映
 	SetGravityAcceleration(param.m_gravityAcceleration);
-
+	
 	m_reachDistance = param.m_reachDistance;
 
 	// 敵を呼び出す間隔(秒)

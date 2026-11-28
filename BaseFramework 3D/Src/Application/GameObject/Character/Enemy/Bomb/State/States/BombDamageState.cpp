@@ -22,3 +22,4 @@ void BombDamageState::OnExit(Bomb * bomb)
 {
 
 }
+

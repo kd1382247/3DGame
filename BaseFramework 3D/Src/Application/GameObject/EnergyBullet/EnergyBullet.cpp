@@ -168,7 +168,7 @@ void EnergyBullet::IsPlayerHit(const KdCollider::SphereInfo& sphereInfo)
 		AttackInfo attackInfo;
 
 		attackInfo.m_knockBackDir = knockBackDir;
-		attackInfo.m_knockBackPower = m_knockBackPower;
+		attackInfo.m_knockBackDist = m_knockBackPower;
 		attackInfo.m_damage = m_damage;
 		attackInfo.m_canReflect = true;
 
@@ -219,7 +219,7 @@ void EnergyBullet::IsOwnerHit(const KdCollider::SphereInfo& sphereInfo)
 		AttackInfo attackInfo;
 
 		attackInfo.m_knockBackDir = knockBackDir;
-		attackInfo.m_knockBackPower = m_knockBackPower;
+		attackInfo.m_knockBackDist = m_knockBackPower;
 		attackInfo.m_damage = m_damage;
 		attackInfo.m_canReflect = true;
 
@@ -231,7 +231,7 @@ void EnergyBullet::IsOwnerHit(const KdCollider::SphereInfo& sphereInfo)
 void EnergyBullet::PlayEnergyEffect(const Math::Vector3& pos)
 {
 	// IsLoop=falseで単発再生し、区間再生が終わるたびにUpdate()側で再生し直す
-	m_wpEffect = KdEffekseerManager::GetInstance().
+	m_wpEffect = KdEffekseerManager::Instance().
 		Play("Enemy/Energy/Energy.efkefc", pos, 0.3f, 1.0f, false, 10, 50);
 }
 
@@ -260,7 +260,7 @@ void EnergyBullet::Vanish()
 		spEffect->StopEffect();
 	}
 
-	KdEffekseerManager::GetInstance().Play("Enemy/Energy/EnergyBreak.efkefc", GetPos(),0.6,1.0f,false,30,60);
+	KdEffekseerManager::Instance().Play("Enemy/Energy/EnergyBreak.efkefc", GetPos(),0.6,1.0f,false,30,60);
 
 	Destroy();
 }

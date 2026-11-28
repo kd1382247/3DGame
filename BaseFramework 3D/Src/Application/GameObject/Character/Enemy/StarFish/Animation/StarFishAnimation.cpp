@@ -41,16 +41,15 @@ void StarFishAnimation::Animations(StarFishAnimationType type)
 		break;
 	case StarFishAnimationType::Idle:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Idle"), true, 0.2f);
-		m_animSpeed = 1.5f;
+		m_animSpeed = 1.2f;
 		break;
 	case StarFishAnimationType::Walk:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Walk"), true, 0.15f);
 		m_animSpeed = 1.0f;
 		break;
-
 	case StarFishAnimationType::Die:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false, 0.1f);
-		m_animSpeed = 1.0f;
+		m_animSpeed = 0.7f;
 		break;
 	}
 

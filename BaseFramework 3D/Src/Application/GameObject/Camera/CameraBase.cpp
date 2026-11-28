@@ -11,7 +11,7 @@ void CameraBase::Init()
 		m_spCamera = std::make_shared<KdCamera>();
 	}
 
-	KdEffekseerManager::GetInstance().SetCamera(m_spCamera);
+	KdEffekseerManager::Instance().SetCamera(m_spCamera);
 	// ↓画面中央座標
 	m_FixMousePos.x = 640;
 	m_FixMousePos.y = 360;

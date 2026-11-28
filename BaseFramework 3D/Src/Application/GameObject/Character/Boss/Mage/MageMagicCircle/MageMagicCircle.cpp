@@ -55,9 +55,9 @@ void MageMagicCircle::Cancel()
 		spEffect->StopEffect();
 	}
 	// エフェクトの管理側から外れていても、まだ再生中なら、ハンドルで直接止める
-	else if (m_effectHandle >= 0 && !KdEffekseerManager::GetInstance().HasEffectFinished(m_effectHandle))
+	else if (m_effectHandle >= 0 && !KdEffekseerManager::Instance().HasEffectFinished(m_effectHandle))
 	{
-		KdEffekseerManager::GetInstance().StopEffect(m_effectHandle);
+		KdEffekseerManager::Instance().StopEffect(m_effectHandle);
 	}
 
 	Destroy();
@@ -89,7 +89,7 @@ void MageMagicCircle::Update()
 	if (m_effectHandle < 0)
 	{
 		// エフェクト再生(最初の1回だけ呼ぶ)
-		auto spEffekseerObj = KdEffekseerManager::GetInstance().Play(
+		auto spEffekseerObj = KdEffekseerManager::Instance().Play(
 			m_desc.effect.fileName,
 			GetPos() + Math::Vector3(0.0f, 0.2f, 0.0f),
 			m_desc.effect.size,
@@ -112,7 +112,7 @@ void MageMagicCircle::Update()
 		}
 	}
 	// ハンドルベースでの終了判定(KdEffekseerObjectの生存期間に依存しない)
-	else if (KdEffekseerManager::GetInstance().HasEffectFinished(m_effectHandle))
+	else if (KdEffekseerManager::Instance().HasEffectFinished(m_effectHandle))
 	{
 		m_telegraphIndicator.Hide();
 		m_rangeIndicator.Hide();

@@ -41,15 +41,15 @@ public:
 		float m_jumpPow = 0.4f;                     // ジャンプ力(飛び出しの勢い)
 	};
 
-
 	struct HitParam
 	{
 		float m_attackPower      = 10.0f;           // 攻撃力
-		float m_knockBackPower   = 0.1f;            // ノックバックの強さ
+		float m_knockBackDist    = 0.1f;            // ノックバックの距離
+		float m_knockBackHeight  = 0.2f;			// ノックバックの高さ
 		float m_hitStop          = 0.05f;           // [s] ヒットストップ
 		float m_killHitStop      = 0.12f;           // [s] 撃破時のヒットストップ
-		float m_SlowScale    = 0.5f;                // スロー演出の倍率
-		float m_SlowDuration = 0.5f;                // スロー演出の時間
+		float m_SlowScale        = 0.5f;            // スロー演出の倍率
+		float m_SlowDuration     = 0.5f;            // スロー演出の時間
 	};
 	
 	// 通常攻撃
@@ -81,7 +81,7 @@ public:
 		float m_parryHitStop		 = 0.1f;		// [s] パリィ成功時のヒットストップ
 		float m_parrySlowScale       = 0.3;			// パリィ成功時のスロー倍率
 		float m_parrySlowDuration    = 0.5f;        // パリィ成功時のスロー時間
-		float m_parryKnockBackPower  = 0.3f;        // ノックバックの威力
+		float m_parryKnockBackDist   = 0.3f;        // ノックバックの距離
 		
 	};
 
@@ -89,7 +89,7 @@ public:
 	struct SpinAttackParam
 	{
 		HitParam m_hitParam =
-		{ {20},{0.1f},{0.08f} };
+		{ { 20 },{ 0.1f },{ 0.1f },{ 0.08f } };
 
 		float m_moveSpeed = 0.3f;                   // [m/F] 必殺技中の移動速度
 

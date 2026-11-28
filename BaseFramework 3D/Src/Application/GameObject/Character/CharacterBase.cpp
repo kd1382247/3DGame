@@ -467,13 +467,25 @@ void CharacterBase::UpdateCurrentAreaID()
 	}
 }
 
-void CharacterBase::AddKnockBack(const Math::Vector3& dir, const float power)
+void CharacterBase::AddKnockBack(const Math::Vector3& dir, const float dist, float height)
 {
 	if (m_knockBack.Length() >= 0.6)
 	{
 		return;
 	}
-	m_knockBack += dir * power;
+	// ノックバックの方向と距離入れる
+	m_knockBack += dir * dist;
+
+	// 上に飛ばす量が0以下かつ、地面についていなかったら
+	if (height <=0||!IsGrounded())
+	{
+		return;
+	}
+	// 上方向に浮かすため重力を反転
+	m_gravity -= height * 60.0f;
+
+	SetIsGrounded(false);
+
 }
 
 void CharacterBase::UpdateGravity()

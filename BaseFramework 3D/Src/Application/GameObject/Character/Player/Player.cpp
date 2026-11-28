@@ -632,19 +632,19 @@ void Player::OnHit(const AttackInfo attackInfo)
 		// ガード状態でエフェクトを変える
 		if(m_playerGuard.IsGuardHit())
 		{
-			KdEffekseerManager::GetInstance().Play("Player/Guard/Guard.efkefc", effectPos, 0.6f, 1.0f, false, 0, 20, GetRotation());
+			KdEffekseerManager::Instance().Play("Player/Guard/Guard.efkefc", effectPos, 0.6f, 1.0f, false, 0, 20, GetRotation());
 			KdAudioManager::Instance().Play("Asset/Data/Sound/SE/Player/Guard/Guard.wav");
 		}
 		if (m_playerGuard.IsGuardBreak())
 		{
-			KdEffekseerManager::GetInstance().Play("Player/GuardBreak/GuardBreak.efkefc", effectPos, 0.3f, 0.6f, false);
+			KdEffekseerManager::Instance().Play("Player/GuardBreak/GuardBreak.efkefc", effectPos, 0.3f, 0.6f, false);
 			KdAudioManager::Instance().Play("Asset/Data/Sound/SE/Player/Guard/GuardBreak.wav");
 		}
 
 		// ノックバック量を減らす
-		info.m_knockBackPower *= m_playerGuard.GetParam().m_guardKnockBackRate;
+		info.m_knockBackDist *= m_playerGuard.GetParam().m_guardKnockBackRate;
 
-		AddKnockBack(info.m_knockBackDir, info.m_knockBackPower);
+		AddKnockBack(info.m_knockBackDir, info.m_knockBackDist);
 		return;
 	}
 	else if (m_health.TakeDamage(info.m_damage))
@@ -665,7 +665,7 @@ void Player::OnHit(const AttackInfo attackInfo)
 	}
 
 
-	AddKnockBack(info.m_knockBackDir, info.m_knockBackPower);
+	AddKnockBack(info.m_knockBackDir, info.m_knockBackDist);
 
 	StartOverlay({ 1,0,0 }, 0.8f,m_overlayDuration);
 
@@ -678,7 +678,7 @@ void Player::OnHit(const AttackInfo attackInfo)
 	Math::Vector3 effectPos = GetPos() + Math::Vector3(0.0f, 0.8f, 0.0f);
 	effectPos -= info.m_knockBackDir * 0.3f;
 
-	KdEffekseerManager::GetInstance().Play("Player/Damage/Damage.efkefc", effectPos,0.3f,1.2f);
+	KdEffekseerManager::Instance().Play("Player/Damage/Damage.efkefc", effectPos,0.3f,1.2f);
 
 }
 
@@ -786,7 +786,7 @@ void Player::OnParrySuccess()
 	// HitParamに値をセット
 	hitParam.m_attackPower    = 0;
 	hitParam.m_hitStop        = parryParam.m_parryHitStop;
-	hitParam.m_knockBackPower = parryParam.m_parryKnockBackPower;
+	hitParam.m_knockBackDist  = parryParam.m_parryKnockBackDist;
 
 	// すでに判定をしている敵がいた場合、判定が飛ばされるため
 	// 一度当たり判定リストをクリア
@@ -803,7 +803,7 @@ void Player::OnParrySuccess()
 
 	effectPos += effectDir * (0.3f * GetSizeScale());
 	// パリィエフェクト
-	KdEffekseerManager::GetInstance().Play("Player/Parry/Parry.efkefc", effectPos, 0.3f, 1.0f, false,0,36,GetRotation());
+	KdEffekseerManager::Instance().Play("Player/Parry/Parry.efkefc", effectPos, 0.3f, 1.0f, false,0,36,GetRotation());
 
 	TimeManager::Instance().StartHitStop(parryParam.m_parryHitStop);
 

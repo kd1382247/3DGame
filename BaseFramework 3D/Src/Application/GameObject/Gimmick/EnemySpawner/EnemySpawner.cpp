@@ -608,8 +608,8 @@ void EnemySpawner::PlayIntroEffect()
 		return;
 	}
 	m_spawnIntroEffect = true;
-	KdEffekseerManager::GetInstance().Play("Enemy/EnemySpawner/Smoke_spawner.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 1.2f, 0.7);
-	KdEffekseerManager::GetInstance().Play("Enemy/EnemySpawner/Lightning_spawner.efkefc", GetPos() + Math::Vector3(0.0f, -1.0f, 0.0f), 0.6f, 1.0f, false, 20, 90);
+	KdEffekseerManager::Instance().Play("Enemy/EnemySpawner/Smoke_spawner.efkefc", GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f), 1.2f, 0.7);
+	KdEffekseerManager::Instance().Play("Enemy/EnemySpawner/Lightning_spawner.efkefc", GetPos() + Math::Vector3(0.0f, -1.0f, 0.0f), 0.6f, 1.0f, false, 20, 90);
 
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Gimmick/EnemySpawner/Spark.wav");
 
@@ -619,7 +619,7 @@ void EnemySpawner::PlayIntroEffect()
 Math::Vector3 EnemySpawner::CreateLaunchDir() const
 {
 
-	float power = KdRandom::GetFloat(0.05f, 0.08f);
+	float dist = KdRandom::GetFloat(0.05f, 0.08f);
 
 	Math::Vector3 randomDir;
 
@@ -629,7 +629,7 @@ Math::Vector3 EnemySpawner::CreateLaunchDir() const
 
 	randomDir.Normalize();
 
-	return randomDir * power;
+	return randomDir * dist;
 
 }
 
@@ -653,10 +653,10 @@ void EnemySpawner::CreateEnemy(const std::string& enemyName)
 	enemy->SetPos(GetPos());
 	enemy->SetPrevPos(GetPos());
 
-	float power = KdRandom::GetFloat(0.3f,0.5f);
+	float height = KdRandom::GetFloat(0.2f,0.3f);
 	Math::Vector3 launchDir = CreateLaunchDir();
 	// 飛び出す方向をセット
-	enemy->Launch(launchDir,power);
+	enemy->Launch(launchDir, height);
 
 	// 関連付け
 	enemy->SetUpReference();

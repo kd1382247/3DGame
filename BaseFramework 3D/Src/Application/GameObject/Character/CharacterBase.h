@@ -119,7 +119,7 @@ public:
 	Math::Vector3 GetKnockBack()const                         { return m_knockBack; }
 	void          SetKnockBack(const Math::Vector3& knockBack){ m_knockBack = knockBack; }
 
-	void          AddKnockBack(const Math::Vector3& dir, const float power);
+	void          AddKnockBack(const Math::Vector3& dir, float dist,float height=0.0f);
 
 
 	//===========================================================
@@ -166,7 +166,7 @@ public:
 	// キャラの向く方向を更新
 	void  UpdateFacingDirection();
 
-
+	
 	//===========================================================
 	// その他
 	//===========================================================

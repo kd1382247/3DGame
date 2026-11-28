@@ -61,7 +61,6 @@ void PlayerGuardState::OnUpdate(Player * owner)
 		owner->PlayAnimation(GetGuardAnimation(owner));
 	}
 
-
 	// ガード中にパリィの入力を受けたら、ステートを変える
 	if (owner->GetInput().IsParryTrigger()&&
 		!guard.IsGuardHit()&&

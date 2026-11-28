@@ -22,6 +22,7 @@ namespace
 		json["MoveSpeed"] = InspectorUI::CeilToDigits(param.m_moveSpeed, 3);
 		json["TurnSpeed"] = InspectorUI::CeilToDigits(param.m_turnSpeed, 1);
 		json["ReachDistance"] = InspectorUI::CeilToDigits(param.m_reachDistance, 2);
+		json["ReachDistanceMargin"] = InspectorUI::CeilToDigits(param.m_reachDistanceMargin, 2);
 		json["GravityAcceleration"] = InspectorUI::CeilToDigits(param.m_gravityAcceleration, 1);
 		json["AttackPower"] = InspectorUI::CeilToDigits(param.m_attackPower, 1);
 		json["AttackCooldown"] = InspectorUI::CeilToDigits(param.m_attackCooldown, 2);
@@ -37,21 +38,22 @@ namespace
 	// json → Parameter(キーが無い項目は、デフォルト値のまま)
 	void FromJson(const nlohmann::json& json, SlimeParameter::Parameter& param)
 	{
-		ParameterJson::Read(json, "MaxHP", param.m_maxHP);
-		ParameterJson::Read(json, "BumpSphereRadius", param.m_bumpSphereRadius);
-		ParameterJson::Read(json, "BumpSphereOffsetY", param.m_bumpSphereOffsetY);
-		ParameterJson::Read(json, "Scale", param.m_scale);
-		ParameterJson::Read(json, "MoveSpeed", param.m_moveSpeed);
-		ParameterJson::Read(json, "TurnSpeed", param.m_turnSpeed);
-		ParameterJson::Read(json, "ReachDistance", param.m_reachDistance);
+		ParameterJson::Read(json, "MaxHP",               param.m_maxHP);
+		ParameterJson::Read(json, "BumpSphereRadius",    param.m_bumpSphereRadius);
+		ParameterJson::Read(json, "BumpSphereOffsetY",   param.m_bumpSphereOffsetY);
+		ParameterJson::Read(json, "Scale",               param.m_scale);
+		ParameterJson::Read(json, "MoveSpeed",           param.m_moveSpeed);
+		ParameterJson::Read(json, "TurnSpeed",           param.m_turnSpeed);
+		ParameterJson::Read(json, "ReachDistance",       param.m_reachDistance);
+		ParameterJson::Read(json, "ReachDistanceMargin", param.m_reachDistanceMargin);
 		ParameterJson::Read(json, "GravityAcceleration", param.m_gravityAcceleration);
-		ParameterJson::Read(json, "AttackPower", param.m_attackPower);
-		ParameterJson::Read(json, "AttackCooldown", param.m_attackCooldown);
-		ParameterJson::Read(json, "KnockBackPower", param.m_knockBackPower);
-		ParameterJson::Read(json, "HitStartFrame", param.m_hitStartFrame);
-		ParameterJson::Read(json, "HitEndFrame", param.m_hitEndFrame);
-		ParameterJson::Read(json, "HitRadius", param.m_hitRadius);
-		ParameterJson::Read(json, "HitForwardOffset", param.m_hitForwardOffset);
+		ParameterJson::Read(json, "AttackPower",         param.m_attackPower);
+		ParameterJson::Read(json, "AttackCooldown",      param.m_attackCooldown);
+		ParameterJson::Read(json, "KnockBackPower",      param.m_knockBackPower);
+		ParameterJson::Read(json, "HitStartFrame",       param.m_hitStartFrame);
+		ParameterJson::Read(json, "HitEndFrame",         param.m_hitEndFrame);
+		ParameterJson::Read(json, "HitRadius",           param.m_hitRadius);
+		ParameterJson::Read(json, "HitForwardOffset",    param.m_hitForwardOffset);
 	}
 }
 
@@ -106,7 +108,7 @@ void SlimeParameter::DrawInspecter()
 		if (InspectorUI::BeginGroup("Split"))
 		{
 			InspectorUI::MeterPerFrame("SplitLaunchSpeed", m_splitLaunchSpeed);
-			InspectorUI::Power("SplitLaunchPower", m_splitLaunchPower);
+			InspectorUI::Power("SplitLaunchPower", m_splitLaunchHeight);
 
 			InspectorUI::EndGroup();
 		}
@@ -136,6 +138,7 @@ void SlimeParameter::DrawParameter(Parameter& param)
 		InspectorUI::MeterPerFrame("MoveSpeed", param.m_moveSpeed);
 		InspectorUI::DegreePerFrame("TurnSpeed", param.m_turnSpeed);
 		InspectorUI::Meter("ReachDistance", param.m_reachDistance);
+		InspectorUI::Meter("ReachDistanceMargin", param.m_reachDistanceMargin);
 		InspectorUI::Acceleration("GravityAccel", param.m_gravityAcceleration);
 
 		InspectorUI::EndGroup();
@@ -169,7 +172,7 @@ void SlimeParameter::SaveToJson()
 	paramJson["Small"] = ToJson(m_paramSmall);
 
 	paramJson["SplitLaunchSpeed"] = InspectorUI::CeilToDigits( m_splitLaunchSpeed);
-	paramJson["SplitLaunchPower"] = InspectorUI::CeilToDigits( m_splitLaunchPower);
+	paramJson["SplitLaunchPower"] = InspectorUI::CeilToDigits( m_splitLaunchHeight);
 
 	std::ofstream file("Asset/Data/Enemy/Slime/Parameter/SlimeParameter.json");
 
@@ -216,7 +219,7 @@ void SlimeParameter::LoadFromJson()
 		}
 
 		ParameterJson::Read(paramJson, "SplitLaunchSpeed", m_splitLaunchSpeed);
-		ParameterJson::Read(paramJson, "SplitLaunchPower", m_splitLaunchPower);
+		ParameterJson::Read(paramJson, "SplitLaunchPower", m_splitLaunchHeight);
 	}
 	catch (const nlohmann::json::exception& e)
 	{

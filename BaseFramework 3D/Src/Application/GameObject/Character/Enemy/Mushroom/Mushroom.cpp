@@ -4,7 +4,6 @@
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 
 #include"State/States/MushroomNormalState.h"
-#include"State/States/MushroomAttackState.h"
 #include"State/States/MushroomDamageState.h"
 #include"State/States/MushroomDieState.h"
 
@@ -106,7 +105,6 @@ void Mushroom::RePlayAnimation(MushroomAnimationType type)
 	m_animation.RePlay(type);
 }
 
-
 void Mushroom::ApplyParameter()
 {
 
@@ -122,6 +120,7 @@ void Mushroom::ApplyParameter()
 	SetGravityAcceleration(param.m_gravityAcceleration);
 
 	m_reachDistance = param.m_reachDistance;
+	m_reachDistanceMargin = param.m_reachDistanceMargin;
 	m_attackCooldownDuration = param.m_attackCooldown;
 
 	// 近接攻撃パラメータをセット

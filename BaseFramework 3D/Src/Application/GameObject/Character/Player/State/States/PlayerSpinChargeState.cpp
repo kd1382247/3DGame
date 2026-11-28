@@ -112,7 +112,7 @@ void PlayerSpinChargeState::PlaySpinAttackChargeFX(const Math::Vector3& effectPo
 
 	if (!spEffekseerObj || !spEffekseerObj->IsPlaying())
 	{
-		m_wpEffekseerObj = KdEffekseerManager::GetInstance().
+		m_wpEffekseerObj = KdEffekseerManager::Instance().
 			Play("Player/Charge/Charge.efkefc", effectPos, 0.8f, 2.5f, false, 30, 90);
 	}
 }

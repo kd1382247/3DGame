@@ -13,6 +13,7 @@
         "MaxHP": 20,
         "MoveSpeed": 0.12,
         "ReachDistance": 1.5,
+        "ReachDistanceMargin": 2.0,
         "TurnSpeed": 12.0
     },
     "AngryRate": 30.0,
@@ -22,14 +23,15 @@
         "BumpSphereOffsetY": 0.5,
         "BumpSphereRadius": 0.5,
         "GravityAcceleration": 30.0,
-        "HitEndFrame": 28.0,
+        "HitEndFrame": 32.0,
         "HitForwardOffset": 0.8,
         "HitRadius": 0.6,
-        "HitStartFrame": 24.0,
+        "HitStartFrame": 28.0,
         "KnockBackPower": 0.05,
         "MaxHP": 40,
         "MoveSpeed": 0.06,
         "ReachDistance": 1.5,
+        "ReachDistanceMargin": 2.0,
         "TurnSpeed": 8.0
     }
 }

@@ -478,7 +478,7 @@ Math::Vector3 Mage::GetAttackEffectPos(const MageParameter::EffectParam& effect)
 
 std::weak_ptr<KdEffekseerObject> Mage::PlayAttackEffect(const MageParameter::EffectParam& effect)const
 {
-	return KdEffekseerManager::GetInstance().Play(
+	return KdEffekseerManager::Instance().Play(
 		effect.m_fileName,
 		GetAttackEffectPos(effect),
 		effect.m_size,

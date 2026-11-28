@@ -40,7 +40,6 @@ public:
 	void DrawInspector()override;
 	void DrawInspectorHeader()override;
 
-
 	void SetUpReference()override;
 
 	void DrawDebug()override;
@@ -50,7 +49,7 @@ public:
 	//===============Moveing===============//
 
 	// 飛び出す
-	void Launch(const Math::Vector3& dir, float power);
+	void Launch(const Math::Vector3& dir, float height);
 
 	// 飛び出し中の移動(接地したら飛び出し終了)
 	void UpdateLaunch();
@@ -89,6 +88,10 @@ public:
 	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
 	// (パラメータの値にScaleを掛けた、ワールド空間での距離)
 	float GetReachDistance()const { return m_reachDistance * GetSizeScale(); }
+
+	// 到達後に「離れた」とみなす余白(到達判定の距離にこの分を足した距離より離れたら、また追いかける)
+	// (パラメータの値にScaleを掛けた、ワールド空間での距離)
+	float GetReachDistanceMargin()const { return m_reachDistanceMargin * GetSizeScale(); }
 
 	void  CreateDeathSmoke();
 
@@ -211,7 +214,7 @@ protected:
 	// 1回(大きくなって元に戻るまで)にかける時間 [秒]
 	static constexpr float kAttackPulseDuration = 0.3f;
 	// 一番大きくなった時の、元の大きさに足す倍率(0.25で1.25倍)
-	static constexpr float kAttackPulseScaleUp = 0.22f;
+	static constexpr float kAttackPulseScaleUp = 0.2f;
 
 	// 拡縮の経過時間 [秒]
 	float m_scalePulseTime = 0.0f;
@@ -234,6 +237,9 @@ protected:
 
 	// 到達判定の距離(この距離まで近づいたら「到達」とみなし、攻撃を開始する)
 	float m_reachDistance = 1.5f;
+
+	// 到達後に「離れた」とみなす余白(到達判定の距離にこの分を足した距離より離れたら、また追いかける)
+	float m_reachDistanceMargin = 0.5f;
 
 	float m_smokeEffectScale = 0.6f;
 

@@ -10,7 +10,8 @@ void BombDieState::OnStart(Bomb* bomb)
 
 void BombDieState::OnUpdate(Bomb * bomb)
 {
-	if (bomb->IsAnimationFinished())
+	// アニメーションが終わったかつ地面に着いていたら
+	if (bomb->IsAnimationFinished()&&bomb->IsGrounded())
 	{
 		bomb->CreateDeathSmoke();
 		bomb->Destroy();

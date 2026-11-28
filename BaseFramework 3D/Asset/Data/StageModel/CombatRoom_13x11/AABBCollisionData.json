@@ -1,0 +1,144 @@
+{
+    "AABBCollisions": [
+        {
+            "ID": 88,
+            "Name": "AABBCollision_88",
+            "Position": {
+                "x": 0.0,
+                "y": -0.2,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 26.0,
+                "y": 0.35,
+                "z": 22.0
+            }
+        },
+        {
+            "ID": 89,
+            "Name": "AABBCollision_89",
+            "Position": {
+                "x": 0.0,
+                "y": 12.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 26.0,
+                "y": 0.35,
+                "z": 22.0
+            }
+        },
+        {
+            "ID": 90,
+            "Name": "AABBCollision_90",
+            "Position": {
+                "x": 0.0,
+                "y": 7.5,
+                "z": 11.0
+            },
+            "Scale": {
+                "x": 2.0,
+                "y": 9.0,
+                "z": 0.35
+            }
+        },
+        {
+            "ID": 91,
+            "Name": "AABBCollision_91",
+            "Position": {
+                "x": -7.0,
+                "y": 6.0,
+                "z": 11.0
+            },
+            "Scale": {
+                "x": 12.0,
+                "y": 12.0,
+                "z": 0.35
+            }
+        },
+        {
+            "ID": 92,
+            "Name": "AABBCollision_92",
+            "Position": {
+                "x": 7.0,
+                "y": 6.0,
+                "z": 11.0
+            },
+            "Scale": {
+                "x": 12.0,
+                "y": 12.0,
+                "z": 0.35
+            }
+        },
+        {
+            "ID": 93,
+            "Name": "AABBCollision_93",
+            "Position": {
+                "x": 7.0,
+                "y": 6.0,
+                "z": -11.0
+            },
+            "Scale": {
+                "x": 12.0,
+                "y": 12.0,
+                "z": 0.35
+            }
+        },
+        {
+            "ID": 94,
+            "Name": "AABBCollision_94",
+            "Position": {
+                "x": 0.0,
+                "y": 7.5,
+                "z": -11.0
+            },
+            "Scale": {
+                "x": 2.0,
+                "y": 9.0,
+                "z": 0.35
+            }
+        },
+        {
+            "ID": 95,
+            "Name": "AABBCollision_95",
+            "Position": {
+                "x": -7.0,
+                "y": 6.0,
+                "z": -11.0
+            },
+            "Scale": {
+                "x": 12.0,
+                "y": 12.0,
+                "z": 0.35
+            }
+        },
+        {
+            "ID": 96,
+            "Name": "AABBCollision_96",
+            "Position": {
+                "x": -13.0,
+                "y": 6.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 0.35,
+                "y": 12.0,
+                "z": 22.0
+            }
+        },
+        {
+            "ID": 97,
+            "Name": "AABBCollision_97",
+            "Position": {
+                "x": 13.0,
+                "y": 6.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 0.35,
+                "y": 12.0,
+                "z": 22.0
+            }
+        }
+    ]
+}

@@ -9,7 +9,9 @@ void MushroomDieState::OnStart(Mushroom* mushroom)
 
 void MushroomDieState::OnUpdate(Mushroom * mushroom)
 {
-	if (mushroom->IsAnimationFinished())
+
+	// アニメーションが終わったかつ地面に着いていたら
+	if (mushroom->IsAnimationFinished()&&mushroom->IsGrounded())
 	{
 		mushroom->CreateDeathSmoke();
 		mushroom->Destroy();

@@ -133,7 +133,9 @@ void SceneManager::ResetSystems()
 	TimeManager::Instance().Init();
 
 	// 再生中のエフェクトを止める(読み込み済みのエフェクトデータは残す)
-	KdEffekseerManager::GetInstance().StopAllEffect();
+	KdEffekseerManager::Instance().StopAllEffect();
+
+	KdEffekseerManager::Instance().SetPause(false);
 
 	// 攻撃範囲表示(カラースフィア)を消す
 	KdShaderManager::Instance().ClearColorSphere();

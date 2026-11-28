@@ -12,4 +12,15 @@ public:
 	void OnUpdate(Player* owner)override;
 	void OnExit(Player* owner)override;
 
+private:
+
+
+	enum class JumpState
+	{
+		Fall,
+		Land
+	};
+
+	JumpState m_jumpState = JumpState::Fall;
+
 };

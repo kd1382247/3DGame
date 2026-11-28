@@ -5,6 +5,7 @@
 #include"PlayerAttackState.h"
 #include"PlayerSpinChargeState.h"
 #include"PlayerJumpStartState.h"
+#include"PlayerJumpLandState.h"
 #include"PlayerGuardState.h"
 
 void PlayerNormalState::OnStart(Player* owner)
@@ -42,6 +43,13 @@ void PlayerNormalState::OnUpdate(Player* owner)
 	if (input.IsJumpDown() && owner->IsGrounded())
 	{
 		m_pMachine->ChangeState<PlayerJumpStartState>();
+		return;
+	}
+	
+	// 地面から離れたら落下モーションのステートに移行
+	if (!owner->IsGrounded())
+	{
+		m_pMachine->ChangeState<PlayerJumpLandState>();
 		return;
 	}
 

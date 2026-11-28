@@ -7,7 +7,6 @@
 
 #include"../../StateMachine/StateMachine.h"
 #include"State/States/SlimeNormalState.h"
-#include"State/States/SlimeAttackState.h"
 #include"State/States/SlimeDamageState.h"
 #include"State/States//SlimeDieState.h"
 
@@ -125,7 +124,7 @@ void Slime::Split()
 		slime->SetUpReference();
 
 		// 分裂した小さいスライムを飛び散らせる(速さ・勢いはParameterで調整できる)
-		slime->Launch(m_launchDir[i] * m_parameter.GetSplitLaunchSpeed(), m_parameter.GetSplitLaunchPower());
+		slime->Launch(m_launchDir[i] * m_parameter.GetSplitLaunchSpeed(), m_parameter.GetSplitLaunchHeight());
 
 		// 自分を出したスポナーを引き継ぐ(ウェーブが、分裂した小スライムの全滅まで次に進まないようにする)
 		InheritSpawnerTo(slime);
@@ -152,6 +151,7 @@ void Slime::ApplyParameter()
 	SetGravityAcceleration(param.m_gravityAcceleration);
 
 	m_reachDistance          = param.m_reachDistance;
+	m_reachDistanceMargin    = param.m_reachDistanceMargin;
 	m_attackCooldownDuration = param.m_attackCooldown;
 
 	// 近接攻撃パラメータをセット

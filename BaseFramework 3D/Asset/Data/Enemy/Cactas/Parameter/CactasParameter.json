@@ -4,13 +4,14 @@
     "BumpSphereOffsetY": 0.5,
     "BumpSphereRadius": 0.5,
     "GravityAcceleration": 30.0,
-    "HitEndFrame": 26.0,
+    "HitEndFrame": 30.0,
     "HitForwardOffset": 0.8,
     "HitRadius": 0.6,
-    "HitStartFrame": 22.0,
+    "HitStartFrame": 26.0,
     "KnockBackPower": 0.08,
-    "MaxHP": 30,
+    "MaxHP": 40,
     "MoveSpeed": 0.08,
     "ReachDistance": 1.5,
+    "ReachDistanceMargin": 2.0,
     "TurnSpeed": 8.0
 }

@@ -546,7 +546,7 @@
             "Waves": [
                 {
                     "Enemies": [
-                        "Slime"
+                        "Cactas"
                     ],
                     "SpawnCount": 5,
                     "SpawnInterval": 0.05,
@@ -1409,6 +1409,7 @@
         },
         {
             "Class": "Mage",
+            "LinkedRoom": "Room_3",
             "LocalPos": {
                 "x": 0.0,
                 "y": 0.7,
@@ -1830,6 +1831,7 @@
         },
         {
             "Class": "Beholder",
+            "LinkedRoom": "",
             "LocalPos": {
                 "x": 0.0,
                 "y": 0.0,

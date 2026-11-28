@@ -5,7 +5,6 @@
 #include"../../../HPBar/EnemyHPBar/EnemyHPBarManager.h"
 
 #include"State/States/CactasNormalState.h"
-#include"State/States/CactasAttackState.h"
 #include"State/States/CactasDamageState.h"
 #include"State//States/CactasDieState.h"
 
@@ -102,6 +101,7 @@ void Cactas::ApplyParameter()
 	SetGravityAcceleration(param.m_gravityAcceleration);
 
 	m_reachDistance = param.m_reachDistance;
+	m_reachDistanceMargin = param.m_reachDistanceMargin;
 	m_attackCooldownDuration = param.m_attackCooldown;
 
 	// 近接攻撃パラメータをセット

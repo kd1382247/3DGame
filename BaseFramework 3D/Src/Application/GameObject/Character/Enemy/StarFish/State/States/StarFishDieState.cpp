@@ -9,7 +9,9 @@ void StarFishDieState::OnStart(StarFish* starFish)
 
 void StarFishDieState::OnUpdate(StarFish * starFish)
 {
-	if (starFish->IsAnimationFinished())
+
+	// アニメーションが終わったかつ地面に着いていたら
+	if (starFish->IsAnimationFinished()&&starFish->IsGrounded())
 	{
 		starFish->CreateDeathSmoke();
 		starFish->Destroy();

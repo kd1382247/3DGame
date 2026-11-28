@@ -9,7 +9,9 @@ void SlimeDieState::OnStart(Slime* slime)
 
 void SlimeDieState::OnUpdate(Slime * slime)
 {
-	if (slime->IsAnimationFinished())
+
+	// アニメーションが終わったかつ地面に着いていたら
+	if (slime->IsAnimationFinished()&&slime->IsGrounded())
 	{
 		slime->Split();
 		slime->CreateDeathSmoke();

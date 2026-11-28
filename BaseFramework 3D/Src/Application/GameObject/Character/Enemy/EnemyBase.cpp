@@ -117,13 +117,13 @@ void EnemyBase::UpdateAttackCollision()
 	UpdateMeleeAttackCollision(m_meleeAttack.m_knockBackPower, GetAttackPower(), m_meleeAttack.m_sphereRadius, m_meleeAttack.m_forwardOffset);
 }
 
-void EnemyBase::Launch(const Math::Vector3& dir, float power)
+void EnemyBase::Launch(const Math::Vector3& dir, float height)
 {
 	m_launchVec = dir;
 	m_launchFlg = true;
 
 	// 重力を反転
-	m_gravity -= power*60.0f;
+	m_gravity -= height * 60.0f;
 }
 
 Math::Vector3 EnemyBase::CreateSpawnDirection()
@@ -180,13 +180,13 @@ void EnemyBase::PlayHitEffect()
 	// エフェクトの位置は、キャラの大きさに合わせる
 	Math::Vector3 effectPos = GetPos() + bossDir * (m_effectDist * GetSizeScale()) + Math::Vector3(0.0f, 0.8f * GetScale().y, 0.0f);
 
-	KdEffekseerManager::GetInstance().
+	KdEffekseerManager::Instance().
 		Play("Common/Hit/Slash_hit.efkefc", effectPos, 0.3f, 0.8f, false);
 
-	KdEffekseerManager::GetInstance().
+	KdEffekseerManager::Instance().
 		Play("Common/Hit/Star_hit.efkefc", effectPos, 0.3f, 0.6f, false);
 
-	KdEffekseerManager::GetInstance().
+	KdEffekseerManager::Instance().
 		Play("Common/Hit/Flash_hit.efkefc", effectPos, 0.4f, 0.6f, false);
 
 }
@@ -216,11 +216,11 @@ void EnemyBase::UpdateDirectChase()
 
 	// 到達判定の距離と、到達後に「離れた」とみなす余白は、キャラの大きさに合わせる
 	const float reachDistance = GetReachDistance();
-	const float reachDistanceMargin = reachDistance + 0.5f * GetSizeScale();
+	const float leaveDistance = GetReachDistanceMargin();
 
 	if (m_hasReachedTarget)
 	{
-		if (distance > reachDistanceMargin)
+		if (distance > leaveDistance)
 		{
 			m_hasReachedTarget = false;
 		}
@@ -496,7 +496,8 @@ void EnemyBase::UpdateMove()
 		return;
 	}
 
-	if (m_knockBack != Math::Vector3::Zero)
+	if (m_knockBack != Math::Vector3::Zero&&
+		!IsGrounded())
 	{
 		// キャラの向き
 		auto spPlayer = m_wpPlayer.lock();
@@ -570,7 +571,7 @@ void EnemyBase::ForceKill()
 
 void EnemyBase::CreateDeathSmoke()
 {
-	KdEffekseerManager::GetInstance().
+	KdEffekseerManager::Instance().
 		Play("Common/Smoke/Smoke_purple.efkefc",GetPos(),m_smokeEffectScale,0.7f,false);
 
 	// SEを流す
@@ -768,13 +769,12 @@ void EnemyBase::LoadData(const nlohmann::json& json)
 bool EnemyBase::ApplyDamage(const AttackInfo& attackInfo)
 {
 
-
 	// 攻撃前の拡縮の途中で被弾したら、拡縮はやめて元の大きさに戻す
 	ResetAttackPulse();
 
 	const bool isDead = m_health.TakeDamage(attackInfo.m_damage);
 
-	AddKnockBack(attackInfo.m_knockBackDir, attackInfo.m_knockBackPower);
+	AddKnockBack(attackInfo.m_knockBackDir, attackInfo.m_knockBackDist,attackInfo.m_knockBackHeight);
 
 	// ダメージが0より上だけ以下の処理をする
 	if(attackInfo.m_damage>0)
@@ -814,7 +814,7 @@ void EnemyBase::AttackPlayer(const std::shared_ptr<Player>& spPlayer, const floa
 	AttackInfo attackInfo;
 
 	attackInfo.m_knockBackDir = knockBackDir;
-	attackInfo.m_knockBackPower = knockBackPower;
+	attackInfo.m_knockBackDist = knockBackPower;
 	attackInfo.m_damage = static_cast<int>(damage);
 
 	spPlayer->OnHit(attackInfo);

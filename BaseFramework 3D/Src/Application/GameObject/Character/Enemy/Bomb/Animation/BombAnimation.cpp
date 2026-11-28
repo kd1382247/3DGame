@@ -45,7 +45,7 @@ void BombAnimation::Animations(BombAnimationType type)
 		break;
 	case BombAnimationType::Idle:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Idle"), true, 0.2f);
-		m_animSpeed = 1.5f;
+		m_animSpeed = 1.2f;
 		break;
 	case BombAnimationType::Walk:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Walk"), true, 0.15f);
@@ -54,7 +54,7 @@ void BombAnimation::Animations(BombAnimationType type)
 
 	case BombAnimationType::Die:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false, 0.1f);
-		m_animSpeed = 1.0f;
+		m_animSpeed = 0.7f;
 		break;
 	}
 

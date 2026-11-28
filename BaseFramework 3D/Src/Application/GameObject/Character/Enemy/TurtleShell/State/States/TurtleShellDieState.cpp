@@ -9,7 +9,9 @@ void TurtleShellDieState::OnStart(TurtleShell* turtleShell)
 
 void TurtleShellDieState::OnUpdate(TurtleShell * turtleShell)
 {
-	if (turtleShell->IsAnimationFinished())
+
+	// アニメーションが終わったかつ地面に着いていたら
+	if (turtleShell->IsAnimationFinished()&&turtleShell->IsGrounded())
 	{
 		turtleShell->CreateDeathSmoke();
 		turtleShell->Destroy();

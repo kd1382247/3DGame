@@ -98,7 +98,7 @@ void MageMagicSector::Update()
 	if (m_effectHandle < 0)
 	{
 		// エフェクト再生(最初の1回だけ呼ぶ)
-		auto spEffekseerObj = KdEffekseerManager::GetInstance().Play(
+		auto spEffekseerObj = KdEffekseerManager::Instance().Play(
 			m_desc.effect.fileName,
 			m_effectPos+m_desc.dir*-1.4f,
 			m_desc.effect.size,
@@ -115,7 +115,7 @@ void MageMagicSector::Update()
 		}
 	}
 	// ハンドルベースでの終了判定(KdEffekseerObjectの生存期間に依存しない)
-	else if (KdEffekseerManager::GetInstance().HasEffectFinished(m_effectHandle))
+	else if (KdEffekseerManager::Instance().HasEffectFinished(m_effectHandle))
 	{
 		m_rangeIndicator.Hide();
 		m_isFinished = true;

@@ -6,7 +6,7 @@
             "Name": "OBBCollision_0",
             "Position": {
                 "x": 0.0,
-                "y": 1.44,
+                "y": 1.4,
                 "z": 3.0
             },
             "Rotation": {
@@ -26,8 +26,8 @@
             "Name": "OBBCollision_1",
             "Position": {
                 "x": 0.0,
-                "y": 2.85,
-                "z": 9.15
+                "y": 2.8,
+                "z": 9.0
             },
             "Rotation": {
                 "x": 0.0,
@@ -37,7 +37,7 @@
             "Scale": {
                 "x": 18.0,
                 "y": 0.35,
-                "z": 8.3
+                "z": 8.0
             }
         }
     ]

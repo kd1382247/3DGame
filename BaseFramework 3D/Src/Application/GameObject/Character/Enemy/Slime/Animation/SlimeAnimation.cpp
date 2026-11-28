@@ -35,7 +35,7 @@ void SlimeAnimation::Animations(SlimeAnimationType type)
 
 	case SlimeAnimationType::Attack:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Attack"), false, 0.08f);
-		m_animSpeed = 0.8f;
+		m_animSpeed = 1.0f;
 		break;
 	case SlimeAnimationType::GetHit:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("GetHit"), false, 0.05f);
@@ -52,7 +52,7 @@ void SlimeAnimation::Animations(SlimeAnimationType type)
 
 	case SlimeAnimationType::Die:
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Die"), false, 0.1f);
-		m_animSpeed = 1.0f;
+		m_animSpeed = 0.7f;
 		break;
 	}
 }

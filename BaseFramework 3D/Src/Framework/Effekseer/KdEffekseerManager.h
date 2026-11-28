@@ -30,10 +30,9 @@ public:
 	void StopEffect(const std::string& name);
 	void StopEffect(const Effekseer::Handle& handle);
 
-	void OnPauseEfkUpdate()
-	{
-		m_isPause = true;
-	}
+	
+	// エフェクト更新の　停止/再開
+	void SetPause(bool pause) { m_isPause = pause; }
 
 	void Release();
 	void Reset();
@@ -96,7 +95,7 @@ private:
 
 public:
 
-	static KdEffekseerManager& GetInstance()
+	static KdEffekseerManager& Instance()
 	{
 		static KdEffekseerManager instance;
 
@@ -120,7 +119,7 @@ public:
 	void StopEffect()
 	{
 		SetLoop(false);
-		KdEffekseerManager::GetInstance().StopEffect(GetHandle());
+		KdEffekseerManager::Instance().StopEffect(GetHandle());
 	}
 
 	// 再生登録したマネージャー設定

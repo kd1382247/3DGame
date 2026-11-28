@@ -299,7 +299,6 @@ void ParentLink::SaveData(nlohmann::json& json) const
 	};
 }
 
-
 void ParentLink::LoadData(const nlohmann::json & json)
 {
 	// 親の名前をセット

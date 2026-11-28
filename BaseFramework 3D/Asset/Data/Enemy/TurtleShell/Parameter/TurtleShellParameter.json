@@ -9,6 +9,7 @@
     "MaxHP": 20,
     "MoveSpeed": 0.065,
     "ReachDistance": 4.0,
+    "ReachDistanceMargin": 4.5,
     "SpinDuration": 5.0,
     "SpinHitCooldown": 0.5,
     "SpinHitRadius": 0.5,

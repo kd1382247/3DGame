@@ -95,7 +95,8 @@ public:
 				AttackInfo attackInfo;
 				attackInfo.m_knockBackDir        = knockBackDir;
 				attackInfo.m_damage              = hitParam.m_attackPower;
-				attackInfo.m_knockBackPower      = hitParam.m_knockBackPower;
+				attackInfo.m_knockBackDist       = hitParam.m_knockBackDist;
+				attackInfo.m_knockBackHeight     = hitParam.m_knockBackHeight;
 				attackInfo.m_hitStop             = hitParam.m_hitStop;
 				attackInfo.m_killHitStop         = hitParam.m_killHitStop;
 				attackInfo.m_SlowScale           = hitParam.m_SlowScale;

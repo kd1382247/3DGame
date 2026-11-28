@@ -273,7 +273,6 @@
     <ClInclude Include="..\Library\tinygltf\stb_image.h" />
     <ClInclude Include="..\Library\tinygltf\stb_image_write.h" />
     <ClInclude Include="..\Library\tinygltf\tiny_gltf.h" />
-    <ClInclude Include="BeholderState.h" />
     <ClInclude Include="Src\Application\BGMManager\BGMManager.h" />
     <ClInclude Include="Src\Application\Editor\EditorManager.h" />
     <ClInclude Include="Src\Application\Editor\EditorPanel\EditorPanel.h" />
@@ -421,13 +420,12 @@
     <ClInclude Include="Src\Application\GameObject\Character\Player\PlayerInput.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\SpinAttack\PlayerSpinAttack.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.h" />
+    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpLandState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpinChargeState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerDieState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerGuardState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerIntroWaitState.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpAirState.h" />
-    <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpLandState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpStartState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerNormalState.h" />
     <ClInclude Include="Src\Application\GameObject\Character\Player\State\States\PlayerParryState.h" />
@@ -457,6 +455,7 @@
     <ClInclude Include="Src\Application\GameObject\Gimmick\EnemySpawner\EnemySpawnerRequest.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\RoomGate\RoomGate.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\Room\Room.h" />
+    <ClInclude Include="Src\Application\GameObject\Gimmick\Room\RoomLink.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\Room\RoomManager.h" />
     <ClInclude Include="Src\Application\GameObject\Gimmick\StageGimmick.h" />
     <ClInclude Include="Src\Application\GameObject\HPBar\BossHPBar\BossHPBar.h" />
@@ -675,13 +674,12 @@
     <ClCompile Include="Src\Application\GameObject\Character\Player\Player.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\SpinAttack\PlayerSpinAttack.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerAttackState.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpLandState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerSpinChargeState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDamageState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerDieState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerGuardState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerIntroWaitState.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpAirState.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpLandState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerJumpStartState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerNormalState.cpp" />
     <ClCompile Include="Src\Application\GameObject\Character\Player\State\States\PlayerParryState.cpp" />

@@ -112,7 +112,7 @@ void StarFish::StartAttack()
 	Math::Vector3 effectPos = GetPos() + Math::Vector3(0.0f, 0.5f, 0.0f);
 	effectPos += m_mWorld.Backward() * 0.3f;
 
-	KdEffekseerManager::GetInstance().Play("Enemy/Shot/Shot.efkefc",effectPos , 0.3f, 1.4f);
+	KdEffekseerManager::Instance().Play("Enemy/Shot/Shot.efkefc",effectPos , 0.3f, 1.4f);
 
 }
 
@@ -133,6 +133,7 @@ void StarFish::ApplyParameter()
 
 	// この距離まで近づいたら攻撃(Energy弾を発射)する
 	m_reachDistance = param.m_reachDistance;
+	m_reachDistanceMargin = param.m_reachDistanceMargin;
 
 }
 

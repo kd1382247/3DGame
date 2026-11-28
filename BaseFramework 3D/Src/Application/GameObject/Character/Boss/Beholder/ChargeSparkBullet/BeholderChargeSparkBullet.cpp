@@ -139,7 +139,7 @@ void BeholderChargeSparkBullet::HitPlayer(const KdCollider::SphereInfo& sphereIn
 	AttackInfo attackInfo;
 
 	attackInfo.m_knockBackDir = knockBackDir;
-	attackInfo.m_knockBackPower = m_desc.knockBackPower;
+	attackInfo.m_knockBackDist = m_desc.knockBackPower;
 	attackInfo.m_damage = m_desc.damage;
 	attackInfo.m_canReflect = true;
 
@@ -177,7 +177,7 @@ void BeholderChargeSparkBullet::HitOwner(const KdCollider::SphereInfo& sphereInf
 	AttackInfo attackInfo;
 
 	attackInfo.m_knockBackDir = knockBackDir;
-	attackInfo.m_knockBackPower = m_desc.knockBackPower;
+	attackInfo.m_knockBackDist = m_desc.knockBackPower;
 	attackInfo.m_damage = m_desc.damage;
 	attackInfo.m_canReflect = true;
 
@@ -191,7 +191,7 @@ void BeholderChargeSparkBullet::HitOwner(const KdCollider::SphereInfo& sphereInf
 void BeholderChargeSparkBullet::PlayEffect(const Math::Vector3& pos)
 {
 	// IsLoop=falseで単発再生し、区間再生が終わるたびにUpdateEffect()側で再生し直す
-	m_wpEffect = KdEffekseerManager::GetInstance().Play(
+	m_wpEffect = KdEffekseerManager::Instance().Play(
 		m_desc.effect.fileName,
 		pos,
 		m_bulletSize,
@@ -348,7 +348,7 @@ void BeholderChargeSparkBullet::Vanish()
 		spEffect->StopEffect();
 	}
 
-	KdEffekseerManager::GetInstance().Play("Boss/Beholder/Spark/SparkBreak.efkefc", GetPos(), 1.0f, 1.0f, false, 30, 60);
+	KdEffekseerManager::Instance().Play("Boss/Beholder/Spark/SparkBreak.efkefc", GetPos(), 1.0f, 1.0f, false, 30, 60);
 
 	Destroy();
 }

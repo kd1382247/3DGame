@@ -75,7 +75,7 @@ void Application::Update()
 	// BGMの切り替え(シーンの更新で部屋の状態が変わった後に行う)
 	BGMManager::Instance().Update();
 
-	KdEffekseerManager::GetInstance().Update();
+	KdEffekseerManager::Instance().Update();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -126,7 +126,7 @@ void Application::Draw()
 {
 	SceneManager::Instance().Draw();
 
-	KdEffekseerManager::GetInstance().Draw();
+	KdEffekseerManager::Instance().Draw();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -225,7 +225,7 @@ bool Application::Init(int w, int h)
 	//===================================================================
 	// Effekseer初期化
 	//===================================================================
-	KdEffekseerManager::GetInstance().Create(w, h);
+	KdEffekseerManager::Instance().Create(w, h);
 
 	//===================================================================
 	// ゲーム固有の初期化
@@ -363,7 +363,7 @@ void Application::Release()
 
 	KdDirect3D::Instance().Release();
 
-	KdEffekseerManager::GetInstance().Release();
+	KdEffekseerManager::Instance().Release();
 
 	// ウィンドウ削除
 	m_window.Release();

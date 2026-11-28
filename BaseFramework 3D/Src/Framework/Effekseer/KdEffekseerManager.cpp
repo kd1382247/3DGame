@@ -33,7 +33,6 @@ void KdEffekseerManager::Create(int w, int h)
 	m_efkManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
 
 
-
 	// 投影行列を設定
 	m_efkRenderer->SetProjectionMatrix(
 		::Effekseer::Matrix44().PerspectiveFovLH(
@@ -218,7 +217,6 @@ void KdEffekseerManager::LoadEffekseer(const std::string& fileName)
 
 	if (effect == nullptr)
 	{
-
 		assert(0 && "Effekseerのエフェクト作成失敗");
 	}
 
@@ -384,31 +382,31 @@ void KdEffekseerObject::SetPos(const Math::Vector3& pos)
 {
 	m_info.Pos = pos;
 
-	KdEffekseerManager::GetInstance().SetPos(m_handle, pos);
+	KdEffekseerManager::Instance().SetPos(m_handle, pos);
 }
 
 void KdEffekseerObject::SetScale(const Math::Vector3 scale)
 {
 	m_info.Size = scale;
 
-	KdEffekseerManager::GetInstance().SetScale(m_handle, scale);
+	KdEffekseerManager::Instance().SetScale(m_handle, scale);
 }
 
 void KdEffekseerObject::SetScale(const float scale)
 {
 	m_info.Size = Math::Vector3(scale);
 
-	KdEffekseerManager::GetInstance().SetScale(m_handle, scale);
+	KdEffekseerManager::Instance().SetScale(m_handle, scale);
 }
 
 void KdEffekseerObject::SetSpeed(const float speed)
 {
 	m_info.Speed = speed;
 
-	KdEffekseerManager::GetInstance().SetSpeed(m_handle, speed);
+	KdEffekseerManager::Instance().SetSpeed(m_handle, speed);
 }
 
 void KdEffekseerObject::SetWorldMatrix(const Math::Matrix& mWorld)
 {
-	KdEffekseerManager::GetInstance().SetWorldMatrix(m_handle, mWorld);
+	KdEffekseerManager::Instance().SetWorldMatrix(m_handle, mWorld);
 }

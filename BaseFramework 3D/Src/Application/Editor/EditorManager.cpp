@@ -214,7 +214,7 @@ void EditorManager::StopPlayMode()
 	SetEditorMode(EditorMode::Edit);
 
 	// エフェクトをストップ
-	KdEffekseerManager::GetInstance().StopAllEffect();
+	KdEffekseerManager::Instance().StopAllEffect();
 
 	// カラースフィアを消す
 	KdShaderManager::Instance().ClearColorSphere();

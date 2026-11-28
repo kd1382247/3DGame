@@ -89,7 +89,7 @@ void CheckPoint::Update()
 	KdAudioManager::Instance().PlaySE("Asset/Data/Sound/SE/Player/Heal/Heal.wav");
 
 	// 回復エフェクト再生
-	m_wpEffekseerObj = KdEffekseerManager::GetInstance().Play("Player/Heal/Heal.efkefc",pos,0.6f);
+	m_wpEffekseerObj = KdEffekseerManager::Instance().Play("Player/Heal/Heal.efkefc",pos,0.6f);
 }
 
 void CheckPoint::DrawLit()

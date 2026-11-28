@@ -150,7 +150,7 @@ void MageBolt::HitPlayer(const KdCollider::SphereInfo& sphereInfo)
 	AttackInfo attackInfo;
 
 	attackInfo.m_knockBackDir = knockBackDir;
-	attackInfo.m_knockBackPower = m_desc.knockBackPower;
+	attackInfo.m_knockBackDist = m_desc.knockBackPower;
 	attackInfo.m_damage = m_desc.damage;
 	attackInfo.m_canReflect = true;
 
@@ -193,7 +193,7 @@ void MageBolt::HitOwner(const KdCollider::SphereInfo& sphereInfo)
 	AttackInfo attackInfo;
 
 	attackInfo.m_knockBackDir = knockBackDir;
-	attackInfo.m_knockBackPower = m_desc.knockBackPower;
+	attackInfo.m_knockBackDist = m_desc.knockBackPower;
 	attackInfo.m_damage = m_desc.damage;
 	attackInfo.m_canReflect = true;
 
@@ -224,7 +224,7 @@ void MageBolt::Reflect()
 void MageBolt::PlayEffect(const Math::Vector3& pos)
 {
 	// IsLoop=falseで単発再生し、区間再生が終わるたびにUpdateEffect()側で再生し直す
-	m_wpEffect = KdEffekseerManager::GetInstance().Play(
+	m_wpEffect = KdEffekseerManager::Instance().Play(
 		m_desc.effect.fileName,
 		pos,
 		m_desc.effect.size,
@@ -257,7 +257,7 @@ void MageBolt::Vanish()
 		spEffect->StopEffect();
 	}
 
-	KdEffekseerManager::GetInstance().Play("Boss/Mage/Bolt/BoltBreak.efkefc",GetPos(),0.5f);
+	KdEffekseerManager::Instance().Play("Boss/Mage/Bolt/BoltBreak.efkefc",GetPos(),0.5f);
 
 	Destroy();
 }

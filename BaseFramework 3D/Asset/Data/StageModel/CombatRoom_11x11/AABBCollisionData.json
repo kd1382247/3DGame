@@ -1,115 +1,143 @@
 {
     "AABBCollisions": [
         {
-            "ID": 72,
-            "Name": "AABBCollision_72",
+            "ID": 88,
+            "Name": "AABBCollision_88",
             "Position": {
-                "x": 11.0,
-                "y": -0.20000000298023224,
-                "z": 11.0
+                "x": 0.0,
+                "y": -0.2,
+                "z": 0.0
             },
             "Scale": {
                 "x": 22.0,
-                "y": 0.3499999940395355,
+                "y": 0.35,
                 "z": 22.0
             }
         },
         {
-            "ID": 73,
-            "Name": "AABBCollision_73",
+            "ID": 89,
+            "Name": "AABBCollision_89",
             "Position": {
-                "x": 11.0,
+                "x": 0.0,
                 "y": 12.0,
-                "z": 11.0
+                "z": 0.0
             },
             "Scale": {
                 "x": 22.0,
-                "y": 0.3499999940395355,
+                "y": 0.35,
                 "z": 22.0
             }
         },
         {
-            "ID": 74,
-            "Name": "AABBCollision_74",
+            "ID": 90,
+            "Name": "AABBCollision_90",
+            "Position": {
+                "x": 11.0,
+                "y": 6.0,
+                "z": -6.0
+            },
+            "Scale": {
+                "x": 0.35,
+                "y": 12.0,
+                "z": 10.0
+            }
+        },
+        {
+            "ID": 91,
+            "Name": "AABBCollision_91",
+            "Position": {
+                "x": -11.0,
+                "y": 6.0,
+                "z": 0.0
+            },
+            "Scale": {
+                "x": 0.35,
+                "y": 12.0,
+                "z": 22.0
+            }
+        },
+        {
+            "ID": 92,
+            "Name": "AABBCollision_92",
             "Position": {
                 "x": 0.0,
                 "y": 6.0,
                 "z": 11.0
             },
             "Scale": {
-                "x": 0.3499999940395355,
+                "x": 22.0,
                 "y": 12.0,
-                "z": 22.0
+                "z": 0.35
             }
         },
         {
-            "ID": 75,
-            "Name": "AABBCollision_75",
+            "ID": 93,
+            "Name": "AABBCollision_93",
             "Position": {
-                "x": 22.0,
+                "x": -6.0,
                 "y": 6.0,
-                "z": 11.0
+                "z": -11.0
             },
             "Scale": {
-                "x": 0.3499999940395355,
+                "x": 10.0,
                 "y": 12.0,
-                "z": 22.0
+                "z": 0.35
             }
         },
         {
-            "ID": 76,
-            "Name": "AABBCollision_76",
+            "ID": 94,
+            "Name": "AABBCollision_94",
+            "Position": {
+                "x": 6.0,
+                "y": 6.0,
+                "z": -11.0
+            },
+            "Scale": {
+                "x": 10.0,
+                "y": 12.0,
+                "z": 0.35
+            }
+        },
+        {
+            "ID": 95,
+            "Name": "AABBCollision_95",
+            "Position": {
+                "x": 0.0,
+                "y": 7.5,
+                "z": -11.0
+            },
+            "Scale": {
+                "x": 2.0,
+                "y": 9.0,
+                "z": 0.35
+            }
+        },
+        {
+            "ID": 96,
+            "Name": "AABBCollision_96",
             "Position": {
                 "x": 11.0,
                 "y": 6.0,
-                "z": 22.0
+                "z": 6.0
             },
             "Scale": {
-                "x": 22.0,
+                "x": 0.35,
                 "y": 12.0,
-                "z": 0.3499999940395355
+                "z": 10.0
             }
         },
         {
-            "ID": 77,
-            "Name": "AABBCollision_77",
-            "Position": {
-                "x": 5.0,
-                "y": 6.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 10.0,
-                "y": 12.0,
-                "z": 0.3499999940395355
-            }
-        },
-        {
-            "ID": 78,
-            "Name": "AABBCollision_78",
-            "Position": {
-                "x": 17.0,
-                "y": 6.0,
-                "z": 0.0
-            },
-            "Scale": {
-                "x": 10.0,
-                "y": 12.0,
-                "z": 0.3499999940395355
-            }
-        },
-        {
-            "ID": 79,
-            "Name": "AABBCollision_79",
+            "ID": 97,
+            "Name": "AABBCollision_97",
             "Position": {
                 "x": 11.0,
                 "y": 7.5,
                 "z": 0.0
             },
             "Scale": {
-                "x": 2.0,
+                "x": 0.35,
                 "y": 9.0,
-                "z": 0.3499999940395355
+                "z": 2.0
             }
         }
     ]

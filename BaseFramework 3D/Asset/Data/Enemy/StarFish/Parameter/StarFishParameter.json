@@ -15,5 +15,6 @@
     "MaxHP": 30,
     "MoveSpeed": 0.08,
     "ReachDistance": 5.0,
+    "ReachDistanceMargin": 5.5,
     "TurnSpeed": 8.0
 }

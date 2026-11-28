@@ -66,6 +66,6 @@ void TurtleShellSpinAttackRepeatState::UpdateEffect(TurtleShell* turtleShell)
 void TurtleShellSpinAttackRepeatState::PlayEffect(const Math::Vector3& pos)
 {
 
-	m_wpEffect = KdEffekseerManager::GetInstance().Play("Enemy/Spin/Spin.efkefc", pos, 0.5f, 1.0f, false, 50.0f, 120.0f);
+	m_wpEffect = KdEffekseerManager::Instance().Play("Enemy/Spin/Spin.efkefc", pos, 0.5f, 1.0f, false, 50.0f, 120.0f);
 
 }
